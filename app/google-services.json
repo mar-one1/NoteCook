@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "677069313204",
+    "project_id": "notebook-85870",
+    "storage_bucket": "notebook-85870.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677069313204:android:a07453dd09c9765fee33e1",
+        "android_client_info": {
+          "package_name": "com.example.notecook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "677069313204-daplf2gk1d01pkj8k2ndrdincf4n872p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-d80aiVuFj2pdsOVf5tfiI9q-5VDlv44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "677069313204-ab6ha6bifafj05mmtbg3pfgaut3p74cj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

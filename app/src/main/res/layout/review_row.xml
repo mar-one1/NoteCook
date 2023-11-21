@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Detailed Review TextView -->
+    <TextView
+        android:id="@+id/textViewDetailReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="Detailed Review Placeholder"/>
+
+    <!-- Rate Review TextView -->
+    <TextView
+        android:id="@+id/textViewRateReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Rating: Placeholder"/>
+
+    <!-- Recipe ID TextView -->
+    <TextView
+        android:id="@+id/textViewRecipeId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Recipe ID: Placeholder"/>
+
+</LinearLayout>

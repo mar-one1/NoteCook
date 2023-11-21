@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/tips"
+        android:enabled="true"
+        android:icon="@drawable/ic_tips_and_updates_fill0_wght400_grad0_opsz48"
+        android:title="Acceuil"/>
+    <item
+        android:id="@+id/fav"
+        android:enabled="true"
+        android:icon="@drawable/ic_favorite_border_black_24dp"
+        android:title="Heart"
+        />
+    <item
+        android:id="@+id/search"
+        android:enabled="true"
+        android:icon="@drawable/ic_search_fill_gray"
+        android:title="Search"/>
+
+    <item
+        android:id="@+id/cart"
+        android:enabled="true"
+        android:icon="@drawable/ic_shopping_bag_fill0_wght400_grad0_opsz48"
+        android:title="Cart" />
+    <item
+        android:id="@+id/parson"
+        android:enabled="true"
+        android:icon="@drawable/ic_person_filled_fill0_wght400_grad0_opsz48"
+        android:title="Profil"/>
+</menu>

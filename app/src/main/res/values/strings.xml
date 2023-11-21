@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">NoteCook</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pick">PICK_IMAGE</string>
+    <string name="Puctire">SELECT_PICTURE</string>
+
+    <string name="message_erreur_system">Erreur Système Serveur, le service web declare une erreur , vérifiez les logs</string>
+    <string name="message_erreur_pas_resultat">Pas de Résultat</string>
+    <string name="message_erreur_token_expire">Session Expirée</string>
+    <string name="message_erreur_auth_echoue">Login et/ou Mot de passe invalides</string>
+    <string name="message_erreur_offline">Problème de connexion , vérifiez votre connectivité Internet</string>
+    <string name="message_chargement_valide">Opération effectuée</string>
+
+
+    <!-- Strings for On Boarding Screen -->
+    <!--Titles-->
+    <string name="first_slide_title">Search Your Location</string>
+    <string name="second_slide_title">Make A Call</string>
+    <string name="third_slide_title">Add Missing Place</string>
+    <string name="fourth_slide_title">Sit Back And Enjoy</string>
+    <!--Descriptions-->
+    <string name="first_slide_desc">You can search any place nearby or with-in the specified city. We will display specific or all related shops to match your search. </string>
+    <string name="second_slide_desc">We provide almost all the numbers of all departments and shops registered with us. You can perform bookings as well.</string>
+    <string name="third_slide_desc">If you have a shop or somethings and want to be a part of our growing industry then add your place by follwing simple steps.</string>
+    <string name="fourth_slide_desc">We will handle everything for you. As you have the app in your pocket then you don\'t have to worry about anything.  </string>
+    <!--Buttons-->
+    <string name="skip_btn">Skip</string>
+    <string name="next_btn">Next</string>
+    <string name="let_get_started">Lets Get Started</string>
+</resources>
