@@ -67,8 +67,12 @@ public interface ApiService {
     @GET("users/filtre/{username}")
     Call<User> getUserByUsername(@Path("username") String username);
 
+    @PUT("users/image/{username}")
+    @Headers("Content-Type: application/octet-stream")
+    Call<Void> InsertUserImage(@Path("username") String username, @Body byte[] body);
+
     @POST("users")
-    //@Headers("Content-Type: application/json")
+        //@Headers("Content-Type: application/json")
     Call<User> createUser(@Body User user);
 
     @PUT("users/{id}")

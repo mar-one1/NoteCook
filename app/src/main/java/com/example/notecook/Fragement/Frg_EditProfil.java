@@ -166,6 +166,7 @@ public class Frg_EditProfil extends Fragment {
                     getUser.setId_User(user_login.getUser().getId_User());
                     getUser.setIcon(null);
                     UpdateUserApi(getUser, getContext());
+                    Login.UpdateImageUserApi(icon,getUser.getUsername(),getContext());
                 }
 
             });
@@ -361,4 +362,5 @@ public class Frg_EditProfil extends Fragment {
 
         datePickerDialog.show();
     }
+
 }
