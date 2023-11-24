@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,6 +78,7 @@
             android:layout_marginEnd="16dp"
             android:hint="Enter cooking instructions" />
     </LinearLayout>
+
 
     <TextView
         android:id="@+id/dt_recipe_txt"
@@ -298,6 +300,11 @@
                     android:lines="10" />
             </LinearLayout>
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
         </LinearLayout>
 
         <Button
@@ -305,7 +312,5 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:text="ADD RECIPE" />
-
-        <!-- Add Recipe Button -->
-    </LinearLayout>
+    </LinearLayout><!-- Add Recipe Button -->
 </LinearLayout>
