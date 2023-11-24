@@ -36,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Api.ApiClient;
@@ -94,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Ingredients> listIngredient;
     private ArrayList<Ingredient_recipe> listIngredientRecipe;
 
+    private boolean doubleBackToExitPressedOnce = false;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     public static Bitmap decod(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
     }
@@ -113,6 +117,22 @@ public class MainActivity extends AppCompatActivity {
         //Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 
         return imageBytes;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            // If you want to exit the app when back button is pressed twice
+            System.exit(0);
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        // Reset flag after a certain time (e.g., 2 seconds)
+        new android.os.Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
     }
 
     public static void UpdateUserApi(User user, Context context) {
@@ -277,6 +297,22 @@ public class MainActivity extends AppCompatActivity {
 //        fragmentTransaction.replace(R.id.fl_main, new MainFragment());
 //        fragmentTransaction.commit();
 
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Perform your data refreshing operations here
+
+                // Simulate refresh delay (remove this in your actual code)
+                new android.os.Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Finish refreshing
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000); // 2 seconds simulated refresh time (adjust as needed)
+            }
+        });
 
     }
 
