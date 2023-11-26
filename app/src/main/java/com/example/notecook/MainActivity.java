@@ -66,6 +66,7 @@ import java.util.List;
 import java.util.Objects;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -289,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
         if (user_login.getUser() == null)
             getUserApi("", getBaseContext());
         else getUserApi(user_login.getUser().getUsername(), getBaseContext());
+        fetchImage(user_login.getUser().getUsername());
         //---------------------
         pDialog.cancel();
         //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
@@ -512,6 +514,7 @@ public class MainActivity extends AppCompatActivity {
                         // Store the token securely (e.g., in SharedPreferences) for later use
                         TAG_CONNEXION = response.code();
                         user_login.setUser(UserResponse);
+                        //fetchImage(user_login.getUser().getUsername());
                         TAG_CONNEXION_MESSAGE = response.message();
                         //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get User from Api", Toast.LENGTH_LONG).show();
@@ -577,7 +580,7 @@ public class MainActivity extends AppCompatActivity {
 
                 TAG_CONNEXION_MESSAGE = call.toString();
                 //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
-                Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "onFailure getApi User : "+ TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
 
                 if (TAG_CONNEXION != 200) {
                     //Constants.AffichageMessage("Online mode", MainActivity.this);
@@ -803,6 +806,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle failure to make the API call
+            }
+        });
+    }
+
+    private void fetchImage(String username) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        Call<ResponseBody> call = apiService.getImageUSerBytes(username);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        byte[] bytes = response.body().bytes();
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        user_login.getUser().setIcon(bytes);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
