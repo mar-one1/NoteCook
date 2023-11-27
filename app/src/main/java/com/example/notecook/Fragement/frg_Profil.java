@@ -55,9 +55,6 @@ public class frg_Profil extends Fragment {
 
                 if (user.getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
-                    Bitmap b = decod(user.getIcon());
-                    //Log.d("tag", b.toString());
-
                 }
                 else
                     binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
