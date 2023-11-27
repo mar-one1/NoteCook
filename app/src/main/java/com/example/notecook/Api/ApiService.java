@@ -9,6 +9,7 @@ import com.example.notecook.Model.User;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -70,6 +71,10 @@ public interface ApiService {
     @PUT("users/image/{username}")
     @Headers("Content-Type: application/octet-stream")
     Call<Void> InsertUserImage(@Path("username") String username, @Body byte[] body);
+
+    @GET("users/image/{username}")
+    @Headers("Content-Type: application/octet-stream")
+    Call<ResponseBody> getImageUSerBytes(@Path("username") String username);
 
     @POST("users")
         //@Headers("Content-Type: application/json")

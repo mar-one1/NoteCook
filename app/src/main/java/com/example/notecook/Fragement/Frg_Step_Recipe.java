@@ -11,8 +11,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -74,8 +72,7 @@ public class Frg_Step_Recipe extends Fragment {
 //        steps = stepsDataSource.getAllSTEP();
 //        stepsDataSource.close();
 
-        Window window = getActivity().getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 
 
 
@@ -111,7 +108,6 @@ public class Frg_Step_Recipe extends Fragment {
                     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis), TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                             TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
                     textViewTime.setText(hms);
-
                 }
             }
 
