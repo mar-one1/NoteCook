@@ -62,12 +62,15 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -160,7 +163,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         binding.editIconProfil.setOnClickListener(v -> captureImage());
 
-        empreinte();
 
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -245,7 +247,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
                     // update the preview image in the layout
-
+                    data.getData().getPath();
                     binding.editIconProfil.setImageURI(selectedImageUri);
                 }
             }
@@ -864,8 +866,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     public static void UpdateImageUserApi(byte[] image,String username,Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         // Example: Fetch users from the API
-        //RequestBody requestBody = RequestBody.create(MediaType.parse("application/octet-stream"), image);
-        Call<Void> call = apiService.InsertUserImage(username,image);
+        File imageFile = new File("path/to/your/image.jpg"); // Replace with your image file path
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
+        Call<Void> call = apiService.InsertUserImage(username,requestFile);
 
         call.enqueue(new Callback<Void>() {
             @Override
@@ -923,7 +926,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-
                 TAG_CONNEXION_MESSAGE = call.toString();
                 Toast.makeText(context,""+TAG_CONNEXION_MESSAGE,Toast.LENGTH_LONG).show();
 //                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);

@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
         if (user_login.getUser() == null)
             getUserApi("", getBaseContext());
         else getUserApi(user_login.getUser().getUsername(), getBaseContext());
-        fetchImage(user_login.getUser().getUsername());
+
         //---------------------
         pDialog.cancel();
         //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
@@ -514,7 +514,7 @@ public class MainActivity extends AppCompatActivity {
                         // Store the token securely (e.g., in SharedPreferences) for later use
                         TAG_CONNEXION = response.code();
                         user_login.setUser(UserResponse);
-                        //fetchImage(user_login.getUser().getUsername());
+                        fetchImage(user_login.getUser().getUsername());
                         TAG_CONNEXION_MESSAGE = response.message();
                         //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get User from Api", Toast.LENGTH_LONG).show();
