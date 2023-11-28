@@ -11,7 +11,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -73,20 +72,17 @@ public class Frg_Step_Recipe extends Fragment {
 //        steps = stepsDataSource.getAllSTEP();
 //        stepsDataSource.close();
 
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+
 
         btn_cancel.setOnClickListener(view -> {
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAGS_CHANGED);
             btn_star.setEnabled(true);
             timer.start().cancel();
             timer.onFinish();
         });
 
         btn_star.setOnClickListener(v -> {
-            // Keep the screen on
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
             if (Integer.parseInt(String.valueOf(binding.editTime.getText())) != 0) {
                 int t = Integer.parseInt(binding.editTime.getText().toString());
                 timer = new CounterClass((long) t * 60 * 1000, 1000);

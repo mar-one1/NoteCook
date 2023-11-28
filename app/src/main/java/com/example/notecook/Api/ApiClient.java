@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     //private static final String BASE_URL = "http://10.0.2.2:3000/";
-    private static final String BASE_URL = "https://20b4-196-75-248-135.ngrok.io/";
+    private static final String BASE_URL = "https://5527-102-96-86-167.ngrok.io/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient() {
@@ -16,7 +16,7 @@ public class ApiClient {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(15, TimeUnit.SECONDS) // Connection timeout
                     .readTimeout(15, TimeUnit.SECONDS)    // Read timeout
-                    .writeTimeout(15, TimeUnit.SECONDS)   // Write timeout
+                    .writeTimeout(15, TimeUnit.SECONDS)   // Write timeo
                     .build();
 
             retrofit = new Retrofit.Builder()
