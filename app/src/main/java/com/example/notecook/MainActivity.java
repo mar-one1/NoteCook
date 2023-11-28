@@ -60,12 +60,18 @@ import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -514,7 +520,8 @@ public class MainActivity extends AppCompatActivity {
                         // Store the token securely (e.g., in SharedPreferences) for later use
                         TAG_CONNEXION = response.code();
                         user_login.setUser(UserResponse);
-                        fetchImage(user_login.getUser().getUsername());
+                        //fetchImage(user_login.getUser().getUsername());
+                        uploadImage();
                         TAG_CONNEXION_MESSAGE = response.message();
                         //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get User from Api", Toast.LENGTH_LONG).show();
@@ -577,10 +584,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-
                 TAG_CONNEXION_MESSAGE = call.toString();
                 //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
-                Toast.makeText(context, "onFailure getApi User : "+ TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "onFailure getApi User : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
 
                 if (TAG_CONNEXION != 200) {
                     //Constants.AffichageMessage("Online mode", MainActivity.this);
@@ -786,17 +792,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public  void searchRecipes(String key)
-    {
+    public void searchRecipes(String key) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        Call<List<Recipe>> call = apiService.searchRecipes(Token,key);
+        Call<List<Recipe>> call = apiService.searchRecipes(Token, key);
         call.enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     Constants.Search_list = response.body();
-                    Log.d("TAG",Constants.Search_list.toString());
+                    Log.d("TAG", Constants.Search_list.toString());
                     // Handle the list of products obtained from the server
                 } else {
                     // Handle unsuccessful response
@@ -806,6 +811,59 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle failure to make the API call
+            }
+        });
+    }
+
+    private void uploadImage() {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
+        // Create a file to save the bitmap
+        File filesDir = getApplicationContext().getFilesDir();
+        File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
+
+// Convert bitmap to file
+        try {
+            OutputStream os = new FileOutputStream(imageFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os); // Compress bitmap into JPEG with quality 100%
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Create a File instance with the path to the file to upload
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
+
+// Create MultipartBody.Part instance from the RequestBody
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
+// Create a service using the Retrofit interface
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+// Call the method to upload the file
+        Call<ResponseBody> call = apiService.uploadFile(filePart);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    String path = null;
+                    try {
+                        path = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(getBaseContext(), "upload image : " + path, Toast.LENGTH_SHORT).show();
+                    // File upload successful
+                    //fetchImage(path);
+                    Toast.makeText(getBaseContext(), "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // Handle unsuccessful upload
+                    Toast.makeText(getBaseContext(), "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(getBaseContext(), "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
