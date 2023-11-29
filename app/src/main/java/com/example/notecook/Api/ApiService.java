@@ -24,6 +24,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 
 public interface ApiService {
@@ -85,6 +86,9 @@ public interface ApiService {
     Call<ResponseBody> uploadFile(
             @Part MultipartBody.Part image
     );
+
+    @GET
+    Call<ResponseBody> downloadImage(@Url String fileUrl);
 
     @POST("users")
         //@Headers("Content-Type: application/json")

@@ -1,6 +1,7 @@
 package com.example.notecook.Utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -42,6 +43,8 @@ public class Constants {
     public static final String TAG_LOCAL = "Local";
     public static int TAG_CONNEXION = -1;
     public static String TAG_CONNEXION_MESSAGE = "";
+    public static Bitmap imageprofill;
+
 
     public static ArrayList<Recipe> list_recipe = new ArrayList<>();
     public static List<Detail_Recipe> list_Detailrecipe ;

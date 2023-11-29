@@ -55,8 +55,8 @@
 
             <ImageView
                 android:id="@+id/icon_profil"
-                android:layout_width="90dp"
-                android:layout_height="90dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:src="@drawable/aec4b1a59b7165562698470ce91494be" />
         </androidx.cardview.widget.CardView>

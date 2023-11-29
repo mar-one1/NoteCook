@@ -13,6 +13,7 @@ import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.imageprofill;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
@@ -27,9 +28,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -58,6 +61,9 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Request;
+import com.squareup.picasso.Target;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -119,8 +125,7 @@ public class MainActivity extends AppCompatActivity {
         array_image.add(imageString);
         Log.i("test encode", imageString);
         //decode base64 string to image
-        imageBytes = Base64.decode(array_image.get(0), Base64.DEFAULT);
-
+        //imageBytes = Base64.decode(array_image.get(0), Base64.DEFAULT);
         //Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
 
         return imageBytes;
@@ -521,7 +526,8 @@ public class MainActivity extends AppCompatActivity {
                         TAG_CONNEXION = response.code();
                         user_login.setUser(UserResponse);
                         //fetchImage(user_login.getUser().getUsername());
-                        uploadImage();
+                        //uploadImage();
+                        fetchImage();
                         TAG_CONNEXION_MESSAGE = response.message();
                         //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get User from Api", Toast.LENGTH_LONG).show();
@@ -868,28 +874,62 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchImage(String username) {
+    private void fetchImage() {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        Call<ResponseBody> call = apiService.getImageUSerBytes(username);
-
+        // URL of the image you want to download
+        String imageUrl = "https://4ede-196-75-64-143.ngrok.io/uploads/1701262223670-320021131-nfc1.png"; // Replace with your image URL
+        // Enqueue the download request
+        Call<ResponseBody> call = apiService.downloadImage(imageUrl);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    ResponseBody responseBody = response.body();
+                    byte[] bytes = new byte[0];
                     try {
-                        byte[] bytes = response.body().bytes();
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        user_login.getUser().setIcon(bytes);
+                        bytes = response.body().bytes();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    user_login.getUser().setIcon(bytes);
+                    Toast.makeText(getBaseContext(), "succes  image down : ", Toast.LENGTH_SHORT).show();
+//                    Target target = new Target() {
+//                        @Override
+//                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+//                            // Here, 'bitmap' contains the loaded image as a Bitmap
+//                            // You can perform actions with the Bitmap object, such as saving it or processing it further
+//
+//                            // For example, saving the bitmap to a file
+//                            //saveBitmapToFile(bitmap);
+//                            user_login.getUser().setIcon(encod(bitmap));
+//                        }
+//
+//                        @Override
+//                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+//                            // Handle failed loading
+//                            Toast.makeText(getBaseContext(), "Handle failed loading .", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                        @Override
+//                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+//                            // Handle before loading (optional)
+//                            Toast.makeText(getBaseContext(), "Loading...", Toast.LENGTH_SHORT).show();
+//                        }
+//                    };
+//        ImageView imageView = findViewById(R.id.imagview);
+//                    Picasso.get().load(imageUrl).into(imageView);
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(getBaseContext(), "unsuccessful download"+ response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                t.printStackTrace();
+                // Handle failure
+                Toast.makeText(getBaseContext(), "Handle failure", Toast.LENGTH_SHORT).show();
             }
         });
     }
