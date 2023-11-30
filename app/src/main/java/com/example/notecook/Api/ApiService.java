@@ -73,17 +73,13 @@ public interface ApiService {
     @GET("users/filtre/{username}")
     Call<User> getUserByUsername(@Path("username") String username);
 
-    @PUT("users/image/{username}")
-    @Headers("Content-Type: application/octet-stream")
-    Call<Void> InsertUserImage(@Path("username") String username, @Body RequestBody imageFile );
-
     @GET("users/image/{username}")
     @Headers("Content-Type: application/octet-stream")
     Call<ResponseBody> getImageUSerBytes(@Path("username") String username);
 
     @Multipart
-    @POST("users/upload/")
-    Call<ResponseBody> uploadFile(
+    @POST("users/upload/{username}")
+    Call<ResponseBody> uploadFile(@Path("username") String username,
             @Part MultipartBody.Part image
     );
 

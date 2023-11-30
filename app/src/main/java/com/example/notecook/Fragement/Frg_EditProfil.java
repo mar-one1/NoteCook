@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.notecook.MainActivity.UpdateUserApi;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.encod;
+import static com.example.notecook.MainActivity.uploadImage;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
@@ -166,7 +167,8 @@ public class Frg_EditProfil extends Fragment {
                     getUser.setId_User(user_login.getUser().getId_User());
                     getUser.setIcon(null);
                     UpdateUserApi(getUser, getContext());
-                    Login.UpdateImageUserApi(icon,getUser.getUsername(),getContext());
+                    //Login.UpdateImageUserApi(icon,getUser.getUsername(),getContext());
+                    uploadImage(user_login.getUser().getUsername(),bitmap,getContext());
                 }
 
             });

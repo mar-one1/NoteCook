@@ -1,5 +1,6 @@
 package com.example.notecook;
 
+import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Data.RecipeDatasource.createRecipe;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
@@ -70,7 +71,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -527,7 +530,8 @@ public class MainActivity extends AppCompatActivity {
                         user_login.setUser(UserResponse);
                         //fetchImage(user_login.getUser().getUsername());
                         //uploadImage();
-                        fetchImage();
+                        getImageUserUrl(user_login.getUser().getUsername());
+
                         TAG_CONNEXION_MESSAGE = response.message();
                         //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get User from Api", Toast.LENGTH_LONG).show();
@@ -821,16 +825,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void uploadImage() {
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
+    public static void uploadImage(String username,Bitmap bitmp ,Context context) {
+        //Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
         // Create a file to save the bitmap
-        File filesDir = getApplicationContext().getFilesDir();
+        File filesDir = context.getFilesDir();
         File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
 
-// Convert bitmap to file
+        // Convert bitmap to file
         try {
             OutputStream os = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os); // Compress bitmap into JPEG with quality 100%
+            bitmp.compress(Bitmap.CompressFormat.JPEG, 100, os); // Compress bitmap into JPEG with quality 100%
             os.flush();
             os.close();
         } catch (Exception e) {
@@ -844,7 +848,7 @@ public class MainActivity extends AppCompatActivity {
 // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 // Call the method to upload the file
-        Call<ResponseBody> call = apiService.uploadFile(filePart);
+        Call<ResponseBody> call = apiService.uploadFile(username,filePart);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -855,71 +859,47 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Toast.makeText(getBaseContext(), "upload image : " + path, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
                     // File upload successful
                     //fetchImage(path);
-                    Toast.makeText(getBaseContext(), "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
 
                 } else {
                     // Handle unsuccessful upload
-                    Toast.makeText(getBaseContext(), "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Handle failure
-                Toast.makeText(getBaseContext(), "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void fetchImage() {
+    private void fetchImage(String s) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
         // URL of the image you want to download
-        String imageUrl = "https://4ede-196-75-64-143.ngrok.io/uploads/1701262223670-320021131-nfc1.png"; // Replace with your image URL
+        //String imageUrl = "https://da97-196-75-207-18.ngrok.io/uploads/1701348093930-989771596-image.jpg"; // Replace with your image URL
+        String imageUrl = BASE_URL +"uploads/"+ s; // Replace with your image URL
         // Enqueue the download request
         Call<ResponseBody> call = apiService.downloadImage(imageUrl);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ResponseBody responseBody = response.body();
+                    //ResponseBody responseBody = response.body();
                     byte[] bytes = new byte[0];
                     try {
                         bytes = response.body().bytes();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     user_login.getUser().setIcon(bytes);
                     Toast.makeText(getBaseContext(), "succes  image down : ", Toast.LENGTH_SHORT).show();
-//                    Target target = new Target() {
-//                        @Override
-//                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                            // Here, 'bitmap' contains the loaded image as a Bitmap
-//                            // You can perform actions with the Bitmap object, such as saving it or processing it further
-//
-//                            // For example, saving the bitmap to a file
-//                            //saveBitmapToFile(bitmap);
-//                            user_login.getUser().setIcon(encod(bitmap));
-//                        }
-//
-//                        @Override
-//                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-//                            // Handle failed loading
-//                            Toast.makeText(getBaseContext(), "Handle failed loading .", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                        @Override
-//                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-//                            // Handle before loading (optional)
-//                            Toast.makeText(getBaseContext(), "Loading...", Toast.LENGTH_SHORT).show();
-//                        }
-//                    };
-//        ImageView imageView = findViewById(R.id.imagview);
-//                    Picasso.get().load(imageUrl).into(imageView);
                 } else {
                     // Handle unsuccessful download
                     Toast.makeText(getBaseContext(), "unsuccessful download"+ response.message(), Toast.LENGTH_SHORT).show();
@@ -933,5 +913,44 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void getImageUserUrl(String username) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        // Enqueue the download request
+        Call<ResponseBody> call = apiService.getImageUSerBytes(username);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    //ResponseBody responseBody = response.body();
+                    byte[] bytes = new byte[0];
+                    try {
+                        bytes = response.body().bytes();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    //user_login.getUser().setIcon(bytes);
+                    // Convert byte array to String using a specific character encoding
+                    String str = new String(bytes, StandardCharsets.UTF_8);
+                    str = str.replaceAll("\"","");// For UTF-8 encoding
+                    Log.d("tag",str);
+                    fetchImage(str);
+                    Toast.makeText(getBaseContext(), "succes  image down : ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(getBaseContext(), "unsuccessful download"+ response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(getBaseContext(), "Handle failure getimage url", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
 }
