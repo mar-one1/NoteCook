@@ -62,6 +62,10 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Request;
+import com.squareup.picasso.Target;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -778,7 +782,7 @@ public class MainActivity extends AppCompatActivity {
 
     public String getToken() {
         SharedPreferences preferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        return preferences.getString("token", "");
+        return preferences.getString("token", null);
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {

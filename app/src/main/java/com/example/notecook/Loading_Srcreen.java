@@ -212,8 +212,7 @@ public class Loading_Srcreen extends AppCompatActivity {
 
     private String getToken() {
         SharedPreferences preferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        return preferences.getString("token", "");
-
+        return preferences.getString("token", null);
     }
 
     public boolean isOnline(Context context) {
