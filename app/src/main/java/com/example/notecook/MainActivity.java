@@ -62,10 +62,6 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Request;
-import com.squareup.picasso.Target;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -350,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
         detailRecipeDataSource.close();
     }
 
-    public void getDetailRecipeByIdRecipeApi(int Recipeid) {
+    public static void getDetailRecipeByIdRecipeApi(int Recipeid,Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
         Call<Detail_Recipe> call = apiService.getDetailRecipeByIdRecipeFRK(Token, Recipeid);
@@ -365,10 +361,10 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("TAG", detail_recipe.getLevel().toString());
                     TAG_CONNEXION_MESSAGE = response.message();
                     TAG_CONNEXION = response.code();
-
-                    if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User())
-                        getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe());
-                    else {
+                    if (CURRENT_RECIPE.getFrk_user()!= user_login.getUser().getId_User() && User_CurrentRecipe.getId_User()!=CURRENT_RECIPE.getFrk_user())
+                        getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe(),context);
+                    else if(User_CurrentRecipe.getId_User()==CURRENT_RECIPE.getFrk_user()) {MainFragment.viewPager2.setCurrentItem(1);}
+                    else{
                         User_CurrentRecipe = user_login.getUser();
                         MainFragment.viewPager2.setCurrentItem(1);
                     }
@@ -435,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void getUserByIdRecipeApi(int Recipeid) {
+    public static void getUserByIdRecipeApi(int Recipeid,Context context) {
 
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -448,10 +444,11 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     User user = response.body();
                     User_CurrentRecipe = user;
+                    getImageUserUrl(User_CurrentRecipe.getUsername(),"recipe_user",context);
                     Log.d("TAG", user.getUsername().toString());
                     TAG_CONNEXION_MESSAGE = response.message();
                     TAG_CONNEXION = response.code();
-                    MainFragment.viewPager2.setCurrentItem(1);
+                    //MainFragment.viewPager2.setCurrentItem(1);
                 } else {
                     // Handle error response here
                     int statusCode = response.code();
@@ -530,7 +527,7 @@ public class MainActivity extends AppCompatActivity {
                         user_login.setUser(UserResponse);
                         //fetchImage(user_login.getUser().getUsername());
                         //uploadImage();
-                        getImageUserUrl(user_login.getUser().getUsername());
+                        getImageUserUrl(user_login.getUser().getUsername(),"user_login",getBaseContext());
 
                         TAG_CONNEXION_MESSAGE = response.message();
                         //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
@@ -878,7 +875,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void fetchImage(String s) {
+    public static void fetchImage(String s,String tag,Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
         // URL of the image you want to download
@@ -898,23 +895,28 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    if(Objects.equals(tag, "user_login"))
                     user_login.getUser().setIcon(bytes);
-                    Toast.makeText(getBaseContext(), "succes  image down : ", Toast.LENGTH_SHORT).show();
+                    if(Objects.equals(tag, "recipe_user")) {
+                        User_CurrentRecipe.setIcon(bytes);
+                        MainFragment.viewPager2.setCurrentItem(1);
+                    }
+                    Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle unsuccessful download
-                    Toast.makeText(getBaseContext(), "unsuccessful download"+ response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "unsuccessful download"+ response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Handle failure
-                Toast.makeText(getBaseContext(), "Handle failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Handle failure", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void getImageUserUrl(String username) {
+    public static void getImageUserUrl(String username,String tag,Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
         // Enqueue the download request
@@ -930,24 +932,24 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                     //user_login.getUser().setIcon(bytes);
                     // Convert byte array to String using a specific character encoding
                     String str = new String(bytes, StandardCharsets.UTF_8);
                     str = str.replaceAll("\"","");// For UTF-8 encoding
                     Log.d("tag",str);
-                    fetchImage(str);
-                    Toast.makeText(getBaseContext(), "succes  image down : ", Toast.LENGTH_SHORT).show();
+                    fetchImage(str,tag,context);
+                    Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle unsuccessful download
-                    Toast.makeText(getBaseContext(), "unsuccessful download"+ response.message(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "unsuccessful download"+ response.message(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Handle failure
-                Toast.makeText(getBaseContext(), "Handle failure getimage url", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Handle failure getimage url", Toast.LENGTH_SHORT).show();
             }
         });
     }

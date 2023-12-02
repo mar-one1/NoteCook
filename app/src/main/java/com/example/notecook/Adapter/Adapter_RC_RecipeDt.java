@@ -1,6 +1,7 @@
 package com.example.notecook.Adapter;
 
 
+import static com.example.notecook.MainActivity.getDetailRecipeByIdRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 
@@ -72,7 +73,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             if(CURRENT_RECIPE!=recipe) {
                 Constants.CURRENT_RECIPE = recipe;
                 MainActivity m = new MainActivity();
-                m.getDetailRecipeByIdRecipeApi(recipe.getId_recipe());
+                getDetailRecipeByIdRecipeApi(recipe.getId_recipe(), v.getContext());
                 m.getStepRecipeByIdRecipeApi(recipe.getId_recipe());
                 m.getReviewRecipeApi(recipe.getId_recipe());
             }

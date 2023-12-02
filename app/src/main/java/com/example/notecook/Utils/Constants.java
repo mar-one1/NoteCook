@@ -52,7 +52,7 @@ public class Constants {
     public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
     public static List<Review> Review_CurrentRecipe = new ArrayList<>();
     public static List<Recipe> Search_list = new ArrayList<>();
-    public static User User_CurrentRecipe;
+    public static User User_CurrentRecipe = new User();
     public static ArrayList<Recipe> Remotelist_recipe = new ArrayList<>();
     public static String TAG_CONNEXION_LOCAL = "";
     public static TokenResponse user_login = new TokenResponse();
