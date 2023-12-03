@@ -3,12 +3,14 @@ package com.example.notecook.Fragement;
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.notecook.MainActivity.UpdateUserApi;
 import static com.example.notecook.MainActivity.decod;
+import static com.example.notecook.MainActivity.deleteimage;
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.MainActivity.uploadImage;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
+import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
@@ -168,6 +170,7 @@ public class Frg_EditProfil extends Fragment {
                     getUser.setIcon(null);
                     UpdateUserApi(getUser, getContext());
                     //Login.UpdateImageUserApi(icon,getUser.getUsername(),getContext());
+                    deleteimage(pathimageuser,getContext());
                     uploadImage(user_login.getUser().getUsername(),bitmap,getContext());
                 }
 

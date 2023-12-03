@@ -56,6 +56,7 @@ public class Constants {
     public static ArrayList<Recipe> Remotelist_recipe = new ArrayList<>();
     public static String TAG_CONNEXION_LOCAL = "";
     public static TokenResponse user_login = new TokenResponse();
+    public static String pathimageuser ="";
     public static final String lOGIN_KEY = "Connection_complete";
 
 

@@ -83,6 +83,9 @@ public interface ApiService {
             @Part MultipartBody.Part image
     );
 
+    @DELETE("users/delete/{path}")
+    Call<ResponseBody> deleteimage(@Path("path") String fileUrl);
+
     @GET
     Call<ResponseBody> downloadImage(@Url String fileUrl);
 

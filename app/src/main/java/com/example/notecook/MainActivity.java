@@ -17,6 +17,7 @@ import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.imageprofill;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.list_recipe;
+import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
@@ -881,6 +882,7 @@ public class MainActivity extends AppCompatActivity {
         // URL of the image you want to download
         //String imageUrl = "https://da97-196-75-207-18.ngrok.io/uploads/1701348093930-989771596-image.jpg"; // Replace with your image URL
         String imageUrl = BASE_URL +"uploads/"+ s; // Replace with your image URL
+
         // Enqueue the download request
         Call<ResponseBody> call = apiService.downloadImage(imageUrl);
         call.enqueue(new Callback<ResponseBody>() {
@@ -894,9 +896,11 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length)
+                    // ;
                     if(Objects.equals(tag, "user_login"))
                     user_login.getUser().setIcon(bytes);
+                    pathimageuser = s;
                     if(Objects.equals(tag, "recipe_user")) {
                         User_CurrentRecipe.setIcon(bytes);
                         MainFragment.viewPager2.setCurrentItem(1);
@@ -950,6 +954,31 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Handle failure
                 Toast.makeText(context, "Handle failure getimage url", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void deleteimage(String s, Context context) {
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        // Enqueue the download request
+        Call<ResponseBody> call = apiService.deleteimage(s);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    Toast.makeText(context, "succes  image deleted : ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful deleted"+ response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "Handle failure", Toast.LENGTH_SHORT).show();
             }
         });
     }
