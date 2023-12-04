@@ -672,19 +672,26 @@ public class MainActivity extends AppCompatActivity {
 
     private void getRecipeApi() {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        sharedPreferences = getSharedPreferences(lOGIN_KEY, Context.MODE_PRIVATE);
-        String s1 = sharedPreferences.getString("username", "");
-        String s2 = sharedPreferences.getString("password", "");
-
         Call<List<Recipe>> call = apiService.getAllRecipes(getToken());
-
         call.enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     List<Recipe> recipes = response.body();
                     Log.d("recipes", recipes.toString());
-                    Remotelist_recipe.addAll(recipes);
+                    for (Recipe recipe : recipes)
+                    {
+                        Toast.makeText(MainActivity.this, ""+recipe.getPathimagerecipe(), Toast.LENGTH_SHORT).show();
+                        Log.d("tag", String.valueOf(recipe.getIcon_recipe()));
+                        byte[] imagepath = Arrays.toString(recipe.getIcon_recipe()).getBytes();
+                        recipe.setIcon_recipe(imagepath);
+                        Log.d("tag",recipe.getIcon_recipe().toString());
+                        Remotelist_recipe.add(recipe);
+                    }
+                    for (int i = 0;i<recipes.size();i++) {
+                        fetchImage(recipes.get(i).getPathimagerecipe(), "image_recipe",i, getBaseContext());
+                    }
+                    //Remotelist_recipe.addAll(recipes);
                     Log.d("listrecipes", Remotelist_recipe.toString());
                     TAG_CONNEXION_MESSAGE = response.message();
                     TAG_CONNEXION = response.code();
@@ -876,7 +883,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void fetchImage(String s,String tag,Context context) {
+    public static void fetchImage(String s,String tag,int position,Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
         // URL of the image you want to download
@@ -904,6 +911,10 @@ public class MainActivity extends AppCompatActivity {
                     if(Objects.equals(tag, "recipe_user")) {
                         User_CurrentRecipe.setIcon(bytes);
                         MainFragment.viewPager2.setCurrentItem(1);
+                    }
+                    if(Objects.equals(tag, "image_recipe"))
+                    {
+                        Remotelist_recipe.get(position).setIcon_recipe(bytes);
                     }
                     Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
                 } else {
@@ -942,7 +953,7 @@ public class MainActivity extends AppCompatActivity {
                     String str = new String(bytes, StandardCharsets.UTF_8);
                     str = str.replaceAll("\"","");// For UTF-8 encoding
                     Log.d("tag",str);
-                    fetchImage(str,tag,context);
+                    fetchImage(str,tag,0,context);
                     Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle unsuccessful download

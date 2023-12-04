@@ -25,6 +25,8 @@ public class User {
     private String Status;
     @SerializedName("grade")
     private String Grade;
+    //@SerializedName("icon")
+    private String pathimageuser;
 
     public User() {
     }
@@ -144,5 +146,13 @@ public class User {
 
     public void setGrade(String grade) {
         Grade = grade;
+    }
+
+    public String getPathimageuser() {
+        return pathimageuser;
+    }
+
+    public void setPathimageuser(String pathimageuser) {
+        this.pathimageuser = pathimageuser;
     }
 }

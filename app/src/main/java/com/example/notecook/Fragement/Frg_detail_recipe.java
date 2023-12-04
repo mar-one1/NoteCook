@@ -58,6 +58,8 @@ public class Frg_detail_recipe extends Fragment {
                 if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {
                     binding.recipeNameTxt.setText(CURRENT_RECIPE.getNom_recipe());
                     binding.NomUserRecipe.setText(User_CurrentRecipe.getUsername());
+                    if(CURRENT_RECIPE.getIcon_recipe()!=null)
+                    binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
                     if (User_CurrentRecipe.getIcon() != null)
                         binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));

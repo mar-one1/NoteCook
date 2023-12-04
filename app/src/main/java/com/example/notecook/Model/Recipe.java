@@ -8,12 +8,22 @@ public class Recipe {
     private int id_recipe;
     @SerializedName("name")
     private String Nom_recipe;
-    @SerializedName("icon")
+    //@SerializedName("icon")
     private byte[] Icon_recipe;
     @SerializedName("fav")
     private int Fav;
     @SerializedName("userId")
     private int Frk_user;
+    @SerializedName("icon")
+    private String pathimagerecipe;
+
+    public String getPathimagerecipe() {
+        return pathimagerecipe;
+    }
+
+    public void setPathimagerecipe(String pathimagerecipe) {
+        this.pathimagerecipe = pathimagerecipe;
+    }
 
     public Recipe() {
     }

@@ -27,7 +27,6 @@ import com.example.notecook.Utils.Constants;
 import com.example.notecook.databinding.FragmentFrgProfilBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,7 @@
 package com.example.notecook.Adapter;
 
 
+import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.getDetailRecipeByIdRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
@@ -36,6 +37,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private List<Recipe> recipes;
     private List<Detail_Recipe> Detailsrecipes;
     private Context context;
+    private MainActivity m = new MainActivity();
 
     public Adapter_RC_RecipeDt(List<Recipe> recipes1, String bb) {
         recipes = recipes1;
@@ -51,12 +53,15 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Adapter_RC_RecipeDt.ViewHolder holder, int position) {
+    public  void  onBindViewHolder(@NonNull Adapter_RC_RecipeDt.ViewHolder holder, int position) {
         Recipe recipe = recipes.get(position);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagelike = holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagenot = holder.itemView.getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
         holder.detail.setText(recipe.getNom_recipe());
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
+        if(recipe.getIcon_recipe()!=null)
+        holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
+
         if (Objects.equals(b, TAG_LOCAL))
             holder.txt_time.setText("Local");
         else holder.txt_time.setText("Remote");
@@ -72,7 +77,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         holder.Image.setOnClickListener(v -> {
             if(CURRENT_RECIPE!=recipe) {
                 Constants.CURRENT_RECIPE = recipe;
-                MainActivity m = new MainActivity();
                 getDetailRecipeByIdRecipeApi(recipe.getId_recipe(), v.getContext());
                 m.getStepRecipeByIdRecipeApi(recipe.getId_recipe());
                 m.getReviewRecipeApi(recipe.getId_recipe());
