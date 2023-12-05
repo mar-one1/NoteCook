@@ -50,7 +50,7 @@ public class Frg_Search extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        bindingRcV_recipes(binding.RcRecipeSearch,null,"default");
     }
 
     @Override

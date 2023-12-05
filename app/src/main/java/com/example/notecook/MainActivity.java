@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 // Perform your data refreshing operations here
-
+                onResume();
                 // Simulate refresh delay (remove this in your actual code)
                 new android.os.Handler().postDelayed(new Runnable() {
                     @Override
@@ -915,6 +915,7 @@ public class MainActivity extends AppCompatActivity {
                     if(Objects.equals(tag, "image_recipe"))
                     {
                         Remotelist_recipe.get(position).setIcon_recipe(bytes);
+
                     }
                     Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
                 } else {

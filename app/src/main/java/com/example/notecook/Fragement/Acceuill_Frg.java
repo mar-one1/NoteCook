@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_RC_MenuCat;
@@ -37,6 +38,7 @@ public class Acceuill_Frg extends Fragment {
     Recipe mRecipe;
     private FragmentAcceuillFrgBinding binding;
     public LayoutInflater inflater;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public Acceuill_Frg() {
         // Required empty public constructor
@@ -64,6 +66,24 @@ public class Acceuill_Frg extends Fragment {
             viewPager2.setCurrentItem(2, false);
         });
 
+        swipeRefreshLayout = binding.swipeRefreshLayout;
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Perform your data refreshing operations here
+                // Simulate refresh delay (remove this in your actual code)
+                //onResume();
+
+                new android.os.Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Finish refreshing
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 2000); // 2 seconds simulated refresh time (adjust as needed)
+            }
+        });
+
         return binding.getRoot();
     }
 
@@ -79,10 +99,6 @@ public class Acceuill_Frg extends Fragment {
         super.onStart();
 
     }
-
-
-
-
 
     /*
      * This function allows to adapt different fragments in main fragment.

@@ -126,7 +126,7 @@ public class MainFragment extends Fragment  {
         fragmentList.add(new frg_Profil());
         AdapterFragment.setData(fragmentList);
         //set the data for the adapter
-        binding.vp2.setAdapter(viewPager2Adapter);
+        viewPager2.setAdapter(viewPager2Adapter);
     }
 
 

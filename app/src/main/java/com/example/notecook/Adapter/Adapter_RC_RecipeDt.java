@@ -1,6 +1,7 @@
 package com.example.notecook.Adapter;
 
 
+import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.getDetailRecipeByIdRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
@@ -81,7 +82,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                 m.getStepRecipeByIdRecipeApi(recipe.getId_recipe());
                 m.getReviewRecipeApi(recipe.getId_recipe());
             }
-            else MainFragment.viewPager2.setCurrentItem(1);
+            else viewPager2.setCurrentItem(1);
         });
 
     }

@@ -52,7 +52,7 @@ public class Frg_detail_recipe extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        binding.vp2Profil.setCurrentItem(0);
+        binding.vp2Detairecipe.setCurrentItem(0);
         if (!MainActivity.Type_User.equals(Constants.TAG_MODE_INVITE)) {
             if (Detail_CurrentRecipe != null) {
                 if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {
@@ -90,7 +90,7 @@ public class Frg_detail_recipe extends Fragment {
         View rootView = inflater.inflate(R.layout.recipe_detail_row, container, false);
 
 
-        viewPager = binding.vp2Profil;
+        viewPager = binding.vp2Detairecipe;
         tabLayout = binding.tl;
 
         tabLayout.addTab(tabLayout.newTab().setText("INGREDIENTS"));
@@ -188,6 +188,6 @@ public class Frg_detail_recipe extends Fragment {
 
         viewPager2Adapter.setData(fragmentList);
         //set the data for the adapter
-        binding.vp2Profil.setAdapter(viewPager2Adapter);
+        binding.vp2Detairecipe.setAdapter(viewPager2Adapter);
     }
 }
