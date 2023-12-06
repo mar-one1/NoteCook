@@ -1,6 +1,7 @@
 package com.example.notecook.Fragement;
 
 
+import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.synchronizeDataDetailRecipe;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
@@ -26,6 +27,7 @@ import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.databinding.FragmentFrgDetailRecipeBinding;
 import com.google.android.material.tabs.TabLayout;
+import com.squareup.picasso.Picasso;
 
 import org.chromium.base.Log;
 
@@ -60,6 +62,10 @@ public class Frg_detail_recipe extends Fragment {
                     binding.NomUserRecipe.setText(User_CurrentRecipe.getUsername());
                     if(CURRENT_RECIPE.getIcon_recipe()!=null)
                     binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
+                    else {
+                        String url = BASE_URL + "uploads/" + CURRENT_RECIPE.getPathimagerecipe() + "?timestamp=" + System.currentTimeMillis();
+                        Picasso.with(getContext()).load(url).into(binding.iconRecipe);
+                    }
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
                     if (User_CurrentRecipe.getIcon() != null)
                         binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));

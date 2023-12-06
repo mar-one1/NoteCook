@@ -1,14 +1,17 @@
 package com.example.notecook.Adapter;
 
 
+import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.MainActivity.decod;
+import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.MainActivity.getDetailRecipeByIdRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +30,7 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import java.util.Objects;
@@ -60,9 +64,11 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagenot = holder.itemView.getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
         holder.detail.setText(recipe.getNom_recipe());
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
-        if(recipe.getIcon_recipe()!=null)
-        holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
-
+        if(recipe.getPathimagerecipe()!=null && holder.Image.getDrawable()==null) {
+            //holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
+            String url = BASE_URL +"uploads/"+ recipe.getPathimagerecipe()+"?timestamp=" + System.currentTimeMillis();
+            Picasso.with(holder.Image.getContext()).load(url).into(holder.Image);
+        }
         if (Objects.equals(b, TAG_LOCAL))
             holder.txt_time.setText("Local");
         else holder.txt_time.setText("Remote");
@@ -77,12 +83,14 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
 
         holder.Image.setOnClickListener(v -> {
             if(CURRENT_RECIPE!=recipe) {
+                //if(recipe.getIcon_recipe()!=null)
+                //recipe.setIcon_recipe(encod(((BitmapDrawable) holder.Image.getDrawable()).getBitmap()));
                 Constants.CURRENT_RECIPE = recipe;
                 getDetailRecipeByIdRecipeApi(recipe.getId_recipe(), v.getContext());
                 m.getStepRecipeByIdRecipeApi(recipe.getId_recipe());
                 m.getReviewRecipeApi(recipe.getId_recipe());
             }
-            else viewPager2.setCurrentItem(1);
+            else viewPager2.setCurrentItem(1,false);
         });
 
     }

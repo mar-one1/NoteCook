@@ -63,6 +63,9 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
+import com.squareup.picasso.Downloader;
+import com.squareup.picasso.Picasso;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -310,6 +313,7 @@ public class MainActivity extends AppCompatActivity {
 //        fragmentTransaction.replace(R.id.fl_main, new MainFragment());
 //        fragmentTransaction.commit();
 
+
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -367,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                     else if(User_CurrentRecipe.getId_User()==CURRENT_RECIPE.getFrk_user()) {MainFragment.viewPager2.setCurrentItem(1);}
                     else{
                         User_CurrentRecipe = user_login.getUser();
-                        MainFragment.viewPager2.setCurrentItem(1);
+                        MainFragment.viewPager2.setCurrentItem(1,false);
                     }
                 } else {
                     // Handle error response here
@@ -682,15 +686,15 @@ public class MainActivity extends AppCompatActivity {
                     for (Recipe recipe : recipes)
                     {
                         Toast.makeText(MainActivity.this, ""+recipe.getPathimagerecipe(), Toast.LENGTH_SHORT).show();
-                        Log.d("tag", String.valueOf(recipe.getIcon_recipe()));
+                        //Log.d("tag", String.valueOf(recipe.getIcon_recipe()));
                         byte[] imagepath = Arrays.toString(recipe.getIcon_recipe()).getBytes();
-                        recipe.setIcon_recipe(imagepath);
-                        Log.d("tag",recipe.getIcon_recipe().toString());
+                        //recipe.setIcon_recipe(imagepath);
+                        //Log.d("tag",recipe.getIcon_recipe().toString());
                         Remotelist_recipe.add(recipe);
                     }
-                    for (int i = 0;i<recipes.size();i++) {
-                        fetchImage(recipes.get(i).getPathimagerecipe(), "image_recipe",i, getBaseContext());
-                    }
+                    //for (int i = 0;i<recipes.size();i++) {
+                    //    fetchImage(recipes.get(i).getPathimagerecipe(), "image_recipe",i, getBaseContext());
+                    //}
                     //Remotelist_recipe.addAll(recipes);
                     Log.d("listrecipes", Remotelist_recipe.toString());
                     TAG_CONNEXION_MESSAGE = response.message();
@@ -910,13 +914,13 @@ public class MainActivity extends AppCompatActivity {
                     pathimageuser = s;
                     if(Objects.equals(tag, "recipe_user")) {
                         User_CurrentRecipe.setIcon(bytes);
-                        MainFragment.viewPager2.setCurrentItem(1);
+                        MainFragment.viewPager2.setCurrentItem(1,false);
                     }
-                    if(Objects.equals(tag, "image_recipe"))
-                    {
-                        Remotelist_recipe.get(position).setIcon_recipe(bytes);
-
-                    }
+//                    if(Objects.equals(tag, "image_recipe"))
+//                    {
+//                        Remotelist_recipe.get(position).setIcon_recipe(bytes);
+//
+//                    }
                     Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle unsuccessful download
