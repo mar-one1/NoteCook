@@ -599,7 +599,7 @@ public class MainActivity extends AppCompatActivity {
                 TAG_CONNEXION_MESSAGE = call.toString();
                 //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
                 Toast.makeText(context, "onFailure getApi User : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
-
+                Log.d("tag",TAG_CONNEXION_MESSAGE);
                 if (TAG_CONNEXION != 200) {
                     //Constants.AffichageMessage("Online mode", MainActivity.this);
                     //Toast.makeText(MainActivity.this,"Online mode",Toast.LENGTH_LONG );
@@ -958,7 +958,8 @@ public class MainActivity extends AppCompatActivity {
                     String str = new String(bytes, StandardCharsets.UTF_8);
                     str = str.replaceAll("\"","");// For UTF-8 encoding
                     Log.d("tag",str);
-                    fetchImage(str,tag,0,context);
+                    user_login.getUser().setPathimageuser(str);
+                    //fetchImage(str,tag,0,context);
                     Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
                 } else {
                     // Handle unsuccessful download

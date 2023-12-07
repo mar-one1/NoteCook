@@ -1,5 +1,6 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.Utils.Constants.user_login;
 
@@ -27,6 +28,7 @@ import com.example.notecook.Utils.Constants;
 import com.example.notecook.databinding.FragmentFrgProfilBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -57,9 +59,13 @@ public class frg_Profil extends Fragment {
 
                 if (user.getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
-                } else
-                    binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+                } else {
+                    String imageUrl = BASE_URL +"uploads/"+ user_login.getUser().getPathimageuser()+"?timestamp=" + System.currentTimeMillis();;
+                    Picasso.with(getContext()).load(imageUrl).into(binding.iconProfil);
+                    //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+                }
             }
+
         }
 
     }
