@@ -1,6 +1,7 @@
 package com.example.notecook.Fragement;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.MainActivity.UpdateUserApi;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.deleteimage;
@@ -52,6 +53,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,9 +116,11 @@ public class Frg_EditProfil extends Fragment {
             }
         });
 
-        if (user_login.getUser().getIcon() != null)
-            binding.iconEditprofil.setImageBitmap(decod(user_login.getUser().getIcon()));
-
+        if (!Objects.equals(user_login.getUser().getPathimageuser(), "")) {
+            String url = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser() + "?timestamp=" + System.currentTimeMillis();
+            Picasso.with(getContext()).load(url).into(binding.iconEditprofil);
+            //binding.iconEditprofil.setImageBitmap(decod(user_login.getUser().getIcon()));
+        }
 
         ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
 
@@ -132,6 +136,7 @@ public class Frg_EditProfil extends Fragment {
                 pDialog.dismissWithAnimation();
             });
             pDialog.setCancelButton("oui", sweetAlertDialog -> {
+                String urlold = user_login.getUser().getPathimageuser();
                 mUserDatasource = new UserDatasource(getContext());
                 mUserDatasource.open();
                 String nom = binding.Nome.getText().toString();
@@ -170,7 +175,7 @@ public class Frg_EditProfil extends Fragment {
                     getUser.setIcon(null);
                     UpdateUserApi(getUser, getContext());
                     //Login.UpdateImageUserApi(icon,getUser.getUsername(),getContext());
-                    deleteimage(pathimageuser,getContext());
+                    deleteimage(urlold,getContext());
                     uploadImage(user_login.getUser().getUsername(),bitmap,getContext());
                 }
 

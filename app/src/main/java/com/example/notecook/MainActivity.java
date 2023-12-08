@@ -442,7 +442,6 @@ public class MainActivity extends AppCompatActivity {
 
         Call<User> call = apiService.getUserByIdRecipe(Token, Recipeid);
 
-
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -865,6 +864,9 @@ public class MainActivity extends AppCompatActivity {
                     String path = null;
                     try {
                         path = response.body().string();
+                        //String str = new String(bytes, StandardCharsets.UTF_8);
+                        path = path.replaceAll("\"","");// For UTF-8 encoding
+                        user_login.getUser().setPathimageuser(path);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -958,7 +960,12 @@ public class MainActivity extends AppCompatActivity {
                     String str = new String(bytes, StandardCharsets.UTF_8);
                     str = str.replaceAll("\"","");// For UTF-8 encoding
                     Log.d("tag",str);
-                    user_login.getUser().setPathimageuser(str);
+                    if(Objects.equals(tag, "user_login"))
+                        user_login.getUser().setPathimageuser(str);
+                    if(Objects.equals(tag, "recipe_user")) {
+                        User_CurrentRecipe.setPathimageuser(str);
+                        MainFragment.viewPager2.setCurrentItem(1,false);
+                    }
                     //fetchImage(str,tag,0,context);
                     Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
                 } else {
@@ -995,7 +1002,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Handle failure
-                Toast.makeText(context, "Handle failure", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Handle failure"+t, Toast.LENGTH_SHORT).show();
+                Log.d("tag","Handle failure"+t);
             }
         });
     }

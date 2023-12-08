@@ -67,9 +67,11 @@ public class Frg_detail_recipe extends Fragment {
                         Picasso.with(getContext()).load(url).into(binding.iconRecipe);
                     }
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
-                    if (User_CurrentRecipe.getIcon() != null)
-                        binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));
-
+                    if (User_CurrentRecipe.getPathimageuser() != "") {
+                        String url = BASE_URL + "uploads/" + User_CurrentRecipe.getPathimageuser() + "?timestamp=" + System.currentTimeMillis();
+                        Picasso.with(getContext()).load(url).into(binding.iconProfilDetailrecipe);
+                        //binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));
+                    }
 
                     Log.d("TAG", String.valueOf(Detail_CurrentRecipe.getId_detail_recipe()));
                     binding.icludeRoxDetailRecipe.vlTime.setText(String.valueOf(Detail_CurrentRecipe.getTime()));

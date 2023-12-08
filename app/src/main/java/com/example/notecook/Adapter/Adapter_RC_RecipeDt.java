@@ -67,7 +67,9 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         if(recipe.getPathimagerecipe()!=null && holder.Image.getDrawable()==null) {
             //holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
             String url = BASE_URL +"uploads/"+ recipe.getPathimagerecipe()+"?timestamp=" + System.currentTimeMillis();
-            Picasso.with(holder.Image.getContext()).load(url).into(holder.Image);
+            Picasso.with(holder.Image.getContext())
+                    .load(url)
+                    .into(holder.Image);
         }
         if (Objects.equals(b, TAG_LOCAL))
             holder.txt_time.setText("Local");
