@@ -178,7 +178,6 @@ public class Frg_EditProfil extends Fragment {
                     deleteimage(urlold,getContext());
                     uploadImage(user_login.getUser().getUsername(),bitmap,getContext());
                 }
-
             });
             pDialog.show();
         });

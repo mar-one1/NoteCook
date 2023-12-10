@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.example.notecook"
@@ -83,5 +83,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.5.2' // Or use the latest version available
 
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
 
 }

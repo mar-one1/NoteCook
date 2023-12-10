@@ -30,6 +30,8 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -69,6 +71,9 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             String url = BASE_URL +"uploads/"+ recipe.getPathimagerecipe()+"?timestamp=" + System.currentTimeMillis();
             Picasso.with(holder.Image.getContext())
                     .load(url)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE) // Skip memory caching
+                    .networkPolicy(NetworkPolicy.OFFLINE) // Load from cache only, skip network if possible
+                    .placeholder(defaultImagenot)
                     .into(holder.Image);
         }
         if (Objects.equals(b, TAG_LOCAL))

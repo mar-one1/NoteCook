@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "677069313204",
-    "project_id": "notebook-85870",
-    "storage_bucket": "notebook-85870.appspot.com"
+    "project_number": "702172950638",
+    "project_id": "mar-book",
+    "storage_bucket": "mar-book.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:677069313204:android:a07453dd09c9765fee33e1",
+        "mobilesdk_app_id": "1:702172950638:android:348b8d8fff6335fd48767f",
         "android_client_info": {
           "package_name": "com.example.notecook"
         }
       },
       "oauth_client": [
         {
-          "client_id": "677069313204-daplf2gk1d01pkj8k2ndrdincf4n872p.apps.googleusercontent.com",
+          "client_id": "702172950638-6klvcs743solo67oo1jue1t4ta7r4bho.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.notecook",
+            "certificate_hash": "50b4f55d68acdaa9a5b03657ff8968188ef32e27"
+          }
+        },
+        {
+          "client_id": "702172950638-5r3dtb6r3god5m4eq0eh67k3u20v4ftt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC-d80aiVuFj2pdsOVf5tfiI9q-5VDlv44"
+          "current_key": "AIzaSyCYZh6CKB9AZmHCOgvNgdYlJN6MdB9nvXw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "677069313204-ab6ha6bifafj05mmtbg3pfgaut3p74cj.apps.googleusercontent.com",
+              "client_id": "702172950638-5r3dtb6r3god5m4eq0eh67k3u20v4ftt.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
