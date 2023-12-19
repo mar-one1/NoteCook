@@ -12,6 +12,7 @@ import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.KeyguardManager;
@@ -36,8 +37,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -61,6 +61,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,7 +104,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private View view;
     private PasswordHasher passwordHasher = new PasswordHasher();
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
+    //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -278,7 +280,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
+    //@TargetApi(api = Build.VERSION_CODES.P)
+    @TargetApi(Build.VERSION_CODES.P)
     public void empreinte() {
         authenticationCallback = new BiometricPrompt.AuthenticationCallback() {
             // here we need to implement two methods
@@ -334,7 +337,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.P)
+    @TargetApi(Build.VERSION_CODES.P)
     private void secoundLogin() {
         BiometricPrompt biometricPrompt = new BiometricPrompt
                 .Builder(getApplicationContext())
@@ -364,7 +367,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     // it checks whether the
     // app the app has fingerprint
     // permission
-    @RequiresApi(Build.VERSION_CODES.M)
+    @TargetApi(Build.VERSION_CODES.M)
     private Boolean checkBiometricSupport() {
         KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         if (!keyguardManager.isDeviceSecure()) {
@@ -560,7 +563,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
                             newUser.setIcon(null);
                             InsertUserApi(newUser);
-
+                            MainActivity.uploadImage(newUser.getUsername(),bitmap,getBaseContext());
                         }
                         if (!Objects.equals(newUser.getUsername(), ""))
                             Constants.AffichageMessage("Vous avez Register avec succes in local", Login.this);

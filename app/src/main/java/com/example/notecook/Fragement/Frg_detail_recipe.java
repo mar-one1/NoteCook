@@ -64,12 +64,12 @@ public class Frg_detail_recipe extends Fragment {
                     binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
                     else {
                         String url = BASE_URL + "uploads/" + CURRENT_RECIPE.getPathimagerecipe() + "?timestamp=" + System.currentTimeMillis();
-                        Picasso.with(getContext()).load(url).into(binding.iconRecipe);
+                        Picasso.get().load(url).into(binding.iconRecipe);
                     }
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
                     if (User_CurrentRecipe.getPathimageuser() != "") {
                         String url = BASE_URL + "uploads/" + User_CurrentRecipe.getPathimageuser() + "?timestamp=" + System.currentTimeMillis();
-                        Picasso.with(getContext()).load(url).into(binding.iconProfilDetailrecipe);
+                        Picasso.get().load(url).into(binding.iconProfilDetailrecipe);
                         //binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));
                     }
 

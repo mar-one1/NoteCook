@@ -61,7 +61,7 @@ public class frg_Profil extends Fragment {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 } else {
                     String imageUrl = BASE_URL +"uploads/"+ user_login.getUser().getPathimageuser()+"?timestamp=" + System.currentTimeMillis();;
-                    Picasso.with(getContext()).load(imageUrl).into(binding.iconProfil);
+                    Picasso.get().load(imageUrl).into(binding.iconProfil);
                     //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
                 }
             }

@@ -33,8 +33,6 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -61,6 +59,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -118,7 +118,7 @@ public class Frg_EditProfil extends Fragment {
 
         if (!Objects.equals(user_login.getUser().getPathimageuser(), "")) {
             String url = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser() + "?timestamp=" + System.currentTimeMillis();
-            Picasso.with(getContext()).load(url).into(binding.iconEditprofil);
+            Picasso.get().load(url).into(binding.iconEditprofil);
             //binding.iconEditprofil.setImageBitmap(decod(user_login.getUser().getIcon()));
         }
 

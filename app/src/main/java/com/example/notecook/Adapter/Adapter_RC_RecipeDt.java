@@ -20,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Fragement.MainFragment;
@@ -33,6 +32,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -51,7 +53,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         b = bb;
     }
 
-    @NonNull
+
     @Override
     public Adapter_RC_RecipeDt.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
@@ -60,20 +62,17 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     }
 
     @Override
-    public  void  onBindViewHolder(@NonNull Adapter_RC_RecipeDt.ViewHolder holder, int position) {
+    public  void  onBindViewHolder(Adapter_RC_RecipeDt.@NonNull ViewHolder holder, int position) {
         Recipe recipe = recipes.get(position);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagelike = holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagenot = holder.itemView.getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
         holder.detail.setText(recipe.getNom_recipe());
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
-        if(recipe.getPathimagerecipe()!=null && holder.Image.getDrawable()==null) {
+        if(recipe.getPathimagerecipe()!=null) {
             //holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
             String url = BASE_URL +"uploads/"+ recipe.getPathimagerecipe()+"?timestamp=" + System.currentTimeMillis();
-            Picasso.with(holder.Image.getContext())
+            Picasso.get()
                     .load(url)
-                    .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE) // Skip memory caching
-                    .networkPolicy(NetworkPolicy.OFFLINE) // Load from cache only, skip network if possible
-                    .placeholder(defaultImagenot)
                     .into(holder.Image);
         }
         if (Objects.equals(b, TAG_LOCAL))
