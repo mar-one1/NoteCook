@@ -37,29 +37,7 @@ public class Loading_Srcreen extends AppCompatActivity {
     SimpleService service = new SimpleService();
     IntentFilter filtreConectivite = new IntentFilter();
     NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_loading_srcreen);
-        registerReceiver(networkChangeReceiver, filtreConectivite);
-        binding = ActivityLoadingSrcreenBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-//        MyAsyncTask myAsyncTask = new MyAsyncTask();
-//        myAsyncTask.execute();
-        Intent i = new Intent(getBaseContext(), Login.class);
-        if (!isOnline(getBaseContext()) && Objects.equals(getToken(), "")) {
-            Constants.AffichageMessage("Welcome to Notebook APP!!!",Loading_Srcreen.this);
-            startActivity(i);
-        } else if (!Objects.equals(getToken(), ""))
-            TokenApi();
-        else {
-            startActivity(i);
-        }
-
-
-
+    private SharedPreferences sharedPreferences;
 
        /* Thread welcomeThread = new Thread() {
             @Override
@@ -95,8 +73,6 @@ public class Loading_Srcreen extends AppCompatActivity {
         };
         welcomeThread.start();*/
 
-
-
         /*ProgressDialog progress = new ProgressDialog(this);
         progress.setTitle("Loading");
         progress.setMessage("Wait while loading...");
@@ -105,9 +81,25 @@ public class Loading_Srcreen extends AppCompatActivity {
     // To dismiss the dialog
         progress.dismiss();*/
 
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_loading_srcreen);
+        registerReceiver(networkChangeReceiver, filtreConectivite);
+        binding = ActivityLoadingSrcreenBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+//        MyAsyncTask myAsyncTask = new MyAsyncTask();
+//        myAsyncTask.execute();
+        Intent i = new Intent(getBaseContext(), Login.class);
+        if (!isOnline(getBaseContext()) && Objects.equals(getToken(), "")) {
+            Constants.AffichageMessage("Welcome to Notebook APP!!!", Loading_Srcreen.this);
+            startActivity(i);
+        } else if (!Objects.equals(getToken(), ""))
+            TokenApi();
+        else {
+            startActivity(i);
+        }
         setContentView(view);
-
     }
 
 
@@ -154,7 +146,7 @@ public class Loading_Srcreen extends AppCompatActivity {
                         saveToken("");
                         Constants.AffichageMessage("Erreur Unauthorized by server ", Loading_Srcreen.this);
                         startActivity(iLg);
-                    } else  {
+                    } else {
                         //(statusCode == 404) {
                         Constants.AffichageMessage("Erreur 404", Loading_Srcreen.this);
 //                        i.putExtra("TAG","online");
@@ -176,7 +168,13 @@ public class Loading_Srcreen extends AppCompatActivity {
 //                startActivity(i);
                 Constants.AffichageMessage(TAG_ERREUR_SYSTEM, Loading_Srcreen.this);
                 Constants.TAG_CONNEXION = call.hashCode();
-                startActivity(iM);
+                sharedPreferences = getSharedPreferences(Constants.lOGIN_KEY, Context.MODE_PRIVATE);
+                if (sharedPreferences.getBoolean(Constants.lOGIN_KEY, true)) {
+                    String s1 = sharedPreferences.getString("username", "");
+                    if (s1.equals("")) {
+                        startActivity(iLg);
+                    } else startActivity(iM);
+                }
                 finish();
             }
 
