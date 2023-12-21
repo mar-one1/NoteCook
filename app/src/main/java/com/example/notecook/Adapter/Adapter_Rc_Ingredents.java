@@ -7,12 +7,12 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.R;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
     }
 
     @Override
-    public void onBindViewHolder(Adapter_Rc_Ingredents.@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Ingredients Ingredients = list_ingredients.get(position);
 
         holder.getDetail().setText(String.valueOf(Ingredients.getNome()));

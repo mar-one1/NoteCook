@@ -10,7 +10,6 @@ import com.example.notecook.Model.User;
 import java.util.List;
 
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -80,7 +79,7 @@ public interface ApiService {
     @Multipart
     @POST("users/upload/{username}")
     Call<ResponseBody> uploadFile(@Path("username") String username,
-            @Part MultipartBody.Part image
+                                  @Part MultipartBody.Part image
     );
 
     @DELETE("users/delete/{path}")
@@ -201,5 +200,5 @@ public interface ApiService {
 
     // Example of a custom query parameter
     @GET("recipes/search/nom")
-    Call<List<Recipe>> searchRecipes(@Header("Authorization") String token,@Query("key") String query);
+    Call<List<Recipe>> searchRecipes(@Header("Authorization") String token, @Query("key") String query);
 }

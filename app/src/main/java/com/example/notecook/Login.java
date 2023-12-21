@@ -525,11 +525,18 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 //                Drawable d = binding.ivUserlogo1.getDrawable();
 //                Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
 //                byte[] icon = m.encod(bitmap);
+                passwordHasher = new PasswordHasher();
+                String password = passwordHasher.hashPassword(acct.getId().toString());
+                User Newuser = new User(username,acct.getGivenName(),"00/00/0000",acct.getEmail(),
+                        null,"",password,"Chef ", "good");
                 createUserlogin(null, username, acct.getGivenName(),
                         acct.getFamilyName(), "00/00/0000", acct.getEmail(),
-                        "0", acct.getId(), "Chef ", "good");
+                        "0",password, "Chef ", "good");
                 vrai = true;
-                Constants.AffichageMessage("Vous avez Register avec succes", Login.this);
+                Constants.AffichageMessage("Vous avez Register avec succes Localy", Login.this);
+
+                InsertUserApi(Newuser);
+                //MainActivity.uploadImage(Newuser.getUsername(),bitmap,getBaseContext());
             } else
                 Toast.makeText(this, "Welcome Back " + acct.getDisplayName(), Toast.LENGTH_LONG).show();
 

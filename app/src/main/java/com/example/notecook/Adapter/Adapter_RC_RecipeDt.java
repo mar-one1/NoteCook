@@ -3,15 +3,12 @@ package com.example.notecook.Adapter;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
-import static com.example.notecook.MainActivity.decod;
-import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.MainActivity.getDetailRecipeByIdRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,32 +17,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-
-
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 import java.util.Objects;
 
 public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeDt.ViewHolder> {
 
-    String b;
-    BottomNavigationView mBottomNavigationView;
+    private String b;
     private List<Recipe> recipes;
-    private List<Detail_Recipe> Detailsrecipes;
-    private Context context;
     private MainActivity m = new MainActivity();
 
     public Adapter_RC_RecipeDt(List<Recipe> recipes1, String bb) {
@@ -62,7 +51,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     }
 
     @Override
-    public  void  onBindViewHolder(Adapter_RC_RecipeDt.@NonNull ViewHolder holder, int position) {
+    public  void  onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Recipe recipe = recipes.get(position);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagelike = holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagenot = holder.itemView.getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
