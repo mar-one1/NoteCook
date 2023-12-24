@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.MainActivity;
@@ -66,6 +65,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             Picasso.get()
                     .load(url)
                     .into(holder.Image);
+
         }
         if (Objects.equals(b, TAG_LOCAL))
             holder.txt_time.setText("Local");
@@ -83,7 +83,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             if(CURRENT_RECIPE!=recipe) {
                 //if(recipe.getIcon_recipe()!=null)
                 //recipe.setIcon_recipe(encod(((BitmapDrawable) holder.Image.getDrawable()).getBitmap()));
-                Constants.CURRENT_RECIPE = recipe;
+                CURRENT_RECIPE = recipe;
                 getDetailRecipeByIdRecipeApi(recipe.getId_recipe(), v.getContext());
                 m.getStepRecipeByIdRecipeApi(recipe.getId_recipe());
                 m.getReviewRecipeApi(recipe.getId_recipe());

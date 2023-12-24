@@ -527,7 +527,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 //                byte[] icon = m.encod(bitmap);
                 passwordHasher = new PasswordHasher();
                 String password = passwordHasher.hashPassword(acct.getId().toString());
-                User Newuser = new User(username,acct.getGivenName(),"00/00/0000",acct.getEmail(),
+                User Newuser = new User(username,acct.getFamilyName(),acct.getGivenName(),"00/00/0000",acct.getEmail(),
                         null,"",password,"Chef ", "good");
                 createUserlogin(null, username, acct.getGivenName(),
                         acct.getFamilyName(), "00/00/0000", acct.getEmail(),
