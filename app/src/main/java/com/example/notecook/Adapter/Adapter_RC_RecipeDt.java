@@ -17,7 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.MainActivity;
@@ -27,6 +28,8 @@ import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
 import java.util.Objects;
