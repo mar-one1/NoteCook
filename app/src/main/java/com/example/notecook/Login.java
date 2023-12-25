@@ -166,7 +166,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         binding.editIconProfil.setOnClickListener(v -> captureImage());
 
 
-
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .
 
@@ -510,32 +509,35 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         if (check.equals("google")) {
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(Login.this);
-
+            //Toast.makeText(getBaseContext(), acct.getPhotoUrl().toString(),Toast.LENGTH_LONG).show();
+            String username = acct.getDisplayName();
             boolean b = false;
             if (Constants.listUser.size() != 0)
                 for (User item : Constants.listUser) {
 
-                    if (Objects.equals(item.getPassWord(), acct.getId())) {
+                    if (Objects.equals(item.getEmail(), acct.getEmail())) {
                         b = true;
+                        updateGoogleUserImage(username,acct.getPhotoUrl().toString());
                         break;
                     }
                 }
             if (!b) {
-                String username = acct.getDisplayName();
+
 //                Drawable d = binding.ivUserlogo1.getDrawable();
 //                Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
 //                byte[] icon = m.encod(bitmap);
                 passwordHasher = new PasswordHasher();
                 String password = passwordHasher.hashPassword(acct.getId().toString());
-                User Newuser = new User(username,acct.getFamilyName(),acct.getGivenName(),"00/00/0000",acct.getEmail(),
-                        null,"",password,"Chef ", "good");
+                User Newuser = new User(username, acct.getFamilyName(), acct.getGivenName(), "00/00/0000", acct.getEmail(),
+                        null, "", password, "Chef ", "good");
                 createUserlogin(null, username, acct.getGivenName(),
                         acct.getFamilyName(), "00/00/0000", acct.getEmail(),
-                        "0",password, "Chef ", "good");
+                        "0", password, "Chef ", "good");
                 vrai = true;
                 Constants.AffichageMessage("Vous avez Register avec succes Localy", Login.this);
 
                 InsertUserApi(Newuser);
+                updateGoogleUserImage(username,acct.getPhotoUrl().toString());
                 //MainActivity.uploadImage(Newuser.getUsername(),bitmap,getBaseContext());
             } else
                 Toast.makeText(this, "Welcome Back " + acct.getDisplayName(), Toast.LENGTH_LONG).show();
@@ -570,7 +572,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
                             newUser.setIcon(null);
                             InsertUserApi(newUser);
-                            MainActivity.uploadImage(newUser.getUsername(),bitmap,getBaseContext());
+                            MainActivity.uploadImage(newUser.getUsername(), bitmap, getBaseContext());
                         }
                         if (!Objects.equals(newUser.getUsername(), ""))
                             Constants.AffichageMessage("Vous avez Register avec succes in local", Login.this);
@@ -871,6 +873,40 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
+    }
+
+    public void updateGoogleUserImage(String username, String path) {
+
+
+    // Create a service using the Retrofit interface
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+    // Call the method to upload the file
+        Call<String> call = apiService.updateUserGoogleImageUrl(username, path);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String path = null;
+                    path = response.body().toString();
+                    //String str = new String(bytes, StandardCharsets.UTF_8);
+                    //path = path.replaceAll("\"", "");// For UTF-8 encoding
+                    Toast.makeText(getApplicationContext(), "upload image : " + path, Toast.LENGTH_SHORT).show();
+                    // File upload successful
+                    //fetchImage(path);
+                    Toast.makeText(getApplicationContext(), "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // Handle unsuccessful upload
+                    Toast.makeText(getApplicationContext(), "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(getApplicationContext(), "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

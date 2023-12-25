@@ -100,6 +100,9 @@ public interface ApiService {
     @Headers("Content-Type: application/json")
     Call<User> updateUserByUsername(@Path("username") String username, @Body User user);
 
+    @PUT("users/image/{username}")
+    @Headers("Content-Type: application/json")
+    Call<String> updateUserGoogleImageUrl(@Path("username") String username, @Body String path);
 //    @Multipart
 //    @PUT("users/filtre/{username}")
 //    Call<User> updateUserByUsername(
