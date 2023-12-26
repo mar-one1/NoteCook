@@ -520,6 +520,7 @@ public class MainActivity extends AppCompatActivity {
         String s1 = sharedPreferences.getString("username", "");
         String s2 = sharedPreferences.getString("password", "");
 
+
         Call<User> call = apiService.getUserByUsername(s1);
 
         call.enqueue(new Callback<User>() {
