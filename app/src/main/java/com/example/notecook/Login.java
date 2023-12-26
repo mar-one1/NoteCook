@@ -511,6 +511,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(Login.this);
             //Toast.makeText(getBaseContext(), acct.getPhotoUrl().toString(),Toast.LENGTH_LONG).show();
             String username = acct.getDisplayName();
+            if(username.contains(" "))
+             username = username.replace(" ","_");
             boolean b = false;
             if (Constants.listUser.size() != 0)
                 for (User item : Constants.listUser) {
@@ -877,11 +879,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     public void updateGoogleUserImage(String username, String path) {
 
+        String jsonInputString = "{\"url\": \"" + path + "\"}";
+// Create a RequestBody from the string
+        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), jsonInputString);
 
     // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
     // Call the method to upload the file
-        Call<String> call = apiService.updateUserGoogleImageUrl(username, path);
+        Call<String> call = apiService.updateUserGoogleImageUrl(username, requestBody);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

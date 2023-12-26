@@ -117,10 +117,15 @@ public class Frg_EditProfil extends Fragment {
         });
 
         if (!Objects.equals(user_login.getUser().getPathimageuser(), "")) {
-            String url = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser() + "?timestamp=" + System.currentTimeMillis();
-            Picasso.get().load(url).into(binding.iconEditprofil);
-            //binding.iconEditprofil.setImageBitmap(decod(user_login.getUser().getIcon()));
+            String imageUrl="";
+            if(user_login.getUser().getPathimageuser().startsWith("http"))
+                imageUrl=user_login.getUser().getPathimageuser();
+            else
+                imageUrl = BASE_URL +"uploads/"+ user_login.getUser().getPathimageuser()+"?timestamp=" + System.currentTimeMillis();;
+            Picasso.get().load(imageUrl).into(binding.iconEditprofil);
+
         }
+        else  binding.iconEditprofil.setImageBitmap(decod(user_login.getUser().getIcon()));
 
         ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
 

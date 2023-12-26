@@ -10,6 +10,7 @@ import com.example.notecook.Model.User;
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -102,7 +103,7 @@ public interface ApiService {
 
     @PUT("users/image/{username}")
     @Headers("Content-Type: application/json")
-    Call<String> updateUserGoogleImageUrl(@Path("username") String username, @Body String path);
+    Call<String> updateUserGoogleImageUrl(@Path("username") String username, @Body RequestBody path);
 //    @Multipart
 //    @PUT("users/filtre/{username}")
 //    Call<User> updateUserByUsername(
