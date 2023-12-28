@@ -60,13 +60,15 @@ public class frg_Profil extends Fragment {
                 if (user.getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 } else {
-                    String imageUrl="";
-                    if(user_login.getUser().getPathimageuser().startsWith("http"))
-                        imageUrl=user_login.getUser().getPathimageuser();
-                    else
-                    imageUrl = BASE_URL +"uploads/"+ user_login.getUser().getPathimageuser()+"?timestamp=" + System.currentTimeMillis();;
-                    Picasso.get().load(imageUrl).into(binding.iconProfil);
-                    //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+                    if(user_login.getUser().getPathimageuser()!=null && !user_login.getUser().getPathimageuser().equals("")) {
+                        String imageUrl = "";
+                        if (user_login.getUser().getPathimageuser().startsWith("http"))
+                            imageUrl = user_login.getUser().getPathimageuser();
+                        else
+                            imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
+                        Picasso.get().load(imageUrl).into(binding.iconProfil);
+                        //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+                    }
                 }
             }
 

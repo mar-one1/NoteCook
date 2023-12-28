@@ -490,6 +490,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             String personEmail = acct.getEmail();
             String personId = acct.getId();
             Uri personPhoto = acct.getPhotoUrl();
+            if(personName.contains(" "))
+                personName = personName.replace(" ","_");
             binding.etUsername.setText(personName);
             binding.etPassword.setText(acct.getId());
 
