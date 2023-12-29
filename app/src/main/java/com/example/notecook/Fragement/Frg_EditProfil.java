@@ -116,15 +116,19 @@ public class Frg_EditProfil extends Fragment {
             }
         });
 
-        if (!Objects.equals(user_login.getUser().getPathimageuser(), "") && user_login.getUser().getPathimageuser()!=null ) {
-            String imageUrl="";
-            if(user_login.getUser().getPathimageuser().startsWith("http"))
-                imageUrl=user_login.getUser().getPathimageuser();
-            else
-                imageUrl = BASE_URL +"uploads/"+ user_login.getUser().getPathimageuser();
+        if (user_login != null) {
+            if (user_login.getUser().getPathimageuser() != null && !user_login.getUser().getPathimageuser().equals("")) {
+                String imageUrl = "";
+                if (user_login.getUser().getPathimageuser().startsWith("http"))
+                    imageUrl = user_login.getUser().getPathimageuser();
+                else
+                    imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
                 Picasso.get().load(imageUrl).into(binding.iconEditprofil);
+                //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+            } else if (user.getIcon() != null) {
+                binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
+            }
         }
-        else if(user_login.getUser().getIcon()!=null)  binding.iconEditprofil.setImageBitmap(decod(user_login.getUser().getIcon()));
 
         ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
 

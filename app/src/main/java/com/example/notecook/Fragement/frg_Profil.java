@@ -57,24 +57,23 @@ public class frg_Profil extends Fragment {
                 user = user_login.getUser();
                 binding.txtUsername.setText(user.getUsername());
 
-                if (user.getIcon() != null) {
+                if (user_login.getUser().getPathimageuser() != null && !user_login.getUser().getPathimageuser().equals("")) {
+                    String imageUrl = "";
+                    if (user_login.getUser().getPathimageuser().startsWith("http"))
+                        imageUrl = user_login.getUser().getPathimageuser();
+                    else
+                        imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
+                    Picasso.get().load(imageUrl).into(binding.iconProfil);
+                    //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+                } else if (user.getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
-                } else {
-                    if(user_login.getUser().getPathimageuser()!=null && !user_login.getUser().getPathimageuser().equals("")) {
-                        String imageUrl = "";
-                        if (user_login.getUser().getPathimageuser().startsWith("http"))
-                            imageUrl = user_login.getUser().getPathimageuser();
-                        else
-                            imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
-                        Picasso.get().load(imageUrl).into(binding.iconProfil);
-                        //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
-                    }
                 }
+
+
             }
-
         }
-
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -160,7 +159,6 @@ public class frg_Profil extends Fragment {
         //set the data for the adapter
         binding.vp2Profil.setAdapter(viewPager2Adapter);
     }
-
 
 
 }
