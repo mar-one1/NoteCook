@@ -140,7 +140,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 if (b) {
                     binding.layoutLoginCheck.setVisibility(View.VISIBLE);
                     binding.layoutRegistre.setVisibility(View.GONE);
-                    binding.etUsername.setText(binding.txtUsername.getText());
+                    String s = binding.txtUsername.getText().toString()+"_"+binding.txtFirstnameLast.getText().toString();
+                    binding.etUsername.setText(s);
                     binding.etPassword.setText("");
                 }
             } catch (IOException e) {
@@ -576,7 +577,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
                             newUser.setIcon(null);
                             InsertUserApi(newUser);
-                            MainActivity.uploadImage(newUser.getUsername(), bitmap, getBaseContext());
+                            MainActivity.uploadImage(newUser.getUsername(), bitmap,"register", getBaseContext());
                         }
                         if (!Objects.equals(newUser.getUsername(), ""))
                             Constants.AffichageMessage("Vous avez Register avec succes in local", Login.this);

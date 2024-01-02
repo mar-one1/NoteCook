@@ -9,6 +9,7 @@ import static com.example.notecook.Utils.Constants.list_recipe;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -83,6 +84,7 @@ public class Acceuill_Frg extends Fragment {
                 }, 2000); // 2 seconds simulated refresh time (adjust as needed)
             }
         });
+        binding.txtRecherche.setOnTouchListener((view, motionEvent) -> binding.seeMoreTxt.callOnClick());
 
         return binding.getRoot();
     }

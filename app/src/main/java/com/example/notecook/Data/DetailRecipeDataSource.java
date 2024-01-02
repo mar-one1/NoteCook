@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class DetailRecipeDataSource {
 
     private static SQLiteDatabase database;
-    private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_DETAIL_RECIPE, MySQLiteHelper.COLUMN_TIME_DR,
+    private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_DETAIL_RECIPE, MySQLiteHelper.COLUMN_DETAIL,MySQLiteHelper.COLUMN_TIME_DR,
             MySQLiteHelper.COLUMN_RATE_DR, MySQLiteHelper.COLUMN_LEVEL_DR,
             MySQLiteHelper.COLUMN_CALORIES, MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL
     };
@@ -36,6 +36,7 @@ public class DetailRecipeDataSource {
         values.put(MySQLiteHelper.COLUMN_LEVEL_DR, detail_recipe.getLevel());
         values.put(MySQLiteHelper.COLUMN_CALORIES, detail_recipe.getCal());
         values.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, detail_recipe.getFrk_recipe());
+        values.put(MySQLiteHelper.COLUMN_DETAIL, detail_recipe.getDt_recipe());
 
         long insertId = database.insert(MySQLiteHelper.TABLE_DETAIL_RECIPE, null,
                 values);
@@ -48,14 +49,16 @@ public class DetailRecipeDataSource {
         return newDR;
     }
 
-    public static Detail_Recipe Create_Detail_Recipe(int time, int rate, String level, int calories, int frk_recipe) {
+    public static Detail_Recipe Create_Detail_Recipe(String detail,int time, int rate, String level, int calories, int frk_recipe) {
         ContentValues values = new ContentValues();
+
 
         values.put(MySQLiteHelper.COLUMN_TIME_DR, time);
         values.put(MySQLiteHelper.COLUMN_RATE_DR, rate);
         values.put(MySQLiteHelper.COLUMN_LEVEL_DR, level);
         values.put(MySQLiteHelper.COLUMN_CALORIES, calories);
         values.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, frk_recipe);
+        values.put(MySQLiteHelper.COLUMN_DETAIL, detail);
 
         long insertId = database.insert(MySQLiteHelper.TABLE_DETAIL_RECIPE, null,
                 values);
@@ -77,6 +80,7 @@ public class DetailRecipeDataSource {
         detail_recipe.setLevel(cursor.getString(3));
         detail_recipe.setCal(cursor.getInt(4));
         detail_recipe.setFrk_recipe(cursor.getInt(5));
+        detail_recipe.setDt_recipe(cursor.getString(6));
 
         return detail_recipe;
     }
@@ -138,6 +142,7 @@ public class DetailRecipeDataSource {
         }
         return ListDRByid;
     }
+
     public ArrayList<Detail_Recipe> select_DR_BYidRecipe(int id) {
         ArrayList<Detail_Recipe> ListDRByidRecipe = new ArrayList<>();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_DETAIL_RECIPE,
@@ -160,6 +165,7 @@ public class DetailRecipeDataSource {
         data.put(MySQLiteHelper.COLUMN_LEVEL_DR, DR.getLevel());
         data.put(MySQLiteHelper.COLUMN_CALORIES, DR.getCal());
         data.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, DR.getFrk_recipe());
+        data.put(MySQLiteHelper.COLUMN_DETAIL, DR.getDt_recipe());
 
         database.update(MySQLiteHelper.TABLE_DETAIL_RECIPE, data, MySQLiteHelper.COLUMN_ID_DETAIL_RECIPE + " = " + id, null);
 

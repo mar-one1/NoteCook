@@ -184,7 +184,7 @@ public class Frg_EditProfil extends Fragment {
                     UpdateUserApi(getUser, getContext());
                     //Login.UpdateImageUserApi(icon,getUser.getUsername(),getContext());
                     deleteimage(urlold,getContext());
-                    uploadImage(user_login.getUser().getUsername(),bitmap,getContext());
+                    uploadImage(user_login.getUser().getUsername(),bitmap,"",getContext());
                 }
             });
             pDialog.show();

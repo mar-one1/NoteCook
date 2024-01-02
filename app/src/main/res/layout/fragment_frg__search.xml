@@ -22,7 +22,8 @@
             android:drawableStart="@drawable/ic_search_fill_gray"
             android:drawableEnd="@drawable/ic_keyboard_voice_fill0_wght400_grad0_opsz48"
             android:hint="Ingredients / Dish"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:imeOptions="actionSend"/>
 
         <ImageView
             android:id="@+id/Heart_imgeclk"

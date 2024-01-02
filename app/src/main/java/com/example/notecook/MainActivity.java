@@ -836,7 +836,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void uploadImage(String username,Bitmap bitmp ,Context context) {
+    public static void uploadImage(String username,Bitmap bitmp , String type ,Context context) {
         //Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
         // Create a file to save the bitmap
         File filesDir = context.getFilesDir();
@@ -869,6 +869,7 @@ public class MainActivity extends AppCompatActivity {
                         path = response.body().string();
                         //String str = new String(bytes, StandardCharsets.UTF_8);
                         path = path.replaceAll("\"","");// For UTF-8 encoding
+                        if(!type.equals("register"))
                         user_login.getUser().setPathimageuser(path);
                     } catch (IOException e) {
                         e.printStackTrace();

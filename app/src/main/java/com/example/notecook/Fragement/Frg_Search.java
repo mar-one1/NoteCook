@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -50,7 +51,7 @@ public class Frg_Search extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        bindingRcV_recipes(binding.RcRecipeSearch,null,"default");
+        bindingRcV_recipes(binding.RcRecipeSearch, null, "default");
     }
 
     @Override
@@ -64,7 +65,7 @@ public class Frg_Search extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFrgSearchBinding.inflate(inflater, container, false);
         // Inflate the layout for this fragment
-        bindingRcV_recipes(binding.RcRecipeSearch,null,"default");
+        bindingRcV_recipes(binding.RcRecipeSearch, null, "default");
         //defaultImagelike=binding.HeartImgeclk;
         defaultImagelike = getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
 
@@ -73,13 +74,19 @@ public class Frg_Search extends Fragment {
             if (!defaultImagelike.getConstantState().equals(binding.HeartImgeclk.getDrawable().getConstantState())) {
                 binding.HeartImgeclk.setImageDrawable(defaultImagelike);
             } else
-                binding.HeartImgeclk.setImageDrawable( getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
+                binding.HeartImgeclk.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
         });
 
+
         binding.txtRecherche.addTextChangedListener(new TextWatcher() {
+            List<String> list = new ArrayList<>();
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 //Search_list.clear();
+                // binding.txtRecherche.setText(s + " \n");
+                if(!list.contains(s.toString()) && s!="")
+                list.add(s.toString());
             }
 
             @Override
@@ -88,16 +95,23 @@ public class Frg_Search extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s)
-            {
-
+            public void afterTextChanged(Editable s) {
+                List<String> listcurrent =new ArrayList<>();
+                for (String item: list){
+                    if(item.contains(s) && !listcurrent.contains(s)) listcurrent.add(s.toString());
+                }
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, listcurrent);
+                binding.txtRecherche.setAdapter(arrayAdapter);
+                binding.txtRecherche.setThreshold(2);
             }
         });
+
+
 
         return binding.getRoot();
     }
 
-    public void bindingRcV_recipes(RecyclerView recyclerView,List<Recipe> searchList,String tag) {
+    public void bindingRcV_recipes(RecyclerView recyclerView, List<Recipe> searchList, String tag) {
 
         List<Recipe> list_recipes = new ArrayList<>();
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
@@ -106,8 +120,8 @@ public class Frg_Search extends Fragment {
             mRecipe = new Recipe();
             list_recipes.add(mRecipe);
         }
-        if(!tag.equals("search"))
-        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(Remotelist_recipe, TAG_REMOTE);
+        if (!tag.equals("search"))
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(Remotelist_recipe, TAG_REMOTE);
         else adapter_rc_recipeDt = new Adapter_RC_RecipeDt(Search_list, TAG_REMOTE);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(manager);
@@ -115,19 +129,18 @@ public class Frg_Search extends Fragment {
         recyclerView.setAdapter(adapter_rc_recipeDt);
     }
 
-    private  void searchRecipes(String key)
-    {
+    private void searchRecipes(String key) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        Call<List<Recipe>> call = apiService.searchRecipes(Token,key);
+        Call<List<Recipe>> call = apiService.searchRecipes(Token, key);
         call.enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     Constants.Search_list = response.body();
-                    if(Search_list.size()>0)
-                        bindingRcV_recipes(binding.RcRecipeSearch,Search_list,"search");
-                    Log.d("TAG",Constants.Search_list.toString());
+                    if (Search_list.size() > 0)
+                        bindingRcV_recipes(binding.RcRecipeSearch, Search_list, "search");
+                    Log.d("TAG", Constants.Search_list.toString());
                     // Handle the list of products obtained from the server
                 } else {
                     // Handle unsuccessful response

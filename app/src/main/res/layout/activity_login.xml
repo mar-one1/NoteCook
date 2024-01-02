@@ -181,7 +181,6 @@
                     android:ems="20"
                     android:gravity="center"
                     android:hint="firstname_last"
-                    android:inputType="textPassword"
                     android:minHeight="48dp"
                     android:padding="10dp" />
 
@@ -193,7 +192,6 @@
                     android:ems="20"
                     android:gravity="center"
                     android:hint="Tel"
-                    android:inputType="textPassword"
                     android:minHeight="48dp"
                     android:padding="10dp" />
 

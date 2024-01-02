@@ -39,6 +39,7 @@ public class Detail_Recipe {
         this.rate = rate;
         Level = level;
         Frk_recipe = frk_recipe;
+        Dt_recipe=dt_recipe;
     }
 
     public String getDt_recipe() {

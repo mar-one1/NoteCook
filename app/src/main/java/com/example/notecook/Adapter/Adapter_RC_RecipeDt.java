@@ -65,7 +65,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             Picasso.get()
                     .load(url)
                     .into(holder.Image);
-
         }
         if (Objects.equals(b, TAG_LOCAL))
             holder.txt_time.setText("Local");
