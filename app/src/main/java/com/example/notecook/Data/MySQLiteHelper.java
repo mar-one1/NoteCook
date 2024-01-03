@@ -43,9 +43,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     private static final String DATABASE_CREATE_DETAIL_RECIPE = "create table "
             + TABLE_DETAIL_RECIPE + "(" + COLUMN_ID_DETAIL_RECIPE
             + " integer primary key autoincrement, " + COLUMN_DETAIL
-            + " text, " + COLUMN_LEVEL_DR + " integer , " + COLUMN_TIME_DR + " integer , " + COLUMN_RATE_DR + " integer, "
-            + " text, " + COLUMN_CALORIES + " integer , "
-            + COLUMN_FRK_RECIPE_DETAIL + " integer, " + " FOREIGN KEY (" + COLUMN_FRK_RECIPE_DETAIL + ") REFERENCES " + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE + ") ON DELETE CASCADE );";
+            + " text, " + COLUMN_LEVEL_DR + " integer , " + COLUMN_TIME_DR
+            + " integer , " + COLUMN_RATE_DR + " integer, "
+            + COLUMN_CALORIES + " integer , "
+            + COLUMN_FRK_RECIPE_DETAIL + " integer, "
+            + " FOREIGN KEY (" + COLUMN_FRK_RECIPE_DETAIL + ") REFERENCES " + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE + ") ON DELETE CASCADE );";
 
     //example : mailbox_id INTEGER REFERENCES mailboxes ON DELETE CASCADE
 

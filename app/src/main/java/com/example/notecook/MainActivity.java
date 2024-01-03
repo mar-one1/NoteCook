@@ -14,7 +14,6 @@ import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.imageprofill;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.pathimageuser;
@@ -30,13 +29,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -63,8 +59,6 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
-import com.squareup.picasso.Downloader;
-import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -136,22 +130,6 @@ public class MainActivity extends AppCompatActivity {
         return imageBytes;
     }
 
-    @Override
-    public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
-            // If you want to exit the app when back button is pressed twice
-            System.exit(0);
-            return;
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-        // Reset flag after a certain time (e.g., 2 seconds)
-        new android.os.Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
-    }
-
     public static void UpdateUserApi(User user, Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         // Example: Fetch users from the API
@@ -218,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static void synchronizeDataDetailRecipe(Detail_Recipe RemotedetailRecipe, Context context) {
         // Step 1: Compare local and remote data to identify differences
-
+        list_detail_recipe = getAllocalDR(context);
         boolean found = false;
         for (Detail_Recipe localDetailRecipe : list_detail_recipe) {
             if (RemotedetailRecipe.getFrk_recipe() == localDetailRecipe.getFrk_recipe()) {
@@ -279,6 +257,287 @@ public class MainActivity extends AppCompatActivity {
         detailRecipeDataSource.close();
     }
 
+    public static void getDetailRecipeByIdRecipeApi(int Recipeid, Context context) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        Call<Detail_Recipe> call = apiService.getDetailRecipeByIdRecipeFRK(Token, Recipeid);
+
+
+        call.enqueue(new Callback<Detail_Recipe>() {
+            @Override
+            public void onResponse(Call<Detail_Recipe> call, Response<Detail_Recipe> response) {
+                if (response.isSuccessful()) {
+                    Detail_Recipe detail_recipe = response.body();
+                    Detail_CurrentRecipe = detail_recipe;
+                    Log.d("TAG", detail_recipe.getLevel().toString());
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+                    if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
+                        getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe(), context);
+                    else if (User_CurrentRecipe.getId_User() == CURRENT_RECIPE.getFrk_user()) {
+                        MainFragment.viewPager2.setCurrentItem(1);
+                    } else {
+                        User_CurrentRecipe = user_login.getUser();
+                        MainFragment.viewPager2.setCurrentItem(1, false);
+                    }
+                } else {
+                    // Handle error response here
+                    int statusCode = response.code();
+                    TAG_CONNEXION = statusCode;
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorResponse = response.errorBody().string();
+                            // Print or log the errorResponse for debugging
+                            Log.e("token", "Error Response: " + errorResponse);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Detail_Recipe> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+            }
+        });
+
+    }
+
+    public static void getUserByIdRecipeApi(int Recipeid, Context context) {
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        Call<User> call = apiService.getUserByIdRecipe(Token, Recipeid);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    User_CurrentRecipe = user;
+                    getImageUserUrl(User_CurrentRecipe.getUsername(), "recipe_user", context);
+                    Log.d("TAG", user.getUsername().toString());
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+                    //MainFragment.viewPager2.setCurrentItem(1);
+                } else {
+                    // Handle error response here
+                    int statusCode = response.code();
+                    TAG_CONNEXION = statusCode;
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorResponse = response.errorBody().string();
+                            // Print or log the errorResponse for debugging
+                            Log.e("token", "Error Response: " + errorResponse);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+            }
+        });
+    }
+
+    public static void uploadImage(String username, Bitmap bitmp, String type, Context context) {
+        //Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
+        // Create a file to save the bitmap
+        File filesDir = context.getFilesDir();
+        File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
+
+        // Convert bitmap to file
+        try {
+            OutputStream os = new FileOutputStream(imageFile);
+            bitmp.compress(Bitmap.CompressFormat.JPEG, 100, os); // Compress bitmap into JPEG with quality 100%
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Create a File instance with the path to the file to upload
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
+
+// Create MultipartBody.Part instance from the RequestBody
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
+// Create a service using the Retrofit interface
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+// Call the method to upload the file
+        Call<ResponseBody> call = apiService.uploadFile(username, filePart);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    String path = null;
+                    try {
+                        path = response.body().string();
+                        //String str = new String(bytes, StandardCharsets.UTF_8);
+                        path = path.replaceAll("\"", "");// For UTF-8 encoding
+                        if (!type.equals("register"))
+                            user_login.getUser().setPathimageuser(path);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
+                    // File upload successful
+                    //fetchImage(path);
+                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // Handle unsuccessful upload
+                    Toast.makeText(context, "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void fetchImage(String s, String tag, int position, Context context) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        // URL of the image you want to download
+        //String imageUrl = "https://da97-196-75-207-18.ngrok.io/uploads/1701348093930-989771596-image.jpg"; // Replace with your image URL
+        String imageUrl = BASE_URL + "uploads/" + s; // Replace with your image URL
+
+        // Enqueue the download request
+        Call<ResponseBody> call = apiService.downloadImage(imageUrl);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    //ResponseBody responseBody = response.body();
+                    byte[] bytes = new byte[0];
+                    try {
+                        bytes = response.body().bytes();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length)
+                    // ;
+                    if (Objects.equals(tag, "user_login"))
+                        user_login.getUser().setIcon(bytes);
+                    pathimageuser = s;
+                    if (Objects.equals(tag, "recipe_user")) {
+                        User_CurrentRecipe.setIcon(bytes);
+                        MainFragment.viewPager2.setCurrentItem(1, false);
+                    }
+//                    if(Objects.equals(tag, "image_recipe"))
+//                    {
+//                        Remotelist_recipe.get(position).setIcon_recipe(bytes);
+//
+//                    }
+                    Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful download" + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "Handle failure", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void getImageUserUrl(String username, String tag, Context context) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        // Enqueue the download request
+        Call<ResponseBody> call = apiService.getImageUSerBytes(username);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    //ResponseBody responseBody = response.body();
+                    byte[] bytes = new byte[0];
+                    try {
+                        bytes = response.body().bytes();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    //user_login.getUser().setIcon(bytes);
+                    // Convert byte array to String using a specific character encoding
+                    String str = new String(bytes, StandardCharsets.UTF_8);
+                    str = str.replaceAll("\"", "");// For UTF-8 encoding
+                    Log.d("tag", str);
+                    if (Objects.equals(tag, "user_login"))
+                        user_login.getUser().setPathimageuser(str);
+                    if (Objects.equals(tag, "recipe_user")) {
+                        User_CurrentRecipe.setPathimageuser(str);
+                        MainFragment.viewPager2.setCurrentItem(1, false);
+                    }
+                    //fetchImage(str,tag,0,context);
+                    Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful download" + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "Handle failure getimage url", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public static void deleteimage(String s, Context context) {
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        // Enqueue the download request
+        Call<ResponseBody> call = apiService.deleteimage(s);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    Toast.makeText(context, "succes  image deleted : ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful deleted" + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "Handle failure" + t, Toast.LENGTH_SHORT).show();
+                Log.d("tag", "Handle failure" + t);
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            super.onBackPressed();
+            // If you want to exit the app when back button is pressed twice
+            System.exit(0);
+            return;
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        // Reset flag after a certain time (e.g., 2 seconds)
+        new android.os.Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -301,7 +560,7 @@ public class MainActivity extends AppCompatActivity {
         pDialog.show();
         // get Recipe From Api
         getLocalRecipes();
-        list_detail_recipe = getAllocalDR();
+        list_detail_recipe = getAllocalDR(getBaseContext());
         getRecipeApi();
         if (user_login.getUser() == null)
             getUserApi("", getBaseContext());
@@ -353,53 +612,6 @@ public class MainActivity extends AppCompatActivity {
         detailRecipeDataSource.close();
     }
 
-    public static void getDetailRecipeByIdRecipeApi(int Recipeid,Context context) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        Call<Detail_Recipe> call = apiService.getDetailRecipeByIdRecipeFRK(Token, Recipeid);
-
-
-        call.enqueue(new Callback<Detail_Recipe>() {
-            @Override
-            public void onResponse(Call<Detail_Recipe> call, Response<Detail_Recipe> response) {
-                if (response.isSuccessful()) {
-                    Detail_Recipe detail_recipe = response.body();
-                    Detail_CurrentRecipe = detail_recipe;
-                    Log.d("TAG", detail_recipe.getLevel().toString());
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    TAG_CONNEXION = response.code();
-                    if (CURRENT_RECIPE.getFrk_user()!= user_login.getUser().getId_User() && User_CurrentRecipe.getId_User()!=CURRENT_RECIPE.getFrk_user())
-                        getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe(),context);
-                    else if(User_CurrentRecipe.getId_User()==CURRENT_RECIPE.getFrk_user()) {MainFragment.viewPager2.setCurrentItem(1);}
-                    else{
-                        User_CurrentRecipe = user_login.getUser();
-                        MainFragment.viewPager2.setCurrentItem(1,false);
-                    }
-                } else {
-                    // Handle error response here
-                    int statusCode = response.code();
-                    TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    if (response.errorBody() != null) {
-                        try {
-                            String errorResponse = response.errorBody().string();
-                            // Print or log the errorResponse for debugging
-                            Log.e("token", "Error Response: " + errorResponse);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Detail_Recipe> call, Throwable t) {
-                TAG_CONNEXION = call.hashCode();
-            }
-        });
-
-    }
-
     public void getStepRecipeByIdRecipeApi(int Recipeid) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -433,47 +645,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Step>> call, Throwable t) {
-                TAG_CONNEXION = call.hashCode();
-            }
-        });
-    }
-
-    public static void getUserByIdRecipeApi(int Recipeid,Context context) {
-
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        Call<User> call = apiService.getUserByIdRecipe(Token, Recipeid);
-
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    User user = response.body();
-                    User_CurrentRecipe = user;
-                    getImageUserUrl(User_CurrentRecipe.getUsername(),"recipe_user",context);
-                    Log.d("TAG", user.getUsername().toString());
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    TAG_CONNEXION = response.code();
-                    //MainFragment.viewPager2.setCurrentItem(1);
-                } else {
-                    // Handle error response here
-                    int statusCode = response.code();
-                    TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    if (response.errorBody() != null) {
-                        try {
-                            String errorResponse = response.errorBody().string();
-                            // Print or log the errorResponse for debugging
-                            Log.e("token", "Error Response: " + errorResponse);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
                 TAG_CONNEXION = call.hashCode();
             }
         });
@@ -534,7 +705,7 @@ public class MainActivity extends AppCompatActivity {
                         user_login.setUser(UserResponse);
                         //fetchImage(user_login.getUser().getUsername());
                         //uploadImage();
-                        getImageUserUrl(user_login.getUser().getUsername(),"user_login",getBaseContext());
+                        getImageUserUrl(user_login.getUser().getUsername(), "user_login", getBaseContext());
 
                         TAG_CONNEXION_MESSAGE = response.message();
                         //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
@@ -601,7 +772,7 @@ public class MainActivity extends AppCompatActivity {
                 TAG_CONNEXION_MESSAGE = call.toString();
                 //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
                 Toast.makeText(context, "onFailure getApi User : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
-                Log.d("tag",TAG_CONNEXION_MESSAGE);
+                Log.d("tag", TAG_CONNEXION_MESSAGE);
                 if (TAG_CONNEXION != 200) {
                     //Constants.AffichageMessage("Online mode", MainActivity.this);
                     //Toast.makeText(MainActivity.this,"Online mode",Toast.LENGTH_LONG );
@@ -647,14 +818,14 @@ public class MainActivity extends AppCompatActivity {
             }
             if (!found) {
                 // Recipe exists locally but not remotely; mark it as deleted
-                //markRecipeAsDeletedLocally(localRecipe);
+                markRecipeAsDeletedLocally(localRecipe,getBaseContext());
             }
         }
     }
 
-    private List<Detail_Recipe> getAllocalDR() {
+    private static List<Detail_Recipe> getAllocalDR(Context context) {
         List<Detail_Recipe> localDetaliRecipes;
-        DetailRecipeDataSource detailRecipeDataSource = new DetailRecipeDataSource(MainActivity.this);
+        DetailRecipeDataSource detailRecipeDataSource = new DetailRecipeDataSource(context);
         detailRecipeDataSource.open();
         localDetaliRecipes = detailRecipeDataSource.getAllDR();
         detailRecipeDataSource.close();
@@ -675,7 +846,6 @@ public class MainActivity extends AppCompatActivity {
         recipeDatasource.close();
     }
 
-
     private void getRecipeApi() {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         Call<List<Recipe>> call = apiService.getAllRecipes(getToken());
@@ -685,9 +855,8 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     List<Recipe> recipes = response.body();
                     Log.d("recipes", recipes.toString());
-                    for (Recipe recipe : recipes)
-                    {
-                        Toast.makeText(MainActivity.this, ""+recipe.getPathimagerecipe(), Toast.LENGTH_SHORT).show();
+                    for (Recipe recipe : recipes) {
+                        Toast.makeText(MainActivity.this, "" + recipe.getPathimagerecipe(), Toast.LENGTH_SHORT).show();
                         //Log.d("tag", String.valueOf(recipe.getIcon_recipe()));
                         byte[] imagepath = Arrays.toString(recipe.getIcon_recipe()).getBytes();
                         //recipe.setIcon_recipe(imagepath);
@@ -796,23 +965,6 @@ public class MainActivity extends AppCompatActivity {
         return preferences.getString("token", null);
     }
 
-    public class NetworkChangeReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (checkInternet(context)) {
-                Toast.makeText(context, "Network Available Do operations", Toast.LENGTH_LONG).show();
-                MODE_ONLINE = true;
-            } else MODE_ONLINE = false;
-
-
-        }
-
-        boolean checkInternet(Context context) {
-            return service.isNetworkAvailable();
-        }
-    }
-
     public void searchRecipes(String key) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -836,180 +988,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void uploadImage(String username,Bitmap bitmp , String type ,Context context) {
-        //Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
-        // Create a file to save the bitmap
-        File filesDir = context.getFilesDir();
-        File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
+    public class NetworkChangeReceiver extends BroadcastReceiver {
 
-        // Convert bitmap to file
-        try {
-            OutputStream os = new FileOutputStream(imageFile);
-            bitmp.compress(Bitmap.CompressFormat.JPEG, 100, os); // Compress bitmap into JPEG with quality 100%
-            os.flush();
-            os.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            if (checkInternet(context)) {
+                Toast.makeText(context, "Network Available Do operations", Toast.LENGTH_LONG).show();
+                MODE_ONLINE = true;
+            } else MODE_ONLINE = false;
+
+
         }
-        // Create a File instance with the path to the file to upload
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
 
-// Create MultipartBody.Part instance from the RequestBody
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
-// Create a service using the Retrofit interface
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-// Call the method to upload the file
-        Call<ResponseBody> call = apiService.uploadFile(username,filePart);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    String path = null;
-                    try {
-                        path = response.body().string();
-                        //String str = new String(bytes, StandardCharsets.UTF_8);
-                        path = path.replaceAll("\"","");// For UTF-8 encoding
-                        if(!type.equals("register"))
-                        user_login.getUser().setPathimageuser(path);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
-                    // File upload successful
-                    //fetchImage(path);
-                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
-
-                } else {
-                    // Handle unsuccessful upload
-                    Toast.makeText(context, "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // Handle failure
-                Toast.makeText(context, "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public static void fetchImage(String s,String tag,int position,Context context) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        // URL of the image you want to download
-        //String imageUrl = "https://da97-196-75-207-18.ngrok.io/uploads/1701348093930-989771596-image.jpg"; // Replace with your image URL
-        String imageUrl = BASE_URL +"uploads/"+ s; // Replace with your image URL
-
-        // Enqueue the download request
-        Call<ResponseBody> call = apiService.downloadImage(imageUrl);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    //ResponseBody responseBody = response.body();
-                    byte[] bytes = new byte[0];
-                    try {
-                        bytes = response.body().bytes();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length)
-                    // ;
-                    if(Objects.equals(tag, "user_login"))
-                    user_login.getUser().setIcon(bytes);
-                    pathimageuser = s;
-                    if(Objects.equals(tag, "recipe_user")) {
-                        User_CurrentRecipe.setIcon(bytes);
-                        MainFragment.viewPager2.setCurrentItem(1,false);
-                    }
-//                    if(Objects.equals(tag, "image_recipe"))
-//                    {
-//                        Remotelist_recipe.get(position).setIcon_recipe(bytes);
-//
-//                    }
-                    Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Handle unsuccessful download
-                    Toast.makeText(context, "unsuccessful download"+ response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // Handle failure
-                Toast.makeText(context, "Handle failure", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public static void getImageUserUrl(String username,String tag,Context context) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        // Enqueue the download request
-        Call<ResponseBody> call = apiService.getImageUSerBytes(username);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    //ResponseBody responseBody = response.body();
-                    byte[] bytes = new byte[0];
-                    try {
-                        bytes = response.body().bytes();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    //user_login.getUser().setIcon(bytes);
-                    // Convert byte array to String using a specific character encoding
-                    String str = new String(bytes, StandardCharsets.UTF_8);
-                    str = str.replaceAll("\"","");// For UTF-8 encoding
-                    Log.d("tag",str);
-                    if(Objects.equals(tag, "user_login"))
-                        user_login.getUser().setPathimageuser(str);
-                    if(Objects.equals(tag, "recipe_user")) {
-                        User_CurrentRecipe.setPathimageuser(str);
-                        MainFragment.viewPager2.setCurrentItem(1,false);
-                    }
-                    //fetchImage(str,tag,0,context);
-                    Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Handle unsuccessful download
-                    Toast.makeText(context, "unsuccessful download"+ response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // Handle failure
-                Toast.makeText(context, "Handle failure getimage url", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public static void deleteimage(String s, Context context) {
-
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // Enqueue the download request
-        Call<ResponseBody> call = apiService.deleteimage(s);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful() && response.body() != null) {
-
-                    Toast.makeText(context, "succes  image deleted : ", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Handle unsuccessful download
-                    Toast.makeText(context, "unsuccessful deleted"+ response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // Handle failure
-                Toast.makeText(context, "Handle failure"+t, Toast.LENGTH_SHORT).show();
-                Log.d("tag","Handle failure"+t);
-            }
-        });
+        boolean checkInternet(Context context) {
+            return service.isNetworkAvailable();
+        }
     }
 
 

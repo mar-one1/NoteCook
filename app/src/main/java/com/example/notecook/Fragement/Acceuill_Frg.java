@@ -9,7 +9,6 @@ import static com.example.notecook.Utils.Constants.list_recipe;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -66,6 +65,8 @@ public class Acceuill_Frg extends Fragment {
             ViewPager2 viewPager2 = getActivity().findViewById(R.id.vp2);
             viewPager2.setCurrentItem(2, false);
         });
+        bindingRcV_categories(binding.RcCatMenu, true);
+        bindingRcV_recipes(binding.RcCatPopular, true);
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -92,8 +93,8 @@ public class Acceuill_Frg extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        bindingRcV_categories(binding.RcCatMenu, true);
-        bindingRcV_recipes(binding.RcCatPopular, true);
+//        bindingRcV_categories(binding.RcCatMenu, true);
+//        bindingRcV_recipes(binding.RcCatPopular, true);
     }
 
     @Override

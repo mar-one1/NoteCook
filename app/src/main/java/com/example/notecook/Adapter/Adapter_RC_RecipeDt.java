@@ -26,6 +26,8 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -64,6 +66,8 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             String url = BASE_URL +"uploads/"+ recipe.getPathimagerecipe();
             Picasso.get()
                     .load(url)
+                    .error(R.drawable.eror_image_download)
+                    .memoryPolicy(MemoryPolicy.NO_STORE)
                     .into(holder.Image);
         }
         if (Objects.equals(b, TAG_LOCAL))
