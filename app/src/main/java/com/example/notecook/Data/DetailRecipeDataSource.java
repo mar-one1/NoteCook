@@ -28,7 +28,7 @@ public class DetailRecipeDataSource {
     /*
      * insert the value in the Image table
      */
-    public static Detail_Recipe insertDetail_recipe(Detail_Recipe detail_recipe) {
+    public  Detail_Recipe insertDetail_recipe(Detail_Recipe detail_recipe) {
         ContentValues values = new ContentValues();
 
         values.put(MySQLiteHelper.COLUMN_TIME_DR, detail_recipe.getTime());
@@ -75,13 +75,12 @@ public class DetailRecipeDataSource {
 
         Detail_Recipe detail_recipe = new Detail_Recipe();
         detail_recipe.setId_detail_recipe(cursor.getInt(0));
-        detail_recipe.setTime(cursor.getInt(1));
-        detail_recipe.setRate(cursor.getInt(2));
-        detail_recipe.setLevel(cursor.getString(3));
-        detail_recipe.setCal(cursor.getInt(4));
-        detail_recipe.setFrk_recipe(cursor.getInt(5));
-        detail_recipe.setDt_recipe(cursor.getString(6));
-
+        detail_recipe.setDt_recipe(cursor.getString(1));
+        detail_recipe.setLevel(cursor.getString(2));
+        detail_recipe.setTime(cursor.getInt(3));
+        detail_recipe.setRate(cursor.getInt(4));
+        detail_recipe.setCal(cursor.getInt(5));
+        detail_recipe.setFrk_recipe(cursor.getInt(6));
         return detail_recipe;
     }
 
@@ -168,6 +167,19 @@ public class DetailRecipeDataSource {
         data.put(MySQLiteHelper.COLUMN_DETAIL, DR.getDt_recipe());
 
         database.update(MySQLiteHelper.TABLE_DETAIL_RECIPE, data, MySQLiteHelper.COLUMN_ID_DETAIL_RECIPE + " = " + id, null);
+
+    }
+    public void Update_Detail_RecipeByIdRecipe(Detail_Recipe DR,int id) {
+
+        ContentValues data = new ContentValues();
+        data.put(MySQLiteHelper.COLUMN_TIME_DR , DR.getTime());
+        data.put(MySQLiteHelper.COLUMN_RATE_DR, DR.getRate());
+        data.put(MySQLiteHelper.COLUMN_LEVEL_DR, DR.getLevel());
+        data.put(MySQLiteHelper.COLUMN_CALORIES, DR.getCal());
+        data.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, DR.getFrk_recipe());
+        data.put(MySQLiteHelper.COLUMN_DETAIL, DR.getDt_recipe());
+        Log.d("found","update"+id);
+        database.update(MySQLiteHelper.TABLE_DETAIL_RECIPE, data, MySQLiteHelper.COLUMN_FRK_RECIPE + " = " + id, null);
 
     }
 }

@@ -199,18 +199,23 @@ public class MainActivity extends AppCompatActivity {
         list_detail_recipe = getAllocalDR(context);
         boolean found = false;
         for (Detail_Recipe localDetailRecipe : list_detail_recipe) {
+            Log.d("found","fooor"+localDetailRecipe.getDt_recipe());
+            Log.d("found","RemotedetailRecipe"+RemotedetailRecipe.getFrk_recipe());
+            Log.d("found","localDetailRecipe"+localDetailRecipe.getFrk_recipe());
             if (RemotedetailRecipe.getFrk_recipe() == localDetailRecipe.getFrk_recipe()) {
                 // Recipe exists locally; update it if necessary
-                if (!RemotedetailRecipe.equals(localDetailRecipe)) {
-                    // Update local recipe with remote data
-                    updateDetaliRecipeLocally(RemotedetailRecipe, localDetailRecipe.getFrk_recipe(), context);
-                }
+                //if (!RemotedetailRecipe.equals(localDetailRecipe)) {
+                    // Update local detail recipe with remote data
+                    updateDetaliRecipeLocally(RemotedetailRecipe, RemotedetailRecipe.getFrk_recipe(), context);
+                //}
                 found = true;
+                Log.d("found",""+found);
                 break;
             }
         }
         if (!found) {
             // Recipe doesn't exist locally; insert it
+            Log.d("found",""+found);
             insertDetailRecipeLocally(RemotedetailRecipe, context);
         }
 
@@ -239,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
     private static void updateDetaliRecipeLocally(Detail_Recipe remotedetailRecipe, int frk_recipe, Context context) {
         DetailRecipeDataSource detailRecipeDataSource = new DetailRecipeDataSource(context);
         detailRecipeDataSource.open();
-        detailRecipeDataSource.Update_Detail_Recipe(remotedetailRecipe, frk_recipe);
+        detailRecipeDataSource.Update_Detail_RecipeByIdRecipe(remotedetailRecipe, frk_recipe);
         detailRecipeDataSource.close();
     }
 
