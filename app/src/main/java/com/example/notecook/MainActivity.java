@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                         user_login.setUser(response.body());
                         TAG_CONNEXION_MESSAGE = response.message();
                         //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
-                        Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "Add User To Api", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "user updated To Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
 
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     int statusCode = response.code();
                     Constants.TAG_CONNEXION = statusCode;
                     TAG_CONNEXION_MESSAGE = response.message();
-                    Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "Add User To Api", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "User not updated To Api", Toast.LENGTH_LONG).show();
 
                     // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Main);
                     // Handle different status codes as per your API's conventions.
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
             insertDetailRecipeLocally(RemotedetailRecipe, context);
         }
 
-        boolean found1 = false;
+       /* boolean found1 = false;
         // Handle deleted recipes
         for (Detail_Recipe localDeatilRecipe : list_detail_recipe) {
 
@@ -232,6 +232,8 @@ public class MainActivity extends AppCompatActivity {
             // Recipe exists locally but not remotely; mark it as deleted
             markDetailRecipeAsDeletedLocally(RemotedetailRecipe, context);
         }
+
+        */
     }
 
     private static void insertDetailRecipeLocally(Detail_Recipe remotedetailRecipe, Context context) {

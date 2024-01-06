@@ -2,6 +2,7 @@ package com.example.notecook.Fragement;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
+import static com.example.notecook.Data.UserDatasource.insertUser;
 import static com.example.notecook.MainActivity.UpdateUserApi;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.deleteimage;
@@ -33,6 +34,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -172,6 +174,15 @@ public class Frg_EditProfil extends Fragment {
                     Vp2.setCurrentItem(0, false);
                     Vp2.setCurrentItem(4, false);
                     Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, (AppCompatActivity) getContext());
+                } else if (value == 0) {
+                    insertUser(getUser);
+                    Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "User insert success");
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.detach(Frg_EditProfil.this);
+                    fragmentTransaction.commitNow();
+                    pDialog.dismissWithAnimation();
+                    Vp2.setCurrentItem(0, false);
+                    Vp2.setCurrentItem(4, false);
                 } else {
                     Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "the Change Not saved");
                 }
@@ -183,8 +194,8 @@ public class Frg_EditProfil extends Fragment {
                     getUser.setIcon(null);
                     UpdateUserApi(getUser, getContext());
                     //Login.UpdateImageUserApi(icon,getUser.getUsername(),getContext());
-                    deleteimage(urlold,getContext());
-                    uploadImage(user_login.getUser().getUsername(),bitmap,"",getContext());
+                    deleteimage(urlold, getContext());
+                    uploadImage(user_login.getUser().getUsername(), bitmap, "", getContext());
                 }
             });
             pDialog.show();

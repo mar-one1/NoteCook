@@ -115,7 +115,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     /*
      * Commande sql pour la création des champs dans les table intial
      */
-    private static final String InsertDataUser = "INSERT INTO " + TABLE_USER  +
+    private static final String InsertDataUser = "INSERT INTO " + TABLE_USER +
             " (\"" + COLUMN_USERNAME + "\",\"" + COLUMN_PASSWORD + "\") values ('R','$2a$10$s0LOsngxGXQpiDywyvF6ceCBGN238klsEprYMtVWdpnlXruSNvjnO'); ";
 
     private static final String InsertDataRecipe = "INSERT INTO " + TABLE_RECIPE + "" +
@@ -127,8 +127,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             "('Mushroom Risotto',1)," +
             "('Spaghetti Bolognese',1)," +
             "('Vegetable Soup',1)," +
-            "('Grilled Salmon',1),"+
-            "('Pasta', '200g', 1),"+
+            "('Grilled Salmon',1)," +
+            "('Pasta', '200g', 1)," +
             "('Chocolate Cake', '200g', 1);";
 
     private static final String InsertDataDetailRecipe = "INSERT INTO " + TABLE_DETAIL_RECIPE + "" +
@@ -140,8 +140,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             "('Simmer chicken with spices and coconut milk.', 30, 5, 'medium', 450, 4), " +
             "('Chop lettuce, tomatoes, and cucumbers; drizzle with vinaigrette.', 10, 3, 'low', 120, 5)," +
             "('Brown ground beef and onions, then add tomato sauce and simmer.', 45, 4, 'medium', 380, 6)," +
-            "('Boil vegetables in broth, then blend until smooth.', 20, 3, 'easy', 180, 7),"+
-            "('Boil water for pasta', '5', '3', 'easy', 9),"+
+            "('Boil vegetables in broth, then blend until smooth.', 20, 3, 'easy', 180, 7)," +
+            "('Boil water for pasta', '5', '3', 'easy', 9)," +
             "('Preheat oven to 350°F', 10, 5,'medium', 10);";
 
     private static final String InsertDataIngredient = "INSERT INTO " + TABLE_INGREDIENT_RECIPE + "" +
@@ -161,8 +161,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             "('Onions', 50, 6)," +
             "('Tomato Sauce', 300, 6)," +
             "('Mixed Vegetables', 250, 7)," +
-            "('Vegetable Broth', 500, 7), "+
-            "('Pasta', '200g', 9),"+
+            "('Vegetable Broth', 500, 7), " +
+            "('Pasta', '200g', 9)," +
             "('Olive Oil', '2 tbsp', 2);";
 
 
@@ -194,8 +194,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             "  ('Step 1: Season the salmon fillet with salt and pepper.', 5, 8)," +
             "  ('Step 2: Preheat the grill to medium-high heat.', 10, 8)," +
             "  ('Step 3: Place the salmon fillet on the grill and cook for 5-7 minutes on each side.', 15, 8)," +
-            "  ('Step 4: Remove from the grill and drizzle with olive oil and lemon juice.', 5, 8),"+
-            "('Boil water for pasta', 5, 9),"+
+            "  ('Step 4: Remove from the grill and drizzle with olive oil and lemon juice.', 5, 8)," +
+            "('Boil water for pasta', 5, 9)," +
             "('Grease baking pan', 3, 10);";
 
     private static final String InsertDataReview = "INSERT INTO " + TABLE_REVIEW_RECIPE + "" +
@@ -210,8 +210,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             "  ('Delicious vegetable soup!', 4, 7)," +
             "  ('Delicious grilled salmon!', 5, 7)," +
             "  ('Perfectly cooked salmon.', 4, 7)," +
-            "  ('Easy and quick recipe.', 5, 7), "+
-            "('Delicious! Will make it again.', 5, 9),"+
+            "  ('Easy and quick recipe.', 5, 7), " +
+            "('Delicious! Will make it again.', 5, 9)," +
             "('Perfect cake, my family loved it.', 5, 2);";
 
 
