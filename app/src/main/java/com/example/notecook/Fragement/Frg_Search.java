@@ -5,8 +5,11 @@ import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_REMOTE;
 import static com.example.notecook.Utils.Constants.Token;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -22,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
+import com.example.notecook.BuildConfig;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -77,6 +81,12 @@ public class Frg_Search extends Fragment {
                 binding.HeartImgeclk.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
         });
 
+        binding.HeartImgeclk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings();
+            }
+        });
 
         binding.txtRecherche.addTextChangedListener(new TextWatcher() {
             List<String> list = new ArrayList<>();
@@ -109,6 +119,12 @@ public class Frg_Search extends Fragment {
 
 
         return binding.getRoot();
+    }
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
     }
 
     public void bindingRcV_recipes(RecyclerView recyclerView, List<Recipe> searchList, String tag) {
