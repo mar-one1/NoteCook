@@ -6,16 +6,29 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.notecook.R;
+import com.example.notecook.Utils.levelRecipe;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import okhttp3.internal.Util;
 
 public class add_recipe extends Fragment {
 
@@ -38,6 +51,25 @@ public class add_recipe extends Fragment {
         binding = FragmentAddRecipeBinding.inflate(inflater, container, false);
         int bnvId = R.id.bottom_nav;
         BottomNavigationView btnV = getActivity().findViewById(bnvId);
+
+        // Get the values of the enum
+        levelRecipe[] values = levelRecipe.values();
+
+        // Create an array of display names
+        String[] displayNames = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            displayNames[i] = values[i].name();
+        }
+
+        // Create an ArrayAdapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, displayNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Set the ArrayAdapter to the Spinner
+
+        binding.levelRecipe.setAdapter(adapter);
+
+        binding.levelRecipe.setAdapter(adapter);
 
         binding.dtRecipeTxt.setOnClickListener(new View.OnClickListener() {
             @Override

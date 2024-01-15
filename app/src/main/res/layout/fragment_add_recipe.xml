@@ -204,6 +204,7 @@
                     android:textSize="18sp" />
 
                 <Spinner
+                    android:id="@+id/level_recipe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="15dp"

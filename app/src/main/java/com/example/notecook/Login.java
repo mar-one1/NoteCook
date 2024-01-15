@@ -521,7 +521,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 for (User item : Constants.listUser) {
 
                     if (Objects.equals(item.getEmail(), acct.getEmail())) {
-                        if (!acct.getPhotoUrl().toString().equals("") && !acct.getPhotoUrl().equals(null)) {
+                        if (acct.getPhotoUrl() != null && !Objects.requireNonNull(acct.getPhotoUrl()).toString().equals("")) {
                             b = true;
                             updateGoogleUserImage(username, acct.getPhotoUrl().toString());
                         }
@@ -544,6 +544,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 Constants.AffichageMessage("Vous avez Register avec succes Localy", Login.this);
 
                 InsertUserApi(Newuser);
+                if(acct.getPhotoUrl()!=null)
                 updateGoogleUserImage(username, acct.getPhotoUrl().toString());
                 //MainActivity.uploadImage(Newuser.getUsername(),bitmap,getBaseContext());
             } else
