@@ -140,7 +140,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 if (b) {
                     binding.layoutLoginCheck.setVisibility(View.VISIBLE);
                     binding.layoutRegistre.setVisibility(View.GONE);
-                    String s = binding.txtUsername.getText().toString() + "_" + binding.txtFirstnameLast.getText().toString();
+                    String s = binding.txtUsername.getText().toString()+"_"+binding.txtFirstnameLast.getText().toString();
                     binding.etUsername.setText(s);
                     binding.etPassword.setText("");
                 }
@@ -491,8 +491,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             String personEmail = acct.getEmail();
             String personId = acct.getId();
             Uri personPhoto = acct.getPhotoUrl();
-            if (personName.contains(" "))
-                personName = personName.replace(" ", "_");
+            if(personName.contains(" "))
+                personName = personName.replace(" ","_");
             binding.etUsername.setText(personName);
             binding.etPassword.setText(acct.getId());
 
@@ -514,17 +514,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(Login.this);
             //Toast.makeText(getBaseContext(), acct.getPhotoUrl().toString(),Toast.LENGTH_LONG).show();
             String username = acct.getDisplayName();
-            if (username.contains(" "))
-                username = username.replace(" ", "_");
+            if(username.contains(" "))
+             username = username.replace(" ","_");
             boolean b = false;
             if (Constants.listUser.size() != 0)
                 for (User item : Constants.listUser) {
 
                     if (Objects.equals(item.getEmail(), acct.getEmail())) {
-                        if (!acct.getPhotoUrl().toString().equals("") && !acct.getPhotoUrl().equals(null)) {
-                            b = true;
-                            updateGoogleUserImage(username, acct.getPhotoUrl().toString());
-                        }
+                        b = true;
+                        if(acct.getPhotoUrl()!=null)
+                        updateGoogleUserImage(username,acct.getPhotoUrl().toString());
                         break;
                     }
                 }
@@ -544,7 +543,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 Constants.AffichageMessage("Vous avez Register avec succes Localy", Login.this);
 
                 InsertUserApi(Newuser);
-                updateGoogleUserImage(username, acct.getPhotoUrl().toString());
+                if(acct.getPhotoUrl()!=null)
+                updateGoogleUserImage(username,acct.getPhotoUrl().toString());
                 //MainActivity.uploadImage(Newuser.getUsername(),bitmap,getBaseContext());
             } else
                 Toast.makeText(this, "Welcome Back " + acct.getDisplayName(), Toast.LENGTH_LONG).show();
@@ -579,7 +579,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
                             newUser.setIcon(null);
                             InsertUserApi(newUser);
-                            MainActivity.uploadImage(newUser.getUsername(), bitmap, "register", getBaseContext());
+                            if(binding.editIconProfil.getDrawable().getConstantState()!=getResources().getDrawable(R.drawable.add_photo_profil).getConstantState())
+                            MainActivity.uploadImage(newUser.getUsername(), bitmap,"register", getBaseContext());
                         }
                         if (!Objects.equals(newUser.getUsername(), ""))
                             Constants.AffichageMessage("Vous avez Register avec succes in local", Login.this);
@@ -888,9 +889,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 // Create a RequestBody from the string
         RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), jsonInputString);
 
-        // Create a service using the Retrofit interface
+    // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // Call the method to upload the file
+    // Call the method to upload the file
         Call<String> call = apiService.updateUserGoogleImageUrl(username, requestBody);
         call.enqueue(new Callback<String>() {
             @Override
