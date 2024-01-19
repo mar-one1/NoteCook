@@ -37,7 +37,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -62,9 +62,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.regex.Matcher;
