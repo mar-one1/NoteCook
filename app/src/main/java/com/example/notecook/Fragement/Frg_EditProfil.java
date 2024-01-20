@@ -12,7 +12,6 @@ import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
-import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
@@ -192,8 +191,10 @@ public class Frg_EditProfil extends Fragment {
                 if (!Objects.equals(user_login.getMessage(), TAG_LOCAL)) {
                     getUser.setId_User(user_login.getUser().getId_User());
                     getUser.setIcon(null);
-                    UpdateUserApi(getUser, getContext());
-                    //Login.UpdateImageUserApi(icon,getUser.getUsername(),getContext());
+                    User userlogin = user_login.getUser();
+                    userlogin.setIcon(null);
+                    if (userlogin != getUser)
+                        UpdateUserApi(getUser, getContext());
                     deleteimage(urlold, getContext());
                     uploadImage(user_login.getUser().getUsername(), bitmap, "", getContext());
                 }

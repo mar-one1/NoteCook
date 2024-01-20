@@ -53,8 +53,8 @@ public interface ApiService {
     Call<User> getUserByIdRecipe(@Header("Authorization") String token, @Path("id") int recipeId);
 
     @POST("recipes")
-    @Headers("Content-Type: application/json")
-    Call<Recipe> createRecipe(@Body Recipe recipe);
+    //@Headers("Content-Type: application/json")
+    Call<Recipe> createRecipe(@Header("Authorization") String token,@Body Recipe recipe);
 
     @PUT("recipes/{id}")
     @Headers("Content-Type: application/json")

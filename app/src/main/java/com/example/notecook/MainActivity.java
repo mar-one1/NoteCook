@@ -503,6 +503,33 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public static void InsertRecipeApi(Recipe recipe ,Context context) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        // Enqueue the download request
+        Call<Recipe> call = apiService.createRecipe(Token,recipe);
+        call.enqueue(new Callback<Recipe>() {
+            @Override
+            public void onResponse(Call<Recipe> call, Response<Recipe> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    //ResponseBody responseBody = response.body();
+
+                    //fetchImage(str,tag,0,context);
+                    Toast.makeText(context, "succes  Created Api ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful Created Api" + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Recipe> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "Handle failure Insert Recipe to api", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public static void deleteimage(String s, Context context) {
 
         ApiService apiService = ApiClient.getClient().create(ApiService.class);

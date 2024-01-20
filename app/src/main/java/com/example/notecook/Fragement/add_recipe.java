@@ -1,5 +1,8 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.MainActivity.InsertRecipeApi;
+import static com.example.notecook.Utils.Constants.user_login;
+
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.levelRecipe;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
@@ -82,6 +86,14 @@ public class add_recipe extends Fragment {
             @Override
             public void onClick(View v) {
                 clickhid(binding.stepLy);
+            }
+        });
+
+        binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(),null,0,user_login.getUser().getId_User());
+                InsertRecipeApi(recipe,getContext());
             }
         });
 
