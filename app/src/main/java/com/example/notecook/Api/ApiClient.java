@@ -8,15 +8,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     //private static final String BASE_URL = "http://10.0.2.2:3000/";
-    public static final String BASE_URL = "https://4b9b-196-64-115-13.ngrok-free.app/";
+    public static final String BASE_URL = "https://1d0b-196-75-166-199.ngrok-free.app/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient() {
         if (retrofit == null) {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(15, TimeUnit.SECONDS) // Connection timeout
-                    .readTimeout(15, TimeUnit.SECONDS)    // Read timeout
-                    .writeTimeout(15, TimeUnit.SECONDS)   // Write timeout
+                    .readTimeout(30, TimeUnit.SECONDS)    // Read timeout
+                    .writeTimeout(30, TimeUnit.SECONDS)   // Write timeout
                     .build();
 
             retrofit = new Retrofit.Builder()

@@ -18,6 +18,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -238,7 +239,7 @@ public class Frg_EditProfil extends Fragment {
             Vp2.setCurrentItem(4, false);
         });
 
-        binding.editIconProfil.setOnClickListener(view -> captureImage());
+        binding.editIconProfil.setOnClickListener(view -> captureImage(getContext()));
 
         binding.logOut.setOnClickListener(view -> {
             SweetAlertDialog ppDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE);
@@ -282,19 +283,19 @@ public class Frg_EditProfil extends Fragment {
     }
 
 
-    private void captureImage() {
+    public void captureImage(Context context) {
         final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Add Photo!");
         builder.setItems(options, (dialog, item) -> {
 
             if (options[item].equals("Take Photo")) {
-                if (ContextCompat.checkSelfPermission(getActivity(),
+                if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
                 }
-                if (ContextCompat.checkSelfPermission(getActivity(),
+                if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.CAMERA)
                         == PackageManager.PERMISSION_GRANTED) {
 
@@ -307,14 +308,14 @@ public class Frg_EditProfil extends Fragment {
 
 
             } else if (options[item].equals("Choose from Gallery")) {
-                if (ContextCompat.checkSelfPermission(getActivity(),
+                if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{
                                     Manifest.permission.READ_EXTERNAL_STORAGE}
                             , STORAGE_PERMISSION_CODE);
                 }
-                if (ContextCompat.checkSelfPermission(getActivity(),
+                if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
                     Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);

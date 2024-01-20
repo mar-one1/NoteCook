@@ -9,30 +9,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.levelRecipe;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import okhttp3.internal.Util;
 
 public class add_recipe extends Fragment {
 
@@ -41,6 +31,7 @@ public class add_recipe extends Fragment {
     public add_recipe() {
         // Required empty public constructor
     }
+
 
 
     @Override
@@ -64,6 +55,14 @@ public class add_recipe extends Fragment {
         for (int i = 0; i < values.length; i++) {
             displayNames[i] = values[i].name();
         }
+
+        binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity f= new MainActivity();
+                f.captureImage(getContext());
+            }
+        });
 
         // Create an ArrayAdapter
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, displayNames);
@@ -92,17 +91,29 @@ public class add_recipe extends Fragment {
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(),null,0,user_login.getUser().getId_User());
-                InsertRecipeApi(recipe,getContext());
+                Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
+                InsertRecipeApi(recipe, getContext());
             }
         });
 
-        binding.btnPlusTime.setOnClickListener(view -> {clickPlus(binding.txtTotTime,binding.btnPlusTime,binding.btnMoinsTime);});
-        binding.btnMoinsTime.setOnClickListener(view -> { clickMoins(binding.txtTotTime,binding.btnMoinsTime,binding.btnMoinsTime);});
-        binding.btnPlusTimesp.setOnClickListener(view -> {clickPlus(binding.txtTotTiemsp,binding.btnPlusTimesp,binding.btnMoinsTimesp);});
-        binding.btnMoinsTimesp.setOnClickListener(view -> { clickMoins(binding.txtTotTiemsp,binding.btnMoinsTimesp,binding.btnMoinsTimesp);});
-        binding.btnPlusCal.setOnClickListener(view -> {clickPlus(binding.txtTotCal,binding.btnPlusCal,binding.btnMoinsCal);});
-        binding.btnMoinsCal.setOnClickListener(view -> { clickMoins(binding.txtTotCal,binding.btnMoinsCal,binding.btnMoinsCal);});
+        binding.btnPlusTime.setOnClickListener(view -> {
+            clickPlus(binding.txtTotTime, binding.btnPlusTime, binding.btnMoinsTime);
+        });
+        binding.btnMoinsTime.setOnClickListener(view -> {
+            clickMoins(binding.txtTotTime, binding.btnMoinsTime, binding.btnMoinsTime);
+        });
+        binding.btnPlusTimesp.setOnClickListener(view -> {
+            clickPlus(binding.txtTotTiemsp, binding.btnPlusTimesp, binding.btnMoinsTimesp);
+        });
+        binding.btnMoinsTimesp.setOnClickListener(view -> {
+            clickMoins(binding.txtTotTiemsp, binding.btnMoinsTimesp, binding.btnMoinsTimesp);
+        });
+        binding.btnPlusCal.setOnClickListener(view -> {
+            clickPlus(binding.txtTotCal, binding.btnPlusCal, binding.btnMoinsCal);
+        });
+        binding.btnMoinsCal.setOnClickListener(view -> {
+            clickMoins(binding.txtTotCal, binding.btnMoinsCal, binding.btnMoinsCal);
+        });
 
         btnV.setOnNavigationItemSelectedListener(
                 item -> {
@@ -201,7 +212,7 @@ public class add_recipe extends Fragment {
         }
     }
 
-    private void clickMoins(TextView textView, Button buttonPlus,Button buttonMoins) {
+    private void clickMoins(TextView textView, Button buttonPlus, Button buttonMoins) {
         int t = Integer.parseInt(textView.getText().toString());
         if (t <= 0) {
             buttonMoins.setEnabled(false);
@@ -210,7 +221,7 @@ public class add_recipe extends Fragment {
         textView.setText("" + t);
     }
 
-    private void clickPlus(TextView textView, Button button,Button buttonMoins) {
+    private void clickPlus(TextView textView, Button button, Button buttonMoins) {
         int t = Integer.parseInt(textView.getText().toString());
         buttonMoins.setEnabled(true);
         t++;

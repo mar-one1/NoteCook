@@ -15,11 +15,14 @@ import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
+import static com.example.notecook.Utils.Constants.listUser;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -30,12 +33,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -130,6 +135,50 @@ public class MainActivity extends AppCompatActivity {
         return imageBytes;
     }
 
+    public void captureImage(Context context) {
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Add Photo!");
+        builder.setItems(options, (dialog, item) -> {
+
+            if (options[item].equals("Take Photo")) {
+                if (ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                }
+                if (ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_GRANTED) {
+
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    String picture = getString(R.string.Puctire);
+                    String pick = getString(R.string.pick);
+//                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                }
+
+
+            } else if (options[item].equals("Choose from Gallery")) {
+                if (ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{
+                                    Manifest.permission.READ_EXTERNAL_STORAGE}
+                            , STORAGE_PERMISSION_CODE);
+                }
+                if (ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
+                }
+            } else if (options[item].equals("Cancel")) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
     public static void UpdateUserApi(User user, Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         // Example: Fetch users from the API
@@ -576,6 +625,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        list_recipe.clear();
+        listUser.clear();
+        Remotelist_recipe.clear();
 
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);

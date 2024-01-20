@@ -10,7 +10,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-
+        <ImageView
+            android:id="@+id/add_icon_recipe"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center"
+            android:background="@color/float_transparent"
+            android:src="@drawable/add_photo_profil" />
         <!-- Recipe Name -->
         <TextView
             android:id="@+id/textViewRecipeName"
