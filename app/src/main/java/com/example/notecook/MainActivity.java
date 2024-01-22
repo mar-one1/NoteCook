@@ -21,8 +21,6 @@ import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,18 +31,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.ConnexionRetrofit;
@@ -52,12 +47,8 @@ import com.example.notecook.Api.TokenResponse;
 import com.example.notecook.Data.DetailRecipeDataSource;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
-import com.example.notecook.Fragement.Acceuill_Frg;
 import com.example.notecook.Fragement.MainFragment;
-import com.example.notecook.Model.Categorie_Food;
 import com.example.notecook.Model.Detail_Recipe;
-import com.example.notecook.Model.Ingredient_recipe;
-import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
@@ -90,27 +81,18 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int CAMERA_REQUEST = 1888;
-    private final static String EXIST = "exist";
+
     private static final int REQUEST_CODE = 1000;
     public static String Type_User = "";
     public static byte[] iconUser = null;
     private static ArrayList<String> array_image = new ArrayList<>();
     private static List<Detail_Recipe> list_detail_recipe = new ArrayList<>();
-    private final int STORAGE_PERMISSION_CODE = 23;
-    private final int GALLERY_REQUEST_CODE = 24;
+
     public SharedPreferences sharedPreferences;
     SimpleService service = new SimpleService();
     IntentFilter filtreConectivite = new IntentFilter();
     NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
     FragmentTransaction fragmentTransaction;
-    Adapter_RC_RecipeDt adapter_rc_menuCat;
-    Acceuill_Frg acceuill_frg;
-    Categorie_Food categorie_food;
-    Recipe mRecipe;
-    SweetAlertDialog pDialog;
-    private ArrayList<Ingredients> listIngredient;
-    private ArrayList<Ingredient_recipe> listIngredientRecipe;
 
     private boolean doubleBackToExitPressedOnce = false;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -135,50 +117,62 @@ public class MainActivity extends AppCompatActivity {
         return imageBytes;
     }
 
-    public void captureImage(Context context) {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Add Photo!");
-        builder.setItems(options, (dialog, item) -> {
+    public static void uploadImageRecipe(int idRecipe, Bitmap bitmp, Context context) {
 
-            if (options[item].equals("Take Photo")) {
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-                }
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.CAMERA)
-                        == PackageManager.PERMISSION_GRANTED) {
+        File filesDir = context.getFilesDir();
+        File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
 
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    String picture = getString(R.string.Puctire);
-                    String pick = getString(R.string.pick);
-//                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
-                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                }
+        // Convert bitmap to file
+        try {
+            OutputStream os = new FileOutputStream(imageFile);
+            bitmp.compress(Bitmap.CompressFormat.JPEG, 100, os); // Compress bitmap into JPEG with quality 100%
+            os.flush();
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Create a File instance with the path to the file to upload
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
 
+// Create MultipartBody.Part instance from the RequestBody
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
+// Create a service using the Retrofit interface
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+// Call the method to upload the file
+        Call<ResponseBody> call = apiService.uploadRecipeFile(idRecipe, filePart);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    String path = null;
+                    try {
+                        path = response.body().string();
+                        //String str = new String(bytes, StandardCharsets.UTF_8);
+                        path = path.replaceAll("\"", "");// For UTF-8 encoding
+//                            user_login.getUser().setPathimageuser(path);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
+                    // File upload successful
+                    //fetchImage(path);
+                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
 
-            } else if (options[item].equals("Choose from Gallery")) {
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{
-                                    Manifest.permission.READ_EXTERNAL_STORAGE}
-                            , STORAGE_PERMISSION_CODE);
+                } else {
+                    // Handle unsuccessful upload
+                    Toast.makeText(context, "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
                 }
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
-                }
-            } else if (options[item].equals("Cancel")) {
-                dialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
-        builder.show();
     }
+
+
     public static void UpdateUserApi(User user, Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         // Example: Fetch users from the API
@@ -248,23 +242,23 @@ public class MainActivity extends AppCompatActivity {
         list_detail_recipe = getAllocalDR(context);
         boolean found = false;
         for (Detail_Recipe localDetailRecipe : list_detail_recipe) {
-            Log.d("found","fooor"+localDetailRecipe.getDt_recipe());
-            Log.d("found","RemotedetailRecipe"+RemotedetailRecipe.getFrk_recipe());
-            Log.d("found","localDetailRecipe"+localDetailRecipe.getFrk_recipe());
+            Log.d("found", "fooor" + localDetailRecipe.getDt_recipe());
+            Log.d("found", "RemotedetailRecipe" + RemotedetailRecipe.getFrk_recipe());
+            Log.d("found", "localDetailRecipe" + localDetailRecipe.getFrk_recipe());
             if (RemotedetailRecipe.getFrk_recipe() == localDetailRecipe.getFrk_recipe()) {
                 // Recipe exists locally; update it if necessary
                 //if (!RemotedetailRecipe.equals(localDetailRecipe)) {
-                    // Update local detail recipe with remote data
-                    updateDetaliRecipeLocally(RemotedetailRecipe, RemotedetailRecipe.getFrk_recipe(), context);
+                // Update local detail recipe with remote data
+                updateDetaliRecipeLocally(RemotedetailRecipe, RemotedetailRecipe.getFrk_recipe(), context);
                 //}
                 found = true;
-                Log.d("found",""+found);
+                Log.d("found", "" + found);
                 break;
             }
         }
         if (!found) {
             // Recipe doesn't exist locally; insert it
-            Log.d("found",""+found);
+            Log.d("found", "" + found);
             insertDetailRecipeLocally(RemotedetailRecipe, context);
         }
 
@@ -552,17 +546,17 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void InsertRecipeApi(Recipe recipe ,Context context) {
+    public static void InsertRecipeApi(Recipe recipe,Bitmap bitmap, Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
         // Enqueue the download request
-        Call<Recipe> call = apiService.createRecipe(Token,recipe);
+        Call<Recipe> call = apiService.createRecipe(Token, recipe);
         call.enqueue(new Callback<Recipe>() {
             @Override
             public void onResponse(Call<Recipe> call, Response<Recipe> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     //ResponseBody responseBody = response.body();
-
+                    uploadImageRecipe(recipe.getId_recipe(),bitmap,context);
                     //fetchImage(str,tag,0,context);
                     Toast.makeText(context, "succes  Created Api ", Toast.LENGTH_SHORT).show();
                 } else {
@@ -578,6 +572,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     public static void deleteimage(String s, Context context) {
 
@@ -603,6 +598,15 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("tag", "Handle failure" + t);
             }
         });
+    }
+
+    private static List<Detail_Recipe> getAllocalDR(Context context) {
+        List<Detail_Recipe> localDetaliRecipes;
+        DetailRecipeDataSource detailRecipeDataSource = new DetailRecipeDataSource(context);
+        detailRecipeDataSource.open();
+        localDetaliRecipes = detailRecipeDataSource.getAllDR();
+        detailRecipeDataSource.close();
+        return localDetaliRecipes;
     }
 
     @Override
@@ -905,18 +909,9 @@ public class MainActivity extends AppCompatActivity {
             }
             if (!found) {
                 // Recipe exists locally but not remotely; mark it as deleted
-                markRecipeAsDeletedLocally(localRecipe,getBaseContext());
+                markRecipeAsDeletedLocally(localRecipe, getBaseContext());
             }
         }
-    }
-
-    private static List<Detail_Recipe> getAllocalDR(Context context) {
-        List<Detail_Recipe> localDetaliRecipes;
-        DetailRecipeDataSource detailRecipeDataSource = new DetailRecipeDataSource(context);
-        detailRecipeDataSource.open();
-        localDetaliRecipes = detailRecipeDataSource.getAllDR();
-        detailRecipeDataSource.close();
-        return localDetaliRecipes;
     }
 
     private void insertRecipeLocally(Recipe remoteRecipe) {

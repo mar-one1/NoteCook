@@ -83,6 +83,12 @@ public interface ApiService {
                                   @Part MultipartBody.Part image
     );
 
+    @Multipart
+    @POST("recipes/upload/{id}")
+    Call<ResponseBody> uploadRecipeFile(@Path("id") int username,
+                                  @Part MultipartBody.Part image
+    );
+
     @DELETE("users/delete/{path}")
     Call<ResponseBody> deleteimage(@Path("path") String fileUrl);
 

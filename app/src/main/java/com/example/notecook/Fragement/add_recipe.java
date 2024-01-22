@@ -3,9 +3,20 @@ package com.example.notecook.Fragement;
 import static com.example.notecook.MainActivity.InsertRecipeApi;
 import static com.example.notecook.Utils.Constants.user_login;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +25,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -31,13 +45,9 @@ public class add_recipe extends Fragment {
     public add_recipe() {
         // Required empty public constructor
     }
-
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -59,8 +69,7 @@ public class add_recipe extends Fragment {
         binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity f= new MainActivity();
-                f.captureImage(getContext());
+                captureImage(getContext());
             }
         });
 
@@ -91,8 +100,9 @@ public class add_recipe extends Fragment {
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Bitmap bitmap = ((BitmapDrawable)binding.addIconRecipe.getDrawable()).getBitmap();
                 Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
-                InsertRecipeApi(recipe, getContext());
+                InsertRecipeApi(recipe,bitmap, getContext());
             }
         });
 
@@ -144,6 +154,73 @@ public class add_recipe extends Fragment {
         // Inflate the layout for this fragmentè
         return binding.getRoot();
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == CAMERA_REQUEST) {
+                Bitmap photo = (Bitmap) data.getExtras().get("data");
+                binding.addIconRecipe.setImageBitmap(photo);
+            } else if (requestCode == GALLERY_REQUEST_CODE) {
+                Uri selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+                    // update the preview image in the layout
+                    binding.addIconRecipe.setImageURI(selectedImageUri);
+                }
+            }
+        }
+    }
+
+    private static final int CAMERA_REQUEST = 1888;
+    private final int STORAGE_PERMISSION_CODE = 23;
+    private final int GALLERY_REQUEST_CODE = 24;
+
+    public void captureImage(Context context) {
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Add Photo!");
+        builder.setItems(options, (dialog, item) -> {
+
+            if (options[item].equals("Take Photo")) {
+                if (ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                }
+                if (ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_GRANTED) {
+
+                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    String picture = getString(R.string.Puctire);
+                    String pick = getString(R.string.pick);
+//                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                }
+
+
+            } else if (options[item].equals("Choose from Gallery")) {
+                if (ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{
+                                    Manifest.permission.READ_EXTERNAL_STORAGE}
+                            , STORAGE_PERMISSION_CODE);
+                }
+                if (ContextCompat.checkSelfPermission(context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
+                }
+            } else if (options[item].equals("Cancel")) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+    }
+
 
     private void expand(LinearLayout linearLayout) {
         linearLayout.setVisibility(View.VISIBLE);
