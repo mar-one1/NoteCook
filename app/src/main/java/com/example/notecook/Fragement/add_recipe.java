@@ -17,6 +17,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,6 +103,7 @@ public class add_recipe extends Fragment {
             public void onClick(View view) {
                 Bitmap bitmap = ((BitmapDrawable)binding.addIconRecipe.getDrawable()).getBitmap();
                 Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
+                Log.d("TAG",""+user_login.getUser().getId_User());
                 InsertRecipeApi(recipe,bitmap, getContext());
             }
         });

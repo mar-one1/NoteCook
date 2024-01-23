@@ -35,9 +35,11 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Api.ApiClient;
@@ -55,6 +57,7 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
+import com.example.notecook.ViewModel.RecipeViewModel;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 // Call the method to upload the file
-        Call<ResponseBody> call = apiService.uploadRecipeFile(idRecipe, filePart);
+        Call<ResponseBody> call = apiService.uploadRecipeFile(Token,idRecipe, filePart);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -179,13 +182,14 @@ public class MainActivity extends AppCompatActivity {
 
         //RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/*"), user.getIcon());
 
-        Call<User> call = apiService.updateUserByUsername(user.getUsername(), user);
+        Call<User> call = apiService.updateUserByUsername(user.getUsername().toString(), user);
 
         call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(@androidx.annotation.NonNull Call<User> call, @androidx.annotation.NonNull Response<User> response) {
                 if (response.isSuccessful()) {
                     User UserResponse = response.body();
+//                    user_login.setUser(response.body());
                     if (UserResponse != null) {
                         // Store the token securely (e.g., in SharedPreferences) for later use
                         TAG_CONNEXION = response.code();
@@ -555,8 +559,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Recipe> call, Response<Recipe> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    Recipe recipe1 = response.body();
+                    Log.d("TAG",recipe1.getId_recipe()+"et nom :  "+ recipe1.getNom_recipe());
                     //ResponseBody responseBody = response.body();
-                    uploadImageRecipe(recipe.getId_recipe(),bitmap,context);
+                    uploadImageRecipe(recipe1.getId_recipe(),bitmap,context);
                     //fetchImage(str,tag,0,context);
                     Toast.makeText(context, "succes  Created Api ", Toast.LENGTH_SHORT).show();
                 } else {
@@ -652,7 +658,19 @@ public class MainActivity extends AppCompatActivity {
         // get Recipe From Api
         getLocalRecipes();
         list_detail_recipe = getAllocalDR(getBaseContext());
-        getRecipeApi();
+
+        RecipeViewModel model = new RecipeViewModel();
+        model.getRecipe(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(@Nullable List<Recipe> recipeList) {
+                Remotelist_recipe.clear();
+                Remotelist_recipe = (ArrayList<Recipe>) recipeList;
+            }
+        });
+
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fl_main, new MainFragment());
+        fragmentTransaction.commit();
         if (user_login.getUser() == null)
             getUserApi("", getBaseContext());
         else getUserApi(user_login.getUser().getUsername(), getBaseContext());
@@ -877,113 +895,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void synchronizeData(List<Recipe> localRecipes, List<Recipe> remoteRecipes) {
-        // Step 1: Compare local and remote data to identify differences
-        for (Recipe remoteRecipe : remoteRecipes) {
-            boolean found = false;
-            for (Recipe localRecipe : localRecipes) {
-                if (remoteRecipe.getId_recipe() == localRecipe.getId_recipe()) {
-                    // Recipe exists locally; update it if necessary
-                    if (!remoteRecipe.equals(localRecipe)) {
-                        // Update local recipe with remote data
-                        updateRecipeLocally(remoteRecipe, localRecipe.getId_recipe());
-                    }
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                // Recipe doesn't exist locally; insert it
-                insertRecipeLocally(remoteRecipe);
-            }
-        }
-
-        // Handle deleted recipes
-        for (Recipe localRecipe : localRecipes) {
-            boolean found = false;
-            for (Recipe remoteRecipe : remoteRecipes) {
-                if (localRecipe.getId_recipe() == remoteRecipe.getId_recipe()) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                // Recipe exists locally but not remotely; mark it as deleted
-                markRecipeAsDeletedLocally(localRecipe, getBaseContext());
-            }
-        }
-    }
-
-    private void insertRecipeLocally(Recipe remoteRecipe) {
-        RecipeDatasource recipeDatasource = new RecipeDatasource(this);
-        recipeDatasource.open();
-        createRecipe(remoteRecipe.getIcon_recipe(), remoteRecipe.getNom_recipe(), remoteRecipe.getFav(), 1);
-        recipeDatasource.close();
-    }
-
-    private void updateRecipeLocally(Recipe remoteRecipe, int id) {
-        RecipeDatasource recipeDatasource = new RecipeDatasource(this);
-        recipeDatasource.open();
-        recipeDatasource.UpdateRecipe(remoteRecipe, id);
-        recipeDatasource.close();
-    }
-
-    private void getRecipeApi() {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        Call<List<Recipe>> call = apiService.getAllRecipes(getToken());
-        call.enqueue(new Callback<List<Recipe>>() {
-            @Override
-            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
-                if (response.isSuccessful()) {
-                    List<Recipe> recipes = response.body();
-                    Log.d("recipes", recipes.toString());
-                    for (Recipe recipe : recipes) {
-                        Toast.makeText(MainActivity.this, "" + recipe.getPathimagerecipe(), Toast.LENGTH_SHORT).show();
-                        //Log.d("tag", String.valueOf(recipe.getIcon_recipe()));
-                        byte[] imagepath = Arrays.toString(recipe.getIcon_recipe()).getBytes();
-                        //recipe.setIcon_recipe(imagepath);
-                        //Log.d("tag",recipe.getIcon_recipe().toString());
-                        Remotelist_recipe.add(recipe);
-                    }
-                    //for (int i = 0;i<recipes.size();i++) {
-                    //    fetchImage(recipes.get(i).getPathimagerecipe(), "image_recipe",i, getBaseContext());
-                    //}
-                    //Remotelist_recipe.addAll(recipes);
-                    Log.d("listrecipes", Remotelist_recipe.toString());
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    TAG_CONNEXION = response.code();
-                    //TokenApi(Token);
-                    if (Remotelist_recipe.size() != 0) {
-                        synchronizeData(list_recipe, Remotelist_recipe);
-                    }
-                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.fl_main, new MainFragment());
-                    fragmentTransaction.commit();
-                } else {
-                    // Handle error response here
-                    int statusCode = response.code();
-                    TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    if (response.errorBody() != null) {
-                        try {
-                            String errorResponse = response.errorBody().string();
-                            // Print or log the errorResponse for debugging
-                            Log.e("token", "Error Response: " + errorResponse);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                TAG_CONNEXION = call.hashCode();
-            }
-        });
 
 
-    }
 
     public void getReviewRecipeApi(int idRecipe) {
 

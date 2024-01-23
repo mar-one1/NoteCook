@@ -13,7 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +28,7 @@ import com.example.notecook.Model.Categorie_Food;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentAcceuillFrgBinding;
 
 import java.util.ArrayList;
@@ -34,10 +37,10 @@ import java.util.List;
 public class Acceuill_Frg extends Fragment {
 
     public RecyclerView mRecyclerView;
+    public LayoutInflater inflater;
     Categorie_Food categorie_food;
     Recipe mRecipe;
     private FragmentAcceuillFrgBinding binding;
-    public LayoutInflater inflater;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public Acceuill_Frg() {
@@ -48,6 +51,8 @@ public class Acceuill_Frg extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
     }
 
     @Override
@@ -65,8 +70,17 @@ public class Acceuill_Frg extends Fragment {
             ViewPager2 viewPager2 = getActivity().findViewById(R.id.vp2);
             viewPager2.setCurrentItem(2, false);
         });
-        bindingRcV_categories(binding.RcCatMenu, true);
-        bindingRcV_recipes(binding.RcCatPopular, true);
+
+        RecipeViewModel model = new RecipeViewModel();
+        model.getRecipe(getContext()).observe(getActivity(), new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(@Nullable List<Recipe> recipeList) {
+                bindingRcV_recipes(recipeList,binding.RcCatPopular, true);
+                bindingRcV_categories(binding.RcCatMenu, true);
+            }
+        });
+
+
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -93,8 +107,7 @@ public class Acceuill_Frg extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        bindingRcV_categories(binding.RcCatMenu, true);
-//        bindingRcV_recipes(binding.RcCatPopular, true);
+
     }
 
     @Override
@@ -145,19 +158,18 @@ public class Acceuill_Frg extends Fragment {
     }
 
 
-    public void bindingRcV_recipes(RecyclerView mRecyclerView, boolean isgarde) {
+    public void bindingRcV_recipes(List<Recipe> list,RecyclerView mRecyclerView, boolean isgarde) {
         List<Recipe> list_recipes = new ArrayList<>();
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
         for (int i = 0; i < 2; i++) {
-            mRecipe = new Recipe("*****",null, 1,1);
+            mRecipe = new Recipe("*****", null, 1, 1);
             //mRecipe = new Recipe();
             list_recipes.add(mRecipe);
         }
         //if(TAG_CONNEXION==200)
         if (!Remotelist_recipe.isEmpty()) {
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(Remotelist_recipe, TAG_ONLINE);
-        }
-        else adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe, TAG_OFFLINE);
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list, TAG_ONLINE);
+        } else adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe, TAG_OFFLINE);
         // adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe,true);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(HORIZONTAL);

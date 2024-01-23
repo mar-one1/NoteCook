@@ -166,7 +166,7 @@ public class Frg_EditProfil extends Fragment {
                 int value = mUserDatasource.UpdateUserByUsername(getUser, user_login.getUser().getUsername());
                 Toast.makeText(getContext(), String.valueOf(value), Toast.LENGTH_SHORT).show();
                 if (value == 1) {
-                    user_login.setUser(getUser);
+                    //user_login.setUser(getUser);
                     FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.detach(Frg_EditProfil.this);
                     fragmentTransaction.commitNow();
