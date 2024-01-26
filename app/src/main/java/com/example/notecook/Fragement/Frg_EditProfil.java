@@ -147,6 +147,7 @@ public class Frg_EditProfil extends Fragment {
             });
             pDialog.setCancelButton("oui", sweetAlertDialog -> {
                 String urlold = user_login.getUser().getPathimageuser();
+                User currentuser = user_login.getUser();
                 mUserDatasource = new UserDatasource(getContext());
                 mUserDatasource.open();
                 String nom = binding.Nome.getText().toString();
@@ -162,11 +163,11 @@ public class Frg_EditProfil extends Fragment {
                 String username = user_login.getUser().getUsername();
                 String Status = user_login.getUser().getStatus();
                 String grade = user_login.getUser().getGrade();
-                getUser = new User(username, nom, prenom, naissance, mail, icon, tel, pass, Status, grade);
+                getUser = new User(user_login.getUser().getId_User(), username, nom, prenom, naissance, mail, icon, tel, pass, Status, grade,currentuser.getPathimageuser());
                 int value = mUserDatasource.UpdateUserByUsername(getUser, user_login.getUser().getUsername());
                 Toast.makeText(getContext(), String.valueOf(value), Toast.LENGTH_SHORT).show();
                 if (value == 1) {
-                    //user_login.setUser(getUser);
+                    user_login.setUser(getUser);
                     FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.detach(Frg_EditProfil.this);
                     fragmentTransaction.commitNow();
@@ -190,11 +191,9 @@ public class Frg_EditProfil extends Fragment {
                 mUserDatasource.close();
 
                 if (!Objects.equals(user_login.getMessage(), TAG_LOCAL)) {
-                    getUser.setId_User(user_login.getUser().getId_User());
+                    currentuser.setIcon(null);
                     getUser.setIcon(null);
-                    User userlogin = user_login.getUser();
-                    userlogin.setIcon(null);
-                    if (userlogin != getUser)
+                    if (!currentuser.equals(getUser))
                         UpdateUserApi(getUser, getContext());
                     deleteimage(urlold, getContext());
                     uploadImage(user_login.getUser().getUsername(), bitmap, "", getContext());

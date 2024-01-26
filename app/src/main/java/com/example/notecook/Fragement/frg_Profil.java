@@ -147,7 +147,6 @@ public class frg_Profil extends Fragment {
         });
         return binding.getRoot();
     }
-
     public void setViewPagerAdapter() {
         Adapter_Vp2_recipeProfil viewPager2Adapter = new
                 Adapter_Vp2_recipeProfil(getActivity());

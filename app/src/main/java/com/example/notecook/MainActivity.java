@@ -1,7 +1,6 @@
 package com.example.notecook;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
-import static com.example.notecook.Data.RecipeDatasource.createRecipe;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
@@ -68,7 +67,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -142,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
 // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 // Call the method to upload the file
-        Call<ResponseBody> call = apiService.uploadRecipeFile(Token,idRecipe, filePart);
+        Call<ResponseBody> call = apiService.uploadRecipeFile(Token, idRecipe, filePart);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -189,8 +187,11 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(@androidx.annotation.NonNull Call<User> call, @androidx.annotation.NonNull Response<User> response) {
                 if (response.isSuccessful()) {
                     User UserResponse = response.body();
-//                    user_login.setUser(response.body());
+
                     if (UserResponse != null) {
+                        UserResponse.setId_User(user_login.getUser().getId_User());
+                        user_login.setUser(UserResponse);
+                        Log.d("TAG", String.valueOf(UserResponse.getId_User()));
                         // Store the token securely (e.g., in SharedPreferences) for later use
                         TAG_CONNEXION = response.code();
                         user_login.setUser(response.body());
@@ -550,7 +551,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void InsertRecipeApi(Recipe recipe,Bitmap bitmap, Context context) {
+    public static void InsertRecipeApi(Recipe recipe, Bitmap bitmap, Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
         // Enqueue the download request
@@ -560,9 +561,9 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Recipe> call, Response<Recipe> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Recipe recipe1 = response.body();
-                    Log.d("TAG",recipe1.getId_recipe()+"et nom :  "+ recipe1.getNom_recipe());
+                    Log.d("TAG", recipe1.getId_recipe() + "et nom :  " + recipe1.getNom_recipe());
                     //ResponseBody responseBody = response.body();
-                    uploadImageRecipe(recipe1.getId_recipe(),bitmap,context);
+                    uploadImageRecipe(recipe1.getId_recipe(), bitmap, context);
                     //fetchImage(str,tag,0,context);
                     Toast.makeText(context, "succes  Created Api ", Toast.LENGTH_SHORT).show();
                 } else {
@@ -638,7 +639,7 @@ public class MainActivity extends AppCompatActivity {
 
         list_recipe.clear();
         listUser.clear();
-        Remotelist_recipe.clear();
+        Remotelist_recipe.setValue(new ArrayList<>());
 
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
@@ -659,15 +660,6 @@ public class MainActivity extends AppCompatActivity {
         getLocalRecipes();
         list_detail_recipe = getAllocalDR(getBaseContext());
 
-        RecipeViewModel model = new RecipeViewModel();
-        model.getRecipe(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipe> recipeList) {
-                Remotelist_recipe.clear();
-                Remotelist_recipe = (ArrayList<Recipe>) recipeList;
-            }
-        });
-
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
@@ -679,9 +671,19 @@ public class MainActivity extends AppCompatActivity {
         pDialog.cancel();
         //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
 
-//        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        fragmentTransaction.replace(R.id.fl_main, new MainFragment());
-//        fragmentTransaction.commit();
+        RecipeViewModel model = new RecipeViewModel();
+        model.getRecipe(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(@Nullable List<Recipe> recipeList) {
+                //Remotelist_recipe.clear();
+                Remotelist_recipe.setValue(recipeList);
+                Toast.makeText(getBaseContext(), "changed main " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fl_main, new MainFragment());
+        fragmentTransaction.commit();
 
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
@@ -894,8 +896,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
 
     public void getReviewRecipeApi(int idRecipe) {

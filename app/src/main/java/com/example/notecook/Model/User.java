@@ -46,6 +46,20 @@ public class User {
         Status = status;
         Grade = grade;
     }
+    public User(int id,String username,String firstname, String lastname, String birthday, String email, byte[] icon, String phonenumber, String passWord, String status, String grade,String pathimage) {
+        this.Id_User = id;
+        this.firstname = firstname;
+        this.username = username;
+        this.lastname = lastname;
+        Birthday = birthday;
+        Email = email;
+        this.icon = icon;
+        Phonenumber = phonenumber;
+        PassWord = passWord;
+        Status = status;
+        Grade = grade;
+        this.pathimageuser = pathimage;
+    }
 
     public User(String username,String firstname, String lastname, String birthday, String email, byte[] icon, String phonenumber, String passWord, String status, String grade) {
         this.firstname = firstname;

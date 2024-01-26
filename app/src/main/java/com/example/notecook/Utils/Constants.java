@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.TokenResponse;
 import com.example.notecook.Model.Detail_Recipe;
@@ -53,7 +54,7 @@ public class Constants {
     public static List<Review> Review_CurrentRecipe = new ArrayList<>();
     public static List<Recipe> Search_list = new ArrayList<>();
     public static User User_CurrentRecipe = new User();
-    public static ArrayList<Recipe> Remotelist_recipe = new ArrayList<>();
+    public static MutableLiveData<List<Recipe>> Remotelist_recipe = new MutableLiveData<>();
     public static String TAG_CONNEXION_LOCAL = "";
     public static TokenResponse user_login = new TokenResponse();
     public static String pathimageuser ="";

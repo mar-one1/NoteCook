@@ -137,7 +137,7 @@ public class Frg_Search extends Fragment {
             list_recipes.add(mRecipe);
         }
         if (!tag.equals("search"))
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(Remotelist_recipe, TAG_REMOTE);
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(Remotelist_recipe.getValue(), TAG_REMOTE);
         else adapter_rc_recipeDt = new Adapter_RC_RecipeDt(Search_list, TAG_REMOTE);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(manager);

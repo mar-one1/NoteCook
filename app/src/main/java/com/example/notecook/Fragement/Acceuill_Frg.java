@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -36,7 +37,6 @@ import java.util.List;
 
 public class Acceuill_Frg extends Fragment {
 
-    public RecyclerView mRecyclerView;
     public LayoutInflater inflater;
     Categorie_Food categorie_food;
     Recipe mRecipe;
@@ -51,8 +51,6 @@ public class Acceuill_Frg extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -71,17 +69,8 @@ public class Acceuill_Frg extends Fragment {
             viewPager2.setCurrentItem(2, false);
         });
 
-        RecipeViewModel model = new RecipeViewModel();
-        model.getRecipe(getContext()).observe(getActivity(), new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipe> recipeList) {
-                bindingRcV_recipes(recipeList,binding.RcCatPopular, true);
-                bindingRcV_categories(binding.RcCatMenu, true);
-            }
-        });
-
-
-
+        bindingRcV_recipes(Remotelist_recipe.getValue(),binding.RcCatPopular, true);
+        bindingRcV_categories(binding.RcCatMenu, true);
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -107,6 +96,9 @@ public class Acceuill_Frg extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Toast.makeText(getContext(), "changed "+Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+        bindingRcV_recipes(Remotelist_recipe.getValue(),binding.RcCatPopular, true);
+        bindingRcV_categories(binding.RcCatMenu, true);
 
     }
 
@@ -167,7 +159,7 @@ public class Acceuill_Frg extends Fragment {
             list_recipes.add(mRecipe);
         }
         //if(TAG_CONNEXION==200)
-        if (!Remotelist_recipe.isEmpty()) {
+        if (!Remotelist_recipe.getValue().isEmpty()) {
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list, TAG_ONLINE);
         } else adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe, TAG_OFFLINE);
         // adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe,true);
