@@ -130,11 +130,12 @@ public class RecipeViewModel extends ViewModel {
         }
     }
 
-    private void insertRecipeLocally(Context context,Recipe remoteRecipe) {
+    public int insertRecipeLocally(Context context,Recipe remoteRecipe) {
         RecipeDatasource recipeDatasource = new RecipeDatasource(context);
         recipeDatasource.open();
-        createRecipe(remoteRecipe.getIcon_recipe(), remoteRecipe.getNom_recipe(), remoteRecipe.getFav(), remoteRecipe.getFrk_user());
+        Recipe recipe =createRecipe(remoteRecipe.getIcon_recipe(), remoteRecipe.getNom_recipe(), remoteRecipe.getFav(), remoteRecipe.getFrk_user());
         recipeDatasource.close();
+        return recipe.getId_recipe();
     }
 
     private void updateRecipeLocally(Context context,Recipe remoteRecipe, int id) {

@@ -1,6 +1,7 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.MainActivity.InsertRecipeApi;
+import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
@@ -25,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -35,7 +37,9 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
+import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.levelRecipe;
+import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -105,6 +109,13 @@ public class add_recipe extends Fragment {
                 Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
                 Log.d("TAG",""+user_login.getUser().getId_User());
                 InsertRecipeApi(recipe,bitmap, getContext());
+                RecipeViewModel recipeViewModel = new RecipeViewModel();
+                recipe.setIcon_recipe(encod(bitmap));
+                int i=recipeViewModel.insertRecipeLocally(getContext(),recipe);
+                if(i!=0) {
+                    Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
+                    Constants.list_recipe.add(recipe);
+                }
             }
         });
 
