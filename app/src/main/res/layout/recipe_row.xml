@@ -2,23 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="180dp"
-    android:layout_height="260dp"
+    android:layout_width="@dimen/_130sdp"
+    android:layout_height="@dimen/_210sdp"
     android:orientation="vertical"
     android:layout_gravity="center"
     android:layout_weight="1"
-    android:layout_marginLeft="5dp"
+    android:layout_marginLeft="@dimen/_5sdp"
     android:gravity="center"
     tools:ignore="MissingDefaultResource">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="5dp"
+        android:layout_margin="@dimen/_5sdp"
         android:layout_weight="1"
-        app:cardCornerRadius="15dp"
+        app:cardCornerRadius="@dimen/_15sdp"
         tools:ignore="MissingConstraints"
-
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -33,14 +32,14 @@
                 android:background="#C8C8C8"
                 android:scaleType="fitXY"
                 app:layout_constraintBottom_toBottomOf="parent"
-                tools:layout_editor_absoluteX="-16dp" />
+                tools:layout_editor_absoluteX="@dimen/_-16sdp" />
 
             <ImageView
                 android:id="@+id/heart_recipe"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginRight="5dp"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_5sdp"
                 android:src="@drawable/ic_favorite_border_black_24dp"
                 app:layout_constraintBottom_toBottomOf="@+id/ImgV_IconCatFood"
                 app:layout_constraintEnd_toEndOf="@+id/ImgV_IconCatFood"
@@ -62,8 +61,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginLeft="12dp"
-            android:padding="5dp"
+            android:layout_marginLeft="@dimen/_12sdp"
+            android:padding="@dimen/_5sdp"
             android:text="Detail"
             android:textStyle="bold"
             android:autoSizeTextType="uniform"
@@ -87,9 +86,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="@dimen/_12sdp"
             android:layout_weight="1"
-            android:padding="5dp"
+            android:padding="@dimen/_5sdp"
             android:text="Detail"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -102,7 +101,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="@dimen/_10sdp"
            >
 
             <ImageView
@@ -116,7 +115,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:padding="5dp"
+                android:padding="@dimen/_5sdp"
                 android:text="Detail"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
