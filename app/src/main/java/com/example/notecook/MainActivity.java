@@ -709,7 +709,7 @@ public class MainActivity extends AppCompatActivity {
 
         RecipeDatasource recipeDatasource = new RecipeDatasource(this);
         recipeDatasource.open();
-        Constants.list_recipe = recipeDatasource.getAllRecipes();
+        Constants.list_recipe = recipeDatasource.getRecipeById(user_login.getUser().getId_User());
         recipeDatasource.close();
         getLocalDetailsRecipes();
         return Constants.list_recipe;

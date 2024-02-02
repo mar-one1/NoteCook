@@ -64,8 +64,8 @@ public class add_recipe extends Fragment {
 
         // Get the values of the enum
         levelRecipe[] values = levelRecipe.values();
-
-        // Create an array of display names
+//
+//        // Create an array of display names
         String[] displayNames = new String[values.length];
         for (int i = 0; i < values.length; i++) {
             displayNames[i] = values[i].name();
@@ -86,7 +86,6 @@ public class add_recipe extends Fragment {
 
         binding.levelRecipe.setAdapter(adapter);
 
-        binding.levelRecipe.setAdapter(adapter);
 
         binding.dtRecipeTxt.setOnClickListener(new View.OnClickListener() {
             @Override

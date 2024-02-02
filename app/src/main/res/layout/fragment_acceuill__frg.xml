@@ -40,12 +40,13 @@
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginBottom="@dimen/_20sdp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/Rc_Cat_Menu"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_300sdp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1" />
         </LinearLayout>
 
@@ -89,7 +90,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/Rc_Cat_Popular"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/_300sdp"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal" />
             </FrameLayout>
         </LinearLayout>
