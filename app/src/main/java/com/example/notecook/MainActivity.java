@@ -4,6 +4,7 @@ import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
+import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
 import static com.example.notecook.Utils.Constants.Remotelist_recipe;
 import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
@@ -18,6 +19,7 @@ import static com.example.notecook.Utils.Constants.listUser;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -657,7 +659,7 @@ public class MainActivity extends AppCompatActivity {
         pDialog.setCancelable(true);
         pDialog.show();
         // get Recipe From Api
-        getLocalRecipes();
+
         list_detail_recipe = getAllocalDR(getBaseContext());
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -678,6 +680,15 @@ public class MainActivity extends AppCompatActivity {
                 //Remotelist_recipe.clear();
                 Remotelist_recipe.setValue(recipeList);
                 Toast.makeText(getBaseContext(), "changed main " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        model.getRecipebyiduser(getBaseContext(),user_login.getUser().getId_User()).observe(this, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(@Nullable List<Recipe> recipeList) {
+                //Remotelist_recipe.clear();
+                RemotelistByIdUser_recipe.setValue(recipeList);
+                Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -706,10 +717,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<Recipe> getLocalRecipes() {
-
-        RecipeDatasource recipeDatasource = new RecipeDatasource(this);
+        RecipeDatasource recipeDatasource = new  RecipeDatasource(this);
         recipeDatasource.open();
-        Constants.list_recipe = recipeDatasource.getRecipeById(user_login.getUser().getId_User());
+        Constants.list_recipe = recipeDatasource.getRecipeById(user_login_local.getUser().getId_User());
         recipeDatasource.close();
         getLocalDetailsRecipes();
         return Constants.list_recipe;
@@ -768,8 +778,10 @@ public class MainActivity extends AppCompatActivity {
             user_login = new TokenResponse();
         }
         User user = userDatasource.select_User_BYUsername(username);
+        user_login_local.setUser(user);
         user_login.setUser(user);
         user_login.setMessage(TAG_LOCAL);
+        getLocalRecipes();
         userDatasource.close();
     }
 
@@ -813,6 +825,7 @@ public class MainActivity extends AppCompatActivity {
                     if (UserResponse != null) {
                         // Store the token securely (e.g., in SharedPreferences) for later use
                         TAG_CONNEXION = response.code();
+                        getLocalUser(s1);
                         user_login.setUser(UserResponse);
                         //fetchImage(user_login.getUser().getUsername());
                         //uploadImage();

@@ -55,8 +55,10 @@ public class Constants {
     public static List<Recipe> Search_list = new ArrayList<>();
     public static User User_CurrentRecipe = new User();
     public static MutableLiveData<List<Recipe>> Remotelist_recipe = new MutableLiveData<>();
+    public static MutableLiveData<List<Recipe>> RemotelistByIdUser_recipe = new MutableLiveData<>();
     public static String TAG_CONNEXION_LOCAL = "";
     public static TokenResponse user_login = new TokenResponse();
+    public static TokenResponse user_login_local = new TokenResponse();
     public static String pathimageuser ="";
     public static final String lOGIN_KEY = "Connection_complete";
 

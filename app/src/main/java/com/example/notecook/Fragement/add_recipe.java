@@ -2,7 +2,9 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.MainActivity.InsertRecipeApi;
 import static com.example.notecook.MainActivity.encod;
+import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -34,8 +36,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.notecook.Api.TokenResponse;
+import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.levelRecipe;
@@ -110,7 +115,8 @@ public class add_recipe extends Fragment {
                 InsertRecipeApi(recipe,bitmap, getContext());
                 RecipeViewModel recipeViewModel = new RecipeViewModel();
                 recipe.setIcon_recipe(encod(bitmap));
-                int i=recipeViewModel.insertRecipeLocally(getContext(),recipe);
+                int i=recipeViewModel.insertRecipeLocally(getContext(),recipe,user_login_local.getUser().getId_User());
+                Log.d("TAG",""+user_login_local.getUser().getId_User());
                 if(i!=0) {
                     Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
                     Constants.list_recipe.add(recipe);
@@ -315,5 +321,14 @@ public class add_recipe extends Fragment {
         buttonMoins.setEnabled(true);
         t++;
         textView.setText("" + t);
+    }
+
+    private User getLocalUser(String username,Context context) {
+        UserDatasource userDatasource = new UserDatasource(context);
+        userDatasource.open();
+
+        User user = userDatasource.select_User_BYUsername(username);
+        userDatasource.close();
+        return user;
     }
 }
