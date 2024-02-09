@@ -772,6 +772,9 @@ public class MainActivity extends AppCompatActivity {
             user_login = new TokenResponse();
         }
         User user = userDatasource.select_User_BYUsername(username);
+        if (user_login_local == null) {
+            user_login_local = new TokenResponse();
+        }
         user_login_local.setUser(user);
         user_login.setUser(user);
         user_login.setMessage(TAG_LOCAL);

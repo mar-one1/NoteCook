@@ -116,7 +116,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
      * Commande sql pour la création des champs dans les table intial
      */
     private static final String InsertDataUser = "INSERT INTO " + TABLE_USER +
-            " (\"" + COLUMN_USERNAME + "\",\"" + COLUMN_PASSWORD + "\") values ('R','$2a$10$s0LOsngxGXQpiDywyvF6ceCBGN238klsEprYMtVWdpnlXruSNvjnO'); ";
+            " (\"" + COLUMN_USERNAME + "\",\"" + COLUMN_PASSWORD + "\") values ('R_','$2a$10$s0LOsngxGXQpiDywyvF6ceCBGN238klsEprYMtVWdpnlXruSNvjnO'); ";
 
     private static final String InsertDataRecipe = "INSERT INTO " + TABLE_RECIPE + "" +
             " (\"" + COLUMN_NOM_RECIPE + "\",\"" + COLUMN_ID_FRK_USER_RECIPE + "\") values " +

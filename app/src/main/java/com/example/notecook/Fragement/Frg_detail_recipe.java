@@ -77,7 +77,7 @@ public class Frg_detail_recipe extends Fragment {
                     binding.icludeRoxDetailRecipe.vlTime.setText(String.valueOf(Detail_CurrentRecipe.getTime()));
                     binding.icludeRoxDetailRecipe.valCal.setText(String.valueOf(Detail_CurrentRecipe.getCal()));
                     binding.icludeRoxDetailRecipe.valLevel.setText(String.valueOf(Detail_CurrentRecipe.getLevel()));
-                    synchronizeDataDetailRecipe(Detail_CurrentRecipe, getContext());
+                    //synchronizeDataDetailRecipe(Detail_CurrentRecipe, getContext());
                 }
             }
 

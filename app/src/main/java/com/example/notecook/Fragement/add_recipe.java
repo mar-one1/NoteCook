@@ -115,8 +115,10 @@ public class add_recipe extends Fragment {
                 InsertRecipeApi(recipe,bitmap, getContext());
                 RecipeViewModel recipeViewModel = new RecipeViewModel();
                 recipe.setIcon_recipe(encod(bitmap));
-                int i=recipeViewModel.insertRecipeLocally(getContext(),recipe,user_login_local.getUser().getId_User());
-                Log.d("TAG",""+user_login_local.getUser().getId_User());
+                User user =getLocalUser(user_login.getUser().getUsername());
+                int i=0;
+                i=recipeViewModel.insertRecipeLocally(getContext(),recipe,user.getId_User());
+                Log.d("TAG",""+user.getId_User());
                 if(i!=0) {
                     Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
                     Constants.list_recipe.add(recipe);
@@ -323,8 +325,8 @@ public class add_recipe extends Fragment {
         textView.setText("" + t);
     }
 
-    private User getLocalUser(String username,Context context) {
-        UserDatasource userDatasource = new UserDatasource(context);
+    private User getLocalUser(String username) {
+        UserDatasource userDatasource = new UserDatasource(getContext());
         userDatasource.open();
 
         User user = userDatasource.select_User_BYUsername(username);
