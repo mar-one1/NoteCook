@@ -683,18 +683,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        model.getRecipebyiduser(getBaseContext(),user_login.getUser().getId_User()).observe(this, new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipe> recipeList) {
-                //Remotelist_recipe.clear();
-                RemotelistByIdUser_recipe.setValue(recipeList);
-                Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
+
 
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
@@ -716,10 +710,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private ArrayList<Recipe> getLocalRecipes() {
+    private ArrayList<Recipe> getLocalRecipes(int i) {
         RecipeDatasource recipeDatasource = new  RecipeDatasource(this);
         recipeDatasource.open();
-        Constants.list_recipe = recipeDatasource.getRecipeById(user_login_local.getUser().getId_User());
+        Constants.list_recipe = recipeDatasource.getRecipeById(i);
         recipeDatasource.close();
         getLocalDetailsRecipes();
         return Constants.list_recipe;
@@ -781,7 +775,7 @@ public class MainActivity extends AppCompatActivity {
         user_login_local.setUser(user);
         user_login.setUser(user);
         user_login.setMessage(TAG_LOCAL);
-        getLocalRecipes();
+        getLocalRecipes(user_login_local.getUser().getId_User());
         userDatasource.close();
     }
 
@@ -830,7 +824,6 @@ public class MainActivity extends AppCompatActivity {
                         //fetchImage(user_login.getUser().getUsername());
                         //uploadImage();
                         getImageUserUrl(user_login.getUser().getUsername(), "user_login", getBaseContext());
-
                         TAG_CONNEXION_MESSAGE = response.message();
                         //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get User from Api", Toast.LENGTH_LONG).show();
@@ -869,7 +862,6 @@ public class MainActivity extends AppCompatActivity {
                 if (TAG_CONNEXION != 200) {
                     //Constants.AffichageMessage("Online mode", MainActivity.this);
                     //Toast.makeText(MainActivity.this,"Online mode",Toast.LENGTH_LONG );
-                    getLocalRecipes();
                     getLocalUser(s1);
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.fl_main, new MainFragment());
@@ -900,7 +892,6 @@ public class MainActivity extends AppCompatActivity {
                 if (TAG_CONNEXION != 200) {
                     //Constants.AffichageMessage("Online mode", MainActivity.this);
                     //Toast.makeText(MainActivity.this,"Online mode",Toast.LENGTH_LONG );
-                    getLocalRecipes();
                     getLocalUser(s1);
                     fragmentTransaction = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.fl_main, new MainFragment());

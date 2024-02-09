@@ -190,14 +190,14 @@ public class Frg_EditProfil extends Fragment {
                 //user_login.setUser(mUserDatasource.select_User_BYid(user_login.getUser().getId_User()));
                 mUserDatasource.close();
 
-                if (!Objects.equals(user_login.getMessage(), TAG_LOCAL)) {
+//                if (!Objects.equals(user_login.getMessage(), TAG_LOCAL)) {
                     currentuser.setIcon(null);
                     getUser.setIcon(null);
                     if (!currentuser.equals(getUser))
                         UpdateUserApi(getUser, getContext());
                     deleteimage(urlold, getContext());
                     uploadImage(user_login.getUser().getUsername(), bitmap, "", getContext());
-                }
+//                }
             });
             pDialog.show();
         });

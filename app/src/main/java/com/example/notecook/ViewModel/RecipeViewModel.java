@@ -74,9 +74,9 @@ public class RecipeViewModel extends ViewModel {
                     TAG_CONNEXION_MESSAGE = response.message();
                     TAG_CONNEXION = response.code();
                     //TokenApi(Token);
-                    if (remoteRecipeList.getValue().size() != 0) {
-                        synchronizeData(context,list_recipe, remoteRecipeList.getValue());
-                    }
+//                    if (remoteRecipeList.getValue().size() != 0) {
+//                        synchronizeData(context,list_recipe, remoteRecipeList.getValue());
+//                    }
 //                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
 //                    fragmentTransaction.replace(R.id.fl_main, new MainFragment());
 //                    fragmentTransaction.commit();
