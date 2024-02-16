@@ -20,10 +20,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     /*
      * Commande sql pour la création de la table USER
      */
-    private static final String DATABASE_CREATE_USER = "create table  "
+    private static final String DATABASE_CREATE_USER = "create table "
             + TABLE_USER + "(" + COLUMN_ID_USER
             + " integer primary key autoincrement, " + COLUMN_USERNAME + " text, " + COLUMN_FIRSTNAME_USER + " text, " + COLUMN_LASTNAME_USER + " text, "
-            + COLUMN_ICON + " BLOB, " + COLUMN_PASSWORD + " text, "
+            + COLUMN_ICON + " BLOB, " + COLUMN_ICON_PATH + " text, " + COLUMN_PASSWORD + " text, "
             + COLUMN_BIRTHDAY_USER + " integer, " + COLUMN_PHONENUMBER_USER + " integer, " + COLUMN_EMAIL_USER + " integer ,"
             + COLUMN_STATUS + " text, " + COLUMN_GRADE + " text );";
 
@@ -33,7 +33,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     private static final String DATABASE_CREATE_RECIPE = "create table "
             + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE
             + " integer primary key autoincrement, " + COLUMN_ICON_RECIPE
-            + " integer , " + COLUMN_FAV_RECIPE + " integer, " + COLUMN_NOM_RECIPE + " text, "
+            + " integer , " + COLUMN_FAV_RECIPE + " integer, " + COLUMN_NOM_RECIPE + " text, "+ COLUMN_ICON_RECIPE_PATH + " text , "
             + COLUMN_ID_FRK_USER_RECIPE + " integer, " + COLUMN_ID_FRK_CATEGORIE_RECIPE + " integer, " + " FOREIGN KEY (" + COLUMN_ID_FRK_USER_RECIPE + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + ") ON DELETE CASCADE , "
             + " FOREIGN KEY (" + COLUMN_ID_FRK_CATEGORIE_RECIPE + ") REFERENCES " + TABLE_CATEGORIE_RECIPE + "(" + COLUMN_ID_CATEGORIE_RECIPE + ") ON DELETE CASCADE );";
 
