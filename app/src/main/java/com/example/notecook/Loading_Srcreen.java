@@ -118,16 +118,19 @@ public class Loading_Srcreen extends AppCompatActivity {
                 //Gson gson = new GsonBuilder().create();
                 //TokenResponse tokenResponse = gson.fromJson(response.toString(), TokenResponse.class);
                 TokenResponse tokenResponse = response.body();
+                int statusCode = response.code();
                 if (response.isSuccessful()) {
+
                     //TokenResponse tokenResponse = response.body();
                     if (tokenResponse != null) {
                         user_login = tokenResponse;
+                        Constants.TAG_CONNEXION = response.code();
+                        // Store the token securely (e.g., in SharedPreferences) for later use
+                        if (statusCode == 201) saveToken(tokenResponse.getToken());
                         Constants.Token = getToken();
                         //Log.d("TAG", "" + user_login.getUser().getUsername() + " " + user_login.getMessage());
-                        Constants.TAG_CONNEXION = response.code();
+                        Toast.makeText(getApplicationContext(), "Validation : " + statusCode, Toast.LENGTH_SHORT).show();
 
-                        //Toast.makeText(getApplicationContext(), "Validation : " + code, Toast.LENGTH_SHORT).show();
-                        // Store the token securely (e.g., in SharedPreferences) for later use
                         Intent i = new Intent(getBaseContext(), MainActivity.class);
 //                        i.putExtra("TAG","online");
                         Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, Loading_Srcreen.this);
@@ -137,7 +140,7 @@ public class Loading_Srcreen extends AppCompatActivity {
                 } else {
                     // The HTTP request was not successful (status code is not 2xx).
                     // You can handle errors here based on the response status code.
-                    int statusCode = response.code();
+
                     Constants.TAG_CONNEXION = statusCode;
 
                     // Handle different status codes as per your API's conventions.

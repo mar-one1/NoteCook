@@ -8,6 +8,12 @@ public class TokenResponse {
     private String message;
     @SerializedName("user")
     private User user;
+    @SerializedName("token")
+    private String token;
+
+    public String getToken() {return token;}
+
+    public void setToken(String token) {this.token = token;}
 
     public String getMessage() {
         return message;

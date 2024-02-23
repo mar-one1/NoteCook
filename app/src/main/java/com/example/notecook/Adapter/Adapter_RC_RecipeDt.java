@@ -3,6 +3,7 @@ package com.example.notecook.Adapter;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
+import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.getDetailRecipeByIdRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
@@ -32,6 +33,7 @@ import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,6 +63,10 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagenot = holder.itemView.getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
         holder.detail.setText(recipe.getNom_recipe());
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
+        if(recipe.getIcon_recipe()!=null && !Arrays.toString(recipe.getIcon_recipe()).equals(""))
+        {
+            holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
+        }else
         if(recipe.getPathimagerecipe()!=null) {
             //holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
             String url = BASE_URL +"data/uploads/"+ recipe.getPathimagerecipe();
