@@ -30,7 +30,7 @@ import retrofit2.Response;
 
 public class RecipeViewModel extends ViewModel {
     private MutableLiveData<List<Recipe>> remoteRecipeList;
-    private MutableLiveData<List<Recipe>> remoteRecipeListByUserId;
+    private MutableLiveData<List<Recipe>> remoteRecipeListByUserUsername;
 
     //we will call this method to get the data
     public LiveData<List<Recipe>> getRecipe(Context context) {
@@ -44,16 +44,16 @@ public class RecipeViewModel extends ViewModel {
         //finally we will return the list
         return remoteRecipeList;
     }
-    public LiveData<List<Recipe>> getRecipebyiduser(Context context,int id) {
+    public LiveData<List<Recipe>> getRecipeByUsernameUser(Context context, String username) {
         //if the list is null
-        if (remoteRecipeListByUserId == null) {
-            remoteRecipeListByUserId = new MutableLiveData<List<Recipe>>();
+        if (remoteRecipeListByUserUsername == null) {
+            remoteRecipeListByUserUsername = new MutableLiveData<List<Recipe>>();
             //we will load it asynchronously from server in this method
-            getRecipeByUserIdApi(context,id);
+            getRecipeByUserIdApi(context,username);
 
         }
         //finally we will return the list
-        return remoteRecipeListByUserId;
+        return remoteRecipeListByUserUsername;
     }
 
 
@@ -106,9 +106,9 @@ public class RecipeViewModel extends ViewModel {
 
     }
 
-    public void getRecipeByUserIdApi(Context context,int id_user) {
+    public void getRecipeByUserIdApi(Context context,String username) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        Call<List<Recipe>> call = apiService.getRecipeByIdUser(Token,id_user);
+        Call<List<Recipe>> call = apiService.getRecipeByUsernameUser(Token,username);
         call.enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
@@ -116,14 +116,14 @@ public class RecipeViewModel extends ViewModel {
                     List<Recipe> recipes = response.body();
                     Log.d("recipes", recipes.toString());
 
-                    remoteRecipeListByUserId.setValue(recipes);
+                    remoteRecipeListByUserUsername.setValue(recipes);
 
-                    Log.d("listrecipes by user", remoteRecipeListByUserId.toString());
+                    Log.d("listrecipes by user", remoteRecipeListByUserUsername.toString());
                     TAG_CONNEXION_MESSAGE = response.message();
                     TAG_CONNEXION = response.code();
                     //TokenApi(Token);
-                    if (remoteRecipeListByUserId.getValue().size() != 0) {
-                        synchronizeData(context,list_recipe, remoteRecipeListByUserId.getValue());
+                    if (remoteRecipeListByUserUsername.getValue().size() != 0) {
+                        synchronizeData(context,list_recipe, remoteRecipeListByUserUsername.getValue());
                     }
 //                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
 //                    fragmentTransaction.replace(R.id.fl_main, new MainFragment());
