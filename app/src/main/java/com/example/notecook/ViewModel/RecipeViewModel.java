@@ -37,7 +37,7 @@ public class RecipeViewModel extends ViewModel {
         //if the list is null
         if (remoteRecipeList == null) {
             remoteRecipeList = new MutableLiveData<List<Recipe>>();
-            //we will load it asynchronously from server in this method
+            //we will load it asynchronously from server in t his method
             getRecipeApi(context);
 
         }
@@ -49,7 +49,7 @@ public class RecipeViewModel extends ViewModel {
         if (remoteRecipeListByUserUsername == null) {
             remoteRecipeListByUserUsername = new MutableLiveData<List<Recipe>>();
             //we will load it asynchronously from server in this method
-            getRecipeByUserIdApi(context,username);
+            getRecipeByUserUsernameApi(context,username);
 
         }
         //finally we will return the list
@@ -106,7 +106,7 @@ public class RecipeViewModel extends ViewModel {
 
     }
 
-    public void getRecipeByUserIdApi(Context context,String username) {
+    public void getRecipeByUserUsernameApi(Context context,String username) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         Call<List<Recipe>> call = apiService.getRecipeByUsernameUser(Token,username);
         call.enqueue(new Callback<List<Recipe>>() {

@@ -1,12 +1,15 @@
 package com.example.notecook.Fragement;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Model.Ingredients;
+import com.example.notecook.Utils.Constants;
 import com.example.notecook.databinding.FragmentFrgRecipeIngredientsBinding;
 
 import java.util.ArrayList;
@@ -34,8 +38,24 @@ public class Frg_recipe_ingredients extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        bindingRcV_Ingredients(mRecyclerView);
+        Toast.makeText(getContext(), "onDestroyView", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Toast.makeText(getContext(), "onCreate", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bindingRcV_Ingredients(mRecyclerView);
+        Toast.makeText(getContext(), "onResume", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -48,8 +68,8 @@ public class Frg_recipe_ingredients extends Fragment {
         txt_cal = binding.txtTot;
         // Inflate the layout for this fragment
         mRecyclerView =binding.RcIngred;
-        bindingRcV_Incredients(mRecyclerView);
-
+        bindingRcV_Ingredients(mRecyclerView);
+        Toast.makeText(getContext(), "onCreateView", Toast.LENGTH_SHORT).show();
 
         binding.btnMoins.setOnClickListener(view -> {
             int t = Integer.parseInt(txt_cal.getText().toString());
@@ -71,30 +91,18 @@ public class Frg_recipe_ingredients extends Fragment {
         return binding.getRoot();
     }
 
-    public void bindingRcV_Incredients(RecyclerView recyclerView)
-    {
-        List_ingredient = new ArrayList<>();
+    public void bindingRcV_Ingredients(RecyclerView recyclerView) {
+        // Fetch ingredient data from the database
+        IngredientsDataSource ingredientsDataSource = new IngredientsDataSource(getContext());
+        ingredientsDataSource.open();
+        List<Ingredients> list_ingredient = ingredientsDataSource.getAllIngerdeients();
+        ingredientsDataSource.close();
 
-        IngredientsDataSource ingredientsDataSource1 = new IngredientsDataSource(getContext());
-        ingredientsDataSource1.open();
-        List_ingredient=ingredientsDataSource1.getAllIngerdeients();
-        ingredientsDataSource1.close();
-
-
-//        for (int i = 0; i < 8; i++) {
-//            ingerdeients = new Ingerdeients("Sucre", 116);
-//            List_ingredient.add(ingerdeients);
-//        }
-
-        Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(List_ingredient);
-        GridLayoutManager manager = new GridLayoutManager(getContext(),1);
+        // Create and set adapter for RecyclerView
+        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(Constants.Ingredients_CurrentRecipe);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         recyclerView.setHorizontalScrollBarEnabled(true);
-        recyclerView.setLayoutManager(manager);
-
-        adapter_rc_ingredents.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter_rc_ingredents);
-
-
+        recyclerView.setAdapter(adapter);
     }
 
     public void bindingRcV_Nutrition(RecyclerView recyclerView)
@@ -105,12 +113,6 @@ public class Frg_recipe_ingredients extends Fragment {
         ingredientsDataSource1.open();
         List_ingredient=ingredientsDataSource1.getAllIngerdeients();
         ingredientsDataSource1.close();
-
-
-//        for (int i = 0; i < 8; i++) {
-//            ingerdeients = new Ingerdeients("Sucre", 116);
-//            List_ingredient.add(ingerdeients);
-//        }
 
         Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(List_ingredient);
         GridLayoutManager manager = new GridLayoutManager(getContext(),1);

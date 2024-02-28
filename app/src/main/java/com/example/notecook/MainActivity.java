@@ -3,6 +3,7 @@ package com.example.notecook;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
 import static com.example.notecook.Utils.Constants.Remotelist_recipe;
@@ -46,6 +47,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.ConnexionRetrofit;
+import com.example.notecook.Api.RecipeResponse;
 import com.example.notecook.Api.TokenResponse;
 import com.example.notecook.Data.DetailRecipeDataSource;
 import com.example.notecook.Data.RecipeDatasource;
@@ -361,6 +363,60 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    public static void getFullRecipeApi(int Recipeid, Context context) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        Call<RecipeResponse> call = apiService.getRecipeById(Token, Recipeid);
+
+
+        call.enqueue(new Callback<RecipeResponse>() {
+            @Override
+            public void onResponse(Call<RecipeResponse> call, Response<RecipeResponse> response) {
+                if (response.isSuccessful()) {
+                    RecipeResponse recipeResponse = response.body();
+                    if (recipeResponse != null) {
+                    //CURRENT_RECIPE =recipeResponse.getRecipe();
+                    Detail_CurrentRecipe=recipeResponse.getDetail_recipe();
+                    Steps_CurrentRecipe = recipeResponse.getSteps();
+                    Review_CurrentRecipe = recipeResponse.getReviews();
+                    Ingredients_CurrentRecipe = recipeResponse.getIngredients();
+                    }
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+                    if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
+                        getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe(), context);
+                    else if (User_CurrentRecipe.getId_User() == CURRENT_RECIPE.getFrk_user()) {
+                        MainFragment.viewPager2.setCurrentItem(1);
+                    } else {
+                        User_CurrentRecipe = user_login.getUser();
+                        MainFragment.viewPager2.setCurrentItem(1, false);
+                    }
+                } else {
+                    // Handle error response here
+                    int statusCode = response.code();
+                    TAG_CONNEXION = statusCode;
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorResponse = response.errorBody().string();
+                            // Print or log the errorResponse for debugging
+                            Log.e("token", "Error Response: " + errorResponse);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecipeResponse> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+            }
+        });
+
+    }
+
 
     public static void getUserByIdRecipeApi(int Recipeid, Context context) {
 

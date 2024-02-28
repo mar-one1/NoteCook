@@ -1,8 +1,12 @@
 package com.example.notecook.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Ingredient_recipe {
 
+    @SerializedName("id")
     private int id_Ingeredient_recipe;
+    @SerializedName("recipeId")
     private int Frk_idRecipe;
     private int Frk_idIngredient;
 

@@ -5,6 +5,7 @@ import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.getDetailRecipeByIdRecipeApi;
+import static com.example.notecook.MainActivity.getFullRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 
@@ -93,9 +94,10 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                 //if(recipe.getIcon_recipe()!=null)
                 //recipe.setIcon_recipe(encod(((BitmapDrawable) holder.Image.getDrawable()).getBitmap()));
                 CURRENT_RECIPE = recipe;
-                getDetailRecipeByIdRecipeApi(recipe.getId_recipe(), v.getContext());
-                m.getStepRecipeByIdRecipeApi(recipe.getId_recipe());
-                m.getReviewRecipeApi(recipe.getId_recipe());
+                //getDetailRecipeByIdRecipeApi(recipe.getId_recipe(), v.getContext());
+                getFullRecipeApi(recipe.getId_recipe(), v.getContext());
+//                m.getStepRecipeByIdRecipeApi(recipe.getId_recipe());
+//                m.getReviewRecipeApi(recipe.getId_recipe());
             }
             else viewPager2.setCurrentItem(1,false);
         });

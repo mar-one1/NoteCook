@@ -47,7 +47,7 @@ public interface ApiService {
     Call<List<Recipe>> getAllRecipes(@Header("Authorization") String token);
 
     @GET("recipes/{id}")
-    Call<Recipe> getRecipeById(@Path("id") int recipeId);
+    Call<RecipeResponse> getRecipeById(@Header("Authorization") String token,@Path("id") int recipeId);
 
     @GET("recipes/user/{id}")
     Call<List<Recipe>> getRecipeByIdUser(@Header("Authorization") String token,@Path("id") int recipeId);

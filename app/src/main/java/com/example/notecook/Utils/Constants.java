@@ -14,8 +14,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.notecook.Api.RecipeResponse;
 import com.example.notecook.Api.TokenResponse;
 import com.example.notecook.Model.Detail_Recipe;
+import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
@@ -52,6 +54,7 @@ public class Constants {
     public static Detail_Recipe Detail_CurrentRecipe;
     public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
     public static List<Review> Review_CurrentRecipe = new ArrayList<>();
+    public static List<Ingredients> Ingredients_CurrentRecipe = new ArrayList<>();
     public static List<Recipe> Search_list = new ArrayList<>();
     public static User User_CurrentRecipe = new User();
     public static MutableLiveData<List<Recipe>> Remotelist_recipe = new MutableLiveData<>();
