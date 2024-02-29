@@ -42,6 +42,7 @@ import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
+import com.example.notecook.Repo.RecipeRepository;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.levelRecipe;
 import com.example.notecook.ViewModel.RecipeViewModel;
@@ -113,12 +114,9 @@ public class add_recipe extends Fragment {
                 Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
                 Log.d("TAG",""+user_login.getUser().getId_User());
                 InsertRecipeApi(recipe,bitmap, getContext());
-                RecipeViewModel recipeViewModel = new RecipeViewModel();
                 recipe.setIcon_recipe(encod(bitmap));
-                User user =getLocalUser(user_login.getUser().getUsername());
                 int i=0;
-                i=recipeViewModel.insertRecipeLocally(getContext(),recipe,user.getId_User());
-                Log.d("TAG",""+user.getId_User());
+                i= RecipeRepository.insertRecipeLocally(getContext(),recipe);
                 if(i!=0) {
                     Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
                     Constants.list_recipe.add(recipe);

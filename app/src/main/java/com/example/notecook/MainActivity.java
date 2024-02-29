@@ -729,8 +729,8 @@ public class MainActivity extends AppCompatActivity {
         pDialog.cancel();
         //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
 
-        RecipeViewModel model = new RecipeViewModel();
-        model.getRecipe(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
+        RecipeViewModel model = new RecipeViewModel(this);
+        model.getRecipes(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
             @Override
             public void onChanged(@Nullable List<Recipe> recipeList) {
                 //Remotelist_recipe.clear();
@@ -739,6 +739,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        model.getRecipesByUsername(getBaseContext(),user_login.getUser().getUsername()).observe(this, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(@Nullable List<Recipe> recipeList) {
+                //Remotelist_recipe.clear();
+                RemotelistByIdUser_recipe.setValue(recipeList);
+                Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -836,6 +844,7 @@ public class MainActivity extends AppCompatActivity {
         user_login.setMessage(TAG_LOCAL);
         getLocalRecipes(user_login_local.getUser().getId_User());
         userDatasource.close();
+
     }
 
     @Override

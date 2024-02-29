@@ -56,6 +56,7 @@ public class Constants {
     public static List<Review> Review_CurrentRecipe = new ArrayList<>();
     public static List<Ingredients> Ingredients_CurrentRecipe = new ArrayList<>();
     public static List<Recipe> Search_list = new ArrayList<>();
+    public static List<Recipe> Basket_list = new ArrayList<>();
     public static User User_CurrentRecipe = new User();
     public static MutableLiveData<List<Recipe>> Remotelist_recipe = new MutableLiveData<>();
     public static MutableLiveData<List<Recipe>> RemotelistByIdUser_recipe = new MutableLiveData<>();

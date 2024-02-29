@@ -1,5 +1,8 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.Utils.Constants.Basket_list;
+import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -88,6 +91,14 @@ public class Frg_recipe_ingredients extends Fragment {
                 t++;
             txt_cal.setText("" + t);
         });
+
+        binding.btnAddBasket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Basket_list.add(CURRENT_RECIPE);
+            }
+        });
+
         return binding.getRoot();
     }
 
