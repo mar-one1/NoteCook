@@ -12,6 +12,8 @@ import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
+import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
+import static com.example.notecook.Utils.Constants.TAG_MODE_UTILISATEUR;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
@@ -721,33 +723,34 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
-        if (user_login.getUser() == null)
-            getUserApi("", getBaseContext());
-        else getUserApi(user_login.getUser().getUsername(), getBaseContext());
+        if(!Type_User.equals(TAG_MODE_INVITE)) {
+            if (user_login.getUser() == null)
+                getUserApi("", getBaseContext());
+            else getUserApi(user_login.getUser().getUsername(), getBaseContext());
 
-        //---------------------
-        pDialog.cancel();
-        //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
+            //---------------------
+            pDialog.cancel();
+            //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
 
-        RecipeViewModel model = new RecipeViewModel(this);
-        model.getRecipes(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipe> recipeList) {
-                //Remotelist_recipe.clear();
-                Remotelist_recipe.setValue(recipeList);
-                Toast.makeText(getBaseContext(), "changed main " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-            }
-        });
+            RecipeViewModel model = new RecipeViewModel(this);
+            model.getRecipes(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
+                @Override
+                public void onChanged(@Nullable List<Recipe> recipeList) {
+                    //Remotelist_recipe.clear();
+                    Remotelist_recipe.setValue(recipeList);
+                    Toast.makeText(getBaseContext(), "changed main " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                }
+            });
 
-        model.getRecipesByUsername(getBaseContext(),user_login.getUser().getUsername()).observe(this, new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipe> recipeList) {
-                //Remotelist_recipe.clear();
-                RemotelistByIdUser_recipe.setValue(recipeList);
-                Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
+            model.getRecipesByUsername(getBaseContext(), user_login.getUser().getUsername()).observe(this, new Observer<List<Recipe>>() {
+                @Override
+                public void onChanged(@Nullable List<Recipe> recipeList) {
+                    //Remotelist_recipe.clear();
+                    RemotelistByIdUser_recipe.setValue(recipeList);
+                    Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
