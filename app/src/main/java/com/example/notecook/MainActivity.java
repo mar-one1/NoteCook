@@ -254,6 +254,8 @@ public class MainActivity extends AppCompatActivity {
         boolean found = false;
         for (Detail_Recipe localDetailRecipe : list_detail_recipe) {
             Log.d("found", "fooor" + localDetailRecipe.getDt_recipe());
+
+
             Log.d("found", "RemotedetailRecipe" + RemotedetailRecipe.getFrk_recipe());
             Log.d("found", "localDetailRecipe" + localDetailRecipe.getFrk_recipe());
             if (RemotedetailRecipe.getFrk_recipe() == localDetailRecipe.getFrk_recipe()) {
@@ -742,14 +744,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            model.getRecipesByUsername(getBaseContext(), user_login.getUser().getUsername()).observe(this, new Observer<List<Recipe>>() {
-                @Override
-                public void onChanged(@Nullable List<Recipe> recipeList) {
-                    //Remotelist_recipe.clear();
-                    RemotelistByIdUser_recipe.setValue(recipeList);
-                    Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                }
-            });
+//            model.getRecipesByUsername(getBaseContext(), user_login.getUser().getUsername()).observe(this, new Observer<List<Recipe>>() {
+//                @Override
+//                public void onChanged(@Nullable List<Recipe> recipeList) {
+//                    //Remotelist_recipe.clear();
+//                    RemotelistByIdUser_recipe.setValue(recipeList);
+//                    Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
         }
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();

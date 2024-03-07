@@ -4,13 +4,12 @@ package com.example.notecook.Adapter;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.MainActivity.decod;
-import static com.example.notecook.MainActivity.getDetailRecipeByIdRecipeApi;
 import static com.example.notecook.MainActivity.getFullRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
+import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,17 +18,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.MainActivity;
-import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
-import com.example.notecook.Utils.Constants;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -58,39 +52,41 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     }
 
     @Override
-    public  void  onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Recipe recipe = recipes.get(position);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagelike = holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
         @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagenot = holder.itemView.getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
         holder.detail.setText(recipe.getNom_recipe());
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
-        if(recipe.getIcon_recipe()!=null && !Arrays.toString(recipe.getIcon_recipe()).equals(""))
-        {
+        if (recipe.getIcon_recipe() != null && !Arrays.toString(recipe.getIcon_recipe()).equals("")) {
             holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
-        }else
-        if(recipe.getPathimagerecipe()!=null) {
+        } else if (recipe.getPathimagerecipe() != null) {
             //holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
-            String url = BASE_URL +"data/uploads/"+ recipe.getPathimagerecipe();
+            String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
             Picasso.get()
                     .load(url)
                     .error(R.drawable.eror_image_download)
                     .memoryPolicy(MemoryPolicy.NO_STORE)
                     .into(holder.Image);
         }
+
         if (Objects.equals(b, TAG_LOCAL))
             holder.txt_time.setText("Local");
         else holder.txt_time.setText("Remote");
+
         holder.heat.setOnClickListener(view -> {
             Drawable pic = holder.heat.getDrawable().getCurrent();
             Toast.makeText(view.getContext(), "" + pic, Toast.LENGTH_SHORT).show();
             if (defaultImagelike.getConstantState().equals(holder.heat.getDrawable().getConstantState())) {
                 holder.heat.setImageDrawable(defaultImagenot);
-            } else
+            } else {
                 holder.heat.setImageDrawable(defaultImagelike);
+                Recipes_Fav_User.add(recipe);
+            }
         });
 
         holder.Image.setOnClickListener(v -> {
-            if(CURRENT_RECIPE!=recipe) {
+            if (CURRENT_RECIPE != recipe) {
                 //if(recipe.getIcon_recipe()!=null)
                 //recipe.setIcon_recipe(encod(((BitmapDrawable) holder.Image.getDrawable()).getBitmap()));
                 CURRENT_RECIPE = recipe;
@@ -98,8 +94,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                 getFullRecipeApi(recipe.getId_recipe(), v.getContext());
 //                m.getStepRecipeByIdRecipeApi(recipe.getId_recipe());
 //                m.getReviewRecipeApi(recipe.getId_recipe());
-            }
-            else viewPager2.setCurrentItem(1,false);
+            } else viewPager2.setCurrentItem(1, false);
         });
 
     }
