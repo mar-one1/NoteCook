@@ -3,11 +3,13 @@ package com.example.notecook.Adapter;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
+import static com.example.notecook.MainActivity.Insert_Fav;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.getFullRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
+import static com.example.notecook.Utils.Constants.user_login;
 
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
@@ -82,6 +84,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             } else {
                 holder.heat.setImageDrawable(defaultImagelike);
                 Recipes_Fav_User.add(recipe);
+                Insert_Fav(user_login.getUser().getId_User(),recipe.getId_recipe());
             }
         });
 

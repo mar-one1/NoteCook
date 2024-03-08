@@ -102,7 +102,13 @@ public interface MySQLiteHelperTable extends AutoCloseable {
     String COLUMN_FRK_RECIPE = "FRK_recipe";
     String COLUMN_FRK_PRODUIT = "FRK_produit";
 
-
+    /*
+     * Table List FavoriteUserRecipe
+     */
+    String TABLE_FAV_RECIPE_USER = "Favorite_User_Recipe";
+    String COLUMN_ID_FAV_USER  = "favRecipe_id";
+    String COLUMN_FRK_RECIPE_FAV= "FRK_recipe";
+    String COLUMN_FRK_USER_FAV = "FRK_user";
 
     @Override
     void close() throws Exception;

@@ -1,5 +1,6 @@
 package com.example.notecook.Api;
 
+import com.example.notecook.Fragement.Favorite_User_Recipe;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
@@ -47,10 +48,10 @@ public interface ApiService {
     Call<List<Recipe>> getAllRecipes(@Header("Authorization") String token);
 
     @GET("recipes/{id}")
-    Call<RecipeResponse> getRecipeById(@Header("Authorization") String token,@Path("id") int recipeId);
+    Call<RecipeResponse> getRecipeById(@Header("Authorization") String token, @Path("id") int recipeId);
 
     @GET("recipes/user/{id}")
-    Call<List<Recipe>> getRecipeByIdUser(@Header("Authorization") String token,@Path("id") int recipeId);
+    Call<List<Recipe>> getRecipeByIdUser(@Header("Authorization") String token, @Path("id") int recipeId);
 
     @GET("recipes/user/{username}")
     Call<List<Recipe>> getRecipeByUsernameUser(@Header("Authorization") String token, @Path("username") String username);
@@ -219,4 +220,9 @@ public interface ApiService {
     // Example of a custom query parameter
     @GET("recipes/search/nom")
     Call<List<Recipe>> searchRecipes(@Header("Authorization") String token, @Query("key") String query);
+
+    @POST("favorites")
+    @Headers("Content-Type: application/json")
+    Call<Favorite_User_Recipe> createFavorite(@Header("Authorization") String token, @Body Favorite_User_Recipe favorite);
+
 }

@@ -113,6 +113,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             + " integer primary key autoincrement, " + COLUMN_FRK_ID_INGREDIENT_RECIPE + " integer , " + COLUMN_FRK_ID_RECIPE + " integer );";
 
     /*
+     * Commande sql pour la création de la table FAV_RECIPE_USER
+     */
+        private static final String DATABASE_CREATE_FAV_RECIPE_USER = "create table "
+            + TABLE_FAV_RECIPE_USER + "(" + COLUMN_ID_FAV_USER + " integer primary key autoincrement, "
+            + COLUMN_FRK_RECIPE_FAV + " integer , "
+            + COLUMN_FRK_USER_FAV + " integer , "
+            + " FOREIGN KEY (" + COLUMN_FRK_USER_FAV + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + ") ON DELETE CASCADE , "
+            +  "FOREIGN KEY (" + COLUMN_FRK_RECIPE_FAV + ") REFERENCES " + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE + ") ON DELETE CASCADE )";
+
+    /*
      * Commande sql pour la création des champs dans les table intial
      */
     private static final String InsertDataUser = "INSERT INTO " + TABLE_USER +
@@ -231,6 +241,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
         sqLiteDatabase.execSQL(DATABASE_CREATE_CATEGORIE_RECIPE);
         sqLiteDatabase.execSQL(DATABASE_CREATE_PRODUIT);
         sqLiteDatabase.execSQL(DATABASE_CREATE_RECIPE_PRODUIT);
+        sqLiteDatabase.execSQL(DATABASE_CREATE_FAV_RECIPE_USER);
         sqLiteDatabase.execSQL(InsertDataUser);
 //        sqLiteDatabase.execSQL(InsertDataRecipe);
 //        sqLiteDatabase.execSQL(InsertDataDetailRecipe);
@@ -251,6 +262,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_LIST_INGREDIENT_RECIPE);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUIT);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPEPRODIUT);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_FAV_RECIPE_USER);
 
         onCreate(sqLiteDatabase);
     }
