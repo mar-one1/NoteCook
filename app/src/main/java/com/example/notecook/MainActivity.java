@@ -38,8 +38,6 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
@@ -76,6 +74,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.MediaType;
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(@androidx.annotation.NonNull Call<User> call, @androidx.annotation.NonNull Response<User> response) {
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
                 if (response.isSuccessful()) {
                     User UserResponse = response.body();
 
@@ -726,16 +726,15 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
+        RecipeViewModel model = new RecipeViewModel(this);
         if(!Type_User.equals(TAG_MODE_INVITE)) {
             if (user_login.getUser() == null)
                 getUserApi("", getBaseContext());
             else getUserApi(user_login.getUser().getUsername(), getBaseContext());
 
             //---------------------
-            pDialog.cancel();
             //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
 
-            RecipeViewModel model = new RecipeViewModel(this);
             model.getRecipes(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
                 @Override
                 public void onChanged(@Nullable List<Recipe> recipeList) {
@@ -744,7 +743,8 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getBaseContext(), "changed main " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
                 }
             });
-
+        }
+            pDialog.cancel();
 //            model.getRecipesByUsername(getBaseContext(), user_login.getUser().getUsername()).observe(this, new Observer<List<Recipe>>() {
 //                @Override
 //                public void onChanged(@Nullable List<Recipe> recipeList) {
@@ -753,7 +753,7 @@ public class MainActivity extends AppCompatActivity {
 //                    Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
 //                }
 //            });
-        }
+
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());

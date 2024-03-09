@@ -30,7 +30,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -48,6 +47,8 @@ import com.example.notecook.Utils.levelRecipe;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import javax.annotation.Nullable;
 
 public class add_recipe extends Fragment {
 

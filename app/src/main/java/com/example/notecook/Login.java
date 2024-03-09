@@ -49,9 +49,11 @@ import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.ConnexionRetrofit;
 import com.example.notecook.Api.LoginResponse;
+import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;
 import com.example.notecook.databinding.ActivityLoginBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -61,11 +63,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -73,6 +81,7 @@ import java.util.regex.Pattern;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -96,13 +105,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     MainActivity m;
     GoogleSignInClient mGoogleSignInClient;
     GoogleSignInOptions gso;
-    TextView txt_username, txt_password;
+    TextView txt_username_login, txt_password_login;
+    TextView txt_firstname, txt_lastname, txt_phoneNumber, txt_email, txt_password, txt_passwordConfirmation;
     ViewPager2 viewPager2;
     // create an authenticationCallback
     private BiometricPrompt.AuthenticationCallback authenticationCallback;
     private SharedPreferences sharedPreferences;
     private View view;
     private PasswordHasher passwordHasher = new PasswordHasher();
+    private InputValidator inputValidator = new InputValidator();
 
     //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
@@ -168,12 +179,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .
-
-                requestEmail()
-                        .
-
-                build();
+                .requestEmail()
+                .build();
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -432,17 +439,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
     public void loginclk() {
-        SweetAlertDialog pDialog = new SweetAlertDialog(Login.this, SweetAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(Color.parseColor("#E41818"));
-        pDialog.setTitleText("Chargement ...");
-        pDialog.setCancelable(true);
-        pDialog.show();
+        if (inputValidator.isValidLogin(binding.etUsername, binding.etPassword)) {
+            SweetAlertDialog pDialog = new SweetAlertDialog(Login.this, SweetAlertDialog.PROGRESS_TYPE);
+            pDialog.getProgressHelper().setBarColor(Color.parseColor("#E41818"));
+            pDialog.setTitleText("Chargement ...");
+            pDialog.setCancelable(true);
+            pDialog.show();
 
-        if (Constants.NetworkIsConnected(Login.this)) {
-            connectionApi();
-        } else Constants.DisplayErrorMessage(Login.this, "Verifier la Connectivitee!!!");
+            if (Constants.NetworkIsConnected(Login.this)) {
+                connectionApi();
+            } else Constants.DisplayErrorMessage(Login.this, "Verifier la Connectivitee!!!");
 
-        pDialog.cancel();
+            pDialog.cancel();
+        }
     }
 
     private String ConnectLocal() {
@@ -536,16 +545,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 passwordHasher = new PasswordHasher();
                 String password = passwordHasher.hashPassword(acct.getId().toString());
                 User Newuser = new User(username, acct.getFamilyName(), acct.getGivenName(), "00/00/0000", acct.getEmail(),
-                        null, "", password, "Chef ", "good");
+                        null, "000000000000", password, "active", "good");
                 createUserlogin(null, username, acct.getGivenName(),
                         acct.getFamilyName(), "00/00/0000", acct.getEmail(),
-                        "0", password, "Chef ", "good");
+                        "0", password, "Chef ", "active");
                 vrai = true;
                 Constants.AffichageMessage("Vous avez Register avec succes Localy", Login.this);
 
                 InsertUserApi(Newuser);
-                if(acct.getPhotoUrl()!=null)
-                updateGoogleUserImage(username, acct.getPhotoUrl().toString());
+                if (acct.getPhotoUrl() != null)
+                    updateGoogleUserImage(username, acct.getPhotoUrl().toString());
                 //MainActivity.uploadImage(Newuser.getUsername(),bitmap,getBaseContext());
             } else
                 Toast.makeText(this, "Welcome Back " + acct.getDisplayName(), Toast.LENGTH_LONG).show();
@@ -553,41 +562,43 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         }
         if (check.equals("registre")) {
-            if (user.getId_User() == 0) {
-                Pattern patternNom = Pattern.compile(NOM_REGEX_3);
-                Matcher matcherNom = patternNom.matcher(binding.txtUsername.getText().toString());
-                if (matcherNom.find()) {
-                    boolean b = false;
-                    if (Constants.listUser.size() != 0)
-                        for (User item : Constants.listUser) {
+            if (inputValidator.isValidRegistration(binding.txtUsername, binding.txtFirstnameLast, binding.txtTel,
+                    binding.txtEmail, binding.txtPassword, binding.txtConfirmationPassword))
+                if (user.getId_User() == 0) {
+                    Pattern patternNom = Pattern.compile(NOM_REGEX_3);
+                    Matcher matcherNom = patternNom.matcher(binding.txtUsername.getText().toString());
+                    if (matcherNom.find()) {
+                        boolean b = false;
+                        if (Constants.listUser.size() != 0)
+                            for (User item : Constants.listUser) {
 
-                            if (Objects.equals(item.getEmail(), binding.txtEmail.getText().toString()) ||
-                                    Objects.equals(item.getUsername(), (binding.txtUsername.getText().toString() + "_" + binding.txtFirstnameLast.getText().toString()))) {
-                                b = true;
-                                break;
+                                if (Objects.equals(item.getEmail(), binding.txtEmail.getText().toString()) ||
+                                        Objects.equals(item.getUsername(), (binding.txtUsername.getText().toString() + "_" + binding.txtFirstnameLast.getText().toString()))) {
+                                    b = true;
+                                    break;
+                                }
                             }
-                        }
-                    if (!b) {
-                        String username = (binding.txtUsername.getText().toString()) + "_" + binding.txtFirstnameLast.getText().toString();
-                        Drawable d = binding.editIconProfil.getDrawable();
-                        Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
-                        passwordHasher = new PasswordHasher();
-                        String password = passwordHasher.hashPassword(binding.txtPassword.getText().toString());
-                        byte[] icon = MainActivity.iconUser;
-                        User newUser;
-                        newUser = createUserlogin(icon, username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), binding.txtTel.getText().toString(), password, "Chef", "good");
-                        vrai = true;
-                        if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
-                            newUser.setIcon(null);
-                            InsertUserApi(newUser);
-                            MainActivity.uploadImage(newUser.getUsername(), bitmap, "register", getBaseContext());
-                        }
-                        if (!Objects.equals(newUser.getUsername(), ""))
-                            Constants.AffichageMessage("Vous avez Register avec succes in local", Login.this);
-                    } else
-                        Constants.AffichageMessage("Votre Email est existe dans la base Changer Email or Sign_in", Login.this);
-                } else Constants.DisplayErrorMessage(this, "Le nom n'est pas valide");
-            } else Constants.AffichageMessage("User already exists", Login.this);
+                        if (!b) {
+                            String username = (binding.txtUsername.getText().toString()) + "_" + binding.txtFirstnameLast.getText().toString();
+                            Drawable d = binding.editIconProfil.getDrawable();
+                            Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
+                            passwordHasher = new PasswordHasher();
+                            String password = passwordHasher.hashPassword(binding.txtPassword.getText().toString());
+                            byte[] icon = MainActivity.iconUser;
+                            User newUser;
+                            newUser = createUserlogin(icon, username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), binding.txtTel.getText().toString(), password, "Chef", "active");
+                            vrai = true;
+                            if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
+                                newUser.setIcon(null);
+                                InsertUserApi(newUser);
+                                MainActivity.uploadImage(newUser.getUsername(), bitmap, "register", getBaseContext());
+                            }
+                            if (!Objects.equals(newUser.getUsername(), ""))
+                                Constants.AffichageMessage("Vous avez Register avec succes in local", Login.this);
+                        } else
+                            Constants.AffichageMessage("Votre Email est existe dans la base Changer Email or Sign_in", Login.this);
+                    } else Constants.DisplayErrorMessage(this, "Le nom n'est pas valide");
+                } else Constants.AffichageMessage("User already exists", Login.this);
         }
         dataSourceUser.close();
         return vrai;
@@ -840,10 +851,25 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     int statusCode = response.code();
                     Constants.TAG_CONNEXION = statusCode;
                     TAG_CONNEXION_MESSAGE = response.message();
-
                     // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
                     // Handle different status codes as per your API's conventions.
-                    if (statusCode == 409) {
+                    if (response.code() == 400) {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Gson gson = new Gson();
+                            ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
+                            // Now you have the validation errors in the validationError object
+                            // Handle them accordingly
+                            StringBuilder errorMessages = new StringBuilder();
+                            for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
+                                errorMessages.append(", ").append(error.getMessage());
+                            }
+                            Constants.AffichageMessage(errorMessages.toString(), Login.this);
+                        } catch (IOException e) {
+                            // Handle error parsing error body
+                        }
+                        // Unauthorized, handle accordingly (e.g., reauthentication).
+                    } else if (statusCode == 409) {
                         Constants.AffichageMessage("User already exists", Login.this);
                         // Unauthorized, handle accordingly (e.g., reauthentication).
                     } else if (statusCode == 404) {
