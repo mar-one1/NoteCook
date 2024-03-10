@@ -133,7 +133,8 @@ public interface ApiService {
 
     // Ingredients API Endpoints
     @GET("ingredients")
-    Call<List<Ingredients>> getAllIngredients();
+    @Headers("Content-Type: application/json")
+    Call<List<Ingredients>> getAllIngredients(@Header("Authorization") String token);
 
     @GET("ingredients/{id}")
     Call<Ingredients> getIngredientById(@Path("id") int ingredientId);

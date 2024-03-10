@@ -62,7 +62,7 @@
             android:textSize="18sp" />
 
         <Spinner
-            android:id="@+id/editTextIngredients"
+            android:id="@+id/sp_Ingredients"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/textViewIngredients"

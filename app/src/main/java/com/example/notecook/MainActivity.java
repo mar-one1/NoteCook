@@ -1,6 +1,7 @@
 package com.example.notecook;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
+import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
@@ -38,6 +39,7 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
@@ -55,6 +57,8 @@ import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Fragement.Favorite_User_Recipe;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Detail_Recipe;
+import com.example.notecook.Model.Ingredient_recipe;
+import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
@@ -381,11 +385,11 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     RecipeResponse recipeResponse = response.body();
                     if (recipeResponse != null) {
-                    //CURRENT_RECIPE =recipeResponse.getRecipe();
-                    Detail_CurrentRecipe=recipeResponse.getDetail_recipe();
-                    Steps_CurrentRecipe = recipeResponse.getSteps();
-                    Review_CurrentRecipe = recipeResponse.getReviews();
-                    Ingredients_CurrentRecipe = recipeResponse.getIngredients();
+                        //CURRENT_RECIPE =recipeResponse.getRecipe();
+                        Detail_CurrentRecipe = recipeResponse.getDetail_recipe();
+                        Steps_CurrentRecipe = recipeResponse.getSteps();
+                        Review_CurrentRecipe = recipeResponse.getReviews();
+                        Ingredients_CurrentRecipe = recipeResponse.getIngredients();
                     }
                     TAG_CONNEXION_MESSAGE = response.message();
                     TAG_CONNEXION = response.code();
@@ -727,7 +731,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
         RecipeViewModel model = new RecipeViewModel(this);
-        if(!Type_User.equals(TAG_MODE_INVITE)) {
+        if (!Type_User.equals(TAG_MODE_INVITE)) {
             if (user_login.getUser() == null)
                 getUserApi("", getBaseContext());
             else getUserApi(user_login.getUser().getUsername(), getBaseContext());
@@ -744,7 +748,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-            pDialog.cancel();
+        pDialog.cancel();
 //            model.getRecipesByUsername(getBaseContext(), user_login.getUser().getUsername()).observe(this, new Observer<List<Recipe>>() {
 //                @Override
 //                public void onChanged(@Nullable List<Recipe> recipeList) {
@@ -754,11 +758,10 @@ public class MainActivity extends AppCompatActivity {
 //                }
 //            });
 
-
+        getIngredientsRecipeApi();
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
-
 
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
@@ -781,7 +784,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<Recipe> getLocalRecipes(int i) {
-        RecipeDatasource recipeDatasource = new  RecipeDatasource(this);
+        RecipeDatasource recipeDatasource = new RecipeDatasource(this);
         recipeDatasource.open();
         Constants.list_recipe = recipeDatasource.getRecipeById(i);
         recipeDatasource.close();
@@ -1013,6 +1016,43 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void getIngredientsRecipeApi() {
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        Call<List<Ingredients>> call = apiService.getAllIngredients(Token);
+
+        call.enqueue(new Callback<List<Ingredients>>() {
+            @Override
+            public void onResponse(Call<List<Ingredients>> call, Response<List<Ingredients>> response) {
+                if (response.isSuccessful()) {
+                    All_Ingredients_Recipe = response.body();
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+                } else {
+                    // Handle error response here
+                    int statusCode = response.code();
+                    TAG_CONNEXION = statusCode;
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorResponse = response.errorBody().string();
+                            // Print or log the errorResponse for debugging
+                            Log.e("token", "Error Response: " + errorResponse);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Ingredients>> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+            }
+        });
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -1061,7 +1101,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public  static void Insert_Fav(int id_user,int id_recipe) {
+    public static void Insert_Fav(int id_user, int id_recipe) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
         // Create a new favorite object
@@ -1070,7 +1110,7 @@ public class MainActivity extends AppCompatActivity {
         newFavorite.setRecipeId(id_recipe); // Set recipe ID
 
         // Send a POST request to create the new favorite
-        Call<Favorite_User_Recipe> call = apiService.createFavorite(Token,newFavorite);
+        Call<Favorite_User_Recipe> call = apiService.createFavorite(Token, newFavorite);
         call.enqueue(new Callback<Favorite_User_Recipe>() {
             @Override
             public void onResponse(Call<Favorite_User_Recipe> call, Response<Favorite_User_Recipe> response) {
@@ -1088,7 +1128,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
 
     public class NetworkChangeReceiver extends BroadcastReceiver {

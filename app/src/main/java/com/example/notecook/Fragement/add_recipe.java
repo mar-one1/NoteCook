@@ -2,6 +2,7 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.MainActivity.InsertRecipeApi;
 import static com.example.notecook.MainActivity.encod;
+import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
@@ -38,6 +39,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.notecook.Api.TokenResponse;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.MainActivity;
+import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
@@ -48,6 +50,9 @@ import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 public class add_recipe extends Fragment {
@@ -57,6 +62,7 @@ public class add_recipe extends Fragment {
     public add_recipe() {
         // Required empty public constructor
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,10 +94,21 @@ public class add_recipe extends Fragment {
         // Create an ArrayAdapter
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, displayNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Set the ArrayAdapter to the Spinner
-
         binding.levelRecipe.setAdapter(adapter);
+
+        List<String> ingredientNames = new ArrayList<>();
+
+// Iterate over All_Ingredients_Recipe to collect all ingredient names
+        for (Ingredients ingredient : All_Ingredients_Recipe) {
+            ingredientNames.add(ingredient.getNome());
+        }
+
+// Create an ArrayAdapter
+        ArrayAdapter<String> adapterIngredients = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ingredientNames);
+
+// Set the adapter to your ListView or RecyclerView
+        binding.spIngredients.setAdapter(adapter);
+        // Set the ArrayAdapter to the Spinner
 
 
         binding.dtRecipeTxt.setOnClickListener(new View.OnClickListener() {
@@ -111,14 +128,14 @@ public class add_recipe extends Fragment {
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bitmap bitmap = ((BitmapDrawable)binding.addIconRecipe.getDrawable()).getBitmap();
+                Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
                 Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
-                Log.d("TAG",""+user_login.getUser().getId_User());
-                InsertRecipeApi(recipe,bitmap, getContext());
+                Log.d("TAG", "" + user_login.getUser().getId_User());
+                InsertRecipeApi(recipe, bitmap, getContext());
                 recipe.setIcon_recipe(encod(bitmap));
-                int i=0;
-                i= RecipeRepository.insertRecipeLocally(getContext(),recipe);
-                if(i!=0) {
+                int i = 0;
+                i = RecipeRepository.insertRecipeLocally(getContext(), recipe);
+                if (i != 0) {
                     Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
                     Constants.list_recipe.add(recipe);
                 }

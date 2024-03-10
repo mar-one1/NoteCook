@@ -55,6 +55,7 @@ public class Constants {
     public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
     public static List<Review> Review_CurrentRecipe = new ArrayList<>();
     public static List<Ingredients> Ingredients_CurrentRecipe = new ArrayList<>();
+    public static List<Ingredients> All_Ingredients_Recipe = new ArrayList<>();
     public static List<Recipe> Search_list = new ArrayList<>();
     public static List<Recipe> Basket_list = new ArrayList<>();
     public static User User_CurrentRecipe = new User();
