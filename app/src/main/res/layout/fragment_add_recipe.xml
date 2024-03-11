@@ -76,7 +76,7 @@
             android:id="@+id/textViewInstructions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/editTextIngredients"
+            android:layout_below="@id/sp_Ingredients"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
@@ -307,6 +307,7 @@
                     android:textSize="18sp" />
 
                 <EditText
+                    android:id="@+id/edt_detail"
                     android:layout_width="572dp"
                     android:layout_height="94dp"
                     android:layout_margin="15dp"

@@ -132,22 +132,22 @@ public interface ApiService {
     Call<Void> deleteUser(@Path("id") int userId);
 
     // Ingredients API Endpoints
-    @GET("ingredients")
+    @GET("ingredientrecipes")
     @Headers("Content-Type: application/json")
     Call<List<Ingredients>> getAllIngredients(@Header("Authorization") String token);
 
-    @GET("ingredients/{id}")
+    @GET("ingredientrecipes/{id}")
     Call<Ingredients> getIngredientById(@Path("id") int ingredientId);
 
-    @POST("ingredients")
+    @POST("ingredientrecipes")
     @Headers("Content-Type: application/json")
     Call<Ingredients> createIngredient(@Body Ingredients ingredient);
 
-    @PUT("ingredients/{id}")
+    @PUT("ingredientrecipes/{id}")
     @Headers("Content-Type: application/json")
     Call<Ingredients> updateIngredient(@Path("id") int ingredientId, @Body Ingredients ingredient);
 
-    @DELETE("ingredients/{id}")
+    @DELETE("ingredientrecipes/{id}")
     Call<Void> deleteIngredient(@Path("id") int ingredientId);
 
 
@@ -215,7 +215,6 @@ public interface ApiService {
     @DELETE("DetailRecipes/{id}")
     Call<Void> deleteDetailRecipe(@Path("id") int DetailRecipeId);
 
-    // ...
     // Add more endpoints for other models as needed
 
     // Example of a custom query parameter

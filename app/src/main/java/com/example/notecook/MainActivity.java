@@ -6,7 +6,6 @@ import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
-import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
 import static com.example.notecook.Utils.Constants.Remotelist_recipe;
 import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
@@ -14,7 +13,6 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
-import static com.example.notecook.Utils.Constants.TAG_MODE_UTILISATEUR;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
@@ -51,13 +49,13 @@ import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.ConnexionRetrofit;
 import com.example.notecook.Api.RecipeResponse;
 import com.example.notecook.Api.TokenResponse;
+import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.DetailRecipeDataSource;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Fragement.Favorite_User_Recipe;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Detail_Recipe;
-import com.example.notecook.Model.Ingredient_recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
@@ -66,6 +64,7 @@ import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.ViewModel.RecipeViewModel;
+import com.google.gson.Gson;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -219,7 +218,22 @@ public class MainActivity extends AppCompatActivity {
                     Constants.TAG_CONNEXION = statusCode;
                     TAG_CONNEXION_MESSAGE = response.message();
                     Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "User not updated To Api", Toast.LENGTH_LONG).show();
-
+                    if (response.code() == 400) {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Gson gson = new Gson();
+                            ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
+                            // Now you have the validation errors in the validationError object
+                            // Handle them accordingly
+                            StringBuilder errorMessages = new StringBuilder();
+                            for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
+                                errorMessages.append(", ").append(error.getMessage());
+                            }
+                            Toast.makeText(context, errorMessages, Toast.LENGTH_LONG).show();
+                        } catch (IOException e) {
+                            // Handle error parsing error body
+                        }
+                    }else
                     // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Main);
                     // Handle different status codes as per your API's conventions.
                     if (statusCode == 409) {
@@ -683,6 +697,34 @@ public class MainActivity extends AppCompatActivity {
         return localDetaliRecipes;
     }
 
+    public static void Insert_Fav(int id_user, int id_recipe) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        // Create a new favorite object
+        Favorite_User_Recipe newFavorite = new Favorite_User_Recipe();
+        newFavorite.setUserId(id_user); // Set user ID
+        newFavorite.setRecipeId(id_recipe); // Set recipe ID
+
+        // Send a POST request to create the new favorite
+        Call<Favorite_User_Recipe> call = apiService.createFavorite(Token, newFavorite);
+        call.enqueue(new Callback<Favorite_User_Recipe>() {
+            @Override
+            public void onResponse(Call<Favorite_User_Recipe> call, Response<Favorite_User_Recipe> response) {
+                if (response.isSuccessful()) {
+                    Favorite_User_Recipe createdFavorite = response.body();
+                    // Handle the newly created favorite
+                } else {
+                    // Handle unsuccessful response
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Favorite_User_Recipe> call, Throwable t) {
+                // Handle network failure
+            }
+        });
+    }
+
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
@@ -717,6 +759,7 @@ public class MainActivity extends AppCompatActivity {
             if (Objects.equals(tag, Constants.TAG_MODE_INVITE))
                 Type_User = tag;
         }
+
         Token = getToken();
         SweetAlertDialog pDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#E41818"));
@@ -725,30 +768,35 @@ public class MainActivity extends AppCompatActivity {
         pDialog.show();
         // get Recipe From Api
 
-        list_detail_recipe = getAllocalDR(getBaseContext());
+        try {
+            list_detail_recipe = getAllocalDR(getBaseContext());
 
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fl_main, new MainFragment());
-        fragmentTransaction.commit();
-        RecipeViewModel model = new RecipeViewModel(this);
-        if (!Type_User.equals(TAG_MODE_INVITE)) {
-            if (user_login.getUser() == null)
-                getUserApi("", getBaseContext());
-            else getUserApi(user_login.getUser().getUsername(), getBaseContext());
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fl_main, new MainFragment());
+            fragmentTransaction.commit();
+            RecipeViewModel model = new RecipeViewModel(this);
+            if (!Type_User.equals(TAG_MODE_INVITE)) {
+                if (user_login.getUser() == null)
+                    getUserApi("", getBaseContext());
+                else getUserApi(user_login.getUser().getUsername(), getBaseContext());
 
-            //---------------------
-            //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
+                //---------------------
+                //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
 
-            model.getRecipes(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
-                @Override
-                public void onChanged(@Nullable List<Recipe> recipeList) {
-                    //Remotelist_recipe.clear();
-                    Remotelist_recipe.setValue(recipeList);
-                    Toast.makeText(getBaseContext(), "changed main " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                model.getRecipes(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
+                    @Override
+                    public void onChanged(@Nullable List<Recipe> recipeList) {
+                        //Remotelist_recipe.clear();
+                        Remotelist_recipe.setValue(recipeList);
+                        Toast.makeText(getBaseContext(), "changed main " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            pDialog.cancel();
+        } catch (Exception e) {
+            Log.e("tag", e.getMessage());
         }
-        pDialog.cancel();
+
 //            model.getRecipesByUsername(getBaseContext(), user_login.getUser().getUsername()).observe(this, new Observer<List<Recipe>>() {
 //                @Override
 //                public void onChanged(@Nullable List<Recipe> recipeList) {
@@ -757,8 +805,12 @@ public class MainActivity extends AppCompatActivity {
 //                    Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
 //                }
 //            });
+        try {
+            getIngredientsRecipeApi();
+        } catch (Exception e) {
+            Log.e("tag", e.getMessage());
+        }
 
-        getIngredientsRecipeApi();
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
@@ -978,7 +1030,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
     public void getReviewRecipeApi(int idRecipe) {
 
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
@@ -1100,35 +1151,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    public static void Insert_Fav(int id_user, int id_recipe) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        // Create a new favorite object
-        Favorite_User_Recipe newFavorite = new Favorite_User_Recipe();
-        newFavorite.setUserId(id_user); // Set user ID
-        newFavorite.setRecipeId(id_recipe); // Set recipe ID
-
-        // Send a POST request to create the new favorite
-        Call<Favorite_User_Recipe> call = apiService.createFavorite(Token, newFavorite);
-        call.enqueue(new Callback<Favorite_User_Recipe>() {
-            @Override
-            public void onResponse(Call<Favorite_User_Recipe> call, Response<Favorite_User_Recipe> response) {
-                if (response.isSuccessful()) {
-                    Favorite_User_Recipe createdFavorite = response.body();
-                    // Handle the newly created favorite
-                } else {
-                    // Handle unsuccessful response
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Favorite_User_Recipe> call, Throwable t) {
-                // Handle network failure
-            }
-        });
-    }
-
 
     public class NetworkChangeReceiver extends BroadcastReceiver {
 

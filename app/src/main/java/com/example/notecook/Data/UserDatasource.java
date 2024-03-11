@@ -1,5 +1,8 @@
 package com.example.notecook.Data;
 
+import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
+import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -28,6 +31,15 @@ public class UserDatasource {
         dbHelper = new MySQLiteHelper(context);
     }
 
+
+    // Method to check if a record exists
+    public static boolean isRecordExist (String tableName,String columnName, String value) {
+
+        Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{value}, null, null, null);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
+    }
     /*
      * insert the value in the Image table
      */
@@ -45,9 +57,9 @@ public class UserDatasource {
         values.put(MySQLiteHelper.COLUMN_GRADE, user.getGrade());
         values.put(MySQLiteHelper.COLUMN_STATUS, user.getStatus());
 
-        long insertId = database.insert(MySQLiteHelper.TABLE_USER, null,
+        long insertId = database.insert(TABLE_USER, null,
                 values);
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_USER,
+        Cursor cursor = database.query(TABLE_USER,
                 allColumns, MySQLiteHelper.COLUMN_ID_USER + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
@@ -71,9 +83,9 @@ public class UserDatasource {
         values.put(MySQLiteHelper.COLUMN_GRADE, grade);
         values.put(MySQLiteHelper.COLUMN_STATUS, status);
 
-        long insertId = database.insert(MySQLiteHelper.TABLE_USER, null,
+        long insertId = database.insert(TABLE_USER, null,
                 values);
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_USER,
+        Cursor cursor = database.query(TABLE_USER,
                 allColumns, MySQLiteHelper.COLUMN_ID_USER + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
@@ -120,13 +132,13 @@ public class UserDatasource {
     public void deleteImage(User user) {
         long id = user.getId_User();
         Log.d("gps", "Image  deleted with id: " + id);
-        database.delete(MySQLiteHelper.TABLE_USER, MySQLiteHelper.COLUMN_ID_USER
+        database.delete(TABLE_USER, MySQLiteHelper.COLUMN_ID_USER
                 + " = " + id, null);
     }
 
     public ArrayList<User> getAllUser() {
         ArrayList<User> ListUser = new ArrayList<>();
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_USER,
+        Cursor cursor = database.query(TABLE_USER,
                 allColumns, null, null, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -141,7 +153,7 @@ public class UserDatasource {
 
     public User select_User_BYid(int id) {
         User ListUserByid = new User();
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_USER,
+        Cursor cursor = database.query(TABLE_USER,
                 allColumns, MySQLiteHelper.COLUMN_ID_USER + " = " + id, null, null, null, null);
 
         cursor.moveToFirst();
@@ -156,7 +168,7 @@ public class UserDatasource {
     public User select_User_BYUsername(String username) {
         User user = new User();
         String[] selectionArgs = {username};
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_USER,
+        Cursor cursor = database.query(TABLE_USER,
                 allColumns, MySQLiteHelper.COLUMN_USERNAME + " = ?", selectionArgs, null, null, null);
 
         cursor.moveToFirst();
@@ -183,7 +195,7 @@ public class UserDatasource {
         if (!Objects.equals(user.getStatus(), ""))
             data.put(MySQLiteHelper.COLUMN_STATUS, user.getStatus());
         data.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
-        int value =database.update(MySQLiteHelper.TABLE_USER, data, MySQLiteHelper.COLUMN_ID_USER + " = " + id, null);
+        int value =database.update(TABLE_USER, data, MySQLiteHelper.COLUMN_ID_USER + " = " + id, null);
         return value;
     }
 
@@ -199,7 +211,7 @@ public class UserDatasource {
         data.put(MySQLiteHelper.COLUMN_GRADE, user.getGrade());
         data.put(MySQLiteHelper.COLUMN_STATUS, user.getStatus());
         data.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
-        int value =database.update(MySQLiteHelper.TABLE_USER, data, MySQLiteHelper.COLUMN_USERNAME +  "= ?", selectionArgs);
+        int value =database.update(TABLE_USER, data, MySQLiteHelper.COLUMN_USERNAME +  "= ?", selectionArgs);
         return value;
     }
 

@@ -61,6 +61,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         holder.detail.setText(recipe.getNom_recipe());
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
         if (recipe.getIcon_recipe() != null && !Arrays.toString(recipe.getIcon_recipe()).equals("")) {
+            b=TAG_LOCAL;
             holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
         } else if (recipe.getPathimagerecipe() != null) {
             //holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));

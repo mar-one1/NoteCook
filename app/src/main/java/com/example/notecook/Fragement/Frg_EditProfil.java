@@ -28,6 +28,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -117,20 +118,22 @@ public class Frg_EditProfil extends Fragment {
                 showDatePickerDialog(v);
             }
         });
-
-        if (user_login != null) {
-            if (user_login.getUser().getPathimageuser() != null && !user_login.getUser().getPathimageuser().equals("")) {
-                String imageUrl = "";
-                if (user_login.getUser().getPathimageuser().startsWith("http"))
-                    imageUrl = user_login.getUser().getPathimageuser();
-                else
-                    imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
-                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
-                //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
-            } else if (user.getIcon() != null) {
-                binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
+        try {
+            if (user_login != null) {
+                if (user_login.getUser().getPathimageuser() != null && !user_login.getUser().getPathimageuser().equals("")) {
+                    String imageUrl = "";
+                    if (user_login.getUser().getPathimageuser().startsWith("http"))
+                        imageUrl = user_login.getUser().getPathimageuser();
+                    else
+                        imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
+                    Picasso.get().load(imageUrl).into(binding.iconEditprofil);
+                    //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+                } else if (user.getIcon() != null) {
+                    binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
+                }
             }
-        }
+        }catch (Exception e) {Log.e("tag",e.getMessage().toString());}
+
 
         ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
 
@@ -146,49 +149,49 @@ public class Frg_EditProfil extends Fragment {
                 pDialog.dismissWithAnimation();
             });
             pDialog.setCancelButton("oui", sweetAlertDialog -> {
-                String urlold = user_login.getUser().getPathimageuser();
-                User currentuser = user_login.getUser();
-                mUserDatasource = new UserDatasource(getContext());
-                mUserDatasource.open();
-                String nom = binding.Nome.getText().toString();
-                String prenom = binding.myEditText.getText().toString();
-                String naissance = binding.txtBirth.getText().toString();
-                String mail = binding.txtEmail.getText().toString();
-                String tel = binding.txtPhone.getText().toString();
-                Drawable d = binding.iconEditprofil.getDrawable();
-                Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
-                byte[] icon = encod(bitmap);
-                byte[] icon1 = null;
-                String pass = user_login.getUser().getPassWord();
-                String username = user_login.getUser().getUsername();
-                String Status = user_login.getUser().getStatus();
-                String grade = user_login.getUser().getGrade();
-                getUser = new User(user_login.getUser().getId_User(), username, nom, prenom, naissance, mail, icon, tel, pass, Status, grade,currentuser.getPathimageuser());
-                int value = mUserDatasource.UpdateUserByUsername(getUser, user_login.getUser().getUsername());
-                Toast.makeText(getContext(), String.valueOf(value), Toast.LENGTH_SHORT).show();
-                if (value == 1) {
-                    user_login.setUser(getUser);
-                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.detach(Frg_EditProfil.this);
-                    fragmentTransaction.commitNow();
-                    pDialog.dismissWithAnimation();
-                    Vp2.setCurrentItem(0, false);
-                    Vp2.setCurrentItem(4, false);
-                    Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, (AppCompatActivity) getContext());
-                } else if (value == 0) {
-                    insertUser(getUser);
-                    Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "User insert success");
-                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.detach(Frg_EditProfil.this);
-                    fragmentTransaction.commitNow();
-                    pDialog.dismissWithAnimation();
-                    Vp2.setCurrentItem(0, false);
-                    Vp2.setCurrentItem(4, false);
-                } else {
-                    Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "the Change Not saved");
-                }
-                //user_login.setUser(mUserDatasource.select_User_BYid(user_login.getUser().getId_User()));
-                mUserDatasource.close();
+                try {
+                    String urlold = user_login.getUser().getPathimageuser();
+                    User currentuser = user_login.getUser();
+                    mUserDatasource = new UserDatasource(getContext());
+                    mUserDatasource.open();
+                    String nom = binding.Nome.getText().toString();
+                    String prenom = binding.myEditText.getText().toString();
+                    String naissance = binding.txtBirth.getText().toString();
+                    String mail = binding.txtEmail.getText().toString();
+                    String tel = binding.txtPhone.getText().toString();
+                    Drawable d = binding.iconEditprofil.getDrawable();
+                    Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
+                    byte[] icon = encod(bitmap);
+                    String pass = user_login.getUser().getPassWord();
+                    String username = user_login.getUser().getUsername();
+                    String status = "active";
+                    String grade = user_login.getUser().getGrade();
+                    getUser = new User(user_login.getUser().getId_User(), username, nom, prenom, naissance, mail, icon, tel, pass, status, grade,currentuser.getPathimageuser());
+                    int value = mUserDatasource.UpdateUserByUsername(getUser, user_login.getUser().getUsername());
+                    Toast.makeText(getContext(), String.valueOf(value), Toast.LENGTH_SHORT).show();
+                    if (value == 1) {
+                        user_login.setUser(getUser);
+                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.detach(Frg_EditProfil.this);
+                        fragmentTransaction.commitNow();
+                        pDialog.dismissWithAnimation();
+                        Vp2.setCurrentItem(0, false);
+                        Vp2.setCurrentItem(4, false);
+                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, (AppCompatActivity) getContext());
+                    } else if (value == 0) {
+                        insertUser(getUser);
+                        Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "User insert success");
+                        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.detach(Frg_EditProfil.this);
+                        fragmentTransaction.commitNow();
+                        pDialog.dismissWithAnimation();
+                        Vp2.setCurrentItem(0, false);
+                        Vp2.setCurrentItem(4, false);
+                    } else {
+                        Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "the Change  sNotaved");
+                    }
+                    //user_login.setUser(mUserDatasource.select_User_BYid(user_login.getUser().getId_User()));
+                    mUserDatasource.close();
 
 //                if (!Objects.equals(user_login.getMessage(), TAG_LOCAL)) {
                     currentuser.setIcon(null);
@@ -198,6 +201,7 @@ public class Frg_EditProfil extends Fragment {
                     deleteimage(urlold, getContext());
                     uploadImage(user_login.getUser().getUsername(), bitmap, "", getContext());
 //                }
+                }catch (Exception e) {Log.e("tag",e.getMessage().toString());}
             });
             pDialog.show();
         });
