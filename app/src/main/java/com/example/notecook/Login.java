@@ -14,6 +14,7 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -55,9 +56,11 @@ import com.example.notecook.Api.LoginResponse;
 import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
+import com.example.notecook.Repo.RecipeRepository;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;
+import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.ActivityLoginBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -125,14 +128,21 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }catch (Exception e) {Log.e("tag",e.getMessage());}
 
 
-
+        try {
         sharedPreferences = getSharedPreferences(lOGIN_KEY, Context.MODE_PRIVATE);
         if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
             String s1 = sharedPreferences.getString("username", "");
             String s2 = sharedPreferences.getString("password", "");
+            getLocalUserLogin(s1);
             binding.etUsername.setText(s1);
             binding.etPassword.setText(s2);
             secoundLogin();
+        }
+        }catch (Exception e) {Log.e("tag",e.getMessage());}
+
+        if(user_login_local.getUser()!=null && user_login_local.getUser().getIcon()!=null)
+        {
+            binding.ivUserlogo1.setImageBitmap(MainActivity.decod(user_login_local.getUser().getIcon()));
         }
 
 
@@ -196,6 +206,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
 
         setContentView(view);
+    }
+
+    private void getLocalUserLogin(String username)
+    {
+        UserDatasource userDatasource = new UserDatasource(this);
+        userDatasource.open();
+        user_login_local.setUser(userDatasource.select_User_BYUsername(username));
+        userDatasource.close();
     }
 
     @Override

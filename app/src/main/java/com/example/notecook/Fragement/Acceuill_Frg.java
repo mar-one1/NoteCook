@@ -99,7 +99,6 @@ public class Acceuill_Frg extends Fragment {
         Toast.makeText(getContext(), "changed "+Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
         bindingRcV_recipes(Remotelist_recipe.getValue(),binding.RcCatPopular, true);
         bindingRcV_categories(binding.RcCatMenu, true);
-
     }
 
     @Override
