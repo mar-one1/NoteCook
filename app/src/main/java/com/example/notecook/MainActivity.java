@@ -42,6 +42,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Api.ApiClient;
@@ -61,6 +62,7 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
+import com.example.notecook.Repo.UserRepository;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.ViewModel.RecipeViewModel;
@@ -110,7 +112,11 @@ public class MainActivity extends AppCompatActivity {
     private UserViewModel userRepo;
 
     public static Bitmap decod(byte[] image) {
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
+        Bitmap bitmap = null;
+        try{
+            bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+        } catch(Exception e){Log.e("tag",""+e);}
+        return bitmap;
     }
 
     public static byte[] encod(Bitmap b) {
@@ -775,8 +781,11 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fl_main, new MainFragment());
             fragmentTransaction.commit();
+
             RecipeViewModel model = new RecipeViewModel(this);
             UserViewModel modelUser = new UserViewModel(this);
+            //model = new ViewModelProvider(this).get(RecipeViewModel.class);
+            //modelUser = new ViewModelProvider(this).get(UserViewModel.class);
             sharedPreferences = getSharedPreferences(lOGIN_KEY, Context.MODE_PRIVATE);
             String s1 = sharedPreferences.getString("username", "");
             String s2 = sharedPreferences.getString("password", "");
@@ -854,17 +863,11 @@ public class MainActivity extends AppCompatActivity {
         recipeDatasource.open();
         Constants.list_recipe = recipeDatasource.getRecipeById(i);
         recipeDatasource.close();
-        getLocalDetailsRecipes();
+        //getLocalDetailsRecipes();
         return Constants.list_recipe;
     }
 
-    public void getLocalDetailsRecipes() {
 
-        DetailRecipeDataSource detailRecipeDataSource = new DetailRecipeDataSource(this);
-        detailRecipeDataSource.open();
-        Constants.list_Detailrecipe = detailRecipeDataSource.getAllDR();
-        detailRecipeDataSource.close();
-    }
 
     public void getStepRecipeByIdRecipeApi(int Recipeid) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);

@@ -201,7 +201,7 @@ public class Frg_EditProfil extends Fragment {
                             public void onChanged(User user) {
                                 user_login.setUser(user);
                                 deleteimage(urlold, getContext());
-                                uploadImage(user_login.getUser().getUsername(), bitmap, "", getContext());
+                                userRepo.updateImage(user_login.getUser().getUsername(), bitmap, "", getContext());
                             }
                         });
                 } catch (Exception e) {

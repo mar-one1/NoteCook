@@ -9,6 +9,7 @@ import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -42,6 +43,10 @@ public class RecipeViewModel extends ViewModel {
 
     public LiveData<List<Recipe>> getRecipesByUsername(Context context, String username) {
         return repository.getRecipesByUsername(context, username);
+    }
+
+    public void uploadRecipeImage(int idRecipe, Bitmap bitmap, Context context) {
+        repository.uploadImageRecipe(idRecipe, bitmap, context);
     }
 
 
