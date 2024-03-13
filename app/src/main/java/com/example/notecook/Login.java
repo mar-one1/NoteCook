@@ -58,6 +58,7 @@ import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
 import com.example.notecook.Repo.RecipeRepository;
+import com.example.notecook.Repo.UserRepository;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;
@@ -112,6 +113,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private View view;
     private PasswordHasher passwordHasher = new PasswordHasher();
     private InputValidator inputValidator = new InputValidator();
+    private UserRepository userRepo;
 
     //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
@@ -122,6 +124,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
         m = new MainActivity();
+        userRepo = new UserRepository(getBaseContext());
 
         // Check FingerPrint In Device
         try {
@@ -136,7 +139,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
                 String s1 = sharedPreferences.getString("username", "");
                 String s2 = sharedPreferences.getString("password", "");
-                getLocalUserLogin(s1);
+                userRepo.getLocalUserLogin(s1);
                 binding.etUsername.setText(s1);
                 binding.etPassword.setText(s2);
                 secoundLogin();
@@ -212,12 +215,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         setContentView(view);
     }
 
-    private void getLocalUserLogin(String username) {
-        UserDatasource userDatasource = new UserDatasource(this);
-        userDatasource.open();
-        user_login_local.setUser(userDatasource.select_User_BYUsername(username));
-        userDatasource.close();
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

@@ -36,8 +36,8 @@
 
             <ImageView
                 android:id="@+id/heart_recipe"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_width="33dp"
+                android:layout_height="34dp"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginRight="@dimen/_5sdp"
                 android:src="@drawable/ic_favorite_border_black_24dp"

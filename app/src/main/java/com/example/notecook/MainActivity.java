@@ -64,6 +64,7 @@ import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.UserViewModel;
 import com.google.gson.Gson;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -100,13 +101,13 @@ public class MainActivity extends AppCompatActivity {
     private static List<Detail_Recipe> list_detail_recipe = new ArrayList<>();
 
     public SharedPreferences sharedPreferences;
-    SimpleService service = new SimpleService();
-    IntentFilter filtreConectivite = new IntentFilter();
-    NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
-    FragmentTransaction fragmentTransaction;
-
+    private SimpleService service = new SimpleService();
+    private IntentFilter filtreConectivite = new IntentFilter();
+    private NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
+    private FragmentTransaction fragmentTransaction;
     private boolean doubleBackToExitPressedOnce = false;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private UserViewModel userRepo;
 
     public static Bitmap decod(byte[] image) {
         return BitmapFactory.decodeByteArray(image, 0, image.length);
@@ -184,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static void UpdateUserApi(User user, Context context) {
+    public static void UpdateUserApi1(User user, Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         // Example: Fetch users from the API
 
@@ -233,25 +234,25 @@ public class MainActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             // Handle error parsing error body
                         }
-                    }else
-                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Main);
-                    // Handle different status codes as per your API's conventions.
-                    if (statusCode == 409) {
-                        //Constants.AffichageMessage("User already exists", context);
-                        //Toast.makeText(context, "User already exists", Toast.LENGTH_SHORT).show();
-                        // Unauthorized, handle accordingly (e.g., reauthentication).
-                    } else if (statusCode == 404) {
-                        // Not found, handle accordingly (e.g., show a 404 error message).
-                        //Constants.AffichageMessage(TAG_OFFLINE, context);
-                        Toast.makeText(context, TAG_OFFLINE, Toast.LENGTH_SHORT).show();
-                    } else if (statusCode >= 500) {
-                        // Handle other status codes or generic error handling.
-                        //Constants.AffichageMessage("Internal Server Error", context);
-                        Toast.makeText(context, "Internal Server Error", Toast.LENGTH_SHORT).show();
-                    } else if (statusCode == 406) {
-                        // Handle other status codes or generic error handling.
-                        // Constants.AffichageMessage("User not found", context);
-                    } else Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+                    } else
+                        // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Main);
+                        // Handle different status codes as per your API's conventions.
+                        if (statusCode == 409) {
+                            //Constants.AffichageMessage("User already exists", context);
+                            //Toast.makeText(context, "User already exists", Toast.LENGTH_SHORT).show();
+                            // Unauthorized, handle accordingly (e.g., reauthentication).
+                        } else if (statusCode == 404) {
+                            // Not found, handle accordingly (e.g., show a 404 error message).
+                            //Constants.AffichageMessage(TAG_OFFLINE, context);
+                            Toast.makeText(context, TAG_OFFLINE, Toast.LENGTH_SHORT).show();
+                        } else if (statusCode >= 500) {
+                            // Handle other status codes or generic error handling.
+                            //Constants.AffichageMessage("Internal Server Error", context);
+                            Toast.makeText(context, "Internal Server Error", Toast.LENGTH_SHORT).show();
+                        } else if (statusCode == 406) {
+                            // Handle other status codes or generic error handling.
+                            // Constants.AffichageMessage("User not found", context);
+                        } else Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
                     //Constants.AffichageMessage(response.message(), context);
                 }
             }
@@ -775,14 +776,27 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction.replace(R.id.fl_main, new MainFragment());
             fragmentTransaction.commit();
             RecipeViewModel model = new RecipeViewModel(this);
+            UserViewModel modelUser = new UserViewModel(this);
+            sharedPreferences = getSharedPreferences(lOGIN_KEY, Context.MODE_PRIVATE);
+            String s1 = sharedPreferences.getString("username", "");
+            String s2 = sharedPreferences.getString("password", "");
             if (!Type_User.equals(TAG_MODE_INVITE)) {
-                if (user_login.getUser() == null)
-                    getUserApi("", getBaseContext());
-                else getUserApi(user_login.getUser().getUsername(), getBaseContext());
-
+                if (user_login.getUser() == null) {
+                    modelUser.getUser("", getBaseContext()).observe(this, new Observer<User>() {
+                        @Override
+                        public void onChanged(User user) {
+                            user_login.setUser(user);
+                        }
+                    });
+                } else {
+                    modelUser.getUser(s1, getBaseContext()).observe(this, new Observer<User>() {
+                        @Override
+                        public void onChanged(User user) {
+                            user_login.setUser(user);
+                        }
+                    });
+                }
                 //---------------------
-                //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
-
                 model.getRecipes(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
                     @Override
                     public void onChanged(@Nullable List<Recipe> recipeList) {
@@ -930,7 +944,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void getUserApi(String username, Context context) {
+    public void getUserApi1(String username, Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         // Example: Fetch users from the API
         sharedPreferences = getSharedPreferences(lOGIN_KEY, Context.MODE_PRIVATE);

@@ -3,7 +3,6 @@ package com.example.notecook.Fragement;
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Data.UserDatasource.insertUser;
-import static com.example.notecook.MainActivity.UpdateUserApi;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.deleteimage;
 import static com.example.notecook.MainActivity.encod;
@@ -11,7 +10,6 @@ import static com.example.notecook.MainActivity.uploadImage;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
-import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
@@ -41,6 +39,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Data.UserDatasource;
@@ -49,6 +48,7 @@ import com.example.notecook.MainActivity;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgEditProfilBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -61,7 +61,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -81,6 +80,7 @@ public class Frg_EditProfil extends Fragment {
     GoogleSignInClient mGoogleSignInClient;
     GoogleSignInOptions gso;
     private SharedPreferences sharedPreferences;
+    private UserViewModel userRepo;
 
 
     public Frg_EditProfil() {
@@ -104,8 +104,9 @@ public class Frg_EditProfil extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFrgEditProfilBinding.inflate(inflater, container, false);
         User user = new User();
+        userRepo = new UserViewModel(getContext());
+        ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
         user = user_login.getUser();
-        //Log.d("TAG",user_login.getUser().getUser_name().toString());
         binding.Nome.setText(user.getFirstname());
         binding.myEditText.setText(user.getLastname());
         binding.txtBirth.setText(user.getBirthday());
@@ -132,11 +133,9 @@ public class Frg_EditProfil extends Fragment {
                     binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
                 }
             }
-        }catch (Exception e) {Log.e("tag",e.getMessage().toString());}
-
-
-        ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
-
+        } catch (Exception e) {
+            Log.e("tag", e.getMessage().toString());
+        }
         binding.TxtBtnSave.setOnClickListener(view -> {
             SweetAlertDialog pDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE);
             pDialog.setTitleText("save");
@@ -166,7 +165,7 @@ public class Frg_EditProfil extends Fragment {
                     String username = user_login.getUser().getUsername();
                     String status = "active";
                     String grade = user_login.getUser().getGrade();
-                    getUser = new User(user_login.getUser().getId_User(), username, nom, prenom, naissance, mail, icon, tel, pass, status, grade,currentuser.getPathimageuser());
+                    getUser = new User(user_login.getUser().getId_User(), username, nom, prenom, naissance, mail, icon, tel, pass, status, grade, currentuser.getPathimageuser());
                     int value = mUserDatasource.UpdateUserByUsername(getUser, user_login.getUser().getUsername());
                     Toast.makeText(getContext(), String.valueOf(value), Toast.LENGTH_SHORT).show();
                     if (value == 1) {
@@ -197,11 +196,17 @@ public class Frg_EditProfil extends Fragment {
                     currentuser.setIcon(null);
                     getUser.setIcon(null);
                     if (!currentuser.equals(getUser))
-                        UpdateUserApi(getUser, getContext());
-                    deleteimage(urlold, getContext());
-                    uploadImage(user_login.getUser().getUsername(), bitmap, "", getContext());
-//                }
-                }catch (Exception e) {Log.e("tag",e.getMessage().toString());}
+                        userRepo.UpdateUser(getUser, getContext()).observe(getActivity(), new Observer<User>() {
+                            @Override
+                            public void onChanged(User user) {
+                                user_login.setUser(user);
+                                deleteimage(urlold, getContext());
+                                uploadImage(user_login.getUser().getUsername(), bitmap, "", getContext());
+                            }
+                        });
+                } catch (Exception e) {
+                    Log.e("tag", e.getMessage().toString());
+                }
             });
             pDialog.show();
         });

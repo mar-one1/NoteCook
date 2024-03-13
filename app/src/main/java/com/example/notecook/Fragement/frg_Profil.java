@@ -1,8 +1,10 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
+import static com.example.notecook.MainActivity.Type_User;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -25,6 +27,7 @@ import com.example.notecook.MainActivity;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.FragmentLifecycle;
 import com.example.notecook.databinding.FragmentFrgProfilBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -32,15 +35,13 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class frg_Profil extends Fragment {
+public class frg_Profil extends Fragment implements FragmentLifecycle {
 
     FragmentFrgProfilBinding binding;
     TabLayout tabLayout;
     ViewPager2 viewPager2;
     Button ImgV_Setting;
     User user;
-    MainActivity m;
-    Context context;
     FloatingActionButton b;
 
     public frg_Profil() {
@@ -50,8 +51,8 @@ public class frg_Profil extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        m = new MainActivity();
-        if (!MainActivity.Type_User.equals(Constants.TAG_MODE_INVITE)) {
+        onResumeFragment();
+        if (!Type_User.equals(Constants.TAG_MODE_INVITE)) {
             user = new User();
             if (user_login != null) {
                 user = user_login.getUser();
@@ -65,11 +66,9 @@ public class frg_Profil extends Fragment {
                         imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
                     Picasso.get().load(imageUrl).into(binding.iconProfil);
                     //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
-                } else if (user.getIcon() != null) {
+                } else if (user_login_local.getUser() != null &&user_login_local.getUser().getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 }
-
-
             }
         }
     }
@@ -137,7 +136,7 @@ public class frg_Profil extends Fragment {
         });
         binding.ImgVSetting.setOnClickListener(view -> {
 
-            if (MainActivity.Type_User.equals(Constants.TAG_MODE_INVITE)) {
+            if (Type_User.equals(Constants.TAG_MODE_INVITE)) {
                 Toast.makeText(getContext(), "" + Constants.TAG_MODE_INVITE, Toast.LENGTH_LONG).show();
             } else {
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -157,6 +156,23 @@ public class frg_Profil extends Fragment {
         viewPager2Adapter.setData(fragmentList);
         //set the data for the adapter
         binding.vp2Profil.setAdapter(viewPager2Adapter);
+    }
+
+
+    @Override
+    public void onPauseFragment() {
+        Toast.makeText(getContext(), "on Pause", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onResumeFragment() {
+        Toast.makeText(getContext(), "on Resume", Toast.LENGTH_SHORT).show();
+
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        onPauseFragment();
     }
 
 
