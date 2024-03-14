@@ -307,7 +307,6 @@
                     android:textSize="18sp" />
 
                 <EditText
-                    android:id="@+id/edt_detail"
                     android:layout_width="572dp"
                     android:layout_height="94dp"
                     android:layout_margin="15dp"

@@ -54,7 +54,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         onResumeFragment();
         if (!Type_User.equals(Constants.TAG_MODE_INVITE)) {
             user = new User();
-            if (user_login != null) {
+            if (user_login.getUser() != null) {
                 user = user_login.getUser();
                 binding.txtUsername.setText(user.getUsername());
 
@@ -69,6 +69,8 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                 } else if (user_login_local.getUser() != null &&user_login_local.getUser().getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 }
+            }else if(user_login_local.getUser()!=null){
+                user_login.setUser(user_login_local.getUser());
             }
         }
     }

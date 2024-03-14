@@ -1,6 +1,5 @@
 package com.example.notecook.Data;
 
-import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
 
 import android.content.ContentValues;

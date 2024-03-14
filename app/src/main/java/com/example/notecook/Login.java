@@ -11,6 +11,7 @@ import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
+import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.user_login;
@@ -23,7 +24,6 @@ import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -43,6 +43,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -54,15 +55,13 @@ import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.ConnexionRetrofit;
 import com.example.notecook.Api.LoginResponse;
+import com.example.notecook.Api.TokenResponse;
 import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
-import com.example.notecook.Repo.RecipeRepository;
-import com.example.notecook.Repo.UserRepository;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;
-import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.ActivityLoginBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -71,16 +70,25 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -113,7 +121,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private View view;
     private PasswordHasher passwordHasher = new PasswordHasher();
     private InputValidator inputValidator = new InputValidator();
-    private UserRepository userRepo;
 
     //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
@@ -124,7 +131,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
         m = new MainActivity();
-        userRepo = new UserRepository(getBaseContext());
 
         // Check FingerPrint In Device
         try {
@@ -139,7 +145,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
                 String s1 = sharedPreferences.getString("username", "");
                 String s2 = sharedPreferences.getString("password", "");
-                userRepo.getLocalUserLogin(s1);
+                getLocalUser(s1);
                 binding.etUsername.setText(s1);
                 binding.etPassword.setText(s2);
                 secoundLogin();
@@ -214,7 +220,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         setContentView(view);
     }
-
+    private  void getLocalUser(String username) {
+        UserDatasource userDatasource = new UserDatasource(this);
+        userDatasource.open();
+        User user = userDatasource.select_User_BYUsername(username);
+        user_login_local.setUser(user);
+        userDatasource.close();
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -291,7 +303,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             updateUI(account);
             Toast.makeText(this, "Success Authentication with google", Toast.LENGTH_LONG).show();
             Save_Preference_Data("google");
-            binding.btnLogin.callOnClick();
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -450,16 +461,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 .setContentText("toast notif");
 
         Intent resultIntent = new Intent(getBaseContext(), Login.class);
-        resultIntent.putExtra("notificationData", "Additional data associated with the notification");
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(getBaseContext());
-
         stackBuilder.addParentStack(Login.class);
         stackBuilder.addNextIntent(resultIntent);
-         PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(resultPendingIntent);
+        // PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        //builder.setContentIntent(resultPendingIntent);
         notificationManager.notify(NOTIFICATION_ID, builder.build());
-
     }
+
 
     public void loginclk() {
         try {
@@ -664,31 +673,30 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
     private void connectionApi() {
-        try {
-            ApiService apiService = ApiClient.getClient().create(ApiService.class);
-            // Example: Fetch users from the API
-            //Call<List<User>> call = apiService.getAllUsers();
-            //Call<List<User>> call = apiService.getData("Bearer " + Token);
-            String username = binding.etUsername.getText().toString();
-            String password = binding.etPassword.getText().toString();
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        // Example: Fetch users from the API
+        //Call<List<User>> call = apiService.getAllUsers();
+        //Call<List<User>> call = apiService.getData("Bearer " + Token);
+        String username = binding.etUsername.getText().toString();
+        String password = binding.etPassword.getText().toString();
 
 
-            LoginResponse login = new LoginResponse();
-            login.setUsername(username);
-            login.setPassword(password);
+        LoginResponse login = new LoginResponse();
+        login.setUsername(username);
+        login.setPassword(password);
 
-            Call<LoginResponse> call = apiService.authontification(login);
+        Call<LoginResponse> call = apiService.authontification(login);
 
-            call.enqueue(new Callback<LoginResponse>() {
-                @Override
-                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                    if (response.isSuccessful()) {
-                        LoginResponse loginResponse = response.body();
-                        if (loginResponse != null) {
-                            String token = loginResponse.getToken();
-                            // Store the token securely (e.g., in SharedPreferences) for later use
-                            TAG_CONNEXION = response.code();
-                            TAG_CONNEXION_MESSAGE = response.message();
+        call.enqueue(new Callback<LoginResponse>() {
+            @Override
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+                if (response.isSuccessful()) {
+                    LoginResponse loginResponse = response.body();
+                    if (loginResponse != null) {
+                        String token = loginResponse.getToken();
+                        // Store the token securely (e.g., in SharedPreferences) for later use
+                        TAG_CONNEXION = response.code();
+                        TAG_CONNEXION_MESSAGE = response.message();
 
                             Log.d("TAG", TAG_CONNEXION_MESSAGE);
                             try {
@@ -710,32 +718,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         }
                     } else {
 
-                        // Handle error response here
-                        // The HTTP request was not successful (status code is not 2xx).
-                        // You can handle errors here based on the response status code.
-                        int statusCode = response.code();
-                        Constants.TAG_CONNEXION = statusCode;
-                        TAG_CONNEXION_MESSAGE = response.message();
-                        // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
-                        // Handle different status codes as per your API's conventions.
-                        if (statusCode == 401) {
-                            Constants.AffichageMessage(TAG_AUTHENTIFICATION_ECHOUE, Login.this);
-                            // Unauthorized, handle accordingly (e.g., reauthentication).
-                        } else if (statusCode == 404) {
-                            // Not found, handle accordingly (e.g., show a 404 error message).
-                            Constants.AffichageMessage(TAG_OFFLINE, Login.this);
-                        } else if (response.code() == 503) {
-                            // Server unavailable
-                            Constants.AffichageMessage("Server is currently unavailable. Please try again later.", Login.this);
-                        } else if (response.code() == 500) {
-                            // Other server errors
-                            // Handle them accordingly
-                            Constants.AffichageMessage("Server error. Please try again later.", Login.this);
-                        } else if (statusCode == 406) {
-                            // Handle other status codes or generic error handling.
-                            Constants.AffichageMessage("User not found", Login.this);
-                        } else Constants.AffichageMessage(response.message(), Login.this);
-                    }
+                    // Handle error response here
+                    // The HTTP request was not successful (status code is not 2xx).
+                    // You can handle errors here based on the response status code.
+                    int statusCode = response.code();
+                    Constants.TAG_CONNEXION = statusCode;
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
+                    // Handle different status codes as per your API's conventions.
+                    if (statusCode == 401) {
+                        Constants.AffichageMessage(TAG_AUTHENTIFICATION_ECHOUE, Login.this);
+                        // Unauthorized, handle accordingly (e.g., reauthentication).
+                    } else if (statusCode == 404) {
+                        // Not found, handle accordingly (e.g., show a 404 error message).
+                        Constants.AffichageMessage(TAG_OFFLINE, Login.this);
+                    } else if (statusCode >= 500) {
+                        // Handle other status codes or generic error handling.
+                        Constants.AffichageMessage("Internal Server Error", Login.this);
+                    } else if (statusCode == 406) {
+                        // Handle other status codes or generic error handling.
+                        Constants.AffichageMessage("User not found", Login.this);
+                    } else Constants.AffichageMessage(response.message(), Login.this);
+                }
 
 //                if (response.errorBody() != null) {
 //                    try {
@@ -750,78 +754,146 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 //                        e.printStackTrace();
 //                    }
 //                }
+            }
+
+            @Override
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
+
+                TAG_CONNEXION_MESSAGE = call.toString();
+                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
+            }
+        });
+
+    }
+
+    private void UpdateUserApi(User user) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        // Example: Fetch users from the API
+        // Convert the byte array to RequestBody
+        //RequestBody imageRequestBody = RequestBody.create(null, user.getIcon());
+
+        Call<User> call = apiService.updateUserByUsername(user.getUsername(), user);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User UserResponse = response.body();
+                    if (UserResponse != null) {
+                        // Store the token securely (e.g., in SharedPreferences) for later use
+                        TAG_CONNEXION = response.code();
+                        TAG_CONNEXION_MESSAGE = response.message();
+                        Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", Login.this);
+                        Log.d("TAG", TAG_CONNEXION_MESSAGE + " " + "Add User To Api");
+                    }
+                } else {
+
+                    // Handle error response here
+                    // The HTTP request was not successful (status code is not 2xx).
+                    // You can handle errors here based on the response status code.
+                    int statusCode = response.code();
+                    Constants.TAG_CONNEXION = statusCode;
+                    TAG_CONNEXION_MESSAGE = response.message();
+
+                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
+                    // Handle different status codes as per your API's conventions.
+                    if (statusCode == 409) {
+                        Constants.AffichageMessage("User already exists", Login.this);
+                        // Unauthorized, handle accordingly (e.g., reauthentication).
+                    } else if (statusCode == 404) {
+                        // Not found, handle accordingly (e.g., show a 404 error message).
+                        Constants.AffichageMessage(TAG_OFFLINE, Login.this);
+                    } else if (statusCode >= 500) {
+                        // Handle other status codes or generic error handling.
+                        Constants.AffichageMessage("Internal Server Error", Login.this);
+                    } else if (statusCode == 406) {
+                        // Handle other status codes or generic error handling.
+                        Constants.AffichageMessage("User not found", Login.this);
+                    } else Constants.AffichageMessage(response.message(), Login.this);
                 }
 
-                @Override
-                public void onFailure(Call<LoginResponse> call, Throwable t) {
-                    TAG_CONNEXION_MESSAGE = call.toString();
-                    Constants.AffichageMessage("Network error. Please check your internet connection and try again., Login.this)", Login.this);
-                }
-            });
+//                if (response.errorBody() != null) {
+//                    try {
+//                        String errorResponse = response.errorBody().string();
+//                        // Print or log the errorResponse for debugging
+//                        TAG_CONNEXION_MESSAGE = errorResponse;
+//                        Constants.AffichageMessage(TAG_ERREUR_SYSTEM,Login.this);
+//                        //Constants.DisplayErrorMessage(Login.this,TAG_CONNEXION_MESSAGE);
+//                        TAG_CONNEXION = response.code();
+//                        Log.e("token", "Error Response: " + errorResponse);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+            }
 
-        } catch (Exception e) {
-            Log.e("tag", "" + e);
-        }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+
+                TAG_CONNEXION_MESSAGE = call.toString();
+                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
+            }
+        });
+
     }
 
     private void InsertUserApi(User user) {
-        try {
-            ApiService apiService = ApiClient.getClient().create(ApiService.class);
-            // Example: Fetch users from the API
-            Call<User> call = apiService.createUser(user);
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        // Example: Fetch users from the API
+        Call<User> call = apiService.createUser(user);
 
-            call.enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    if (response.isSuccessful()) {
-                        User UserResponse = response.body();
-                        if (UserResponse != null) {
-                            // Store the token securely (e.g., in SharedPreferences) for later use
-                            TAG_CONNEXION = response.code();
-                            TAG_CONNEXION_MESSAGE = response.message();
-                            Constants.AffichageMessage("Vous avez Register avec succes with server", Login.this);
-                            Log.d("TAG", TAG_CONNEXION_MESSAGE + " " + "Add User To Api");
-                        }
-                    } else {
-
-                        // Handle error response here
-                        // The HTTP request was not successful (status code is not 2xx).
-                        // You can handle errors here based on the response status code.
-                        int statusCode = response.code();
-                        Constants.TAG_CONNEXION = statusCode;
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User UserResponse = response.body();
+                    if (UserResponse != null) {
+                        // Store the token securely (e.g., in SharedPreferences) for later use
+                        TAG_CONNEXION = response.code();
                         TAG_CONNEXION_MESSAGE = response.message();
-                        // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
-                        // Handle different status codes as per your API's conventions.
-                        if (response.code() == 400) {
-                            try {
-                                String errorBody = response.errorBody().string();
-                                Gson gson = new Gson();
-                                ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
-                                // Now you have the validation errors in the validationError object
-                                // Handle them accordingly
-                                StringBuilder errorMessages = new StringBuilder();
-                                for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
-                                    errorMessages.append(", ").append(error.getMessage());
-                                }
-                                Constants.AffichageMessage(errorMessages.toString(), Login.this);
-                            } catch (IOException e) {
-                                // Handle error parsing error body
-                            }
-                            // Unauthorized, handle accordingly (e.g., reauthentication).
-                        } else if (statusCode == 409) {
-                            Constants.AffichageMessage("User already exists", Login.this);
-                            // Unauthorized, handle accordingly (e.g., reauthentication).
-                        } else if (statusCode == 404) {
-                            // Not found, handle accordingly (e.g., show a 404 error message).
-                            Constants.AffichageMessage(TAG_OFFLINE, Login.this);
-                        } else if (statusCode >= 500) {
-                            // Handle other status codes or generic error handling.
-                            Constants.AffichageMessage("Internal Server Error", Login.this);
-                        } else if (statusCode == 406) {
-                            // Handle other status codes or generic error handling.
-                            Constants.AffichageMessage("User not found", Login.this);
-                        } else Constants.AffichageMessage(response.message(), Login.this);
+                        Constants.AffichageMessage("Vous avez Register avec succes with server", Login.this);
+                        Log.d("TAG", TAG_CONNEXION_MESSAGE + " " + "Add User To Api");
                     }
+                } else {
+
+                    // Handle error response here
+                    // The HTTP request was not successful (status code is not 2xx).
+                    // You can handle errors here based on the response status code.
+                    int statusCode = response.code();
+                    Constants.TAG_CONNEXION = statusCode;
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
+                    // Handle different status codes as per your API's conventions.
+                    if (response.code() == 400) {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Gson gson = new Gson();
+                            ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
+                            // Now you have the validation errors in the validationError object
+                            // Handle them accordingly
+                            StringBuilder errorMessages = new StringBuilder();
+                            for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
+                                errorMessages.append(", ").append(error.getMessage());
+                            }
+                            Constants.AffichageMessage(errorMessages.toString(), Login.this);
+                        } catch (IOException e) {
+                            // Handle error parsing error body
+                        }
+                        // Unauthorized, handle accordingly (e.g., reauthentication).
+                    } else if (statusCode == 409) {
+                        Constants.AffichageMessage("User already exists", Login.this);
+                        // Unauthorized, handle accordingly (e.g., reauthentication).
+                    } else if (statusCode == 404) {
+                        // Not found, handle accordingly (e.g., show a 404 error message).
+                        Constants.AffichageMessage(TAG_OFFLINE, Login.this);
+                    } else if (statusCode >= 500) {
+                        // Handle other status codes or generic error handling.
+                        Constants.AffichageMessage("Internal Server Error", Login.this);
+                    } else if (statusCode == 406) {
+                        // Handle other status codes or generic error handling.
+                        Constants.AffichageMessage("User not found", Login.this);
+                    } else Constants.AffichageMessage(response.message(), Login.this);
+                }
 
 //                if (response.errorBody() != null) {
 //                    try {
@@ -836,18 +908,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 //                        e.printStackTrace();
 //                    }
 //                }
-                }
+            }
 
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
 
-                    TAG_CONNEXION_MESSAGE = call.toString();
-                    Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
-                }
-            });
-        } catch (Exception e) {
-            Log.e("tag", "" + e);
-        }
+                TAG_CONNEXION_MESSAGE = call.toString();
+                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
+            }
+        });
+
     }
 
     public void updateGoogleUserImage(String username, String path) {

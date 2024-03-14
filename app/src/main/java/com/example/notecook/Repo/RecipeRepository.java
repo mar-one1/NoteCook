@@ -4,6 +4,7 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -37,21 +38,12 @@ import retrofit2.Response;
 public class RecipeRepository {
     private ApiService apiService;
     private RecipeDatasource recipeDatasource;
+    private UserDatasource userDatasource;
 
     public RecipeRepository(Context context) {
         apiService = ApiClient.getClient().create(ApiService.class);
         recipeDatasource = new RecipeDatasource(context);
-    }
-
-    public static int insertRecipeLocally(Context context, Recipe recipe) {
-        // Insert the recipe locally using your createRecipe method
-        User user = getUserRecipe(context, user_login.getUser().getUsername());
-        recipe.setFrk_user(user.getId_User());
-        RecipeDatasource recipeDatasource = new RecipeDatasource(context);
-        recipeDatasource.open();
-        int insertedId = (int) RecipeDatasource.InsertRecipe(recipe);
-        recipeDatasource.close();
-        return insertedId;
+        userDatasource = new UserDatasource(context);
     }
 
     private static void markRecipeAsDeletedLocally(Recipe localRecipe, Context context) {
@@ -67,6 +59,14 @@ public class RecipeRepository {
         User user = userDatasource.select_User_BYUsername(username);
         userDatasource.close();
         return user;
+    }
+
+    public int insertRecipeLocally(Recipe recipe, int id) {
+        // Insert the recipe locally using your createRecipe method
+        recipeDatasource.open();
+        int insertedId = (int) RecipeDatasource.InsertRecipe(recipe, id);
+        recipeDatasource.close();
+        return insertedId;
     }
 
     public LiveData<List<Recipe>> getRecipes(Context context) {
@@ -102,7 +102,7 @@ public class RecipeRepository {
                 if (response.isSuccessful()) {
                     remoteRecipeListByUser.setValue(response.body());
                     if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
-                        synchronizeDataFromRemoteTOLocal(context, list_recipe, remoteRecipeListByUser.getValue(), user_login.getUser().getId_User());
+                        synchronizeDataFromLocalToRemote(list_recipe,remoteRecipeListByUser.getValue(),username);
                     }
 
                 } else {
@@ -187,32 +187,55 @@ public class RecipeRepository {
         }
     }
 
-    public void synchronizeDataFromRemoteTOLocal(Context context, List<Recipe> localRecipes, List<Recipe> remoteRecipes, int userId) {
+    public void synchronizeDataFromLocalToRemote(List<Recipe> localRecipes, List<Recipe> remoteRecipes, String username) {
+        // Step 1: Get the user ID from the local database using the username
+        userDatasource.open();
+        int userId;
+        if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
+            userId = user_login_local.getUser().getId_User();
+        } else {
+            user_login_local.setUser(userDatasource.select_User_BYUsername(username));
+            userId = user_login_local.getUser().getId_User();
+        }
+        if (userId == -1) {
+            // Handle the case where the user ID is not found
+            return;
+        }
+        userDatasource.close();
+
+        // Step 2: Perform the synchronization using the user ID
+        synchronizeDataFromLocalToRemote(localRecipes, remoteRecipes,userId);
+    }
+
+    public void synchronizeDataFromLocalToRemote(List<Recipe> localRecipes, List<Recipe> remoteRecipes,int id) {
         // Step 1: Update local recipes with data from remote recipes
         for (Recipe remoteRecipe : remoteRecipes) {
             // Check if the remote recipe belongs to the specified user
-            if (remoteRecipe.getFrk_user() == userId) {
+            if (remoteRecipe.getFrk_user() == user_login.getUser().getId_User()) {
                 boolean foundLocally = false;
                 for (Recipe localRecipe : localRecipes) {
+                    // Match recipes using a unique identifier, e.g., recipe ID
                     if (remoteRecipe.getNom_recipe().equals(localRecipe.getNom_recipe())) {
                         // Recipe exists locally; update it with remote data
-                        updateRecipeLocally(context, remoteRecipe);
+                        updateRecipeLocally(remoteRecipe,localRecipe.getId_recipe());
                         foundLocally = true;
                         break;
                     }
                 }
                 if (!foundLocally) {
                     // Recipe doesn't exist locally; add it to the local list
-                    insertRecipeLocally(context, remoteRecipe);
+                    insertRecipeLocally(remoteRecipe, user_login_local.getUser().getId_User());
                 }
             }
         }
 
         // Step 2: Update remote recipes with data from local recipes (if needed)
         for (Recipe localRecipe : localRecipes) {
-            if (localRecipe.getFrk_user() == userId) {
+            // Check if the local recipe belongs to the specified user
+            if (localRecipe.getFrk_user() == id) {
                 boolean foundRemotely = false;
                 for (Recipe remoteRecipe : remoteRecipes) {
+                    // Match recipes using a unique identifier, e.g., recipe ID
                     if (remoteRecipe.getNom_recipe().equals(localRecipe.getNom_recipe())) {
                         // Recipe exists remotely; no need to update
                         foundRemotely = true;
@@ -227,51 +250,10 @@ public class RecipeRepository {
         }
     }
 
-    public void synchronizeDataFromLocalToRemote(Context context, List<Recipe> localRecipes, List<Recipe> remoteRecipes, int userId) {
-        // Step 1: Update local recipes with data from remote recipes
-        for (Recipe remoteRecipe : remoteRecipes) {
-            // Check if the remote recipe belongs to the specified user
-            if (remoteRecipe.getFrk_user() == userId) {
-                boolean foundLocally = false;
-                for (Recipe localRecipe : localRecipes) {
-                    if (remoteRecipe.getNom_recipe().equals(localRecipe.getNom_recipe())) {
-                        // Recipe exists locally; update it with remote data
-                        updateRecipeLocally(context, remoteRecipe);
-                        foundLocally = true;
-                        break;
-                    }
-                }
-                if (!foundLocally) {
-                    // Recipe doesn't exist locally; add it to the local list
-                    insertRecipeLocally(context, remoteRecipe);
-                }
-            }
-        }
-
-        // Step 2: Update remote recipes with data from local recipes (if needed)
-        for (Recipe localRecipe : localRecipes) {
-            if (localRecipe.getFrk_user() == userId) {
-                boolean foundRemotely = false;
-                for (Recipe remoteRecipe : remoteRecipes) {
-                    if (remoteRecipe.getNom_recipe().equals(localRecipe.getNom_recipe())) {
-                        // Recipe exists remotely; no need to update
-                        foundRemotely = true;
-                        break;
-                    }
-                }
-                if (!foundRemotely) {
-                    // Recipe exists locally but not remotely; update it remotely if needed
-                    updateRecipeRemotely(localRecipe);
-                }
-            }
-        }
-    }
-
-    private void updateRecipeLocally(Context context, Recipe recipe) {
-        // Update the recipe locally using your UpdateRecipe method
-        RecipeDatasource recipeDatasource = new RecipeDatasource(context);
+    private void updateRecipeLocally(Recipe remoteRecipe,int id) {
+        // Implement logic to update the local recipe with data from the remote recipe
         recipeDatasource.open();
-        recipeDatasource.UpdateRecipe(recipe, recipe.getId_recipe());
+        recipeDatasource.UpdateRecipe(remoteRecipe,id);
         recipeDatasource.close();
     }
 

@@ -4,6 +4,7 @@ import static com.example.notecook.MainActivity.InsertRecipeApi;
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -40,7 +41,6 @@ import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Repo.RecipeRepository;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.levelRecipe;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -56,6 +56,7 @@ public class add_recipe extends Fragment {
     private final int STORAGE_PERMISSION_CODE = 23;
     private final int GALLERY_REQUEST_CODE = 24;
     FragmentAddRecipeBinding binding;
+    RecipeRepository recipeRepo;
 
     public add_recipe() {
         // Required empty public constructor
@@ -72,6 +73,7 @@ public class add_recipe extends Fragment {
         binding = FragmentAddRecipeBinding.inflate(inflater, container, false);
         int bnvId = R.id.bottom_nav;
         BottomNavigationView btnV = getActivity().findViewById(bnvId);
+        recipeRepo = new RecipeRepository(getContext());
 
         // Get the values of the enum
         levelRecipe[] values = levelRecipe.values();
@@ -96,7 +98,7 @@ public class add_recipe extends Fragment {
 
         List<String> ingredientNames = new ArrayList<>();
 
-        // Iterate over All_Ingredients_Recipe to collect all ingredient names
+// Iterate over All_Ingredients_Recipe to collect all ingredient names
         for (Ingredients ingredient : All_Ingredients_Recipe) {
             ingredientNames.add(ingredient.getNome());
         }
@@ -105,7 +107,7 @@ public class add_recipe extends Fragment {
         ArrayAdapter<String> adapterIngredients = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ingredientNames);
 
 // Set the adapter to your ListView or RecyclerView
-        binding.spIngredients.setAdapter(adapterIngredients);
+        binding.spIngredients.setAdapter(adapter);
         // Set the ArrayAdapter to the Spinner
 
 
@@ -126,27 +128,24 @@ public class add_recipe extends Fragment {
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    InputValidator inp = new InputValidator();
-                    if(inp.isValidAddRecipe(binding.editTextRecipeName,binding.editTextInstructions,binding.edtDetail)) {
-                        Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
-                        Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
-                        Log.d("TAG", "" + user_login.getUser().getId_User());
-                        InsertRecipeApi(recipe, bitmap, getContext());
-                        recipe.setIcon_recipe(encod(bitmap));
-                        int i = 0;
-                        i = RecipeRepository.insertRecipeLocally(getContext(), recipe);
-                        if (i != 0) {
-                            Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
-                            Constants.list_recipe.add(recipe);
-                        }
-                    }
-                } catch (Exception e) {
-                    Log.e("tag", e.getMessage().toString());
+                Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
+                Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
+                Log.d("TAG", "" + user_login.getUser().getId_User());
+                InsertRecipeApi(recipe, bitmap, getContext());
+                recipe.setIcon_recipe(encod(bitmap));
+                int i;
+                if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
+                    i = recipeRepo.insertRecipeLocally(recipe, user_login_local.getUser().getId_User());
+                } else {
+                    user_login_local.setUser(getLocalUser(user_login.getUser().getUsername()));
+                    i = recipeRepo.insertRecipeLocally(recipe, user_login_local.getUser().getId_User());
+                }
+                if (i != 0) {
+                    Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
+                    Constants.list_recipe.add(recipe);
                 }
             }
         });
-
 
         binding.btnPlusTime.setOnClickListener(view -> {
             clickPlus(binding.txtTotTime, binding.btnPlusTime, binding.btnMoinsTime);

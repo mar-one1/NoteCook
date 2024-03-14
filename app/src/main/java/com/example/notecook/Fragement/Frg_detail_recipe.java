@@ -60,16 +60,19 @@ public class Frg_detail_recipe extends Fragment {
                 if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {
                     binding.recipeNameTxt.setText(CURRENT_RECIPE.getNom_recipe());
                     binding.NomUserRecipe.setText(User_CurrentRecipe.getUsername());
-                    if(CURRENT_RECIPE.getIcon_recipe()!=null) {
-                        binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
-                    } else {
+                    if(CURRENT_RECIPE.getIcon_recipe()!=null)
+                    binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
+                    else {
                         String url = BASE_URL + "uploads/" + CURRENT_RECIPE.getPathimagerecipe();
                         Picasso.get().load(url).into(binding.iconRecipe);
                     }
+                    //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
                     if (!User_CurrentRecipe.getPathimageuser().equals("")) {
                         String url = BASE_URL + "uploads/" + User_CurrentRecipe.getPathimageuser();
                         Picasso.get().load(url).into(binding.iconProfilDetailrecipe);
+                        //binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));
                     }
+
                     Log.d("TAG", String.valueOf(Detail_CurrentRecipe.getId_detail_recipe()));
                     binding.icludeRoxDetailRecipe.vlTime.setText(String.valueOf(Detail_CurrentRecipe.getTime()));
                     binding.icludeRoxDetailRecipe.valCal.setText(String.valueOf(Detail_CurrentRecipe.getCal()));
