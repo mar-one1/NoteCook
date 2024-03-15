@@ -52,6 +52,7 @@ import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.ConnexionRetrofit;
 import com.example.notecook.Api.RecipeResponse;
 import com.example.notecook.Api.TokenResponse;
+import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.DetailRecipeDataSource;
 import com.example.notecook.Data.ModelsDataSource;
 import com.example.notecook.Data.RecipeDatasource;
@@ -68,6 +69,7 @@ import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.ViewModel.RecipeViewModel;
+import com.google.gson.Gson;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -112,7 +114,11 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public static Bitmap decod(byte[] image) {
-        return BitmapFactory.decodeByteArray(image, 0, image.length);
+        Bitmap bitmap = null;
+        try{
+            bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+        } catch(Exception e){Log.e("tag",""+e);}
+        return bitmap;
     }
 
     public static byte[] encod(Bitmap b) {
@@ -221,7 +227,22 @@ public class MainActivity extends AppCompatActivity {
                     Constants.TAG_CONNEXION = statusCode;
                     TAG_CONNEXION_MESSAGE = response.message();
                     Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "User not updated To Api", Toast.LENGTH_LONG).show();
-
+                    if (response.code() == 400) {
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Gson gson = new Gson();
+                            ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
+                            // Now you have the validation errors in the validationError object
+                            // Handle them accordingly
+                            StringBuilder errorMessages = new StringBuilder();
+                            for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
+                                errorMessages.append(", ").append(error.getMessage());
+                            }
+                            Toast.makeText(context, errorMessages, Toast.LENGTH_LONG).show();
+                        } catch (IOException e) {
+                            // Handle error parsing error body
+                        }
+                    }else
                     // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Main);
                     // Handle different status codes as per your API's conventions.
                     if (statusCode == 409) {
