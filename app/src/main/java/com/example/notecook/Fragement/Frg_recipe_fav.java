@@ -2,12 +2,14 @@ package com.example.notecook.Fragement;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
+import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_ONLINE;
 import static com.example.notecook.Utils.Constants.list_recipe;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -61,7 +63,7 @@ public class Frg_recipe_fav extends Fragment {
         //if(TAG_CONNEXION==200)
         adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list, TAG_ONLINE);
         // adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe,true);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         manager.setOrientation(HORIZONTAL);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(adapter_rc_recipeDt);
