@@ -121,6 +121,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private View view;
     private PasswordHasher passwordHasher = new PasswordHasher();
     private InputValidator inputValidator = new InputValidator();
+    private UserDatasource userDatasource;
 
     //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
@@ -131,6 +132,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
         m = new MainActivity();
+        userDatasource = new UserDatasource(getBaseContext());
 
         // Check FingerPrint In Device
         try {
@@ -706,7 +708,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                                 String password = passwordHasher.hashPassword(binding.etPassword.getText().toString());
                                 user.setPassWord(password);
                                 user_login.setUser(user);
-
+                                userDatasource.open();
+                                if(!isRecordExist(TABLE_USER,COLUMN_USERNAME,username)) {
+                                    insertUser(user);
+                                    Log.e("tag",user.getUsername());
+                                }
+                                userDatasource.close();
                                 saveToken(token);
                                 saveUserInput(binding.etUsername.getText().toString(), binding.etPassword.getText().toString());
                                 Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, Login.this);

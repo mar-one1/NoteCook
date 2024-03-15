@@ -6,6 +6,7 @@ public interface MySQLiteHelperTable extends AutoCloseable {
      */
     String TABLE_USER = "User";
     String COLUMN_ID_USER = "Id_user";
+    String COLUMN_CODE_USER = "Code_user";
     String COLUMN_FIRSTNAME_USER = "Firstname_user";
     String COLUMN_USERNAME = "username";
     String COLUMN_LASTNAME_USER = "Lastname_user";
@@ -26,6 +27,7 @@ public interface MySQLiteHelperTable extends AutoCloseable {
     String COLUMN_ICON_RECIPE = "Icon_recipe";
     String COLUMN_ICON_RECIPE_PATH = "Icon_recipe_path";
     String COLUMN_FAV_RECIPE = "Fav_recipe";
+    String COLUMN_CODE_RECIPE = "Code_recipe";
     String COLUMN_ID_FRK_USER_RECIPE = "Frk_user";
     String COLUMN_ID_FRK_CATEGORIE_RECIPE = "Frk_categorie";
     /*

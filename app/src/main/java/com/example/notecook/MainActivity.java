@@ -1,6 +1,7 @@
 package com.example.notecook;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
+import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
@@ -52,6 +53,7 @@ import com.example.notecook.Api.ConnexionRetrofit;
 import com.example.notecook.Api.RecipeResponse;
 import com.example.notecook.Api.TokenResponse;
 import com.example.notecook.Data.DetailRecipeDataSource;
+import com.example.notecook.Data.ModelsDataSource;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Fragement.Favorite_User_Recipe;
@@ -789,11 +791,14 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Recipe> getLocalRecipes(int i) {
         RecipeDatasource recipeDatasource = new RecipeDatasource(this);
         recipeDatasource.open();
+        //ModelsDataSource<Recipe> model = new ModelsDataSource<>(getBaseContext(),Recipe.class);
+        //list_recipe.addAll( model.getAllRecordsByIdUser(TABLE_RECIPE));
         Constants.list_recipe = recipeDatasource.getRecipeById(i);
         recipeDatasource.close();
         getLocalDetailsRecipes();
-        return Constants.list_recipe;
+        return list_recipe;
     }
+
 
     public void getLocalDetailsRecipes() {
 

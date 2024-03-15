@@ -4,7 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import androidx.annotation.Nullable;
+import javax.annotation.Nullable;
+
 
 public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTable {
 
