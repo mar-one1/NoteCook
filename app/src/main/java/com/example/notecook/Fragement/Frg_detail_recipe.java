@@ -63,7 +63,7 @@ public class Frg_detail_recipe extends Fragment {
                     if(CURRENT_RECIPE.getIcon_recipe()!=null)
                     binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
                     else {
-                        String url = BASE_URL + "uploads/" + CURRENT_RECIPE.getPathimagerecipe();
+                        String url = BASE_URL + "data/uploads/" + CURRENT_RECIPE.getPathimagerecipe();
                         Picasso.get().load(url).into(binding.iconRecipe);
                     }
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));

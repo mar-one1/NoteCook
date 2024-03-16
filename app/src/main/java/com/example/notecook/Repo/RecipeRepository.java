@@ -1,7 +1,14 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
+import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.Token;
+import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
@@ -16,8 +23,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
+import com.example.notecook.Api.RecipeResponse;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
+import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 
@@ -39,11 +48,17 @@ public class RecipeRepository {
     private ApiService apiService;
     private RecipeDatasource recipeDatasource;
     private UserDatasource userDatasource;
+    private Context context;
+    private DetailRecipeRepository detailRecipeRepository;
+    private UserRepository userRepo;
 
     public RecipeRepository(Context context) {
+        this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
         recipeDatasource = new RecipeDatasource(context);
         userDatasource = new UserDatasource(context);
+        detailRecipeRepository = new DetailRecipeRepository(context);
+        userRepo = new UserRepository(context);
     }
 
     private static void markRecipeAsDeletedLocally(Recipe localRecipe, Context context) {
@@ -69,7 +84,139 @@ public class RecipeRepository {
         return insertedId;
     }
 
-    public LiveData<List<Recipe>> getRecipes(Context context) {
+    public void getUserByIdRecipeApi(int Recipeid, Context context) {
+
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        Call<User> call = apiService.getUserByIdRecipe(Token, Recipeid);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    User_CurrentRecipe = user;
+                    userRepo.getImageUserUrl(User_CurrentRecipe.getUsername(), "recipe_user", context);
+                    Log.d("TAG", user.getUsername().toString());
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+                    //MainFragment.viewPager2.setCurrentItem(1);
+                } else {
+                    // Handle error response here
+                    int statusCode = response.code();
+                    TAG_CONNEXION = statusCode;
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorResponse = response.errorBody().string();
+                            // Print or log the errorResponse for debugging
+                            Log.e("token", "Error Response: " + errorResponse);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+            }
+        });
+    }
+
+
+    public LiveData<Recipe> InsertRecipeApi(Recipe recipe, Bitmap bitmap) {
+
+        // Enqueue the download request
+        apiService.createRecipe(Token, recipe).enqueue(new Callback<Recipe>() {
+            @Override
+            public void onResponse(Call<Recipe> call, Response<Recipe> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Recipe recipe1 = response.body();
+                    Log.d("TAG", recipe1.getId_recipe() + "et nom :  " + recipe1.getNom_recipe());
+                    //ResponseBody responseBody = response.body();
+                    uploadImageRecipe(recipe1.getId_recipe(), bitmap);
+                    //fetchImage(str,tag,0,context);
+                    Toast.makeText(context, "succes  Created Api ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful Created Api" + response.message(), Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Recipe> call, Throwable t) {
+                Toast.makeText(context, "Handle failure Insert Recipe to api", Toast.LENGTH_SHORT).show();
+            }
+        });
+        return null;
+    }
+
+    public LiveData<List<Recipe>> getLocalRecipes(int i) {
+        recipeDatasource.open();
+        //ModelsDataSource<Recipe> model = new ModelsDataSource<>(context,Recipe.class);
+        //list_recipe.addAll(Objects.requireNonNull(model.getAllRecordsByIdUser(TABLE_RECIPE, COLUMN_ID_FRK_USER_RECIPE, i).getValue()));
+        list_recipe.setValue(recipeDatasource.getRecipeById(i).getValue());
+        recipeDatasource.close();
+        detailRecipeRepository.getLocalDetailsRecipes();
+        return list_recipe;
+    }
+
+    public void getFullRecipeApi(int Recipeid, Context context) {
+
+        Call<RecipeResponse> call = apiService.getRecipeById(Token, Recipeid);
+
+
+        call.enqueue(new Callback<RecipeResponse>() {
+            @Override
+            public void onResponse(Call<RecipeResponse> call, Response<RecipeResponse> response) {
+                if (response.isSuccessful()) {
+                    RecipeResponse recipeResponse = response.body();
+                    if (recipeResponse != null) {
+                        CURRENT_RECIPE =recipeResponse.getRecipe();
+                        Detail_CurrentRecipe = recipeResponse.getDetail_recipe();
+                        Steps_CurrentRecipe = recipeResponse.getSteps();
+                        Review_CurrentRecipe = recipeResponse.getReviews();
+                        Ingredients_CurrentRecipe = recipeResponse.getIngredients();
+                    }
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+                    if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
+                        getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe(), context);
+                    else if (User_CurrentRecipe.getId_User() == CURRENT_RECIPE.getFrk_user()) {
+                        MainFragment.viewPager2.setCurrentItem(1);
+                    } else {
+                        User_CurrentRecipe = user_login.getUser();
+                        MainFragment.viewPager2.setCurrentItem(1, false);
+                    }
+                } else {
+                    // Handle error response here
+                    int statusCode = response.code();
+                    TAG_CONNEXION = statusCode;
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    if (response.errorBody() != null) {
+                        try {
+                            String errorResponse = response.errorBody().string();
+                            // Print or log the errorResponse for debugging
+                            Log.e("token", "Error Response: " + errorResponse);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecipeResponse> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+            }
+        });
+
+    }
+
+    public LiveData<List<Recipe>> getRecipes() {
         MutableLiveData<List<Recipe>> remoteRecipeList = new MutableLiveData<>();
         apiService.getAllRecipes(Token).enqueue(new Callback<List<Recipe>>() {
             @Override
@@ -94,7 +241,7 @@ public class RecipeRepository {
         // Handle network failure
     }
 
-    public LiveData<List<Recipe>> getRecipesByUsername(Context context, String username) {
+    public LiveData<List<Recipe>> getRecipesByUsername( String username) {
         MutableLiveData<List<Recipe>> remoteRecipeListByUser = new MutableLiveData<>();
         apiService.getRecipeByUsernameUser(Token, username).enqueue(new Callback<List<Recipe>>() {
             @Override
@@ -102,7 +249,7 @@ public class RecipeRepository {
                 if (response.isSuccessful()) {
                     remoteRecipeListByUser.setValue(response.body());
                     if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
-                        synchronizeDataFromLocalToRemote(list_recipe,remoteRecipeListByUser.getValue(),username);
+                        synchronizeDataFromLocalToRemote(list_recipe.getValue(),remoteRecipeListByUser.getValue(),username);
                     }
 
                 } else {
@@ -120,7 +267,7 @@ public class RecipeRepository {
         return remoteRecipeListByUser;
     }
 
-    public void uploadImageRecipe(int idRecipe, Bitmap bitmp, Context context) {
+    public void uploadImageRecipe(int idRecipe, Bitmap bitmp) {
 
         File filesDir = context.getFilesDir();
         File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format

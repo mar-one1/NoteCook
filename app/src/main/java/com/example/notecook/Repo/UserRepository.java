@@ -1,9 +1,14 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_ID_FRK_USER_RECIPE;
+import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
+import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
+import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
+import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -19,14 +24,21 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.TokenResponse;
+import com.example.notecook.Data.ModelsDataSource;
+import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
+import com.example.notecook.Fragement.MainFragment;
+import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
+import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -39,6 +51,7 @@ import retrofit2.Response;
 public class UserRepository {
     private ApiService apiService;
     private UserDatasource userDatasource;
+    private RecipeDatasource recipeDatasource;
     private Context context;
     private SharedPreferences sharedPreferences;
 
@@ -46,9 +59,10 @@ public class UserRepository {
         this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
         userDatasource = new UserDatasource(context);
+        recipeDatasource = new RecipeDatasource(context);
     }
 
-    public LiveData<User> getUserApi(String username, Context context) {
+    public LiveData<User> getUserApi(String username) {
         MutableLiveData<User> userLogin = new MutableLiveData<>();
         sharedPreferences = context.getSharedPreferences(lOGIN_KEY, Context.MODE_PRIVATE);
         String s1 = sharedPreferences.getString("username", "");
@@ -62,11 +76,14 @@ public class UserRepository {
                     if (UserResponse != null) {
                         UserResponse.setId_User(user_login.getUser().getId_User());
                         userLogin.setValue(UserResponse);
+                        user_login.setUser(UserResponse);
+                        getLocalUserLogin(s1, "success");
+                        getImageUserUrl(user_login.getUser().getUsername(), "user_login", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get user from Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     handleErrorResponse(response);
-                    getLocalUserLogin(username);
+                    getLocalUserLogin(username, "");
 
                 }
             }
@@ -74,14 +91,58 @@ public class UserRepository {
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 handleNetworkFailure(call);
-                getLocalUserLogin(username);
+                getLocalUserLogin(username, "");
             }
         });
         return userLogin;
     }
 
+    public void getImageUserUrl(String username, String tag, Context context) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-    public LiveData<User> UpdateUserApi(User user, Context context) {
+        // Enqueue the download request
+        Call<ResponseBody> call = apiService.getImageUSerBytes(username);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    //ResponseBody responseBody = response.body();
+                    byte[] bytes = new byte[0];
+                    try {
+                        bytes = response.body().bytes();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    //user_login.getUser().setIcon(bytes);
+                    // Convert byte array to String using a specific character encoding
+                    String str = new String(bytes, StandardCharsets.UTF_8);
+                    str = str.replaceAll("\"", "");// For UTF-8 encoding
+                    Log.d("tag", str);
+                    if (Objects.equals(tag, "user_login"))
+                        user_login.getUser().setPathimageuser(str);
+                    if (Objects.equals(tag, "recipe_user")) {
+                        User_CurrentRecipe.setPathimageuser(str);
+                        MainFragment.viewPager2.setCurrentItem(1, false);
+                    }
+                    //fetchImage(str,tag,0,context);
+                    Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful download" + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "Handle failure getimage url", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    public LiveData<User> UpdateUserApi(User user, Bitmap bitmap) {
         MutableLiveData<User> userUpdated = new MutableLiveData<>();
         // Example: Fetch users from the API
         apiService.updateUserByUsername(user.getUsername(), user).enqueue(new Callback<User>() {
@@ -90,8 +151,12 @@ public class UserRepository {
                 if (response.isSuccessful()) {
                     User UserResponse = response.body();
                     if (UserResponse != null) {
-                        UserResponse.setId_User(user_login.getUser().getId_User());
-                        userUpdated.setValue(UserResponse);
+                        try {
+                            UserResponse.setId_User(user_login.getUser().getId_User());
+                            userUpdated.setValue(UserResponse);
+                            deleteimage(user.getPathimageuser());
+                            uploadImage(user_login.getUser().getUsername(), bitmap, "register");
+                        }catch (Exception e) {Log.e("tag",""+e);}
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "user updated To Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
@@ -107,7 +172,30 @@ public class UserRepository {
         return userUpdated;
     }
 
-    public void uploadImage(String username, Bitmap bitmp, String type, Context context) {
+    public void deleteimage(String s) {
+        // Enqueue the download request
+        apiService.deleteimage(s).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    Toast.makeText(context, "succes  image deleted : ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful deleted" + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "Handle failure" + t, Toast.LENGTH_SHORT).show();
+                Log.d("tag", "Handle failure" + t);
+            }
+        });
+    }
+
+    public void uploadImage(String username, Bitmap bitmp, String type) {
         //Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
         // Create a file to save the bitmap
         File filesDir = context.getFilesDir();
@@ -167,7 +255,7 @@ public class UserRepository {
     private void handleErrorResponse(Response<?> response) {
         int statusCode = response.code();
         String message = response.message();
-        erorBody(statusCode,message);
+        erorBody(statusCode, message);
         if (response.errorBody() != null) {
             try {
                 String errorResponse = response.errorBody().string();
@@ -186,7 +274,7 @@ public class UserRepository {
     }
 
 
-    public void getLocalUserLogin(String username) {
+    public void getLocalUserLogin(String username, String tag) {
         userDatasource.open();
         if (user_login == null) {
             user_login = new TokenResponse();
@@ -195,14 +283,27 @@ public class UserRepository {
         if (user_login_local == null) {
             user_login_local = new TokenResponse();
         }
-        user_login_local.setUser(user);
-        user_login.setUser(user);
-        user_login.setMessage(TAG_LOCAL);
+        if (tag.equals("success")) {
+            user_login_local.setUser(user);
+        } else {
+            user_login.setUser(user);
+            user_login.setMessage(TAG_LOCAL);
+        }
+        getLocalRecipes(user.getId_User());
         userDatasource.close();
     }
 
-    public void erorBody(int statusCode,String message)
-    {
+    private void getLocalRecipes(int id_user) {
+        recipeDatasource.open();
+        //ModelsDataSource<Recipe> model = new ModelsDataSource<>(context,Recipe.class);
+        //list_recipe.addAll(Objects.requireNonNull(model.getAllRecordsByIdUser(TABLE_RECIPE, COLUMN_ID_FRK_USER_RECIPE, i).getValue()));
+        list_recipe.setValue(recipeDatasource.getRecipeById(id_user).getValue());
+        recipeDatasource.close();
+        //ModelsDataSource<Recipe> model = new ModelsDataSource<>(context,Recipe.class);
+        //list_recipe=model.getAllRecordsByIdUser(TABLE_RECIPE,COLUMN_ID_FRK_USER_RECIPE,id_user).getValue();
+    }
+
+    public void erorBody(int statusCode, String message) {
         if (statusCode == 409) {
             //Constants.AffichageMessage("User already exists", context);
             //Toast.makeText(context, "User already exists", Toast.LENGTH_SHORT).show();

@@ -32,22 +32,39 @@ import retrofit2.Response;
 
 public class RecipeViewModel extends ViewModel {
     private RecipeRepository repository;
+    private Context context;
 
     public RecipeViewModel(Context context) {
         repository = new RecipeRepository(context);
+        this.context = context;
     }
 
     public LiveData<List<Recipe>> getRecipes(Context context) {
-        return repository.getRecipes(context);
+        return repository.getRecipes();
     }
 
-    public LiveData<List<Recipe>> getRecipesByUsername(Context context, String username) {
-        return repository.getRecipesByUsername(context, username);
+    public LiveData<List<Recipe>> getRecipesByUsername( String username) {
+        return repository.getRecipesByUsername(username);
     }
 
-    public void uploadRecipeImage(int idRecipe, Bitmap bitmap, Context context) {
-        repository.uploadImageRecipe(idRecipe, bitmap, context);
+    public void uploadRecipeImage(int idRecipe, Bitmap bitmap) {
+        repository.uploadImageRecipe(idRecipe, bitmap);
     }
+
+    public LiveData<List<Recipe>> getRecipesByUsernameLocal(int id_user) {
+        return repository.getLocalRecipes(id_user);
+    }
+
+    public LiveData<Recipe> postRecipe(Recipe recipe,Bitmap bitmap)
+    {
+        return repository.InsertRecipeApi(recipe,bitmap);
+    }
+
+    public int postRecipeLocal(Recipe recipe, int id_user) {
+        return repository.insertRecipeLocally(recipe, id_user);
+    }
+
+
 
 
 

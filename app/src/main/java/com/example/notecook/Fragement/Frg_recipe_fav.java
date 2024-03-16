@@ -59,7 +59,7 @@ public class Frg_recipe_fav extends Fragment {
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
 
         //if(TAG_CONNEXION==200)
-        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list, TAG_ONLINE);
+        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),list, TAG_ONLINE);
         // adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe,true);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(HORIZONTAL);

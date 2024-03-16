@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Repo.RecipeRepository;
+import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeProfilBinding;
 
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class Frg_Recipe_Profil extends Fragment {
     Recipe mRecipe;
     FragmentFrgRecipeProfilBinding binding;
     private RecyclerView recyclerView;
+    private RecipeViewModel model;
 
     public Frg_Recipe_Profil() {
         // Required empty public constructor
@@ -55,10 +58,16 @@ public class Frg_Recipe_Profil extends Fragment {
             mRecipe = new Recipe();
             list_recipes.add(mRecipe);
         }
-        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe, TAG_LOCAL);
+        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),list_recipe.getValue(), TAG_LOCAL);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(manager);
         adapter_rc_recipeDt.notifyDataSetChanged();
         recyclerView.setAdapter(adapter_rc_recipeDt);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        bindingRcV_recipes(binding.RcRecipeProfil);
     }
 }

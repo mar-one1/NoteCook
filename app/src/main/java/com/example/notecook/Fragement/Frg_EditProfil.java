@@ -5,7 +5,6 @@ import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Data.UserDatasource.insertUser;
 import static com.example.notecook.MainActivity.UpdateUserApi;
 import static com.example.notecook.MainActivity.decod;
-import static com.example.notecook.MainActivity.deleteimage;
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.MainActivity.uploadImage;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
@@ -49,6 +48,7 @@ import com.example.notecook.MainActivity;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgEditProfilBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -81,6 +81,7 @@ public class Frg_EditProfil extends Fragment {
     GoogleSignInClient mGoogleSignInClient;
     GoogleSignInOptions gso;
     private SharedPreferences sharedPreferences;
+    private UserViewModel userVM;
 
 
     public Frg_EditProfil() {
@@ -103,6 +104,7 @@ public class Frg_EditProfil extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentFrgEditProfilBinding.inflate(inflater, container, false);
+        userVM  = new UserViewModel(getContext());
         User user = new User();
         user = user_login.getUser();
         //Log.d("TAG",user_login.getUser().getUser_name().toString());
@@ -196,9 +198,7 @@ public class Frg_EditProfil extends Fragment {
                     currentuser.setIcon(null);
                     getUser.setIcon(null);
                     if (!currentuser.equals(getUser))
-                        UpdateUserApi(getUser, getContext());
-                    deleteimage(urlold, getContext());
-                    uploadImage(user_login.getUser().getUsername(), bitmap, "", getContext());
+                        userVM.UpdateUser(getUser,bitmap);
                 }catch(Exception e){Log.e("tag",""+e);}
             });
             pDialog.show();

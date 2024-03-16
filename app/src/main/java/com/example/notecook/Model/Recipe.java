@@ -1,5 +1,7 @@
 package com.example.notecook.Model;
 
+import android.database.Cursor;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Recipe {
@@ -74,4 +76,5 @@ public class Recipe {
     public void setFrk_user(int frk_user) {
         Frk_user = frk_user;
     }
+
 }

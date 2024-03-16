@@ -5,13 +5,13 @@ import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.MainActivity.Insert_Fav;
 import static com.example.notecook.MainActivity.decod;
-import static com.example.notecook.MainActivity.getFullRecipeApi;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
+import com.example.notecook.Repo.RecipeRepository;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -39,10 +40,12 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private String b;
     private List<Recipe> recipes;
     private MainActivity m = new MainActivity();
+    private RecipeRepository recipeRepo;
 
-    public Adapter_RC_RecipeDt(List<Recipe> recipes1, String bb) {
+    public Adapter_RC_RecipeDt(Context context, List<Recipe> recipes1, String bb) {
         recipes = recipes1;
         b = bb;
+        recipeRepo = new RecipeRepository(context);
     }
 
 
@@ -84,19 +87,14 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             } else {
                 holder.heat.setImageDrawable(defaultImagelike);
                 Recipes_Fav_User.add(recipe);
-                Insert_Fav(user_login.getUser().getId_User(),recipe.getId_recipe());
+                Insert_Fav(user_login.getUser().getId_User(), recipe.getId_recipe());
             }
         });
 
         holder.Image.setOnClickListener(v -> {
             if (CURRENT_RECIPE != recipe) {
-                //if(recipe.getIcon_recipe()!=null)
-                //recipe.setIcon_recipe(encod(((BitmapDrawable) holder.Image.getDrawable()).getBitmap()));
                 CURRENT_RECIPE = recipe;
-                //getDetailRecipeByIdRecipeApi(recipe.getId_recipe(), v.getContext());
-                getFullRecipeApi(recipe.getId_recipe(), v.getContext());
-//                m.getStepRecipeByIdRecipeApi(recipe.getId_recipe());
-//                m.getReviewRecipeApi(recipe.getId_recipe());
+                recipeRepo.getFullRecipeApi(recipe.getId_recipe(), v.getContext());
             } else viewPager2.setCurrentItem(1, false);
         });
 

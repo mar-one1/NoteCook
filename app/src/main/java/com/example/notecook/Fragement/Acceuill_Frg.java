@@ -157,9 +157,9 @@ public class Acceuill_Frg extends Fragment {
             list_recipes.add(mRecipe);
         }
         //if(TAG_CONNEXION==200)
-        if (!Remotelist_recipe.getValue().isEmpty()) {
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list, TAG_ONLINE);
-        } else adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe, TAG_OFFLINE);
+        if (!(list.size() ==0)) {
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),list, TAG_ONLINE);
+        } else adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),list_recipe.getValue(), TAG_OFFLINE);
         // adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe,true);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(HORIZONTAL);
