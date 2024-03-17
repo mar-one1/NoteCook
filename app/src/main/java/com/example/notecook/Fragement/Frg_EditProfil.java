@@ -40,6 +40,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Data.UserDatasource;
@@ -198,7 +199,12 @@ public class Frg_EditProfil extends Fragment {
                     currentuser.setIcon(null);
                     getUser.setIcon(null);
                     if (!currentuser.equals(getUser))
-                        userVM.UpdateUser(getUser,bitmap);
+                        userVM.UpdateUser(getUser,bitmap).observe(getActivity(), new Observer<User>() {
+                            @Override
+                            public void onChanged(User user) {
+                                user_login.setUser(user);
+                            }
+                        });
                 }catch(Exception e){Log.e("tag",""+e);}
             });
             pDialog.show();

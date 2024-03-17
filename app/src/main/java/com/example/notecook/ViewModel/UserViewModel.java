@@ -24,11 +24,20 @@ public class UserViewModel extends ViewModel {
         return repository.getUserApi(username);
     }
 
-    public LiveData<User> UpdateUser(User user,Bitmap bitmap) {
-        return repository.UpdateUserApi(user,bitmap);
+    public LiveData<User> getUserRecipe(int id_recipe) {
+        return repository.getUserByIdRecipeApi(id_recipe);
     }
 
-    public void getUserLocal(String username,String tag) {
+    public LiveData<User> postUser(User user,String imageUrl,Bitmap bitmap,String type) {
+        return repository.InsertUserApi(user,imageUrl,bitmap,type);
+    }
+
+
+    public LiveData<User> UpdateUser(User user, Bitmap bitmap) {
+        return repository.UpdateUserApi(user, bitmap);
+    }
+
+    public void getUserLocal(String username, String tag) {
         repository.getLocalUserLogin(username, tag);
     }
 }

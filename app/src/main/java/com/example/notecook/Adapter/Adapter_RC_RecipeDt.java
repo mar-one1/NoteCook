@@ -6,8 +6,13 @@ import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.MainActivity.Insert_Fav;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
+import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
+import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
+import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.annotation.SuppressLint;
@@ -20,12 +25,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notecook.Api.RecipeResponse;
+import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Repo.RecipeRepository;
+import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.UserViewModel;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -40,12 +54,16 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private String b;
     private List<Recipe> recipes;
     private MainActivity m = new MainActivity();
-    private RecipeRepository recipeRepo;
+    private RecipeViewModel recipeVM;
+    private UserViewModel userVM;
+    private Context context;
 
-    public Adapter_RC_RecipeDt(Context context, List<Recipe> recipes1, String bb) {
-        recipes = recipes1;
+    public Adapter_RC_RecipeDt(Context context, List<Recipe> recipes, String bb) {
+        this.recipes = recipes;
         b = bb;
-        recipeRepo = new RecipeRepository(context);
+        this.context = context;
+        recipeVM = new RecipeViewModel(context);
+        userVM = new UserViewModel(context);
     }
 
 
@@ -92,9 +110,21 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         });
 
         holder.Image.setOnClickListener(v -> {
+            // Get the FragmentActivity associated with the context of the clicked view
+            FragmentActivity fragmentActivity = (FragmentActivity) v.getContext();
             if (CURRENT_RECIPE != recipe) {
                 CURRENT_RECIPE = recipe;
-                recipeRepo.getFullRecipeApi(recipe.getId_recipe(), v.getContext());
+                recipeVM.getRecipe(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
+                    @Override
+                    public void onChanged(RecipeResponse recipeResponses) {
+                        //viewPager2.setCurrentItem(1);
+                        CURRENT_RECIPE = recipeResponses.getRecipe();
+                        Detail_CurrentRecipe = recipeResponses.getDetail_recipe();
+                        Steps_CurrentRecipe = recipeResponses.getSteps();
+                        Review_CurrentRecipe = recipeResponses.getReviews();
+                        Ingredients_CurrentRecipe = recipeResponses.getIngredients();
+                    }
+                });
             } else viewPager2.setCurrentItem(1, false);
         });
 

@@ -469,6 +469,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
+
         RecipeViewModel model = new RecipeViewModel(this);
         UserViewModel userVM = new UserViewModel(this);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
@@ -483,14 +484,17 @@ public class MainActivity extends AppCompatActivity {
             //---------------------
             //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
 
-            model.getRecipes(getBaseContext()).observe(this, new Observer<List<Recipe>>() {
+            /*model.getRecipes().observe(this, new Observer<List<Recipe>>() {
                 @Override
                 public void onChanged(@Nullable List<Recipe> recipeList) {
                     //Remotelist_recipe.clear();
                     Remotelist_recipe.setValue(recipeList);
                     Toast.makeText(getBaseContext(), "changed main " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.fl_main, new MainFragment());
+                    fragmentTransaction.commit();
                 }
-            });
+            });*/
         }
         pDialog.cancel();
         model.getRecipesByUsername(s1).observe(this, new Observer<List<Recipe>>() {
@@ -503,9 +507,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         getIngredientsRecipeApi();
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fl_main, new MainFragment());
-        fragmentTransaction.commit();
+
 
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);

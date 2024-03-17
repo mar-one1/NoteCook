@@ -18,8 +18,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
+import com.example.notecook.Api.RecipeResponse;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Model.User;
 import com.example.notecook.Repo.RecipeRepository;
 
 import java.io.IOException;
@@ -39,13 +41,21 @@ public class RecipeViewModel extends ViewModel {
         this.context = context;
     }
 
-    public LiveData<List<Recipe>> getRecipes(Context context) {
+    public LiveData<List<Recipe>> getRecipes() {
         return repository.getRecipes();
     }
 
     public LiveData<List<Recipe>> getRecipesByUsername( String username) {
         return repository.getRecipesByUsername(username);
     }
+
+    public LiveData<RecipeResponse> getRecipe(int id_recipe) {
+        return repository.getFullRecipeApi(id_recipe);
+    }
+
+
+
+
 
     public void uploadRecipeImage(int idRecipe, Bitmap bitmap) {
         repository.uploadImageRecipe(idRecipe, bitmap);
