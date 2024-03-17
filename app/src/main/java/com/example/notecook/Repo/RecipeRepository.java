@@ -84,46 +84,7 @@ public class RecipeRepository {
         return insertedId;
     }
 
-    public void getUserByIdRecipeApi(int Recipeid, Context context) {
 
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        Call<User> call = apiService.getUserByIdRecipe(Token, Recipeid);
-
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    User user = response.body();
-                    User_CurrentRecipe = user;
-                    userRepo.getImageUserUrl(User_CurrentRecipe.getUsername(), "recipe_user", context);
-                    Log.d("TAG", user.getUsername().toString());
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    TAG_CONNEXION = response.code();
-                    //MainFragment.viewPager2.setCurrentItem(1);
-                } else {
-                    // Handle error response here
-                    int statusCode = response.code();
-                    TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    if (response.errorBody() != null) {
-                        try {
-                            String errorResponse = response.errorBody().string();
-                            // Print or log the errorResponse for debugging
-                            Log.e("token", "Error Response: " + errorResponse);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                TAG_CONNEXION = call.hashCode();
-            }
-        });
-    }
 
 
     public LiveData<Recipe> InsertRecipeApi(Recipe recipe, Bitmap bitmap) {
@@ -164,27 +125,20 @@ public class RecipeRepository {
         return list_recipe;
     }
 
-    public void getFullRecipeApi(int Recipeid, Context context) {
-
-        Call<RecipeResponse> call = apiService.getRecipeById(Token, Recipeid);
-
-
-        call.enqueue(new Callback<RecipeResponse>() {
+    public LiveData<RecipeResponse> getFullRecipeApi(int Recipeid) {
+        MutableLiveData<RecipeResponse> recipeResponseMutableLiveData = new MutableLiveData<>();
+        apiService.getRecipeById(Token, Recipeid).enqueue(new Callback<RecipeResponse>() {
             @Override
             public void onResponse(Call<RecipeResponse> call, Response<RecipeResponse> response) {
                 if (response.isSuccessful()) {
                     RecipeResponse recipeResponse = response.body();
                     if (recipeResponse != null) {
-                        CURRENT_RECIPE =recipeResponse.getRecipe();
-                        Detail_CurrentRecipe = recipeResponse.getDetail_recipe();
-                        Steps_CurrentRecipe = recipeResponse.getSteps();
-                        Review_CurrentRecipe = recipeResponse.getReviews();
-                        Ingredients_CurrentRecipe = recipeResponse.getIngredients();
+                        recipeResponseMutableLiveData.setValue(recipeResponse);
                     }
                     TAG_CONNEXION_MESSAGE = response.message();
                     TAG_CONNEXION = response.code();
                     if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
-                        getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe(), context);
+                        userRepo.getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe());
                     else if (User_CurrentRecipe.getId_User() == CURRENT_RECIPE.getFrk_user()) {
                         MainFragment.viewPager2.setCurrentItem(1);
                     } else {
@@ -192,28 +146,17 @@ public class RecipeRepository {
                         MainFragment.viewPager2.setCurrentItem(1, false);
                     }
                 } else {
-                    // Handle error response here
-                    int statusCode = response.code();
-                    TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    if (response.errorBody() != null) {
-                        try {
-                            String errorResponse = response.errorBody().string();
-                            // Print or log the errorResponse for debugging
-                            Log.e("token", "Error Response: " + errorResponse);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    handleErrorResponse(response);
                 }
             }
 
             @Override
             public void onFailure(Call<RecipeResponse> call, Throwable t) {
                 TAG_CONNEXION = call.hashCode();
+                handleNetworkFailure();
             }
         });
-
+        return recipeResponseMutableLiveData;
     }
 
     public LiveData<List<Recipe>> getRecipes() {
@@ -241,7 +184,7 @@ public class RecipeRepository {
         // Handle network failure
     }
 
-    public LiveData<List<Recipe>> getRecipesByUsername( String username) {
+    public LiveData<List<Recipe>> getRecipesByUsername(String username) {
         MutableLiveData<List<Recipe>> remoteRecipeListByUser = new MutableLiveData<>();
         apiService.getRecipeByUsernameUser(Token, username).enqueue(new Callback<List<Recipe>>() {
             @Override
@@ -249,7 +192,7 @@ public class RecipeRepository {
                 if (response.isSuccessful()) {
                     remoteRecipeListByUser.setValue(response.body());
                     if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
-                        synchronizeDataFromLocalToRemote(list_recipe.getValue(),remoteRecipeListByUser.getValue(),username);
+                        synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
                     }
 
                 } else {
@@ -351,10 +294,10 @@ public class RecipeRepository {
         userDatasource.close();
 
         // Step 2: Perform the synchronization using the user ID
-        synchronizeDataFromLocalToRemote(localRecipes, remoteRecipes,userId);
+        synchronizeDataFromLocalToRemote(localRecipes, remoteRecipes, userId);
     }
 
-    public void synchronizeDataFromLocalToRemote(List<Recipe> localRecipes, List<Recipe> remoteRecipes,int id) {
+    public void synchronizeDataFromLocalToRemote(List<Recipe> localRecipes, List<Recipe> remoteRecipes, int id) {
         // Step 1: Update local recipes with data from remote recipes
         for (Recipe remoteRecipe : remoteRecipes) {
             // Check if the remote recipe belongs to the specified user
@@ -364,7 +307,7 @@ public class RecipeRepository {
                     // Match recipes using a unique identifier, e.g., recipe ID
                     if (remoteRecipe.getNom_recipe().equals(localRecipe.getNom_recipe())) {
                         // Recipe exists locally; update it with remote data
-                        updateRecipeLocally(remoteRecipe,localRecipe.getId_recipe());
+                        updateRecipeLocally(remoteRecipe, localRecipe.getId_recipe());
                         foundLocally = true;
                         break;
                     }
@@ -397,10 +340,10 @@ public class RecipeRepository {
         }
     }
 
-    private void updateRecipeLocally(Recipe remoteRecipe,int id) {
+    private void updateRecipeLocally(Recipe remoteRecipe, int id) {
         // Implement logic to update the local recipe with data from the remote recipe
         recipeDatasource.open();
-        recipeDatasource.UpdateRecipe(remoteRecipe,id);
+        recipeDatasource.UpdateRecipe(remoteRecipe, id);
         recipeDatasource.close();
     }
 

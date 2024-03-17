@@ -6,6 +6,7 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
+import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.list_recipe;
@@ -18,20 +19,24 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.TokenResponse;
+import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.ModelsDataSource;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Fragement.MainFragment;
+import com.example.notecook.Login;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -84,7 +89,6 @@ public class UserRepository {
                 } else {
                     handleErrorResponse(response);
                     getLocalUserLogin(username, "");
-
                 }
             }
 
@@ -155,8 +159,10 @@ public class UserRepository {
                             UserResponse.setId_User(user_login.getUser().getId_User());
                             userUpdated.setValue(UserResponse);
                             deleteimage(user.getPathimageuser());
-                            uploadImage(user_login.getUser().getUsername(), bitmap, "register");
-                        }catch (Exception e) {Log.e("tag",""+e);}
+                            uploadImage(user_login.getUser().getUsername(), bitmap, "update");
+                        } catch (Exception e) {
+                            Log.e("tag", "" + e);
+                        }
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "user updated To Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
@@ -255,22 +261,74 @@ public class UserRepository {
     private void handleErrorResponse(Response<?> response) {
         int statusCode = response.code();
         String message = response.message();
-        erorBody(statusCode, message);
         if (response.errorBody() != null) {
-            try {
-                String errorResponse = response.errorBody().string();
-                Log.e("ErrorResponse", "Error Response: " + errorResponse);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            if (statusCode == 400) {
+                try {
+                    String errorBody = response.errorBody().string();
+                    Gson gson = new Gson();
+                    ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
+                    // Now you have the validation errors in the validationError object
+                    // Handle them accordingly
+                    StringBuilder errorMessages = new StringBuilder();
+                    for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
+                        errorMessages.append(", ").append(error.getMessage());
+                    }
+                    Constants.AffichageMessage(errorMessages.toString(), (AppCompatActivity) context);
+                } catch (IOException e) {
+                    // Handle error parsing error body
+                }
+                // Unauthorized, handle accordingly (e.g., reauthentication).
+            } else if (statusCode == 409) {
+                Constants.AffichageMessage("User already exists", (AppCompatActivity) context);
+                // Unauthorized, handle accordingly (e.g., reauthentication).
+            } else if (statusCode == 404) {
+                // Not found, handle accordingly (e.g., show a 404 error message).
+                Constants.AffichageMessage(TAG_OFFLINE, (AppCompatActivity) context);
+            } else if (statusCode >= 500) {
+                // Handle other status codes or generic error handling.
+                Constants.AffichageMessage("Internal Server Error", (AppCompatActivity) context);
+            } else if (statusCode == 406) {
+                // Handle other status codes or generic error handling.
+                Constants.AffichageMessage("User not found", (AppCompatActivity) context);
+            } else Constants.AffichageMessage(message, (AppCompatActivity) context);
         }
     }
 
-    private void handleNetworkFailure(Call<User> call) {
+    private void handleNetworkFailure(Call<?> call) {
         // Handle network failure
         TAG_CONNEXION_MESSAGE = call.toString();
         //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
         Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+    }
+
+    public LiveData<User> getUserByIdRecipeApi(int Recipeid) {
+        MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
+        apiService.getUserByIdRecipe(Token, Recipeid).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    userMutableLiveData.setValue(user);
+                    User_CurrentRecipe = user;
+                    getImageUserUrl(User_CurrentRecipe.getUsername(), "recipe_user", context);
+                    Log.d("TAG", user.getUsername().toString());
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+                    //MainFragment.viewPager2.setCurrentItem(1);
+                } else {
+                    // Handle error response here
+                    handleErrorResponse(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+                handleNetworkFailure(call);
+            }
+        });
+        return userMutableLiveData;
     }
 
 
@@ -303,25 +361,78 @@ public class UserRepository {
         //list_recipe=model.getAllRecordsByIdUser(TABLE_RECIPE,COLUMN_ID_FRK_USER_RECIPE,id_user).getValue();
     }
 
-    public void erorBody(int statusCode, String message) {
-        if (statusCode == 409) {
-            //Constants.AffichageMessage("User already exists", context);
-            //Toast.makeText(context, "User already exists", Toast.LENGTH_SHORT).show();
-            // Unauthorized, handle accordingly (e.g., reauthentication).
-        } else if (statusCode == 404) {
-            // Not found, handle accordingly (e.g., show a 404 error message).
-            //Constants.AffichageMessage(TAG_OFFLINE, context);
-            Toast.makeText(context, TAG_OFFLINE, Toast.LENGTH_SHORT).show();
-        } else if (statusCode >= 500) {
-            // Handle other status codes or generic error handling.
-            //Constants.AffichageMessage("Internal Server Error", context);
-            Toast.makeText(context, "Internal Server Error", Toast.LENGTH_SHORT).show();
-        } else if (statusCode == 406) {
-            // Handle other status codes or generic error handling.
-            // Constants.AffichageMessage("User not found", context);
-        } else Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
-        //Constants.AffichageMessage(response.message(), context);
+    public LiveData<User> InsertUserApi(User user, String url, Bitmap bitmap, String type) {
+        MutableLiveData<User> userInsered = new MutableLiveData<>();
+        // Example: Fetch users from the API
+        apiService.createUser(user).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User UserResponse = response.body();
+                    if (UserResponse != null) {
+                        // Store the token securely (e.g., in SharedPreferences) for later use
+                        TAG_CONNEXION = response.code();
+                        TAG_CONNEXION_MESSAGE = response.message();
+                        userInsered.setValue(UserResponse);
+                        if (type != null && type.equals("registre"))
+                            uploadImage(user.getUsername(), bitmap, type);
+                        else if (!url.isEmpty()) {
+                            updateGoogleUserImage(user.getUsername(), url).getValue();
+                        }
+                        Constants.AffichageMessage("Vous avez Register avec succes with server", (AppCompatActivity) context);
+                        Log.d("TAG", TAG_CONNEXION_MESSAGE + " " + "Add User To Api");
+                    }
+                } else {
+                    handleErrorResponse(response);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                handleNetworkFailure(call);
+            }
+        });
+        return userInsered;
     }
 
+    public LiveData<String> updateGoogleUserImage(String username, String path) {
+        MutableLiveData<String> pathImageUser = new MutableLiveData<>();
 
+        String jsonInputString = "{\"url\": \"" + path + "\"}";
+// Create a RequestBody from the string
+        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), jsonInputString);
+
+
+        // Call the method to upload the file
+        apiService.updateUserGoogleImageUrl(username, requestBody).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String path = null;
+                    path = response.body().toString();
+                    pathImageUser.setValue(path);
+                    //String str = new String(bytes, StandardCharsets.UTF_8);
+                    //path = path.replaceAll("\"", "");// For UTF-8 encoding
+                    Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
+                    // File upload successful
+                    //fetchImage(path);
+                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // Handle unsuccessful upload
+                    handleErrorResponse(response);
+                    pathImageUser.setValue("");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                // Handle failure
+                handleNetworkFailure(call);
+                pathImageUser.setValue("");
+            }
+        });
+        return pathImageUser;
+    }
 }
