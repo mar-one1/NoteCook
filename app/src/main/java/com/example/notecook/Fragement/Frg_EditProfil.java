@@ -3,7 +3,6 @@ package com.example.notecook.Fragement;
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Data.UserDatasource.insertUser;
-import static com.example.notecook.MainActivity.UpdateUserApi;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.MainActivity.uploadImage;

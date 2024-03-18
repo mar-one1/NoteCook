@@ -128,53 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static void UpdateUserApi(User user, Context context) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // Example: Fetch users from the API
 
-        //RequestBody imageRequestBody = RequestBody.create(MediaType.parse("image/*"), user.getIcon());
-
-        Call<User> call = apiService.updateUserByUsername(user.getUsername().toString(), user);
-
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if (response.isSuccessful()) {
-                    User UserResponse = response.body();
-
-                    if (UserResponse != null) {
-                        UserResponse.setId_User(user_login.getUser().getId_User());
-                        user_login.setUser(UserResponse);
-                        Log.d("TAG", String.valueOf(UserResponse.getId_User()));
-                        // Store the token securely (e.g., in SharedPreferences) for later use
-                        TAG_CONNEXION = response.code();
-                        user_login.setUser(response.body());
-                        TAG_CONNEXION_MESSAGE = response.message();
-                        //Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", context);
-                        Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "user updated To Api", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-
-                    // Handle error response here
-                    // The HTTP request was not successful (status code is not 2xx).
-                    // You can handle errors here based on the response status code.
-                    Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "User not updated To Api", Toast.LENGTH_LONG).show();
-                    handleErrorResponse(context,"User",response);
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-
-                TAG_CONNEXION_MESSAGE = call.toString();
-                //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
-                Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
-                handleNetworkFailure(context,call);
-            }
-        });
-
-    }
 
     private static void handleErrorResponse(Context context, String model, Response<?> response) {
         int statusCode = response.code();
