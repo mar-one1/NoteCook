@@ -56,7 +56,6 @@ import retrofit2.Response;
 public class UserRepository {
     private ApiService apiService;
     private UserDatasource userDatasource;
-    private RecipeDatasource recipeDatasource;
     private Context context;
     private SharedPreferences sharedPreferences;
 
@@ -64,7 +63,6 @@ public class UserRepository {
         this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
         userDatasource = new UserDatasource(context);
-        recipeDatasource = new RecipeDatasource(context);
     }
 
     public LiveData<User> getUserApi(String username) {
@@ -332,33 +330,24 @@ public class UserRepository {
     }
 
 
-    public void getLocalUserLogin(String username, String tag) {
+    public LiveData<User> getLocalUserLogin(String username, String tag) {
+        MutableLiveData<User> user = new MutableLiveData<>();
         userDatasource.open();
         if (user_login == null) {
             user_login = new TokenResponse();
         }
-        User user = userDatasource.select_User_BYUsername(username);
+        user.setValue(userDatasource.select_User_BYUsername(username));
         if (user_login_local == null) {
             user_login_local = new TokenResponse();
         }
         if (tag.equals("success")) {
-            user_login_local.setUser(user);
+            user_login_local.setUser(user.getValue());
         } else {
-            user_login.setUser(user);
+            user_login.setUser(user.getValue());
             user_login.setMessage(TAG_LOCAL);
         }
-        getLocalRecipes(user.getId_User());
         userDatasource.close();
-    }
-
-    private void getLocalRecipes(int id_user) {
-        recipeDatasource.open();
-        //ModelsDataSource<Recipe> model = new ModelsDataSource<>(context,Recipe.class);
-        //list_recipe.addAll(Objects.requireNonNull(model.getAllRecordsByIdUser(TABLE_RECIPE, COLUMN_ID_FRK_USER_RECIPE, i).getValue()));
-        list_recipe.setValue(recipeDatasource.getRecipeById(id_user).getValue());
-        recipeDatasource.close();
-        //ModelsDataSource<Recipe> model = new ModelsDataSource<>(context,Recipe.class);
-        //list_recipe=model.getAllRecordsByIdUser(TABLE_RECIPE,COLUMN_ID_FRK_USER_RECIPE,id_user).getValue();
+        return  user;
     }
 
     public LiveData<User> InsertUserApi(User user, String url, Bitmap bitmap, String type) {

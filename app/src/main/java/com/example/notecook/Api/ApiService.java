@@ -132,7 +132,7 @@ public interface ApiService {
     Call<Void> deleteUser(@Path("id") int userId);
 
     // Ingredients API Endpoints
-    @GET("ingredients")
+    @GET("ingredientrecipes")
     @Headers("Content-Type: application/json")
     Call<List<Ingredients>> getAllIngredients(@Header("Authorization") String token);
 

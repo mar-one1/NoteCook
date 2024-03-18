@@ -1,6 +1,5 @@
 package com.example.notecook.ViewModel;
 
-import static com.example.notecook.Data.RecipeDatasource.createRecipe;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.Token;
@@ -53,17 +52,19 @@ public class RecipeViewModel extends ViewModel {
         return repository.getFullRecipeApi(id_recipe);
     }
 
-
-
-
-
-    public void uploadRecipeImage(int idRecipe, Bitmap bitmap) {
-        repository.uploadImageRecipe(idRecipe, bitmap);
+    public LiveData<List<Recipe>> getRecipesLocal(int id_user) {
+        return repository.getLocalRecipes(id_user);
     }
 
     public LiveData<List<Recipe>> getRecipesByUsernameLocal(int id_user) {
         return repository.getLocalRecipes(id_user);
     }
+
+    public void uploadRecipeImage(int idRecipe, Bitmap bitmap) {
+        repository.uploadImageRecipe(idRecipe, bitmap);
+    }
+
+
 
     public LiveData<Recipe> postRecipe(Recipe recipe,Bitmap bitmap)
     {

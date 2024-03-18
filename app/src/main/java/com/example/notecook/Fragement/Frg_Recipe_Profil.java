@@ -50,14 +50,7 @@ public class Frg_Recipe_Profil extends Fragment {
     }
 
     public void bindingRcV_recipes(RecyclerView recyclerView) {
-
-        List<Recipe> list_recipes = new ArrayList<>();
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-        for (int i = 0; i < 8; i++) {
-//            mRecipe = new Recipe(getResources().getDrawable(R.drawable.ic_search_fill_gray), "jus orange",false);
-            mRecipe = new Recipe();
-            list_recipes.add(mRecipe);
-        }
         adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),list_recipe.getValue(), TAG_LOCAL);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(manager);

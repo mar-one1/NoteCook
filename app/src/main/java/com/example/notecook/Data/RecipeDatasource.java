@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Model.Recipe;
 
+import java.sql.NClob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +31,9 @@ public class RecipeDatasource {
     /*
      * insert the value in the Image table
      */
-    public static Recipe createRecipe(byte[] ICONBYTE,String nom_recipe, int fav , int frk) {
+    public Recipe createRecipe(byte[] ICONBYTE,String nom_recipe, int fav , int frk) {
+        open();
         ContentValues values = new ContentValues();
-
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, ICONBYTE);
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, fav);
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE,nom_recipe );
@@ -46,10 +47,12 @@ public class RecipeDatasource {
         cursor.moveToFirst();
         Recipe newRecipe = cursorToComment(cursor);
         cursor.close();
+        close();
         return newRecipe;
     }
 
-    public static long InsertRecipe(Recipe recipe,int id) {
+    public long InsertRecipe(Recipe recipe,int id) {
+        open();
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE,recipe.getNom_recipe() );
@@ -60,11 +63,11 @@ public class RecipeDatasource {
 
         long insertId = database.insert(MySQLiteHelper.TABLE_RECIPE,
                 null, values);
-
+        close();
         return insertId;
     }
 
-    private static Recipe cursorToComment(Cursor cursor) {
+    private Recipe cursorToComment(Cursor cursor) {
         Recipe recipe = new Recipe();
         recipe.setId_recipe(cursor.getInt(0));
         recipe.setIcon_recipe(cursor.getBlob(1));
@@ -92,15 +95,17 @@ public class RecipeDatasource {
      * delete item from the table of images
      */
     public void deleteRecipe(Recipe recipe) {
+        open();
         long id = recipe.getId_recipe();
         Log.d("gps", "Image  deleted with id: " + id);
         database.delete(MySQLiteHelper.TABLE_RECIPE, MySQLiteHelper.COLUMN_ID_RECIPE
                 + " = " + id, null);
+        close();
     }
 
     public ArrayList<Recipe> getAllRecipes() {
+        open();
         ArrayList<Recipe> ListRecipe = new ArrayList<>();
-
         Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
                 allColumns, null, null, null, null, null);
 
@@ -112,9 +117,10 @@ public class RecipeDatasource {
         }
         // assurez-vous de la fermeture du curseur
         cursor.close();
+        close();
         return ListRecipe;
     }
-    public LiveData<List<Recipe>> getRecipeById(int id) {
+    public LiveData<List<Recipe>> getRecipeByIdUser(int id) {
         MutableLiveData<List<Recipe>> ListRecipe = new MutableLiveData<>();
         List<Recipe> list  = new ArrayList<>();
 
@@ -134,12 +140,13 @@ public class RecipeDatasource {
     }
 
     public void UpdateRecipe(Recipe recipe,int id) {
-
+        open();
         ContentValues values = new ContentValues();
         //values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, recipe.getFav());
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE,recipe.getNom_recipe());
         database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
+        close();
     }
 
 

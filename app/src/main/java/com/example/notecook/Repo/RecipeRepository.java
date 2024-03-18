@@ -78,10 +78,7 @@ public class RecipeRepository {
 
     public int insertRecipeLocally(Recipe recipe, int id) {
         // Insert the recipe locally using your createRecipe method
-        recipeDatasource.open();
-        int insertedId = (int) RecipeDatasource.InsertRecipe(recipe, id);
-        recipeDatasource.close();
-        return insertedId;
+        return (int) recipeDatasource.InsertRecipe(recipe, id);
     }
 
 
@@ -117,11 +114,9 @@ public class RecipeRepository {
 
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
         recipeDatasource.open();
-        //ModelsDataSource<Recipe> model = new ModelsDataSource<>(context,Recipe.class);
-        //list_recipe.addAll(Objects.requireNonNull(model.getAllRecordsByIdUser(TABLE_RECIPE, COLUMN_ID_FRK_USER_RECIPE, i).getValue()));
-        list_recipe.setValue(recipeDatasource.getRecipeById(i).getValue());
+        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i).getValue());
+        //detailRecipeRepository.getLocalDetailsRecipes();
         recipeDatasource.close();
-        detailRecipeRepository.getLocalDetailsRecipes();
         return list_recipe;
     }
 

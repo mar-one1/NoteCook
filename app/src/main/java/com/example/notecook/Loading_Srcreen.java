@@ -10,7 +10,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +41,7 @@ public class Loading_Srcreen extends AppCompatActivity {
     IntentFilter filtreConectivite = new IntentFilter();
     NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
     private SharedPreferences sharedPreferences;
+
 
        /* Thread welcomeThread = new Thread() {
             @Override
@@ -91,14 +95,16 @@ public class Loading_Srcreen extends AppCompatActivity {
 //        MyAsyncTask myAsyncTask = new MyAsyncTask();
 //        myAsyncTask.execute();
         Intent i = new Intent(getBaseContext(), Login.class);
+        Intent iM = new Intent(getBaseContext(), MainActivity.class);
         if (!isOnline(getBaseContext()) && Objects.equals(getToken(), "")) {
             Constants.AffichageMessage("Welcome to Notebook APP!!!", Loading_Srcreen.this);
             startActivity(i);
-        } else if (!Objects.equals(getToken(), ""))
+        } else if (!Objects.equals(getToken(), "") && isOnline(getBaseContext()))
             TokenApi();
-        else {
+        else if (!Objects.equals(getToken(), "") && !isOnline(getBaseContext())) {
+            startActivity(iM);
+        } else
             startActivity(i);
-        }
         setContentView(view);
     }
 
@@ -218,10 +224,24 @@ public class Loading_Srcreen extends AppCompatActivity {
 
     public boolean isOnline(Context context) {
 
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        //should check null because in airplane mode it will be a null
-        return (netInfo != null && netInfo.isConnected());
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Network network = connectivityManager.getActiveNetwork();
+                if (network != null) {
+                    NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(network);
+                    return networkCapabilities != null &&
+                            (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                                    networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
+                }
+            } else {
+                // For devices running older versions than Android M
+                // Check if any network is available
+                NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+            }
+        }
+        return false;
     }
 
     private void saveToken(String token) {
@@ -242,7 +262,7 @@ public class Loading_Srcreen extends AppCompatActivity {
 
         boolean checkInternet(Context context) {
 
-            return service.isNetworkAvailable();
+            return service.isNetworkAvailable(context);
         }
     }
 

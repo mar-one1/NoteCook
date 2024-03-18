@@ -14,6 +14,7 @@ import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -97,6 +98,9 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             holder.txt_time.setText("Local");
         else holder.txt_time.setText("Remote");
 
+
+
+
         holder.heat.setOnClickListener(view -> {
             Drawable pic = holder.heat.getDrawable().getCurrent();
             Toast.makeText(view.getContext(), "" + pic, Toast.LENGTH_SHORT).show();
@@ -113,19 +117,25 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             // Get the FragmentActivity associated with the context of the clicked view
             FragmentActivity fragmentActivity = (FragmentActivity) v.getContext();
             if (CURRENT_RECIPE != recipe) {
-                CURRENT_RECIPE = recipe;
-                recipeVM.getRecipe(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
-                    @Override
-                    public void onChanged(RecipeResponse recipeResponses) {
-                        //viewPager2.setCurrentItem(1);
-                        CURRENT_RECIPE = recipeResponses.getRecipe();
-                        Detail_CurrentRecipe = recipeResponses.getDetail_recipe();
-                        Steps_CurrentRecipe = recipeResponses.getSteps();
-                        Review_CurrentRecipe = recipeResponses.getReviews();
-                        Ingredients_CurrentRecipe = recipeResponses.getIngredients();
-                    }
-                });
+                if(!Objects.equals(b, TAG_LOCAL)) {
+                    CURRENT_RECIPE = recipe;
+                    recipeVM.getRecipe(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
+                        @Override
+                        public void onChanged(RecipeResponse recipeResponses) {
+                            //viewPager2.setCurrentItem(1);
+                            CURRENT_RECIPE = recipeResponses.getRecipe();
+                            Detail_CurrentRecipe = recipeResponses.getDetail_recipe();
+                            Steps_CurrentRecipe = recipeResponses.getSteps();
+                            Review_CurrentRecipe = recipeResponses.getReviews();
+                            Ingredients_CurrentRecipe = recipeResponses.getIngredients();
+                        }
+                    });
+                }
+                else{
+                    //recipeVM.getRecipesLocal(user_login_local.getUser().getId_User());
+                }
             } else viewPager2.setCurrentItem(1, false);
+
         });
 
     }

@@ -17,6 +17,7 @@ import static com.example.notecook.Utils.Constants.listUser;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -36,7 +37,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -125,9 +125,6 @@ public class MainActivity extends AppCompatActivity {
 
         return imageBytes;
     }
-
-
-
 
 
     private static void handleErrorResponse(Context context, String model, Response<?> response) {
@@ -251,12 +248,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-
     public static void uploadImage(String username, Bitmap bitmp, String type, Context context) {
         //Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
         // Create a file to save the bitmap
@@ -372,6 +363,34 @@ public class MainActivity extends AppCompatActivity {
         return localDetaliRecipes;
     }
 
+    public static void Insert_Fav(int id_user, int id_recipe) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        // Create a new favorite object
+        Favorite_User_Recipe newFavorite = new Favorite_User_Recipe();
+        newFavorite.setUserId(id_user); // Set user ID
+        newFavorite.setRecipeId(id_recipe); // Set recipe ID
+
+        // Send a POST request to create the new favorite
+        Call<Favorite_User_Recipe> call = apiService.createFavorite(Token, newFavorite);
+        call.enqueue(new Callback<Favorite_User_Recipe>() {
+            @Override
+            public void onResponse(Call<Favorite_User_Recipe> call, Response<Favorite_User_Recipe> response) {
+                if (response.isSuccessful()) {
+                    Favorite_User_Recipe createdFavorite = response.body();
+                    // Handle the newly created favorite
+                } else {
+                    // Handle unsuccessful response
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Favorite_User_Recipe> call, Throwable t) {
+                // Handle network failure
+            }
+        });
+    }
+
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
@@ -424,44 +443,28 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
 
-        RecipeViewModel model = new RecipeViewModel(this);
+        RecipeViewModel recipeVM = new RecipeViewModel(this);
         UserViewModel userVM = new UserViewModel(this);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
 
-           userVM.getUser(s1).observe(this, new Observer<User>() {
-               @Override
-               public void onChanged(User user) {
-                   Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
-               }
-           });
+            userVM.getUser(s1).observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-            //---------------------
-            //Toast.makeText(MainActivity.this,"Offline mode",Toast.LENGTH_LONG );
-
-            /*model.getRecipes().observe(this, new Observer<List<Recipe>>() {
+            recipeVM.getRecipesByUsername(s1).observe(this, new Observer<List<Recipe>>() {
                 @Override
                 public void onChanged(@Nullable List<Recipe> recipeList) {
                     //Remotelist_recipe.clear();
-                    Remotelist_recipe.setValue(recipeList);
-                    Toast.makeText(getBaseContext(), "changed main " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                    fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.fl_main, new MainFragment());
-                    fragmentTransaction.commit();
+                    RemotelistByIdUser_recipe.setValue(recipeList);
+                    Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
                 }
-            });*/
+            });
         }
         pDialog.cancel();
-        model.getRecipesByUsername(s1).observe(this, new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipe> recipeList) {
-                //Remotelist_recipe.clear();
-                RemotelistByIdUser_recipe.setValue(recipeList);
-                Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
         getIngredientsRecipeApi();
-
 
 
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
@@ -504,9 +507,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
 
     public void getReviewRecipeApi(int idRecipe) {
 
@@ -630,35 +630,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void Insert_Fav(int id_user, int id_recipe) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        // Create a new favorite object
-        Favorite_User_Recipe newFavorite = new Favorite_User_Recipe();
-        newFavorite.setUserId(id_user); // Set user ID
-        newFavorite.setRecipeId(id_recipe); // Set recipe ID
-
-        // Send a POST request to create the new favorite
-        Call<Favorite_User_Recipe> call = apiService.createFavorite(Token, newFavorite);
-        call.enqueue(new Callback<Favorite_User_Recipe>() {
-            @Override
-            public void onResponse(Call<Favorite_User_Recipe> call, Response<Favorite_User_Recipe> response) {
-                if (response.isSuccessful()) {
-                    Favorite_User_Recipe createdFavorite = response.body();
-                    // Handle the newly created favorite
-                } else {
-                    // Handle unsuccessful response
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Favorite_User_Recipe> call, Throwable t) {
-                // Handle network failure
-            }
-        });
-    }
-
-
     public class NetworkChangeReceiver extends BroadcastReceiver {
 
         @Override
@@ -672,7 +643,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         boolean checkInternet(Context context) {
-            return service.isNetworkAvailable();
+            return service.isNetworkAvailable(context);
         }
     }
 

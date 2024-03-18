@@ -37,7 +37,7 @@ public class UserViewModel extends ViewModel {
         return repository.UpdateUserApi(user, bitmap);
     }
 
-    public void getUserLocal(String username, String tag) {
-        repository.getLocalUserLogin(username, tag);
+    public LiveData<User> getUserLocal(String username, String tag) {
+        return repository.getLocalUserLogin(username, tag);
     }
 }
