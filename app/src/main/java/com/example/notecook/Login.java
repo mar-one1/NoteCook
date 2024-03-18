@@ -49,6 +49,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Api.ApiClient;
@@ -62,6 +63,7 @@ import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;
+import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityLoginBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -122,6 +124,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private PasswordHasher passwordHasher = new PasswordHasher();
     private InputValidator inputValidator = new InputValidator();
     private UserDatasource userDatasource;
+    private UserViewModel userVM;
 
     //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
@@ -133,6 +136,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         view = binding.getRoot();
         m = new MainActivity();
         userDatasource = new UserDatasource(getBaseContext());
+        userVM = new UserViewModel(getBaseContext());
 
         // Check FingerPrint In Device
         try {
@@ -564,12 +568,20 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             boolean b = isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail());
 
             if (!b) {
+                String jsonInputString="";
+                if (acct.getPhotoUrl() != null)
+                jsonInputString = "{\"url\": \"" + acct.getPhotoUrl().toString() + "\"}";
                 passwordHasher = new PasswordHasher();
                 String password = passwordHasher.hashPassword(acct.getId().toString());
                 User Newuser = new User(username, acct.getFamilyName(), acct.getGivenName(), "00/00/0000", acct.getEmail(),
                         null, "000000000000", password, "active", "good");
 
-                InsertUserApi(Newuser);
+                userVM.postUser(Newuser,acct.getPhotoUrl().toString(),null,"google").observe(this, new Observer<User>() {
+                    @Override
+                    public void onChanged(User user) {
+                        Constants.AffichageMessage("Registre Success",Login.this);
+                    }
+                });
                 if (!isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
                     User userInsered = createUserlogin(null, username, acct.getGivenName(),
                             acct.getFamilyName(), "00/00/0000", acct.getEmail(),
@@ -580,8 +592,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 }
 
 
-                if (acct.getPhotoUrl() != null)
-                    updateGoogleUserImage(username, acct.getPhotoUrl().toString());
+
                 //MainActivity.uploadImage(Newuser.getUsername(),bitmap,getBaseContext());
             } else
                 Toast.makeText(this, "Welcome Back " + acct.getDisplayName(), Toast.LENGTH_LONG).show();
@@ -605,8 +616,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     vrai = true;
                     if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
                         newUser.setIcon(null);
-                        InsertUserApi(newUser);
-                        MainActivity.uploadImage(newUser.getUsername(), bitmap, "register", getBaseContext());
+                        userVM.postUser(newUser,"",bitmap,"registre").observe(this, new Observer<User>() {
+                            @Override
+                            public void onChanged(User user) {
+                                Constants.AffichageMessage("Registre Success",Login.this);
+                            }
+                        });
                     }
                     if (!Objects.equals(newUser.getUsername(), ""))
                         Constants.AffichageMessage("Vous avez Register avec succes in local", Login.this);
@@ -844,125 +859,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-    private void InsertUserApi(User user) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // Example: Fetch users from the API
-        Call<User> call = apiService.createUser(user);
 
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    User UserResponse = response.body();
-                    if (UserResponse != null) {
-                        // Store the token securely (e.g., in SharedPreferences) for later use
-                        TAG_CONNEXION = response.code();
-                        TAG_CONNEXION_MESSAGE = response.message();
-                        Constants.AffichageMessage("Vous avez Register avec succes with server", Login.this);
-                        Log.d("TAG", TAG_CONNEXION_MESSAGE + " " + "Add User To Api");
-                    }
-                } else {
 
-                    // Handle error response here
-                    // The HTTP request was not successful (status code is not 2xx).
-                    // You can handle errors here based on the response status code.
-                    int statusCode = response.code();
-                    Constants.TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
-                    // Handle different status codes as per your API's conventions.
-                    if (response.code() == 400) {
-                        try {
-                            String errorBody = response.errorBody().string();
-                            Gson gson = new Gson();
-                            ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
-                            // Now you have the validation errors in the validationError object
-                            // Handle them accordingly
-                            StringBuilder errorMessages = new StringBuilder();
-                            for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
-                                errorMessages.append(", ").append(error.getMessage());
-                            }
-                            Constants.AffichageMessage(errorMessages.toString(), Login.this);
-                        } catch (IOException e) {
-                            // Handle error parsing error body
-                        }
-                        // Unauthorized, handle accordingly (e.g., reauthentication).
-                    } else if (statusCode == 409) {
-                        Constants.AffichageMessage("User already exists", Login.this);
-                        // Unauthorized, handle accordingly (e.g., reauthentication).
-                    } else if (statusCode == 404) {
-                        // Not found, handle accordingly (e.g., show a 404 error message).
-                        Constants.AffichageMessage(TAG_OFFLINE, Login.this);
-                    } else if (statusCode >= 500) {
-                        // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("Internal Server Error", Login.this);
-                    } else if (statusCode == 406) {
-                        // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("User not found", Login.this);
-                    } else Constants.AffichageMessage(response.message(), Login.this);
-                }
-
-//                if (response.errorBody() != null) {
-//                    try {
-//                        String errorResponse = response.errorBody().string();
-//                        // Print or log the errorResponse for debugging
-//                        TAG_CONNEXION_MESSAGE = errorResponse;
-//                        Constants.AffichageMessage(TAG_ERREUR_SYSTEM,Login.this);
-//                        //Constants.DisplayErrorMessage(Login.this,TAG_CONNEXION_MESSAGE);
-//                        TAG_CONNEXION = response.code();
-//                        Log.e("token", "Error Response: " + errorResponse);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-
-                TAG_CONNEXION_MESSAGE = call.toString();
-                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
-            }
-        });
-
-    }
-
-    public void updateGoogleUserImage(String username, String path) {
-
-        String jsonInputString = "{\"url\": \"" + path + "\"}";
-// Create a RequestBody from the string
-        RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), jsonInputString);
-
-        // Create a service using the Retrofit interface
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // Call the method to upload the file
-        Call<String> call = apiService.updateUserGoogleImageUrl(username, requestBody);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful()) {
-                    String path = null;
-                    path = response.body().toString();
-                    //String str = new String(bytes, StandardCharsets.UTF_8);
-                    //path = path.replaceAll("\"", "");// For UTF-8 encoding
-                    Toast.makeText(getApplicationContext(), "upload image : " + path, Toast.LENGTH_SHORT).show();
-                    // File upload successful
-                    //fetchImage(path);
-                    Toast.makeText(getApplicationContext(), "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
-
-                } else {
-                    // Handle unsuccessful upload
-                    Toast.makeText(getApplicationContext(), "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                // Handle failure
-                Toast.makeText(getApplicationContext(), "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     @Override
     protected void onPause() {

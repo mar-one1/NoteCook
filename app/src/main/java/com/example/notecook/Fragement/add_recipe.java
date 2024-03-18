@@ -1,6 +1,5 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.MainActivity.InsertRecipeApi;
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.user_login;
@@ -39,9 +38,10 @@ import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
-import com.example.notecook.Repo.RecipeRepository;
-import com.example.notecook.Utils.Constants;
+import com.example.notecook.Repo.UserRepository;
 import com.example.notecook.Utils.levelRecipe;
+import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -56,7 +56,8 @@ public class add_recipe extends Fragment {
     private final int STORAGE_PERMISSION_CODE = 23;
     private final int GALLERY_REQUEST_CODE = 24;
     FragmentAddRecipeBinding binding;
-    RecipeRepository recipeRepo;
+    private RecipeViewModel recipeVM;
+    private UserViewModel userVM;
 
     public add_recipe() {
         // Required empty public constructor
@@ -73,7 +74,8 @@ public class add_recipe extends Fragment {
         binding = FragmentAddRecipeBinding.inflate(inflater, container, false);
         int bnvId = R.id.bottom_nav;
         BottomNavigationView btnV = getActivity().findViewById(bnvId);
-        recipeRepo = new RecipeRepository(getContext());
+        recipeVM = new RecipeViewModel(getContext());
+        userVM = new UserViewModel(getContext());
 
         // Get the values of the enum
         levelRecipe[] values = levelRecipe.values();
@@ -131,18 +133,18 @@ public class add_recipe extends Fragment {
                 Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
                 Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
                 Log.d("TAG", "" + user_login.getUser().getId_User());
-                InsertRecipeApi(recipe, bitmap, getContext());
+                recipeVM.postRecipe(recipe, bitmap);
                 recipe.setIcon_recipe(encod(bitmap));
                 int i;
                 if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
-                    i = recipeRepo.insertRecipeLocally(recipe, user_login_local.getUser().getId_User());
+                    i = recipeVM.postRecipeLocal(recipe, user_login_local.getUser().getId_User());
                 } else {
-                    user_login_local.setUser(getLocalUser(user_login.getUser().getUsername()));
-                    i = recipeRepo.insertRecipeLocally(recipe, user_login_local.getUser().getId_User());
+                    userVM.getUserLocal(user_login.getUser().getUsername(),"success");
+                    i = recipeVM.postRecipeLocal(recipe, user_login_local.getUser().getId_User());
                 }
                 if (i != 0) {
                     Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
-                    Constants.list_recipe.add(recipe);
+                    //Constants.list_recipe.add(recipe);
                 }
             }
         });

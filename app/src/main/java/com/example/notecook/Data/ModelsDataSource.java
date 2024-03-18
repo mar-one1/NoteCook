@@ -7,6 +7,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.notecook.Model.GenericModel;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
@@ -115,7 +118,9 @@ public class ModelsDataSource<T> {
     }
 
 
-    public List<T> getAllRecords(String tableName) {
+    // Method to query all records from the database
+    public LiveData<List<T>> getAllRecords(String tableName) {
+        MutableLiveData<List<T>> resultLiveData = new MutableLiveData<>();
         open();
         List<T> recordList = new ArrayList<>();
         Cursor cursor = database.query(tableName, null, null, null, null, null, null);
@@ -127,9 +132,12 @@ public class ModelsDataSource<T> {
         }
         cursor.close();
         close();
-        return recordList;
+        resultLiveData.setValue(recordList);
+        return resultLiveData;
     }
-    public List<T> getAllRecordsByIdUser(String tableName, String columnName, int value) {
+    // Method to query all records for a specific user from the database
+    public LiveData<List<T>> getAllRecordsByIdUser(String tableName, String columnName, int value) {
+        MutableLiveData<List<T>> resultLiveData = new MutableLiveData<>();
         open();
         List<T> recordList = new ArrayList<>();
         Cursor cursor = database.query(tableName, null, columnName + " = " + value, null, null, null, null, null);
@@ -141,20 +149,22 @@ public class ModelsDataSource<T> {
         }
         cursor.close();
         close();
-        return recordList;
+        resultLiveData.setValue(recordList);
+        return resultLiveData;
     }
 
     // Method to query a specific record from the database
-    public T getRecord(String tableName, String columnName, String value) {
+    public LiveData<T> getRecord(String tableName, String columnName, String value) {
+        MutableLiveData<T> resultLiveData = new MutableLiveData<>();
         open();
         Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{value}, null, null, null);
-        T object = null;
         if (cursor.moveToFirst()) {
-            object = cursorToObject(cursor);
+            T object = cursorToObject(cursor);
+            resultLiveData.setValue(object);
         }
         cursor.close();
         close();
-        return object;
+        return resultLiveData;
     }
 
 }

@@ -7,9 +7,13 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.notecook.Model.Recipe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RecipeDatasource {
 
@@ -110,8 +114,9 @@ public class RecipeDatasource {
         cursor.close();
         return ListRecipe;
     }
-    public ArrayList<Recipe> getRecipeById(int id) {
-        ArrayList<Recipe> ListRecipe = new ArrayList<>();
+    public LiveData<List<Recipe>> getRecipeById(int id) {
+        MutableLiveData<List<Recipe>> ListRecipe = new MutableLiveData<>();
+        List<Recipe> list  = new ArrayList<>();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
                 allColumns, MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE + " = " + id, null, null, null, null);
@@ -119,9 +124,10 @@ public class RecipeDatasource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Recipe Recipe = cursorToComment(cursor);
-            ListRecipe.add(Recipe);
+            list.add(Recipe);
             cursor.moveToNext();
         }
+        ListRecipe.setValue(list);
         // assurez-vous de la fermeture du curseur
         cursor.close();
         return ListRecipe;

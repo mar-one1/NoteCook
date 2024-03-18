@@ -2,10 +2,12 @@ package com.example.notecook.Fragement;
 
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
+import static com.example.notecook.MainActivity.Type_User;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.synchronizeDataDetailRecipe;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 
 import android.content.Intent;
@@ -45,6 +47,7 @@ public class Frg_detail_recipe extends Fragment {
     private Drawable defaultImagelike;
     private Drawable defaultImageRate;
     private Recipe recipe;
+    private Adapter_Vp2_recipeProfil viewPager2Adapter;
 
 
     public Frg_detail_recipe() {
@@ -54,20 +57,21 @@ public class Frg_detail_recipe extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        binding.vp2Detairecipe.setCurrentItem(0);
-        if (!MainActivity.Type_User.equals(Constants.TAG_MODE_INVITE)) {
+        binding.vp2Detairecipe.setCurrentItem(1,true);
+        binding.vp2Detairecipe.setCurrentItem(0,true);
+        if (!Type_User.equals(TAG_MODE_INVITE)) {
             if (Detail_CurrentRecipe != null) {
                 if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {
                     binding.recipeNameTxt.setText(CURRENT_RECIPE.getNom_recipe());
                     binding.NomUserRecipe.setText(User_CurrentRecipe.getUsername());
-                    if(CURRENT_RECIPE.getIcon_recipe()!=null)
-                    binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
+                    if (CURRENT_RECIPE.getIcon_recipe() != null)
+                        binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
                     else {
-                        String url = BASE_URL + "uploads/" + CURRENT_RECIPE.getPathimagerecipe();
+                        String url = BASE_URL + "data/uploads/" + CURRENT_RECIPE.getPathimagerecipe();
                         Picasso.get().load(url).into(binding.iconRecipe);
                     }
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
-                    if (!User_CurrentRecipe.getPathimageuser().equals("")) {
+                    if (User_CurrentRecipe != null) {
                         String url = BASE_URL + "uploads/" + User_CurrentRecipe.getPathimageuser();
                         Picasso.get().load(url).into(binding.iconProfilDetailrecipe);
                         //binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));
@@ -82,6 +86,7 @@ public class Frg_detail_recipe extends Fragment {
             }
 
         }
+
     }
 
 
@@ -186,7 +191,7 @@ public class Frg_detail_recipe extends Fragment {
 
 
     public void setViewPagerAdapter() {
-        Adapter_Vp2_recipeProfil viewPager2Adapter = new
+        viewPager2Adapter = new
                 Adapter_Vp2_recipeProfil(getActivity());
         //create an ArrayList of Fragments
         ArrayList<Fragment> fragmentList = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.Utils.Constants.Basket_list;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
+import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +33,6 @@ public class Frg_recipe_ingredients extends Fragment {
     RecyclerView mRecyclerView;
     Button btn_plus,btn_moins;
     TextView txt_cal;
-    //String Url = "https://www.jamieoliver.com/recipes/vegetables-recipes/superfood-salad/";
 
 
     public Frg_recipe_ingredients() {
@@ -53,12 +52,18 @@ public class Frg_recipe_ingredients extends Fragment {
         Toast.makeText(getContext(), "onCreate", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        Toast.makeText(getContext(), "onPause Frg_ingredient", Toast.LENGTH_SHORT).show();
+        bindingRcV_Ingredients(mRecyclerView);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
         bindingRcV_Ingredients(mRecyclerView);
-        Toast.makeText(getContext(), "onResume", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "onResume Frg_ingredient", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -110,7 +115,7 @@ public class Frg_recipe_ingredients extends Fragment {
         ingredientsDataSource.close();
 
         // Create and set adapter for RecyclerView
-        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(Constants.Ingredients_CurrentRecipe);
+        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(Ingredients_CurrentRecipe);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setAdapter(adapter);
@@ -129,8 +134,6 @@ public class Frg_recipe_ingredients extends Fragment {
         GridLayoutManager manager = new GridLayoutManager(getContext(),1);
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setLayoutManager(manager);
-
-        adapter_rc_ingredents.notifyDataSetChanged();
         recyclerView.setAdapter(adapter_rc_ingredents);
 
 

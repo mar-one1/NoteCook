@@ -18,8 +18,10 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
+import com.example.notecook.Api.RecipeResponse;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Model.User;
 import com.example.notecook.Repo.RecipeRepository;
 
 import java.io.IOException;
@@ -32,22 +34,47 @@ import retrofit2.Response;
 
 public class RecipeViewModel extends ViewModel {
     private RecipeRepository repository;
+    private Context context;
 
     public RecipeViewModel(Context context) {
         repository = new RecipeRepository(context);
+        this.context = context;
     }
 
-    public LiveData<List<Recipe>> getRecipes(Context context) {
-        return repository.getRecipes(context);
+    public LiveData<List<Recipe>> getRecipes() {
+        return repository.getRecipes();
     }
 
-    public LiveData<List<Recipe>> getRecipesByUsername(Context context, String username) {
-        return repository.getRecipesByUsername(context, username);
+    public LiveData<List<Recipe>> getRecipesByUsername( String username) {
+        return repository.getRecipesByUsername(username);
     }
 
-    public void uploadRecipeImage(int idRecipe, Bitmap bitmap, Context context) {
-        repository.uploadImageRecipe(idRecipe, bitmap, context);
+    public LiveData<RecipeResponse> getRecipe(int id_recipe) {
+        return repository.getFullRecipeApi(id_recipe);
     }
+
+
+
+
+
+    public void uploadRecipeImage(int idRecipe, Bitmap bitmap) {
+        repository.uploadImageRecipe(idRecipe, bitmap);
+    }
+
+    public LiveData<List<Recipe>> getRecipesByUsernameLocal(int id_user) {
+        return repository.getLocalRecipes(id_user);
+    }
+
+    public LiveData<Recipe> postRecipe(Recipe recipe,Bitmap bitmap)
+    {
+        return repository.InsertRecipeApi(recipe,bitmap);
+    }
+
+    public int postRecipeLocal(Recipe recipe, int id_user) {
+        return repository.insertRecipeLocally(recipe, id_user);
+    }
+
+
 
 
 

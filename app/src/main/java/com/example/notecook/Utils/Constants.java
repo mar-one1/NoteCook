@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.notecook.Api.RecipeResponse;
 import com.example.notecook.Api.TokenResponse;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
@@ -31,7 +30,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Constants {
 
-    public static final String API_KEY = "";
     public static final int NETWORK_TIMEOUT = 3000;
     public static String Token = "";
 
@@ -49,7 +47,7 @@ public class Constants {
     public static Bitmap imageprofill;
 
 
-    public static ArrayList<Recipe> list_recipe = new ArrayList<>();
+    public static MutableLiveData<List<Recipe>> list_recipe = new MutableLiveData<>();
     public static List<Detail_Recipe> list_Detailrecipe ;
     public static Detail_Recipe Detail_CurrentRecipe;
     public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
