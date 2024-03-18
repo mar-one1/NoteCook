@@ -43,9 +43,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     private ViewPager2 viewPager2;
     private User user;
     private FloatingActionButton b;
-    private SharedPreferences sharedPreferences;
-    private UserViewModel userVM;
-    private RecipeViewModel recipeVM;
 
     public frg_Profil() {
         // Required empty public constructor
@@ -64,6 +61,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
             if (user_login.getUser() != null) {
                 user = user_login.getUser();
                 binding.txtUsername.setText(user.getUsername());
+                binding.txtGradeStatus.setText(user.getGrade()+" "+user.getStatus());
 
                 if (user_login.getUser().getPathimageuser() != null && !user_login.getUser().getPathimageuser().equals("")) {
                     String imageUrl = "";
@@ -101,22 +99,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
         setViewPagerAdapter();
         viewPager2.setUserInputEnabled(true);
-
-        sharedPreferences = getContext().getSharedPreferences(lOGIN_KEY, Context.MODE_PRIVATE);
-        String s1 = sharedPreferences.getString("username", "");
-
-        recipeVM = new RecipeViewModel(getContext());
-        userVM = new UserViewModel(getContext());
-
-        if (user_login_local.getUser() == null) {
-            userVM.getUserLocal(s1, "success").observe(getActivity(), new Observer<User>() {
-                @Override
-                public void onChanged(User user) {
-
-                    recipeVM.getRecipesLocal(user_login_local.getUser().getId_User());
-                }
-            });
-        } else recipeVM.getRecipesLocal(user_login_local.getUser().getId_User());
 
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
         tabLayout.setSelectedTabIndicatorHeight((int) (3 * getResources().getDisplayMetrics().density));
@@ -169,6 +151,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         });
         return binding.getRoot();
     }
+
     public void setViewPagerAdapter() {
         Adapter_Vp2_recipeProfil viewPager2Adapter = new
                 Adapter_Vp2_recipeProfil(getActivity());

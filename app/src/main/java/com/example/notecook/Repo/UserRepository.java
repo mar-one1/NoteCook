@@ -86,14 +86,14 @@ public class UserRepository {
                     }
                 } else {
                     handleErrorResponse(response);
-                    getLocalUserLogin(username, "");
+                    userLogin.setValue(getLocalUserLogin(username, "").getValue());
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 handleNetworkFailure(call);
-                getLocalUserLogin(username, "");
+                userLogin.setValue(getLocalUserLogin(username, "").getValue());
             }
         });
         return userLogin;

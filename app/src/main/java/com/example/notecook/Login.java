@@ -788,76 +788,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-    private void UpdateUserApi(User user) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // Example: Fetch users from the API
-        // Convert the byte array to RequestBody
-        //RequestBody imageRequestBody = RequestBody.create(null, user.getIcon());
 
-        Call<User> call = apiService.updateUserByUsername(user.getUsername(), user);
-
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    User UserResponse = response.body();
-                    if (UserResponse != null) {
-                        // Store the token securely (e.g., in SharedPreferences) for later use
-                        TAG_CONNEXION = response.code();
-                        TAG_CONNEXION_MESSAGE = response.message();
-                        Constants.AffichageMessage("Vous avez Modifier Utilisateur avec  succes with server", Login.this);
-                        Log.d("TAG", TAG_CONNEXION_MESSAGE + " " + "Add User To Api");
-                    }
-                } else {
-
-                    // Handle error response here
-                    // The HTTP request was not successful (status code is not 2xx).
-                    // You can handle errors here based on the response status code.
-                    int statusCode = response.code();
-                    Constants.TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
-
-                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
-                    // Handle different status codes as per your API's conventions.
-                    if (statusCode == 409) {
-                        Constants.AffichageMessage("User already exists", Login.this);
-                        // Unauthorized, handle accordingly (e.g., reauthentication).
-                    } else if (statusCode == 404) {
-                        // Not found, handle accordingly (e.g., show a 404 error message).
-                        Constants.AffichageMessage(TAG_OFFLINE, Login.this);
-                    } else if (statusCode >= 500) {
-                        // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("Internal Server Error", Login.this);
-                    } else if (statusCode == 406) {
-                        // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("User not found", Login.this);
-                    } else Constants.AffichageMessage(response.message(), Login.this);
-                }
-
-//                if (response.errorBody() != null) {
-//                    try {
-//                        String errorResponse = response.errorBody().string();
-//                        // Print or log the errorResponse for debugging
-//                        TAG_CONNEXION_MESSAGE = errorResponse;
-//                        Constants.AffichageMessage(TAG_ERREUR_SYSTEM,Login.this);
-//                        //Constants.DisplayErrorMessage(Login.this,TAG_CONNEXION_MESSAGE);
-//                        TAG_CONNEXION = response.code();
-//                        Log.e("token", "Error Response: " + errorResponse);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-
-                TAG_CONNEXION_MESSAGE = call.toString();
-                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
-            }
-        });
-
-    }
 
 
 

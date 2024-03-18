@@ -7,15 +7,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    public static final String BASE_URL = "http://192.168.60.36:3000/";
-//    public static final String BASE_URL = "https://8b62-102-100-43-119.ngrok-free.app/";
+   // public static final String BASE_URL = "http://192.168.60.36:3000/";
+      public static final String BASE_URL = "https://6150-102-96-41-11.ngrok-free.app/";
     private static Retrofit retrofit = null;
 
     public static Retrofit getClient() {
         if (retrofit == null) {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .connectTimeout(5, TimeUnit.SECONDS) // Connection timeout
-                    .readTimeout(15, TimeUnit.SECONDS)    // Read timeout
+                    .readTimeout(10, TimeUnit.SECONDS)    // Read timeout
                     .writeTimeout(30, TimeUnit.SECONDS)   // Write timeout
                     .build();
 

@@ -3,6 +3,7 @@ package com.example.notecook.Fragement;
 import static com.example.notecook.Utils.Constants.Basket_list;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -14,13 +15,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Model.Ingredients;
+import com.example.notecook.Model.Recipe;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeIngredientsBinding;
 
 import java.util.ArrayList;
@@ -28,11 +32,12 @@ import java.util.List;
 
 public class Frg_recipe_ingredients extends Fragment {
 
-    FragmentFrgRecipeIngredientsBinding binding;
-    List<Ingredients> List_ingredient;
-    RecyclerView mRecyclerView;
-    Button btn_plus,btn_moins;
-    TextView txt_cal;
+    private FragmentFrgRecipeIngredientsBinding binding;
+    private List<Ingredients> List_ingredient;
+    private RecyclerView mRecyclerView;
+    private Button btn_plus,btn_moins;
+    private TextView txt_cal;
+
 
 
     public Frg_recipe_ingredients() {
@@ -62,6 +67,7 @@ public class Frg_recipe_ingredients extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         bindingRcV_Ingredients(mRecyclerView);
         Toast.makeText(getContext(), "onResume Frg_ingredient", Toast.LENGTH_SHORT).show();
     }

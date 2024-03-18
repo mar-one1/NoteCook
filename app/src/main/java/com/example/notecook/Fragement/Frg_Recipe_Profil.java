@@ -2,6 +2,7 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.list_recipe;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,13 +47,13 @@ public class Frg_Recipe_Profil extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFrgRecipeProfilBinding.inflate(inflater, container, false);
         // Inflate the layout for this fragment
-        bindingRcV_recipes(binding.RcRecipeProfil);
+        bindingRcV_recipes(binding.RcRecipeProfil,list_recipe.getValue());
         return binding.getRoot();
     }
 
-    public void bindingRcV_recipes(RecyclerView recyclerView) {
+    public void bindingRcV_recipes(RecyclerView recyclerView,List<Recipe> recipes) {
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),list_recipe.getValue(), TAG_LOCAL);
+        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),recipes, TAG_LOCAL);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(manager);
         adapter_rc_recipeDt.notifyDataSetChanged();
@@ -61,6 +63,8 @@ public class Frg_Recipe_Profil extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        bindingRcV_recipes(binding.RcRecipeProfil);
+        model = new RecipeViewModel(getContext());
+        //model.getRecipesLocal(user_login_local.getUser().getId_User());
+        bindingRcV_recipes(binding.RcRecipeProfil,list_recipe.getValue());
     }
 }

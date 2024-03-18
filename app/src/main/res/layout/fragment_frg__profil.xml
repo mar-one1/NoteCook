@@ -87,9 +87,10 @@
 
         </LinearLayout>
         <TextView
+            android:id="@+id/txt_Grade_Status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="First name " />
+            android:text="Grade_Status " />
 
     </LinearLayout>
 
