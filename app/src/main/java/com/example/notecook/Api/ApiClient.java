@@ -14,7 +14,7 @@ public class ApiClient {
     public static Retrofit getClient() {
         if (retrofit == null) {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(5, TimeUnit.SECONDS) // Connection timeout
+                    .connectTimeout(15, TimeUnit.SECONDS) // Connection timeout
                     .readTimeout(15, TimeUnit.SECONDS)    // Read timeout
                     .writeTimeout(30, TimeUnit.SECONDS)   // Write timeout
                     .build();
