@@ -3,6 +3,7 @@ package com.example.notecook.ViewModel;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -14,10 +15,16 @@ public class UserViewModel extends ViewModel {
 
     private UserRepository repository;
     private Context context;
+    private AppCompatActivity appCompatActivity;
 
     public UserViewModel(Context context) {
         this.context = context;
         repository = new UserRepository(context);
+    }
+    public UserViewModel(Context context, AppCompatActivity appCompatActivity) {
+        this.context = context;
+        this.appCompatActivity = appCompatActivity;
+        repository = new UserRepository(context,appCompatActivity);
     }
 
     public LiveData<User> getUser(String username) {

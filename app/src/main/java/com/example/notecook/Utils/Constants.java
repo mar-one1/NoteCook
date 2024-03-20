@@ -68,14 +68,15 @@ public class Constants {
     public static TokenResponse user_login_local = new TokenResponse();
     public static String pathimageuser ="";
     public static final String lOGIN_KEY = "Connection_complete";
+    public static final String SYNCH_KEY = "Synch_complete";
 
 
     public static final String TAG_MODE_INVITE = "Mode Invite";
     public static final String TAG_MODE_UTILISATEUR = "Mode Utilisateur";
     public static  boolean MODE_ONLINE = false;
     public static SweetAlertDialog alertDialog;
-    
-    
+
+
 
 
 
@@ -214,6 +215,26 @@ public class Constants {
 
     }
 
+    public static void saveUserSynch(String username,Boolean b,Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SYNCH_KEY, MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean(username, b);
+            editor.apply();
+    }
+
+    public static Boolean getUserSynch(String username,Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(SYNCH_KEY, MODE_PRIVATE);
+        return preferences.getBoolean(username, false);
+    }
+    private String getToken(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        return preferences.getString("token", "");
+    }
+
+    public static String getUserInput(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(lOGIN_KEY, MODE_PRIVATE);
+        return sharedPreferences.getString("username", "");
+    }
 
 
 }

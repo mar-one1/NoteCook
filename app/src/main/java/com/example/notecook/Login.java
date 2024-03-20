@@ -14,6 +14,7 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
+import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -136,7 +137,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         view = binding.getRoot();
         m = new MainActivity();
         userDatasource = new UserDatasource(getBaseContext());
-        userVM = new UserViewModel(getBaseContext());
+        userVM = new UserViewModel(getBaseContext(),this);
 
         // Check FingerPrint In Device
         try {
@@ -571,12 +572,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 String jsonInputString="";
                 if (acct.getPhotoUrl() != null)
                 jsonInputString = "{\"url\": \"" + acct.getPhotoUrl().toString() + "\"}";
+                else jsonInputString="";
                 passwordHasher = new PasswordHasher();
                 String password = passwordHasher.hashPassword(acct.getId().toString());
                 User Newuser = new User(username, acct.getFamilyName(), acct.getGivenName(), "00/00/0000", acct.getEmail(),
                         null, "000000000000", password, "active", "good");
 
-                userVM.postUser(Newuser,acct.getPhotoUrl().toString(),null,"google").observe(this, new Observer<User>() {
+                userVM.postUser(Newuser,jsonInputString,null,"google").observe(this, new Observer<User>() {
                     @Override
                     public void onChanged(User user) {
                         Constants.AffichageMessage("Registre Success",Login.this);
@@ -731,6 +733,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                                 userDatasource.close();
                                 saveToken(token);
                                 saveUserInput(binding.etUsername.getText().toString(), binding.etPassword.getText().toString());
+                                saveUserSynch(username,false,getBaseContext());
                                 Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, Login.this);
                             } catch (Exception e) {
                                 Log.e("tag", e.toString());

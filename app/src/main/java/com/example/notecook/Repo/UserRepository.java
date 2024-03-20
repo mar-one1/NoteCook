@@ -20,6 +20,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -58,11 +59,18 @@ public class UserRepository {
     private UserDatasource userDatasource;
     private Context context;
     private SharedPreferences sharedPreferences;
+    private AppCompatActivity appCompatActivity;
 
     public UserRepository(Context context) {
         this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
         userDatasource = new UserDatasource(context);
+    }
+    public UserRepository(Context context, AppCompatActivity appCompatActivity) {
+        this.context = context;
+        apiService = ApiClient.getClient().create(ApiService.class);
+        userDatasource = new UserDatasource(context);
+        this.appCompatActivity = appCompatActivity;
     }
 
     public LiveData<User> getUserApi(String username) {
@@ -78,9 +86,9 @@ public class UserRepository {
                     User UserResponse = response.body();
                     if (UserResponse != null) {
                         UserResponse.setId_User(user_login.getUser().getId_User());
-                        userLogin.setValue(UserResponse);
+                        //userLogin.setValue(UserResponse);
                         user_login.setUser(UserResponse);
-                        getLocalUserLogin(s1, "success");
+                        userLogin.setValue(getLocalUserLogin(s1, "success").getValue());
                         getImageUserUrl(user_login.getUser().getUsername(), "user_login", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get user from Api", Toast.LENGTH_LONG).show();
                     }
@@ -271,24 +279,24 @@ public class UserRepository {
                     for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
                         errorMessages.append(", ").append(error.getMessage());
                     }
-                    Constants.AffichageMessage(errorMessages.toString(), (AppCompatActivity) context);
+                    Constants.AffichageMessage(errorMessages.toString(), appCompatActivity);
                 } catch (IOException e) {
                     // Handle error parsing error body
                 }
                 // Unauthorized, handle accordingly (e.g., reauthentication).
             } else if (statusCode == 409) {
-                Constants.AffichageMessage("User already exists", (AppCompatActivity) context);
+                Constants.AffichageMessage("User already exists", appCompatActivity);
                 // Unauthorized, handle accordingly (e.g., reauthentication).
             } else if (statusCode == 404) {
                 // Not found, handle accordingly (e.g., show a 404 error message).
-                Constants.AffichageMessage(TAG_OFFLINE, (AppCompatActivity) context);
+                Constants.AffichageMessage(TAG_OFFLINE, appCompatActivity);
             } else if (statusCode >= 500) {
                 // Handle other status codes or generic error handling.
-                Constants.AffichageMessage("Internal Server Error", (AppCompatActivity) context);
+                Constants.AffichageMessage("Internal Server Error", appCompatActivity);
             } else if (statusCode == 406) {
                 // Handle other status codes or generic error handling.
-                Constants.AffichageMessage("User not found", (AppCompatActivity) context);
-            } else Constants.AffichageMessage(message, (AppCompatActivity) context);
+                Constants.AffichageMessage("User not found", appCompatActivity);
+            } else Constants.AffichageMessage(message, appCompatActivity);
         }
     }
 
@@ -368,7 +376,7 @@ public class UserRepository {
                         else if (!url.isEmpty()) {
                             updateGoogleUserImage(user.getUsername(), url).getValue();
                         }
-                        Constants.AffichageMessage("Vous avez Register avec succes with server", (AppCompatActivity) context);
+                        Constants.AffichageMessage("Vous avez Register avec succes with server", appCompatActivity);
                         Log.d("TAG", TAG_CONNEXION_MESSAGE + " " + "Add User To Api");
                     }
                 } else {

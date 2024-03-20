@@ -11,6 +11,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -34,10 +35,18 @@ import retrofit2.Response;
 public class RecipeViewModel extends ViewModel {
     private RecipeRepository repository;
     private Context context;
+    private AppCompatActivity appCompatActivity;
 
     public RecipeViewModel(Context context) {
         repository = new RecipeRepository(context);
         this.context = context;
+    }
+
+    public RecipeViewModel(Context context,AppCompatActivity appCompatActivity) {
+        this.context = context;
+        this.appCompatActivity = appCompatActivity;
+        repository = new RecipeRepository(context,appCompatActivity);
+
     }
 
     public LiveData<List<Recipe>> getRecipes() {

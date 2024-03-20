@@ -9,7 +9,9 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.getUserSynch;
 import static com.example.notecook.Utils.Constants.list_recipe;
+import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -18,6 +20,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -51,6 +54,17 @@ public class RecipeRepository {
     private Context context;
     private DetailRecipeRepository detailRecipeRepository;
     private UserRepository userRepo;
+    private AppCompatActivity appCompatActivity;
+
+    public RecipeRepository(Context context, AppCompatActivity appCompatActivity) {
+        this.context = context;
+        apiService = ApiClient.getClient().create(ApiService.class);
+        recipeDatasource = new RecipeDatasource(context);
+        userDatasource = new UserDatasource(context);
+        detailRecipeRepository = new DetailRecipeRepository(context);
+        userRepo = new UserRepository(context);
+        this.appCompatActivity = appCompatActivity;
+    }
 
     public RecipeRepository(Context context) {
         this.context = context;
@@ -59,6 +73,7 @@ public class RecipeRepository {
         userDatasource = new UserDatasource(context);
         detailRecipeRepository = new DetailRecipeRepository(context);
         userRepo = new UserRepository(context);
+
     }
 
     private static void markRecipeAsDeletedLocally(Recipe localRecipe, Context context) {
@@ -80,8 +95,6 @@ public class RecipeRepository {
         // Insert the recipe locally using your createRecipe method
         return (int) recipeDatasource.InsertRecipe(recipe, id);
     }
-
-
 
 
     public LiveData<Recipe> InsertRecipeApi(Recipe recipe, Bitmap bitmap) {
@@ -186,8 +199,12 @@ public class RecipeRepository {
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     remoteRecipeListByUser.setValue(response.body());
-                    if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
-                        synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
+                    if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
+                        if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
+                            synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
+                        }
+                    } else {
+                        saveUserSynch(username, true, context);
                     }
 
                 } else {
