@@ -115,17 +115,20 @@ public class MainActivity extends AppCompatActivity {
 
     public static byte[] encod(Bitmap b) {
         //Bitmap bb = Bitmap.createBitmap(b);
-        byte[] imageBytes;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        b.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        imageBytes = baos.toByteArray();
-        String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        array_image.add(imageString);
-        Log.i("test encode", imageString);
-        //decode base64 string to image
-        //imageBytes = Base64.decode(array_image.get(0), Base64.DEFAULT);
-        //Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-
+        byte[] imageBytes = new byte[0];
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            b.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            imageBytes = baos.toByteArray();
+            String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+            array_image.add(imageString);
+            Log.i("test encode", imageString);
+            //decode base64 string to image
+            //imageBytes = Base64.decode(array_image.get(0), Base64.DEFAULT);
+            //Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        } catch (Exception e) {
+            Log.e("tag", "" + e);
+        }
         return imageBytes;
     }
 
@@ -445,22 +448,22 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
 
-        RecipeViewModel recipeVM = new RecipeViewModel(this,this);
-        UserViewModel userVM = new UserViewModel(this,this);
+        RecipeViewModel recipeVM = new RecipeViewModel(this, this);
+        UserViewModel userVM = new UserViewModel(this, this);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
 
             userVM.getUser(s1).observe(this, user -> {
                 Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
                 recipeVM.getRecipesLocal(user.getId_User()).observe(MainActivity.this, new Observer<List<Recipe>>() {
-                            @Override
-                            public void onChanged(List<Recipe> recipes) {
-                                    recipeVM.getRecipesByUsername(s1).observe(MainActivity.this, recipeList -> {
-                                        RemotelistByIdUser_recipe.setValue(recipeList);
-                                        Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                                    });
-                            }
+                    @Override
+                    public void onChanged(List<Recipe> recipes) {
+                        recipeVM.getRecipesByUsername(s1).observe(MainActivity.this, recipeList -> {
+                            RemotelistByIdUser_recipe.setValue(recipeList);
+                            Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
                         });
-                    });
+                    }
+                });
+            });
         }
         pDialog.cancel();
         getIngredientsRecipeApi();

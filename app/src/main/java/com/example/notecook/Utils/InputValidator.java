@@ -77,4 +77,27 @@ public class InputValidator {
 
         return true;
     }
+
+    public boolean isValidAddRecipe(EditText NameRecipe, EditText Instruction,  EditText detail)
+    {
+        String nameRecipe = NameRecipe.getText().toString().trim();
+        String instruction = Instruction.getText().toString().trim();
+        String detaill = detail.getText().toString().trim();
+
+        if (nameRecipe.isEmpty()) {
+            NameRecipe.setError("nome recipe cannot be empty");
+            return false;
+        }
+        if (instruction.isEmpty()) {
+            Instruction.setError("instruction cannot be empty");
+            return false;
+        }
+        if (detaill.isEmpty()) {
+            detail.setError("detail cannot be empty");
+            return false;
+        }
+        return true;
+    }
+
+
 }

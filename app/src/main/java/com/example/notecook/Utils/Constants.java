@@ -2,6 +2,7 @@ package com.example.notecook.Utils;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -128,7 +129,7 @@ public class Constants {
         //pDialog.cancel();
     }
 
-    public static void AffichageMessage(String _tag, final AppCompatActivity _context) {
+    public static void AffichageMessage(String _tag, final Activity _context) {
         SweetAlertDialog sd;
         switch (_tag) {
             case TAG_CHARGEMENT_VALIDE:
