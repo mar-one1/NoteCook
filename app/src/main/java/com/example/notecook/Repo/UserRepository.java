@@ -13,6 +13,7 @@ import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -59,14 +60,14 @@ public class UserRepository {
     private UserDatasource userDatasource;
     private Context context;
     private SharedPreferences sharedPreferences;
-    private AppCompatActivity appCompatActivity;
+    private Activity appCompatActivity;
 
     public UserRepository(Context context) {
         this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
         userDatasource = new UserDatasource(context);
     }
-    public UserRepository(Context context, AppCompatActivity appCompatActivity) {
+    public UserRepository(Context context, Activity appCompatActivity) {
         this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
         userDatasource = new UserDatasource(context);

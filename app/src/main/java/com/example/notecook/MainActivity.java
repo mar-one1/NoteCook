@@ -445,8 +445,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
 
-        recipeVM = new RecipeViewModel(this);
-        userVM = new UserViewModel(this);
+        recipeVM = new RecipeViewModel(this,MainActivity.this);
+        userVM = new UserViewModel(this,MainActivity.this);
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         //userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
         if (!Type_User.equals(TAG_MODE_INVITE)) {

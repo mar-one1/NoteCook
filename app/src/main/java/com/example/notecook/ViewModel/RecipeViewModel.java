@@ -36,7 +36,6 @@ import retrofit2.Response;
 public class RecipeViewModel extends ViewModel implements ViewModelProvider.Factory {
     private RecipeRepository repository;
     private Context context;
-    private AppCompatActivity appCompatActivity;
 
     public RecipeViewModel(Context context) {
         repository = new RecipeRepository(context);
@@ -45,7 +44,6 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
 
     public RecipeViewModel(Context context,AppCompatActivity appCompatActivity) {
         this.context = context;
-        this.appCompatActivity = appCompatActivity;
         repository = new RecipeRepository(context,appCompatActivity);
 
     }
