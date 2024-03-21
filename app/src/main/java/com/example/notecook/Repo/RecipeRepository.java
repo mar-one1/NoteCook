@@ -147,11 +147,9 @@ public class RecipeRepository {
                     TAG_CONNEXION = response.code();
                     if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
                         userRepo.getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe());
-                    else if (User_CurrentRecipe.getId_User() == CURRENT_RECIPE.getFrk_user()) {
-                        MainFragment.viewPager2.setCurrentItem(1);
-                    } else {
+                    else if (User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user()){
                         User_CurrentRecipe = user_login.getUser();
-                        MainFragment.viewPager2.setCurrentItem(1, false);
+                        //MainFragment.viewPager2.setCurrentItem(1, false);
                     }
                 } else {
                     handleErrorResponse(response);

@@ -75,11 +75,8 @@ public class UserRepository {
 
     public LiveData<User> getUserApi(String username) {
         MutableLiveData<User> userLogin = new MutableLiveData<>();
-        sharedPreferences = context.getSharedPreferences(lOGIN_KEY, Context.MODE_PRIVATE);
-        String s1 = sharedPreferences.getString("username", "");
-        String s2 = sharedPreferences.getString("password", "");
         // Example: Fetch users from the API
-        apiService.getUserByUsername(s1).enqueue(new Callback<User>() {
+        apiService.getUserByUsername(username).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
@@ -88,7 +85,7 @@ public class UserRepository {
                         UserResponse.setId_User(user_login.getUser().getId_User());
                         //userLogin.setValue(UserResponse);
                         user_login.setUser(UserResponse);
-                        userLogin.setValue(getLocalUserLogin(s1, "success").getValue());
+                        userLogin.setValue(getLocalUserLogin(username, "success").getValue());
                         getImageUserUrl(user_login.getUser().getUsername(), "user_login", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get user from Api", Toast.LENGTH_LONG).show();
                     }
@@ -353,6 +350,7 @@ public class UserRepository {
         } else {
             user_login.setUser(user.getValue());
             user_login.setMessage(TAG_LOCAL);
+            user_login_local.setUser(user.getValue());
         }
         userDatasource.close();
         return  user;
@@ -399,7 +397,6 @@ public class UserRepository {
         String jsonInputString = "{\"url\": \"" + path + "\"}";
 // Create a RequestBody from the string
         RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), jsonInputString);
-
 
         // Call the method to upload the file
         apiService.updateUserGoogleImageUrl(username, requestBody).enqueue(new Callback<String>() {

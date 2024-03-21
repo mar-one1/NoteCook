@@ -65,6 +65,13 @@ public class Frg_recipe_ingredients extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        Toast.makeText(getContext(), "onStart Frg_ingredient", Toast.LENGTH_SHORT).show();
+        bindingRcV_Ingredients(mRecyclerView);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 

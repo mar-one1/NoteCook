@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
@@ -32,7 +33,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class RecipeViewModel extends ViewModel {
+public class RecipeViewModel extends ViewModel implements ViewModelProvider.Factory {
     private RecipeRepository repository;
     private Context context;
     private AppCompatActivity appCompatActivity;
@@ -47,6 +48,13 @@ public class RecipeViewModel extends ViewModel {
         this.appCompatActivity = appCompatActivity;
         repository = new RecipeRepository(context,appCompatActivity);
 
+    }
+    @Override
+    public <T extends ViewModel> T create(Class<T> modelClass) {
+        if (modelClass.isAssignableFrom(RecipeViewModel.class)) {
+            return (T) new RecipeViewModel(context);
+        }
+        throw new IllegalArgumentException("Unknown ViewModel class");
     }
 
     public LiveData<List<Recipe>> getRecipes() {

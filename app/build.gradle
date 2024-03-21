@@ -91,4 +91,8 @@ dependencies {
     // Text size responsive
     implementation 'com.intuit.sdp:sdp-android:1.1.0'
     implementation 'com.intuit.ssp:ssp-android:1.1.0'
+
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'  // ViewModel
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'   // LiveData
+
 }

@@ -65,6 +65,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         this.context = context;
         recipeVM = new RecipeViewModel(context);
         userVM = new UserViewModel(context);
+        notifyDataSetChanged();
     }
 
 
@@ -118,7 +119,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             FragmentActivity fragmentActivity = (FragmentActivity) v.getContext();
             if (CURRENT_RECIPE != recipe) {
                 if(!Objects.equals(b, TAG_LOCAL)) {
-                    CURRENT_RECIPE = recipe;
+                    //CURRENT_RECIPE = recipe;
                     recipeVM.getRecipe(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
                         @Override
                         public void onChanged(RecipeResponse recipeResponses) {
@@ -128,6 +129,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                             Steps_CurrentRecipe = recipeResponses.getSteps();
                             Review_CurrentRecipe = recipeResponses.getReviews();
                             Ingredients_CurrentRecipe = recipeResponses.getIngredients();
+                            MainFragment.viewPager2.setCurrentItem(1);
                         }
                     });
                 }

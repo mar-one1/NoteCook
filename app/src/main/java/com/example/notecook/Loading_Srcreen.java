@@ -2,6 +2,7 @@ package com.example.notecook;
 
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_ERREUR_SYSTEM;
+import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.content.BroadcastReceiver;
@@ -92,16 +93,16 @@ public class Loading_Srcreen extends AppCompatActivity {
         registerReceiver(networkChangeReceiver, filtreConectivite);
         binding = ActivityLoadingSrcreenBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-//        MyAsyncTask myAsyncTask = new MyAsyncTask();
-//        myAsyncTask.execute();
+
+
         Intent i = new Intent(getBaseContext(), Login.class);
         Intent iM = new Intent(getBaseContext(), MainActivity.class);
-        if (!isOnline(getBaseContext()) && Objects.equals(getToken(), "")) {
+        if (!isConnected() && Objects.equals(getToken(), "")) {
             Constants.AffichageMessage("Welcome to Notebook APP!!!", Loading_Srcreen.this);
             startActivity(i);
-        } else if (!Objects.equals(getToken(), "") && isOnline(getBaseContext()))
+        } else if (!Objects.equals(getToken(), "") && isConnected())
             TokenApi();
-        else if (!Objects.equals(getToken(), "") && !isOnline(getBaseContext())) {
+        else if (!Objects.equals(getToken(), "") && !isConnected()) {
             startActivity(iM);
         } else
             startActivity(i);

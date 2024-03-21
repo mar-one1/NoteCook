@@ -17,11 +17,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
@@ -57,7 +60,7 @@ public class Frg_detail_recipe extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        binding.vp2Detairecipe.setCurrentItem(1,true);
+        Log.e("tag resume detaile recipe","true");
         binding.vp2Detairecipe.setCurrentItem(0,true);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
             if (Detail_CurrentRecipe != null) {

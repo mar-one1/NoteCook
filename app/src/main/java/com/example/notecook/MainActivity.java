@@ -6,7 +6,6 @@ import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
 import static com.example.notecook.Utils.Constants.Remotelist_recipe;
 import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.SYNCH_KEY;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
@@ -14,13 +13,10 @@ import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.getUserInput;
-import static com.example.notecook.Utils.Constants.getUserSynch;
-import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.listUser;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -41,6 +37,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Api.ApiClient;
@@ -73,8 +70,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.Nullable;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -95,10 +90,12 @@ public class MainActivity extends AppCompatActivity {
     private static List<Detail_Recipe> list_detail_recipe = new ArrayList<>();
 
     public SharedPreferences sharedPreferences;
-    SimpleService service = new SimpleService();
-    IntentFilter filtreConectivite = new IntentFilter();
-    NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
-    FragmentTransaction fragmentTransaction;
+    private SimpleService service = new SimpleService();
+    private IntentFilter filtreConectivite = new IntentFilter();
+    private NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
+    private FragmentTransaction fragmentTransaction;
+    private RecipeViewModel recipeVM;
+    private UserViewModel userVM;
 
     private boolean doubleBackToExitPressedOnce = false;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -448,21 +445,27 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
 
-        RecipeViewModel recipeVM = new RecipeViewModel(this, this);
-        UserViewModel userVM = new UserViewModel(this, this);
+        recipeVM = new RecipeViewModel(this);
+        userVM = new UserViewModel(this);
+        recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
+        //userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
 
-            userVM.getUser(s1).observe(this, user -> {
-                Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
-                recipeVM.getRecipesLocal(user.getId_User()).observe(MainActivity.this, new Observer<List<Recipe>>() {
-                    @Override
-                    public void onChanged(List<Recipe> recipes) {
-                        recipeVM.getRecipesByUsername(s1).observe(MainActivity.this, recipeList -> {
-                            RemotelistByIdUser_recipe.setValue(recipeList);
-                            Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                });
+            userVM.getUser(s1).observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
+                    recipeVM.getRecipesLocal(user.getId_User()).observe(MainActivity.this, new Observer<List<Recipe>>() {
+                        @Override
+                        public void onChanged(List<Recipe> recipes) {
+                            recipeVM.getRecipesByUsername(s1).observe(MainActivity.this, recipeList -> {
+                                RemotelistByIdUser_recipe.setValue(recipeList);
+                                Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                }
+
             });
         }
         pDialog.cancel();

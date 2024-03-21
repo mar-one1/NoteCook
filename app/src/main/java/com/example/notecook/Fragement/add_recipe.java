@@ -2,6 +2,7 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
+import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -61,6 +62,7 @@ public class add_recipe extends Fragment {
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
     private InputValidator inputValidator;
+    private List<Recipe> recipes;
 
     public add_recipe() {
         // Required empty public constructor
@@ -77,6 +79,7 @@ public class add_recipe extends Fragment {
         binding = FragmentAddRecipeBinding.inflate(inflater, container, false);
         int bnvId = R.id.bottom_nav;
         BottomNavigationView btnV = getActivity().findViewById(bnvId);
+        recipes = new ArrayList<>();
         recipeVM = new RecipeViewModel(getContext());
         userVM = new UserViewModel(getContext());
         inputValidator = new InputValidator();
@@ -148,7 +151,9 @@ public class add_recipe extends Fragment {
                     }
                     if (i != 0) {
                         Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
-                        //Constants.list_recipe.add(recipe);
+//                        recipes = list_recipe.getValue();
+//                        recipes.add(recipe);
+//                        list_recipe.setValue(recipes);
                     }
                 }
             }

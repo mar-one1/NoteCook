@@ -2,6 +2,8 @@ package com.example.notecook.Utils;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static org.chromium.base.ThreadUtils.runOnUiThread;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -27,16 +30,20 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Constants {
 
     public static final int NETWORK_TIMEOUT = 3000;
-    public static String Token = "";
-
     public static final String TAG_ERREUR_SYSTEM = "erreur_Systeme";
     public static final String TAG_CHARGEMENT_VALIDE = "chargement_Valide";
     public static final String TAG_PAS_RESULTAT = "pasDeResultat";
@@ -46,13 +53,29 @@ public class Constants {
     public static final String TAG_OFFLINE = "Offline";
     public static final String TAG_REMOTE = "Remote";
     public static final String TAG_LOCAL = "Local";
+    public static final String lOGIN_KEY = "Connection_complete";
+    public static final String SYNCH_KEY = "Synch_complete";
+    public static final String TAG_MODE_INVITE = "Mode Invite";
+    public static final String TAG_MODE_UTILISATEUR = "Mode Utilisateur";
+    public static final String[] DEFAULT_SEARCH_CATEGORIES =
+            {"Barbecue", "Breakfast", "Chicken", "Beef", "Brunch", "Dinner", "Wine", "Italian"};
+    public static final String[] DEFAULT_SEARCH_CATEGORY_IMAGES =
+            {
+                    "barbecue",
+                    "breakfast",
+                    "chicken",
+                    "beef",
+                    "brunch",
+                    "dinner",
+                    "wine",
+                    "italian"
+            };
+    public static String Token = "";
     public static int TAG_CONNEXION = -1;
     public static String TAG_CONNEXION_MESSAGE = "";
     public static Bitmap imageprofill;
-
-
     public static MutableLiveData<List<Recipe>> list_recipe = new MutableLiveData<>();
-    public static List<Detail_Recipe> list_Detailrecipe ;
+    public static List<Detail_Recipe> list_Detailrecipe;
     public static Detail_Recipe Detail_CurrentRecipe;
     public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
     public static List<Review> Review_CurrentRecipe = new ArrayList<>();
@@ -67,34 +90,9 @@ public class Constants {
     public static String TAG_CONNEXION_LOCAL = "";
     public static TokenResponse user_login = new TokenResponse();
     public static TokenResponse user_login_local = new TokenResponse();
-    public static String pathimageuser ="";
-    public static final String lOGIN_KEY = "Connection_complete";
-    public static final String SYNCH_KEY = "Synch_complete";
-
-
-    public static final String TAG_MODE_INVITE = "Mode Invite";
-    public static final String TAG_MODE_UTILISATEUR = "Mode Utilisateur";
-    public static  boolean MODE_ONLINE = false;
+    public static String pathimageuser = "";
+    public static boolean MODE_ONLINE = false;
     public static SweetAlertDialog alertDialog;
-
-
-
-
-
-    public static final String[] DEFAULT_SEARCH_CATEGORIES =
-            {"Barbecue", "Breakfast", "Chicken", "Beef", "Brunch", "Dinner", "Wine", "Italian"};
-
-    public static final String[] DEFAULT_SEARCH_CATEGORY_IMAGES =
-            {
-                    "barbecue",
-                    "breakfast",
-                    "chicken",
-                    "beef",
-                    "brunch",
-                    "dinner",
-                    "wine",
-                    "italian"
-            };
     public static List<User> listUser = new ArrayList<>();
     public static Recipe CURRENT_RECIPE = null;
     public static Detail_Recipe DETAIL_RECIPE = null;
@@ -118,8 +116,7 @@ public class Constants {
         sd.show();
     }
 
-    public static void Loading(SweetAlertDialog pDialog)
-    {
+    public static void Loading(SweetAlertDialog pDialog) {
 
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#E41818"));
         pDialog.setTitleText("Chargement ...");
@@ -207,7 +204,7 @@ public class Constants {
         editor.apply();
     }
 
-    public static void saveUserInput(String username, String password,Context context) {
+    public static void saveUserInput(String username, String password, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(lOGIN_KEY, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("username", username);
@@ -216,20 +213,16 @@ public class Constants {
 
     }
 
-    public static void saveUserSynch(String username,Boolean b,Context context) {
+    public static void saveUserSynch(String username, Boolean b, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SYNCH_KEY, MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean(username, b);
-            editor.apply();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(username, b);
+        editor.apply();
     }
 
-    public static Boolean getUserSynch(String username,Context context) {
+    public static Boolean getUserSynch(String username, Context context) {
         SharedPreferences preferences = context.getSharedPreferences(SYNCH_KEY, MODE_PRIVATE);
         return preferences.getBoolean(username, false);
-    }
-    private String getToken(Context context) {
-        SharedPreferences preferences = context.getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        return preferences.getString("token", "");
     }
 
     public static String getUserInput(Context context) {
@@ -237,5 +230,44 @@ public class Constants {
         return sharedPreferences.getString("username", "");
     }
 
+    public static boolean isConnected() {
+        final AtomicBoolean connected = new AtomicBoolean(false);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                connected.set(isOnline());
+                Log.d("tag internet", String.valueOf(connected));
+            }
+        });
+        thread.start();
+
+        // Wait for the thread to finish before returning the result
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return connected.get();
+    }
+    private static boolean isOnline() {
+        try {
+            // Create a Socket and connect to a known reliable host
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("8.8.8.8", 53), 1500); // 8.8.8.8 is Google's public DNS server
+            socket.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private String getToken(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        return preferences.getString("token", "");
+    }
+
 
 }
+

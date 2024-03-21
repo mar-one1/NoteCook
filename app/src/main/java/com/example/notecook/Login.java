@@ -137,7 +137,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         view = binding.getRoot();
         m = new MainActivity();
         userDatasource = new UserDatasource(getBaseContext());
-        userVM = new UserViewModel(getBaseContext(),this);
+        userVM = new UserViewModel(this,this);
 
         // Check FingerPrint In Device
         try {
@@ -732,7 +732,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                                 }
                                 userDatasource.close();
                                 saveToken(token);
-                                saveUserInput(binding.etUsername.getText().toString(), binding.etPassword.getText().toString());
+                                saveUserInput(username,password);
                                 saveUserSynch(username,false,getBaseContext());
                                 Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, Login.this);
                             } catch (Exception e) {
