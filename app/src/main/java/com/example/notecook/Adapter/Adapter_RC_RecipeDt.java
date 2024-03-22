@@ -17,6 +17,7 @@ import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -58,12 +59,14 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
     private Context context;
+    private Activity activity;
 
-    public Adapter_RC_RecipeDt(Context context, List<Recipe> recipes, String bb) {
+    public Adapter_RC_RecipeDt(Context context, Activity activity, List<Recipe> recipes, String bb) {
         this.recipes = recipes;
         b = bb;
         this.context = context;
-        recipeVM = new RecipeViewModel(context);
+        this.activity = activity;
+        recipeVM = new RecipeViewModel(context,activity);
         userVM = new UserViewModel(context);
         notifyDataSetChanged();
     }

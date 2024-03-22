@@ -53,7 +53,7 @@ public class Frg_Recipe_Profil extends Fragment {
 
     public void bindingRcV_recipes(RecyclerView recyclerView,List<Recipe> recipes) {
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),recipes, TAG_LOCAL);
+        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(),recipes, TAG_LOCAL);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(manager);
         adapter_rc_recipeDt.notifyDataSetChanged();
@@ -63,7 +63,6 @@ public class Frg_Recipe_Profil extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        model = new RecipeViewModel(getContext());
         //model.getRecipesLocal(user_login_local.getUser().getId_User());
         bindingRcV_recipes(binding.RcRecipeProfil,list_recipe.getValue());
     }

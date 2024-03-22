@@ -27,6 +27,7 @@ public class MainFragment extends Fragment  {
     public static ViewPager2 viewPager2;
     TabLayout tabLayout;
     private FloatingActionButton Flbtn;
+
     public MainFragment() {/* Required empty public constructor*/}
 
     @Override
@@ -46,7 +47,7 @@ public class MainFragment extends Fragment  {
 
         Flbtn.setOnClickListener(v -> {
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.ly_vp_con, new add_recipe());
+                fragmentTransaction.replace(R.id.ly_vp_con,new add_recipe());
                 fragmentTransaction.commitNow();
 
                 //viewPager2.setCurrentItem(1,false);
