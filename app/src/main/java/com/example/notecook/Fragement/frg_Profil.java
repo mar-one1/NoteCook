@@ -99,7 +99,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         b.show();
         tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
         tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
-        recipeVM = new RecipeViewModel(getContext());
+        recipeVM = new RecipeViewModel(getContext(),getActivity());
         userVM = new UserViewModel(getContext());
         recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
         //userVM = new ViewModelProvider(this,userVM).get(UserViewModel.class);

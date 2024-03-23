@@ -7,6 +7,7 @@ import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -36,21 +37,23 @@ import retrofit2.Response;
 public class RecipeViewModel extends ViewModel implements ViewModelProvider.Factory {
     private RecipeRepository repository;
     private Context context;
+    private Activity appCompatActivity;
 
     public RecipeViewModel(Context context) {
         repository = new RecipeRepository(context);
         this.context = context;
     }
 
-    public RecipeViewModel(Context context,AppCompatActivity appCompatActivity) {
+    public RecipeViewModel(Context context, Activity appCompatActivity) {
         this.context = context;
+        this.appCompatActivity = appCompatActivity;
         repository = new RecipeRepository(context,appCompatActivity);
 
     }
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(RecipeViewModel.class)) {
-            return (T) new RecipeViewModel(context);
+            return (T) new RecipeViewModel(context,appCompatActivity);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

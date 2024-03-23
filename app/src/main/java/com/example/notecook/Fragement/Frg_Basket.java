@@ -53,7 +53,7 @@ import com.example.notecook.databinding.FragmentFrgBasketBinding;
 
       public void bindingRcV_Baskets(RecyclerView recyclerView) {
           // Create and set adapter for RecyclerView
-          Adapter_RC_RecipeDt adapter = new Adapter_RC_RecipeDt(getContext(),Basket_list,"remote");
+          Adapter_RC_RecipeDt adapter = new Adapter_RC_RecipeDt(getContext(),getActivity(),Basket_list,"remote");
           LinearLayoutManager manager = new LinearLayoutManager(getContext());
           manager.setOrientation(HORIZONTAL);
           recyclerView.setLayoutManager(manager);

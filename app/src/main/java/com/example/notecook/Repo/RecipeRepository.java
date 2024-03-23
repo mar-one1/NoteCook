@@ -7,6 +7,7 @@ import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
+import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.getUserSynch;
@@ -15,6 +16,7 @@ import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -27,11 +29,14 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.RecipeResponse;
+import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
+import com.example.notecook.Utils.Constants;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,9 +59,9 @@ public class RecipeRepository {
     private Context context;
     private DetailRecipeRepository detailRecipeRepository;
     private UserRepository userRepo;
-    private AppCompatActivity appCompatActivity;
+    private Activity appCompatActivity;
 
-    public RecipeRepository(Context context, AppCompatActivity appCompatActivity) {
+    public RecipeRepository(Context context, Activity appCompatActivity) {
         this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
         recipeDatasource = new RecipeDatasource(context);
@@ -72,8 +77,7 @@ public class RecipeRepository {
         recipeDatasource = new RecipeDatasource(context);
         userDatasource = new UserDatasource(context);
         detailRecipeRepository = new DetailRecipeRepository(context);
-        userRepo = new UserRepository(context);
-
+        userRepo = new UserRepository(context,appCompatActivity);
     }
 
     private static void markRecipeAsDeletedLocally(Recipe localRecipe, Context context) {
@@ -113,6 +117,7 @@ public class RecipeRepository {
                 } else {
                     // Handle unsuccessful download
                     Toast.makeText(context, "unsuccessful Created Api" + response.message(), Toast.LENGTH_SHORT).show();
+                    handleErrorResponse(response);
                 }
 
             }
@@ -120,6 +125,7 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<Recipe> call, Throwable t) {
                 Toast.makeText(context, "Handle failure Insert Recipe to api", Toast.LENGTH_SHORT).show();
+                handleNetworkFailure(call);
             }
         });
         return null;
@@ -159,10 +165,52 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<RecipeResponse> call, Throwable t) {
                 TAG_CONNEXION = call.hashCode();
-                handleNetworkFailure();
+                handleNetworkFailure(call);
             }
         });
         return recipeResponseMutableLiveData;
+    }
+    private void handleErrorResponse(Response<?> response) {
+        int statusCode = response.code();
+        String message = response.message();
+        if (response.errorBody() != null) {
+            if (statusCode == 400) {
+                try {
+                    String errorBody = response.errorBody().string();
+                    Gson gson = new Gson();
+                    ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
+                    // Now you have the validation errors in the validationError object
+                    // Handle them accordingly
+                    StringBuilder errorMessages = new StringBuilder();
+                    for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
+                        errorMessages.append(", ").append(error.getMessage());
+                    }
+                    Constants.AffichageMessage(errorMessages.toString(), appCompatActivity);
+                } catch (IOException e) {
+                    // Handle error parsing error body
+                }
+                // Unauthorized, handle accordingly (e.g., reauthentication).
+            } else if (statusCode == 409) {
+                Constants.AffichageMessage("Recipe already exists", appCompatActivity);
+                // Unauthorized, handle accordingly (e.g., reauthentication).
+            } else if (statusCode == 404) {
+                // Not found, handle accordingly (e.g., show a 404 error message).
+                Constants.AffichageMessage(TAG_OFFLINE, appCompatActivity);
+            } else if (statusCode >= 500) {
+                // Handle other status codes or generic error handling.
+                Constants.AffichageMessage("Internal Server Error", appCompatActivity);
+            } else if (statusCode == 406) {
+                // Handle other status codes or generic error handling.
+                Constants.AffichageMessage("User not found", appCompatActivity);
+            } else Constants.AffichageMessage(message, appCompatActivity);
+        }
+    }
+
+    private void handleNetworkFailure(Call<?> call) {
+        // Handle network failure
+        TAG_CONNEXION_MESSAGE = call.toString();
+        //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
+        Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
     }
 
     public LiveData<List<Recipe>> getRecipes() {
@@ -180,14 +228,10 @@ public class RecipeRepository {
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                handleNetworkFailure();
+                handleNetworkFailure(call);
             }
         });
         return remoteRecipeList;
-    }
-
-    private void handleNetworkFailure() {
-        // Handle network failure
     }
 
     public LiveData<List<Recipe>> getRecipesByUsername(String username) {
@@ -207,14 +251,14 @@ public class RecipeRepository {
 
                 } else {
                     // Handle error response here
-                    handleErrorResponse(response);
+                    if(response!=null) handleErrorResponse(response);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle network failure
-                handleNetworkFailure();
+                handleNetworkFailure(call);
             }
         });
         return remoteRecipeListByUser;
@@ -273,19 +317,6 @@ public class RecipeRepository {
         });
     }
 
-
-    private void handleErrorResponse(Response<?> response) {
-        int statusCode = response.code();
-        String message = response.message();
-        if (response.errorBody() != null) {
-            try {
-                String errorResponse = response.errorBody().string();
-                Log.e("ErrorResponse", "Error Response: " + errorResponse);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public void synchronizeDataFromLocalToRemote(List<Recipe> localRecipes, List<Recipe> remoteRecipes, String username) {
         // Step 1: Get the user ID from the local database using the username

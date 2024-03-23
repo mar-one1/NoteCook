@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -43,6 +44,8 @@ public class Acceuill_Frg extends Fragment {
     Recipe mRecipe;
     private FragmentAcceuillFrgBinding binding;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private  RecipeViewModel recipeVM;
+    private FragmentActivity fragmentActivity;
 
     public Acceuill_Frg() {
         // Required empty public constructor
@@ -71,11 +74,11 @@ public class Acceuill_Frg extends Fragment {
         });
 
         bindingRcV_categories(binding.RcCatMenu, true);
-        RecipeViewModel model = new RecipeViewModel(getContext());
-        model.getRecipes().observe(getActivity(), new Observer<List<Recipe>>() {
+        fragmentActivity = (FragmentActivity) getContext();
+        RecipeViewModel model = new RecipeViewModel(getContext(),getActivity());
+        model.getRecipes().observe(fragmentActivity,new Observer<List<Recipe>>() {
             @Override
             public void onChanged(@Nullable List<Recipe> recipeList) {
-                //Remotelist_recipe.clear();
                 Remotelist_recipe.setValue(recipeList);
                 bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
                 Toast.makeText(getContext(), "changed main " + "recipe by observe", Toast.LENGTH_SHORT).show();
@@ -170,9 +173,9 @@ public class Acceuill_Frg extends Fragment {
         }
         //if(TAG_CONNEXION==200)
         if (!(list.size() == 0)) {
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), list, TAG_ONLINE);
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(), list, TAG_ONLINE);
         } else
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), list_recipe.getValue(), TAG_OFFLINE);
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(), list_recipe.getValue(), TAG_OFFLINE);
         // adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe,true);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(HORIZONTAL);
