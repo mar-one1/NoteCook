@@ -25,7 +25,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             + TABLE_USER + "(" + COLUMN_ID_USER
             + " integer primary key autoincrement, " + COLUMN_USERNAME + " text, " + COLUMN_FIRSTNAME_USER + " text, " + COLUMN_LASTNAME_USER + " text, "
             + COLUMN_ICON + " BLOB, " + COLUMN_ICON_PATH + " text, " + COLUMN_PASSWORD + " text, "
-            + COLUMN_BIRTHDAY_USER + " integer, " + COLUMN_PHONENUMBER_USER + " integer, " + COLUMN_EMAIL_USER + " integer ,"
+            + COLUMN_BIRTHDAY_USER + " integer, " + COLUMN_PHONENUMBER_USER + " text, " + COLUMN_EMAIL_USER + " integer ,"
             + COLUMN_STATUS + " text, " + COLUMN_GRADE + " text );";
 
     /*

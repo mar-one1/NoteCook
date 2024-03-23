@@ -13,9 +13,11 @@ import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.getUserInput;
+import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.listUser;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.pathimageuser;
+import static com.example.notecook.Utils.Constants.showToast;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
@@ -28,7 +30,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
@@ -54,6 +59,7 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.NetworkChangeReceiver;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
     public SharedPreferences sharedPreferences;
     private SimpleService service = new SimpleService();
-    private IntentFilter filtreConectivite = new IntentFilter();
+    private IntentFilter filtreConectivite = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     private NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
     private FragmentTransaction fragmentTransaction;
     private RecipeViewModel recipeVM;
@@ -445,8 +451,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
 
-        recipeVM = new RecipeViewModel(this,MainActivity.this);
-        userVM = new UserViewModel(this,MainActivity.this);
+        recipeVM = new RecipeViewModel(this, MainActivity.this);
+        userVM = new UserViewModel(this, MainActivity.this);
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         //userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
@@ -502,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
 //                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, requestCode);
 //
             if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                if (!ConnexionRetrofit.isOnline(MainActivity.this)) {
+                if (!isConnected()) {
                     Constants.DisplayErrorMessage(MainActivity.this, "Mode Offline");
                 } else Constants.DisplayErrorMessage(MainActivity.this, "Mode Online");
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
@@ -634,23 +640,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    public class NetworkChangeReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (checkInternet(context)) {
-                Toast.makeText(context, "Network Available Do operations", Toast.LENGTH_LONG).show();
-                MODE_ONLINE = true;
-            } else MODE_ONLINE = false;
-
-
-        }
-
-        boolean checkInternet(Context context) {
-            return service.isNetworkAvailable(context);
-        }
-    }
-
 
 }

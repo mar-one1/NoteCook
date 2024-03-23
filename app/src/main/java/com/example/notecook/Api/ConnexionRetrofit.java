@@ -27,13 +27,6 @@ public class ConnexionRetrofit {
     }
 
 
-    public static boolean isOnline(Context _context) {
-        ConnectivityManager cm =
-                (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
     public static void TokenApi(String token) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 

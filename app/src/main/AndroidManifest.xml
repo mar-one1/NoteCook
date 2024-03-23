@@ -15,14 +15,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
-    <supports-screens
-        android:anyDensity="true"
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:resizeable="true"
-        android:smallScreens="true"
-        android:xlargeScreens="true" />
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -35,12 +27,7 @@
         android:theme="@style/Theme.NoteCook"
         tools:targetApi="30">
 
-        <receiver android:name=".MainActivity$NetworkChangeReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+
 
         <activity
             android:name=".Loading_Srcreen"
@@ -68,7 +55,11 @@
 
         </activity>
 
-
+        <receiver android:name=".Utils.NetworkChangeReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
 
         <service android:name=".Utils.SimpleService"/>
         <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->

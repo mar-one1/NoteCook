@@ -13,6 +13,7 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
+import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.user_login;
@@ -240,7 +241,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE)
             if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                if (!ConnexionRetrofit.isOnline(Login.this)) {
+                if (!isConnected()) {
                     Constants.DisplayErrorMessage(Login.this, "Veuillez vérifier votre connectivité réseau SVP");
                     return;
                 }

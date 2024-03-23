@@ -26,6 +26,7 @@ import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.TokenResponse;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.NetworkChangeReceiver;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.databinding.ActivityLoadingSrcreenBinding;
 
@@ -250,21 +251,6 @@ public class Loading_Srcreen extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("token", token);
         editor.apply();
-    }
-
-    public class NetworkChangeReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            if (checkInternet(context)) {
-                Toast.makeText(context, "Network Available Do operations", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        boolean checkInternet(Context context) {
-
-            return service.isNetworkAvailable(context);
-        }
     }
 
 

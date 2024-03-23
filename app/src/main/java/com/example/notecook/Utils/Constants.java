@@ -13,10 +13,12 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
@@ -252,9 +254,9 @@ public class Constants {
     }
     private static boolean isOnline() {
         try {
-            // Create a Socket and connect to a known reliable host
+            // Create a Socket and connect to a known reliable host (google.com)
             Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("8.8.8.8", 53), 1500); // 8.8.8.8 is Google's public DNS server
+            socket.connect(new InetSocketAddress("google.com", 80), 1500); // Port 80 is commonly used for HTTP
             socket.close();
             return true;
         } catch (IOException e) {
@@ -266,6 +268,16 @@ public class Constants {
     private String getToken(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("MyPrefs", MODE_PRIVATE);
         return preferences.getString("token", "");
+    }
+
+    public static void showToast(final Context context, final String message) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 
