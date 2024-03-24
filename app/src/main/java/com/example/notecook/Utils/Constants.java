@@ -21,10 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.notecook.Api.TokenResponse;
+import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
@@ -34,10 +33,8 @@ import com.example.notecook.Model.User;
 import com.example.notecook.R;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -266,7 +263,7 @@ public class Constants {
         return false;
     }
 
-    private String getToken(Context context) {
+    public static String getToken(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("MyPrefs", MODE_PRIVATE);
         return preferences.getString("token", "");
     }

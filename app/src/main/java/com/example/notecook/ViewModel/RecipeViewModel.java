@@ -1,37 +1,18 @@
 package com.example.notecook.ViewModel;
 
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.Token;
-import static com.example.notecook.Utils.Constants.list_recipe;
-import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Utils.Constants.user_login_local;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.notecook.Api.ApiClient;
-import com.example.notecook.Api.ApiService;
-import com.example.notecook.Api.RecipeResponse;
-import com.example.notecook.Data.RecipeDatasource;
+import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Model.User;
 import com.example.notecook.Repo.RecipeRepository;
 
-import java.io.IOException;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class RecipeViewModel extends ViewModel implements ViewModelProvider.Factory {

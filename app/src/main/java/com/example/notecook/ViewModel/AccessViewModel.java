@@ -1,5 +1,6 @@
 package com.example.notecook.ViewModel;
 
+import android.app.Activity;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
@@ -11,14 +12,18 @@ import com.example.notecook.Repo.RecipeRepository;
 public class AccessViewModel {
 
     private AccessRepository repository;
-    private Context context;
 
-    public AccessViewModel(Context context) {
-        repository = new AccessRepository(context);
-        this.context = context;
+    public AccessViewModel(Context context, Activity activity) {
+        repository = new AccessRepository(context,activity);
     }
 
     public LiveData<String> connectApi(String username,String password) {
         return repository.connectionApi(username,password);
     }
+
+    public LiveData<String> verifyToken() {
+        return repository.TokenApi();
+    }
+
+
 }

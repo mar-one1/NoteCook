@@ -12,11 +12,14 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_ERREUR_SYSTEM;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
+import static com.example.notecook.Utils.Constants.getToken;
+import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.saveToken;
 import static com.example.notecook.Utils.Constants.saveUserInput;
 import static com.example.notecook.Utils.Constants.user_login;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,11 +32,9 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Api.LoginResponse;
-import com.example.notecook.Api.TokenResponse;
-import com.example.notecook.Data.DetailRecipeDataSource;
+import com.example.notecook.Dto.LoginResponse;
+import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Data.UserDatasource;
-import com.example.notecook.Loading_Srcreen;
 import com.example.notecook.Login;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.User;
@@ -47,17 +48,19 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AccessRepository {
-    private  Context context;
+    private Context context;
     private ApiService apiService;
     private PasswordHasher passwordHasher;
     private UserDatasource userDatasource;
-    private SharedPreferences sharedPreferences;
+    private Activity activity;
 
-    public AccessRepository(Context context) {
+    public AccessRepository(Context context, Activity activity) {
         apiService = ApiClient.getClient().create(ApiService.class);
         this.context = context;
         userDatasource = new UserDatasource(context);
+        this.activity = activity;
     }
+    // TODO make insert user local in methode
     public LiveData<String> connectionApi(String username, String password) {
         MutableLiveData<String> TokenMutableLiveData = new MutableLiveData<>();
         // Example: Fetch users from the API
@@ -89,43 +92,44 @@ public class AccessRepository {
                             user.setPassWord(passwordHacher);
                             user_login.setUser(user);
                             userDatasource.open();
-                            if(!isRecordExist(TABLE_USER,COLUMN_USERNAME,username)) {
+                            if (!isRecordExist(TABLE_USER, COLUMN_USERNAME, username)) {
                                 insertUser(user);
-                                Log.e("tag",user.getUsername());
+                                Log.e("tag", user.getUsername());
                             }
                             userDatasource.close();
-                            saveToken(token,context);
-                            saveUserInput(username, password,context);
-                            Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, (AppCompatActivity) context);
+                            saveToken(token, context);
+                            saveUserInput(username, password, context);
+                            Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, activity);
                         } catch (Exception e) {
                             Log.e("tag", e.toString());
                         }
                         Intent i = new Intent(context, MainActivity.class);
-                        ((AppCompatActivity) context).startActivity(i);
+                        activity.startActivity(i);
                     }
                 } else {
-
+                // TODO make handle response error and failure
                     // Handle error response here
                     // The HTTP request was not successful (status code is not 2xx).
                     // You can handle errors here based on the response status code.
                     int statusCode = response.code();
                     Constants.TAG_CONNEXION = statusCode;
                     TAG_CONNEXION_MESSAGE = response.message();
-                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, (AppCompatActivity) context);
+                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, activity);
                     // Handle different status codes as per your API's conventions.
                     if (statusCode == 401) {
-                        Constants.AffichageMessage(TAG_AUTHENTIFICATION_ECHOUE, (AppCompatActivity) context);
+                        Constants.AffichageMessage(TAG_AUTHENTIFICATION_ECHOUE, activity);
                         // Unauthorized, handle accordingly (e.g., reauthentication).
                     } else if (statusCode == 404) {
                         // Not found, handle accordingly (e.g., show a 404 error message).
-                        Constants.AffichageMessage(TAG_OFFLINE, (AppCompatActivity) context);
+                        Constants.AffichageMessage(TAG_OFFLINE, activity);
                     } else if (statusCode >= 500) {
                         // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("Internal Server Error", (AppCompatActivity) context);
+                        Constants.AffichageMessage("Internal Server Error", activity);
                     } else if (statusCode == 406) {
                         // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("User not found", (AppCompatActivity) context);
-                    } else Constants.AffichageMessage(response.message(), (AppCompatActivity) context);
+                        Constants.AffichageMessage("User not found", activity);
+                    } else
+                        Constants.AffichageMessage(response.message(), activity);
                 }
 
 //                if (response.errorBody() != null) {
@@ -133,8 +137,8 @@ public class AccessRepository {
 //                        String errorResponse = response.errorBody().string();
 //                        // Print or log the errorResponse for debugging
 //                        TAG_CONNEXION_MESSAGE = errorResponse;
-//                        Constants.AffichageMessage(TAG_ERREUR_SYSTEM,(AppCompatActivity) context);
-//                        //Constants.DisplayErrorMessage((AppCompatActivity) context,TAG_CONNEXION_MESSAGE);
+//                        Constants.AffichageMessage(TAG_ERREUR_SYSTEM,activity);
+//                        //Constants.DisplayErrorMessage(activity,TAG_CONNEXION_MESSAGE);
 //                        TAG_CONNEXION = response.code();
 //                        Log.e("token", "Error Response: " + errorResponse);
 //                    } catch (IOException e) {
@@ -147,13 +151,13 @@ public class AccessRepository {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
 
                 TAG_CONNEXION_MESSAGE = call.toString();
-                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, (AppCompatActivity) context);
+                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, activity);
             }
         });
-        return  TokenMutableLiveData;
+        return TokenMutableLiveData;
     }
 
-    private String ConnectLocal(String username,String password) {
+    private String ConnectLocal(String username, String password) {
         TAG_CONNEXION_LOCAL = "";
         userDatasource.open();
         Constants.listUser = userDatasource.getAllUser();
@@ -162,9 +166,7 @@ public class AccessRepository {
         for (User item : Constants.listUser) {
             //Toast.makeText(getBaseContext(), "user : " + item.getUser_name() + " pass : " + item.getPassWord(), Toast.LENGTH_SHORT).show();
             if (Objects.equals(item.getFirstname(), username) && passwordHasher.verifyPassword(password, item.getPassWord())) {
-                if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
-                    saveUserInput(username, password,context);
-                }
+                saveUserInput(username, password, context);
                 TAG_CONNEXION_LOCAL = "success";
                 user_login.setUser(item);
                 /*if (!Objects.equals(user_login.getUser(), null)) {
@@ -175,7 +177,7 @@ public class AccessRepository {
                 }*/
                 Intent i = new Intent(context, MainActivity.class);
                 context.startActivity(i);
-                ((AppCompatActivity) context).finish();
+                activity.finish();
 
 
                 //break;
@@ -183,14 +185,14 @@ public class AccessRepository {
         }
         return TAG_CONNEXION_LOCAL;
     }
-
-    public void TokenApi() {
-
+    // TODO make response error and failure handle
+    public LiveData<String> TokenApi() {
+        MutableLiveData<String> mutableLiveDataToken = new MutableLiveData<>();
         Intent iM = new Intent(context, MainActivity.class);
         Intent iLg = new Intent(context, Login.class);
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        Call<TokenResponse> call = apiService.getVerifyToken(getToken());
+        Call<TokenResponse> call = apiService.getVerifyToken(getToken(context));
 
         call.enqueue(new Callback<TokenResponse>() {
             @Override
@@ -207,18 +209,21 @@ public class AccessRepository {
                         user_login = tokenResponse;
                         Constants.TAG_CONNEXION = response.code();
                         // Store the token securely (e.g., in SharedPreferences) for later use
-                        if (statusCode == 201) saveToken(tokenResponse.getToken(),context);
-                        Constants.Token = getToken();
+                        if (statusCode == 201) {
+                            saveToken(tokenResponse.getToken(), context);
+                            mutableLiveDataToken.setValue(tokenResponse.getToken());
+                        }
+                        Constants.Token = tokenResponse.getToken();
                         //Log.d("TAG", "" + user_login.getUser().getUsername() + " " + user_login.getMessage());
                         Toast.makeText(context, "Validation : " + statusCode, Toast.LENGTH_SHORT).show();
 
-                        Intent i = new Intent(context, MainActivity.class);
 //                        i.putExtra("TAG","online");
-                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, ((AppCompatActivity) context));
-                        context.startActivity(i);
-                        ((AppCompatActivity) context).finish();
+                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, activity);
+                        activity.startActivity(iM);
+                        activity.finish();
                     }
                 } else {
+                    // TODO check this start activity logic
                     // The HTTP request was not successful (status code is not 2xx).
                     // You can handle errors here based on the response status code.
 
@@ -227,51 +232,32 @@ public class AccessRepository {
                     // Handle different status codes as per your API's conventions.
                     if (statusCode == 401) {
                         // Unauthorized, handle accordingly (e.g., reauthentication).
-                        saveToken("",context);
-                        Constants.AffichageMessage("Erreur Unauthorized by server ", ((AppCompatActivity) context));
+                        saveToken("", context);
+                        Constants.AffichageMessage("Erreur Unauthorized by server ", activity);
                         context.startActivity(iLg);
                     } else {
                         //(statusCode == 404) {
-                        Constants.AffichageMessage("Erreur 404", ((AppCompatActivity) context));
+                        Constants.AffichageMessage("Erreur 404", activity);
 //                        i.putExtra("TAG","online");
-                        context.startActivity(iM);
-                        ((AppCompatActivity) context).finish();
+                        activity.startActivity(iM);
+                        activity.finish();
                     }
-                    // Not found, handle accordingly (e.g., show a 404 error message).
-                    // Resource not found
-                    //}
                 }
-
-
             }
-
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
-//                Intent i = new Intent(Loading_Srcreen.this,
-//                        Login.class);
-//                startActivity(i);
-                Constants.AffichageMessage(TAG_ERREUR_SYSTEM, ((AppCompatActivity) context));
+                Constants.AffichageMessage(TAG_ERREUR_SYSTEM, activity);
                 Constants.TAG_CONNEXION = call.hashCode();
-                sharedPreferences = context.getSharedPreferences(Constants.lOGIN_KEY, MODE_PRIVATE);
-                if (sharedPreferences.getBoolean(Constants.lOGIN_KEY, true)) {
-                    String s1 = sharedPreferences.getString("username", "");
-                    if (s1.equals("")) {
-                        context.startActivity(iLg);
-                    } else context.startActivity(iM);
+                String s1 = getUserInput(context);
+                if (s1.equals("")) {
+                    context.startActivity(iLg);
+                } else {
+                    activity.startActivity(iM);
                 }
-                ((AppCompatActivity) context).finish();
+                activity.finish();
             }
-
-
         });
-
-        //startActivity(iM);
-
-    }
-
-    private String getToken() {
-        SharedPreferences preferences = context.getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        return preferences.getString("token", "");
+        return mutableLiveDataToken;
     }
 
 

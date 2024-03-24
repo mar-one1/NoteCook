@@ -11,7 +11,6 @@ import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
@@ -56,15 +55,13 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Api.ConnexionRetrofit;
-import com.example.notecook.Api.LoginResponse;
-import com.example.notecook.Api.TokenResponse;
-import com.example.notecook.Api.ValidationError;
+import com.example.notecook.Dto.LoginResponse;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;
+import com.example.notecook.ViewModel.AccessViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityLoginBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -74,25 +71,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -116,9 +101,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     MainActivity m;
     GoogleSignInClient mGoogleSignInClient;
     GoogleSignInOptions gso;
-    TextView txt_username_login, txt_password_login;
-    TextView txt_firstname, txt_lastname, txt_phoneNumber, txt_email, txt_password, txt_passwordConfirmation;
-    ViewPager2 viewPager2;
     // create an authenticationCallback
     private BiometricPrompt.AuthenticationCallback authenticationCallback;
     private SharedPreferences sharedPreferences;
@@ -127,6 +109,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private InputValidator inputValidator = new InputValidator();
     private UserDatasource userDatasource;
     private UserViewModel userVM;
+    private AccessViewModel accessVM;
 
     //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
@@ -139,6 +122,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         m = new MainActivity();
         userDatasource = new UserDatasource(getBaseContext());
         userVM = new UserViewModel(this,this);
+        accessVM = new AccessViewModel(this,this);
 
         // Check FingerPrint In Device
         try {
@@ -488,7 +472,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 pDialog.show();
 
                 if (Constants.NetworkIsConnected(Login.this)) {
-                    connectionApi();
+                    String username = binding.etUsername.getText().toString();
+                    String password = binding.etPassword.getText().toString();
+                    accessVM.connectApi(username,password).observe(this, new Observer<String>() {
+                        @Override
+                        public void onChanged(String s) {
+                            //if(!s.equals("")) saveToken(s);
+                        }
+                    });
+                            //connectionApi();
                 } else Constants.DisplayErrorMessage(Login.this, "Verifier la Connectivitee!!!");
                 pDialog.cancel();
             }

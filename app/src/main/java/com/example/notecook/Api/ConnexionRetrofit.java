@@ -3,13 +3,11 @@ package com.example.notecook.Api;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.user_login;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Utils.Constants;
 
 import org.json.JSONObject;

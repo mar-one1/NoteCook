@@ -1,15 +1,11 @@
 package com.example.notecook.Repo;
 
-import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_ID_FRK_USER_RECIPE;
-import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.lOGIN_KEY;
-import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -20,23 +16,16 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Api.TokenResponse;
+import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Api.ValidationError;
-import com.example.notecook.Data.ModelsDataSource;
-import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Fragement.MainFragment;
-import com.example.notecook.Login;
-import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
-import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.google.gson.Gson;
 

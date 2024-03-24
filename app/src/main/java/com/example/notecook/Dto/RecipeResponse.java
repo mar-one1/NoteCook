@@ -1,4 +1,4 @@
-package com.example.notecook.Api;
+package com.example.notecook.Dto;
 
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;

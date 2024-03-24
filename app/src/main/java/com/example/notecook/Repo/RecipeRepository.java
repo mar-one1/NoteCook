@@ -1,10 +1,6 @@
 package com.example.notecook.Repo;
 
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
-import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
@@ -22,17 +18,15 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Api.RecipeResponse;
+import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
-import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
@@ -42,6 +36,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -125,7 +120,7 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<Recipe> call, Throwable t) {
                 Toast.makeText(context, "Handle failure Insert Recipe to api", Toast.LENGTH_SHORT).show();
-                handleNetworkFailure(call);
+                handleNetworkFailure(t);
             }
         });
         return null;
@@ -165,7 +160,7 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<RecipeResponse> call, Throwable t) {
                 TAG_CONNEXION = call.hashCode();
-                handleNetworkFailure(call);
+                handleNetworkFailure(t);
             }
         });
         return recipeResponseMutableLiveData;
@@ -206,9 +201,17 @@ public class RecipeRepository {
         }
     }
 
-    private void handleNetworkFailure(Call<?> call) {
+    private void handleNetworkFailure(Throwable t) {
         // Handle network failure
-        TAG_CONNEXION_MESSAGE = call.toString();
+        TAG_CONNEXION_MESSAGE = t.toString();
+        // Handle network failure or timeout
+        if (t instanceof SocketTimeoutException) {
+            // Handle timeout exception
+            System.out.println("Timeout occurred");
+        } else {
+            // Handle other network failures
+            t.printStackTrace();
+        }
         //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
         Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
     }
@@ -228,12 +231,12 @@ public class RecipeRepository {
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                handleNetworkFailure(call);
+                handleNetworkFailure(t);
             }
         });
         return remoteRecipeList;
     }
-
+    //TODO make synch with recipe with it image and with full data
     public LiveData<List<Recipe>> getRecipesByUsername(String username) {
         MutableLiveData<List<Recipe>> remoteRecipeListByUser = new MutableLiveData<>();
         apiService.getRecipeByUsernameUser(Token, username).enqueue(new Callback<List<Recipe>>() {
@@ -258,7 +261,7 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle network failure
-                handleNetworkFailure(call);
+                handleNetworkFailure(t);
             }
         });
         return remoteRecipeListByUser;

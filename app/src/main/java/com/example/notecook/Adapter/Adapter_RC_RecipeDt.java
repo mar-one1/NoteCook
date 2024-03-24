@@ -12,9 +12,7 @@ import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
 import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
-import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -28,18 +26,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notecook.Api.RecipeResponse;
+import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Model.User;
 import com.example.notecook.R;
-import com.example.notecook.Repo.RecipeRepository;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.squareup.picasso.MemoryPolicy;
