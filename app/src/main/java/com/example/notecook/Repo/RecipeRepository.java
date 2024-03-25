@@ -23,10 +23,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.UserDatasource;
+import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
@@ -72,7 +72,7 @@ public class RecipeRepository {
         recipeDatasource = new RecipeDatasource(context);
         userDatasource = new UserDatasource(context);
         detailRecipeRepository = new DetailRecipeRepository(context);
-        userRepo = new UserRepository(context,appCompatActivity);
+        userRepo = new UserRepository(context, appCompatActivity);
     }
 
     private static void markRecipeAsDeletedLocally(Recipe localRecipe, Context context) {
@@ -148,7 +148,7 @@ public class RecipeRepository {
                     TAG_CONNEXION = response.code();
                     if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
                         userRepo.getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe());
-                    else if (User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user()){
+                    else if (User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user()) {
                         User_CurrentRecipe = user_login.getUser();
                         //MainFragment.viewPager2.setCurrentItem(1, false);
                     }
@@ -165,6 +165,7 @@ public class RecipeRepository {
         });
         return recipeResponseMutableLiveData;
     }
+
     private void handleErrorResponse(Response<?> response) {
         int statusCode = response.code();
         String message = response.message();
@@ -201,6 +202,30 @@ public class RecipeRepository {
         }
     }
 
+    public void searchRecipes(String key) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        Call<List<Recipe>> call = apiService.searchRecipes(Token, key);
+        call.enqueue(new Callback<List<Recipe>>() {
+            @Override
+            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+                if (response.isSuccessful()) {
+                    Constants.Search_list = response.body();
+                    Log.d("TAG", Constants.Search_list.toString());
+                    // Handle the list of products obtained from the server
+                } else {
+                    // Handle unsuccessful response
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+                // Handle failure to make the API call
+            }
+        });
+    }
+
+
     private void handleNetworkFailure(Throwable t) {
         // Handle network failure
         TAG_CONNEXION_MESSAGE = t.toString();
@@ -236,6 +261,7 @@ public class RecipeRepository {
         });
         return remoteRecipeList;
     }
+
     //TODO make synch with recipe with it image and with full data
     public LiveData<List<Recipe>> getRecipesByUsername(String username) {
         MutableLiveData<List<Recipe>> remoteRecipeListByUser = new MutableLiveData<>();
@@ -254,7 +280,7 @@ public class RecipeRepository {
 
                 } else {
                     // Handle error response here
-                    if(response!=null) handleErrorResponse(response);
+                    if (response != null) handleErrorResponse(response);
                 }
             }
 

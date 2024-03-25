@@ -13,16 +13,28 @@ import com.example.notecook.Model.User;
 import com.example.notecook.Repo.UserRepository;
 
 
-public class UserViewModel extends ViewModel{
+public class UserViewModel extends ViewModel implements ViewModelProvider.Factory{
 
     private UserRepository repository;
+    private Context context;
+    private Activity appCompatActivity;
 
     public UserViewModel(Context context) {
         repository = new UserRepository(context);
     }
 
     public UserViewModel(Context context, Activity appCompatActivity) {
+        this.context = context;
+        this.appCompatActivity = appCompatActivity;
         repository = new UserRepository(context, appCompatActivity);
+    }
+
+    @Override
+    public <T extends ViewModel> T create(Class<T> modelClass) {
+        if (modelClass.isAssignableFrom(UserViewModel.class)) {
+            return (T) new UserViewModel(context,appCompatActivity);
+        }
+        throw new IllegalArgumentException("Unknown ViewModel class");
     }
 
 

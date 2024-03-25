@@ -41,7 +41,6 @@ public class Acceuill_Frg extends Fragment {
 
     public LayoutInflater inflater;
     Categorie_Food categorie_food;
-    Recipe mRecipe;
     private FragmentAcceuillFrgBinding binding;
     private SwipeRefreshLayout swipeRefreshLayout;
     private  RecipeViewModel recipeVM;
@@ -75,15 +74,8 @@ public class Acceuill_Frg extends Fragment {
 
         bindingRcV_categories(binding.RcCatMenu, true);
         fragmentActivity = (FragmentActivity) getContext();
-        RecipeViewModel model = new RecipeViewModel(getContext(),getActivity());
-        model.getRecipes().observe(fragmentActivity,new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipe> recipeList) {
-                Remotelist_recipe.setValue(recipeList);
-                bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
-                Toast.makeText(getContext(), "changed main " + "recipe by observe", Toast.LENGTH_SHORT).show();
-            }
-        });
+        recipeVM = new RecipeViewModel(getContext(),getActivity());
+        fetchRecipe();
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -92,6 +84,7 @@ public class Acceuill_Frg extends Fragment {
                 // Perform your data refreshing operations here
                 // Simulate refresh delay (remove this in your actual code)
                 //onResume();
+                fetchRecipe();
 
                 new android.os.Handler().postDelayed(new Runnable() {
                     @Override
@@ -103,7 +96,6 @@ public class Acceuill_Frg extends Fragment {
             }
         });
         binding.txtRecherche.setOnTouchListener((view, motionEvent) -> binding.seeMoreTxt.callOnClick());
-
         return binding.getRoot();
     }
 
@@ -112,13 +104,23 @@ public class Acceuill_Frg extends Fragment {
         super.onResume();
         Toast.makeText(getContext(), "changed " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
         bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
-        bindingRcV_categories(binding.RcCatMenu, true);
+    }
+
+    private void fetchRecipe()
+    {
+        recipeVM.getRecipes().observe(fragmentActivity,new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(@Nullable List<Recipe> recipeList) {
+                    Remotelist_recipe.setValue(recipeList);
+                    bindingRcV_recipes(recipeList, binding.RcCatPopular, true);
+                    Toast.makeText(getContext(), "changed main " + "recipe by observe"+recipeList.size(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
     }
 
     /*
@@ -127,16 +129,14 @@ public class Acceuill_Frg extends Fragment {
 
     private void heart_click(ImageView IV) {
         Drawable defaultImagelike = getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
-
         IV.setOnClickListener(view -> {
-
             if (!defaultImagelike.getConstantState().equals(IV.getDrawable().getConstantState())) {
                 IV.setImageDrawable(defaultImagelike);
             } else
                 IV.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
         });
     }
-
+    // TODO Make category recipe git from server
     public void bindingRcV_categories(RecyclerView recyclerView, boolean isgarde) {
         List<Categorie_Food> list_categorie_foods = new ArrayList<>();
         Adapter_RC_MenuCat adapter_rc_menuCat;
@@ -157,26 +157,17 @@ public class Acceuill_Frg extends Fragment {
         adapter_rc_menuCat = new Adapter_RC_MenuCat(list_categorie_foods, true);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 4);
         recyclerView.setLayoutManager(manager);
-
         adapter_rc_menuCat.notifyDataSetChanged();
         recyclerView.setAdapter(adapter_rc_menuCat);
     }
 
 
     public void bindingRcV_recipes(List<Recipe> list, RecyclerView mRecyclerView, boolean isgarde) {
-        List<Recipe> list_recipes = new ArrayList<>();
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-        for (int i = 0; i < 2; i++) {
-            mRecipe = new Recipe("*****", null, 1, 1);
-            //mRecipe = new Recipe();
-            list_recipes.add(mRecipe);
-        }
-        //if(TAG_CONNEXION==200)
-        if (!(list.size() == 0)) {
+        if (list.size() != 0) {
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(), list, TAG_ONLINE);
         } else
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(), list_recipe.getValue(), TAG_OFFLINE);
-        // adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe,true);
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         manager.setOrientation(HORIZONTAL);
         mRecyclerView.setLayoutManager(manager);

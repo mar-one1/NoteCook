@@ -32,6 +32,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
+import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Dto.LoginResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Data.UserDatasource;
@@ -40,7 +41,9 @@ import com.example.notecook.MainActivity;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.PasswordHasher;
+import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -258,6 +261,53 @@ public class AccessRepository {
             }
         });
         return mutableLiveDataToken;
+    }
+
+    private static void handleErrorResponse(Context context, String model, Response<?> response) {
+        int statusCode = response.code();
+        String message = response.message();
+        if (response.errorBody() != null) {
+            if (response.code() == 400) {
+                try {
+                    String errorBody = response.errorBody().string();
+                    Gson gson = new Gson();
+                    ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
+                    // Now you have the validation errors in the validationError object
+                    // Handle them accordingly
+                    StringBuilder errorMessages = new StringBuilder();
+                    for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
+                        errorMessages.append(", ").append(error.getMessage());
+                    }
+                    Toast.makeText(context, errorMessages, Toast.LENGTH_LONG).show();
+                } catch (IOException e) {
+                    // Handle error parsing error body
+                }
+            }
+        } else if (statusCode == 409) {
+            //Constants.AffichageMessage("User already exists", context);
+            //Toast.makeText(context, "User already exists", Toast.LENGTH_SHORT).show();
+            // Unauthorized, handle accordingly (e.g., reauthentication).
+        } else if (statusCode == 404) {
+            // Not found, handle accordingly (e.g., show a 404 error message).
+            //Constants.AffichageMessage(TAG_OFFLINE, context);
+            Toast.makeText(context, TAG_OFFLINE, Toast.LENGTH_SHORT).show();
+        } else if (statusCode >= 500) {
+            // Handle other status codes or generic error handling.
+            //Constants.AffichageMessage("Internal Server Error", context);
+            Toast.makeText(context, "Internal Server Error", Toast.LENGTH_SHORT).show();
+        } else if (statusCode == 406) {
+            // Handle other status codes or generic error handling.
+            // Constants.AffichageMessage("User not found", context);
+        } else Toast.makeText(context, model + " not found", Toast.LENGTH_SHORT).show();
+        //Constants.AffichageMessage(response.message(), context);
+
+    }
+
+    private static void handleNetworkFailure(Context context, Call<User> call) {
+        // Handle network failure
+        TAG_CONNEXION_MESSAGE = call.toString();
+        //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
+        Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
     }
 
 

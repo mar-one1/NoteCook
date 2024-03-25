@@ -4,7 +4,6 @@ package com.example.notecook.Fragement;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.MainActivity.Type_User;
 import static com.example.notecook.MainActivity.decod;
-import static com.example.notecook.MainActivity.synchronizeDataDetailRecipe;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;

@@ -3,7 +3,6 @@ package com.example.notecook.Fragement;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.MainActivity.Type_User;
 import static com.example.notecook.MainActivity.decod;
-import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -16,25 +15,19 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
-import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.FragmentLifecycle;
-import com.example.notecook.ViewModel.RecipeViewModel;
-import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgProfilBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class frg_Profil extends Fragment implements FragmentLifecycle {
 
@@ -43,8 +36,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     private ViewPager2 viewPager2;
     private User user;
     private FloatingActionButton b;
-    private RecipeViewModel recipeVM;
-    private UserViewModel userVM;
+
 
     public frg_Profil() {
         // Required empty public constructor
@@ -56,6 +48,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         onResumeFragment();
         extracted();
     }
+
 
     private void extracted() {
         if (!Type_User.equals(Constants.TAG_MODE_INVITE)) {
@@ -99,35 +92,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         b.show();
         tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
         tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
-        recipeVM = new RecipeViewModel(getContext(),getActivity());
-        userVM = new UserViewModel(getContext());
-        recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
-        //userVM = new ViewModelProvider(this,userVM).get(UserViewModel.class);
-        if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
-            recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-                @Override
-                public void onChanged(List<Recipe> recipes) {
-                    setViewPagerAdapter();
-                }
-            });
-        } else {
-            userVM.getUserLocal(getUserInput(getContext()), "success").observe(getActivity(), new Observer<User>() {
-                @Override
-                public void onChanged(User user) {
-                    extracted();
-                    recipeVM.getRecipesLocal(user.getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-                        @Override
-                        public void onChanged(List<Recipe> recipes) {
-                            setViewPagerAdapter();
-                        }
-                    });
-                }
-            });
-
-        }
-
-
-
 
         viewPager2.setUserInputEnabled(true);
 
@@ -171,7 +135,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
             }
         });
         binding.ImgVSetting.setOnClickListener(view -> {
-
             if (Type_User.equals(Constants.TAG_MODE_INVITE)) {
                 Toast.makeText(getContext(), "" + Constants.TAG_MODE_INVITE, Toast.LENGTH_LONG).show();
             } else {
@@ -180,6 +143,8 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                 fragmentTransaction.commitNow();
             }
         });
+
+        setViewPagerAdapter();
         return binding.getRoot();
     }
 
