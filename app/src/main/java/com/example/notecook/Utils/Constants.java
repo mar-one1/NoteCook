@@ -73,7 +73,6 @@ public class Constants {
     public static String Token = "";
     public static int TAG_CONNEXION = -1;
     public static String TAG_CONNEXION_MESSAGE = "";
-    public static Bitmap imageprofill;
     public static MutableLiveData<List<Recipe>> list_recipe = new MutableLiveData<>();
     public static List<Detail_Recipe> list_Detailrecipe;
     public static Detail_Recipe Detail_CurrentRecipe;
@@ -114,6 +113,24 @@ public class Constants {
             text.setLines(5);
         });
         sd.show();
+    }
+
+    public static void init()
+    {
+        Token = "";
+        TAG_CONNEXION = -1;
+        TAG_CONNEXION_MESSAGE = "";
+        list_recipe = new MutableLiveData<>();
+        Steps_CurrentRecipe = new ArrayList<>();
+        Review_CurrentRecipe = new ArrayList<>();
+        Ingredients_CurrentRecipe = new ArrayList<>();
+        All_Ingredients_Recipe = new ArrayList<>();
+        Search_list = new ArrayList<>();
+        Basket_list = new ArrayList<>();
+        User_CurrentRecipe = new User();
+        Recipes_Fav_User = new ArrayList<>();
+        Remotelist_recipe = new MutableLiveData<>();
+        RemotelistByIdUser_recipe = new MutableLiveData<>();
     }
 
     public static void Loading(SweetAlertDialog pDialog) {

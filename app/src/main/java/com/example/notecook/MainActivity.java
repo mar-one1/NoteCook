@@ -1,26 +1,18 @@
 package com.example.notecook;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
-import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
-import static com.example.notecook.Utils.Constants.Remotelist_recipe;
-import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.isConnected;
-import static com.example.notecook.Utils.Constants.listUser;
-import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
 import android.content.Context;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,11 +32,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Fragement.Favorite_User_Recipe;
 import com.example.notecook.Fragement.MainFragment;
-import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Model.Review;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
@@ -54,18 +43,12 @@ import com.example.notecook.ViewModel.UserViewModel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -119,63 +102,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static void uploadImage(String username, Bitmap bitmp, String type, Context context) {
-        //Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
-        // Create a file to save the bitmap
-        File filesDir = context.getFilesDir();
-        File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
-
-        // Convert bitmap to file
-        try {
-            OutputStream os = new FileOutputStream(imageFile);
-            bitmp.compress(Bitmap.CompressFormat.JPEG, 100, os); // Compress bitmap into JPEG with quality 100%
-            os.flush();
-            os.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        // Create a File instance with the path to the file to upload
-        RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
-
-// Create MultipartBody.Part instance from the RequestBody
-        MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
-// Create a service using the Retrofit interface
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-// Call the method to upload the file
-        Call<ResponseBody> call = apiService.uploadFile(username, filePart);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    String path = null;
-                    try {
-                        path = response.body().string();
-                        //String str = new String(bytes, StandardCharsets.UTF_8);
-                        path = path.replaceAll("\"", "");// For UTF-8 encoding
-                        if (!type.equals("register"))
-                            user_login.getUser().setPathimageuser(path);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
-                    // File upload successful
-                    //fetchImage(path);
-                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
-
-                } else {
-                    // Handle unsuccessful upload
-                    Toast.makeText(context, "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // Handle failure
-                Toast.makeText(context, "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     public static void fetchImage(String s, String tag, int position, Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
@@ -226,34 +152,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static void Insert_Fav(int id_user, int id_recipe) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        // Create a new favorite object
-        Favorite_User_Recipe newFavorite = new Favorite_User_Recipe();
-        newFavorite.setUserId(id_user); // Set user ID
-        newFavorite.setRecipeId(id_recipe); // Set recipe ID
-
-        // Send a POST request to create the new favorite
-        Call<Favorite_User_Recipe> call = apiService.createFavorite(Token, newFavorite);
-        call.enqueue(new Callback<Favorite_User_Recipe>() {
-            @Override
-            public void onResponse(Call<Favorite_User_Recipe> call, Response<Favorite_User_Recipe> response) {
-                if (response.isSuccessful()) {
-                    Favorite_User_Recipe createdFavorite = response.body();
-                    // Handle the newly created favorite
-                } else {
-                    // Handle unsuccessful response
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Favorite_User_Recipe> call, Throwable t) {
-                // Handle network failure
-            }
-        });
-    }
-
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
@@ -275,9 +173,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        list_recipe.setValue(new ArrayList<>());
-        listUser = new ArrayList<>();
-        Remotelist_recipe.setValue(new ArrayList<>());
+        Constants.init();
 
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
@@ -331,20 +227,53 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchData() {
-        String s1 = getUserInput(getBaseContext());
-        userVM.getUser(s1).observe(this, new Observer<User>() {
+        String userInput = getUserInput(getApplicationContext()); // Assuming getUserInput is a method defined elsewhere
+        if (userInput == null || userInput.isEmpty()) {
+            // Handle empty or null user input
+            return;
+        }
+
+        userVM.getUser(userInput).observe(this, new Observer<User>() {
             @Override
             public void onChanged(User user) {
-                Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
-                recipeVM.getRecipesLocal(user.getId_User()).observe(MainActivity.this, new Observer<List<Recipe>>() {
-                    @Override
-                    public void onChanged(List<Recipe> recipes) {
-                        recipeVM.getRecipesByUsername(s1).observe(MainActivity.this, recipeList -> {
-                            RemotelistByIdUser_recipe.setValue(recipeList);
-                            Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                });
+                if (user != null) {
+                    // User data retrieved successfully
+                    observeLocalRecipes(user.getId_User(), userInput);
+                } else {
+                    // Handle user not found
+                    Toast.makeText(getApplicationContext(), "User not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void observeLocalRecipes(int userId, String username) {
+        recipeVM.getRecipesLocal(userId).observe(MainActivity.this, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(List<Recipe> recipes) {
+                if (recipes != null) {
+                    // Local recipes retrieved successfully
+                    observeRemoteRecipes(username);
+                } else {
+                    // Handle local recipes not found
+                    Toast.makeText(getApplicationContext(), "Local recipes not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void observeRemoteRecipes(String username) {
+        recipeVM.getRecipesByUsername(username).observe(MainActivity.this, new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(List<Recipe> recipes) {
+                if (recipes != null) {
+                    // Remote recipes retrieved successfully
+                    RemotelistByIdUser_recipe.setValue(recipes);
+                    Toast.makeText(getApplicationContext(), "Changed main " + recipes.size(), Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle remote recipes not found
+                    Toast.makeText(getApplicationContext(), "Remote recipes not found", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -370,9 +299,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-
 
 
     @Override

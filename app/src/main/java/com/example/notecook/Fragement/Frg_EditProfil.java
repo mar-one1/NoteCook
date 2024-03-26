@@ -5,7 +5,6 @@ import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Data.UserDatasource.insertUser;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.encod;
-import static com.example.notecook.MainActivity.uploadImage;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;

@@ -3,8 +3,8 @@ package com.example.notecook.Adapter;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
-import static com.example.notecook.MainActivity.Insert_Fav;
 import static com.example.notecook.MainActivity.decod;
+import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;

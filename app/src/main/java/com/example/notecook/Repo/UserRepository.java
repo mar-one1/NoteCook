@@ -80,7 +80,8 @@ public class UserRepository {
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get user from Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    handleErrorResponse(response);
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
+                    //handleErrorResponse(response);
                     userLogin.setValue(getLocalUserLogin(username, "").getValue());
                 }
             }
@@ -419,4 +420,5 @@ public class UserRepository {
         });
         return pathImageUser;
     }
+
 }
