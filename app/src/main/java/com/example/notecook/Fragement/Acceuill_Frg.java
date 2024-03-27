@@ -103,6 +103,7 @@ public class Acceuill_Frg extends Fragment {
     public void onResume() {
         super.onResume();
         //Toast.makeText(getContext(), "changed " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+        if(Remotelist_recipe.getValue()!=null)
         bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
     }
 
@@ -166,15 +167,20 @@ public class Acceuill_Frg extends Fragment {
 
     public void bindingRcV_recipes(List<Recipe> list, RecyclerView mRecyclerView, boolean isgarde) {
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-        if (list!=null && list.size() != 0) {
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(), list, TAG_ONLINE);
-        } else
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(), list_recipe.getValue(), TAG_OFFLINE);
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        manager.setOrientation(HORIZONTAL);
-        mRecyclerView.setLayoutManager(manager);
-        mRecyclerView.setAdapter(adapter_rc_recipeDt);
-    }
+        if (list != null && list.size() != 0) {
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), Remotelist_recipe.getValue(), TAG_ONLINE);
+            LinearLayoutManager manager = new LinearLayoutManager(getContext());
+            manager.setOrientation(HORIZONTAL);
+            mRecyclerView.setLayoutManager(manager);
+            mRecyclerView.setAdapter(adapter_rc_recipeDt);
+        } else if (list_recipe != null && list_recipe.getValue().size() != 0) {
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), list_recipe.getValue(), TAG_OFFLINE);
+            LinearLayoutManager manager = new LinearLayoutManager(getContext());
+            manager.setOrientation(HORIZONTAL);
+            mRecyclerView.setLayoutManager(manager);
+            mRecyclerView.setAdapter(adapter_rc_recipeDt);
+        }
 
+    }
 
 }
