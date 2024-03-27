@@ -82,7 +82,7 @@ public class add_recipe extends Fragment {
         BottomNavigationView btnV = getActivity().findViewById(bnvId);
         recipes = new ArrayList<>();
         recipeVM = new RecipeViewModel(getContext(),getActivity());
-        userVM = new UserViewModel(getContext());
+        userVM = new UserViewModel(getContext(),getActivity());
         inputValidator = new InputValidator();
         // Get the values of the enum
         levelRecipe[] values = levelRecipe.values();

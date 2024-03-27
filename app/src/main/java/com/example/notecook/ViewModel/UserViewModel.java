@@ -19,10 +19,6 @@ public class UserViewModel extends ViewModel implements ViewModelProvider.Factor
     private Context context;
     private Activity appCompatActivity;
 
-    public UserViewModel(Context context) {
-        repository = new UserRepository(context);
-    }
-
     public UserViewModel(Context context, Activity appCompatActivity) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;

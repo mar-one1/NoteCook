@@ -202,7 +202,24 @@ public class MainActivity extends AppCompatActivity {
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
-            fetchData();
+//            fetchData();
+            String s1 = getUserInput(this);
+            userVM.getUser(s1).observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
+                    recipeVM.getRecipesLocal(user.getId_User()).observe(MainActivity.this, new Observer<List<Recipe>>() {
+                        @Override
+                        public void onChanged(List<Recipe> recipes) {
+                            recipeVM.getRecipesByUsername(s1).observe(MainActivity.this, recipeList -> {
+                                RemotelistByIdUser_recipe.setValue(recipeList);
+                                Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    });
+                }
+
+            });
         }
         pDialog.cancel();
 

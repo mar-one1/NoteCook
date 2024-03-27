@@ -61,7 +61,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         this.context = context;
         this.activity = activity;
         recipeVM = new RecipeViewModel(context,activity);
-        userVM = new UserViewModel(context);
+        userVM = new UserViewModel(context,activity);
         notifyDataSetChanged();
     }
 

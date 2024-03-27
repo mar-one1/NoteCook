@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +31,7 @@ import com.example.notecook.BuildConfig;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgSearchBinding;
 
 import java.util.ArrayList;
@@ -45,6 +48,8 @@ public class Frg_Search extends Fragment {
     FragmentFrgSearchBinding binding;
     private RecyclerView mRecyclerView;
     private Drawable defaultImagelike;
+    private RecipeViewModel recipeVM;
+    private FragmentActivity fragmentActivity;
 
 
     public Frg_Search() {
@@ -69,6 +74,8 @@ public class Frg_Search extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFrgSearchBinding.inflate(inflater, container, false);
         // Inflate the layout for this fragment
+        fragmentActivity = (FragmentActivity) getContext();
+        recipeVM = new RecipeViewModel(getContext(),getActivity());
         bindingRcV_recipes(binding.RcRecipeSearch, null, "default");
         //defaultImagelike=binding.HeartImgeclk;
         defaultImagelike = getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
@@ -102,6 +109,13 @@ public class Frg_Search extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchRecipes(String.valueOf(s));
+                recipeVM.SearchRecipe(s.toString()).observe(fragmentActivity, new Observer<List<Recipe>>() {
+                    @Override
+                    public void onChanged(List<Recipe> recipes) {
+                        if (recipes!=null && recipes.size() > 0)
+                            bindingRcV_recipes(binding.RcRecipeSearch, Search_list, "search");
+                    }
+                });
             }
 
             @Override
@@ -124,6 +138,7 @@ public class Frg_Search extends Fragment {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
         intent.setData(uri);
+
         startActivityForResult(intent, 101);
     }
 
@@ -136,7 +151,7 @@ public class Frg_Search extends Fragment {
             mRecipe = new Recipe();
             list_recipes.add(mRecipe);
         }
-        if (!tag.equals("search"))
+        if (!tag.equals("search") && Remotelist_recipe.getValue()!=null)
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(),Remotelist_recipe.getValue(), TAG_REMOTE);
         else adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(),Search_list, TAG_REMOTE);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);

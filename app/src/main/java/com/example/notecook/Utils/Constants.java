@@ -47,6 +47,7 @@ public class Constants {
     public static final String TAG_ERREUR_SYSTEM = "erreur_Systeme";
     public static final String TAG_CHARGEMENT_VALIDE = "chargement_Valide";
     public static final String TAG_PAS_RESULTAT = "pasDeResultat";
+    public static final String TAG_SERVEUR_HORS_SERVICE = "Serveur en maintenance ,hors service";
     public static final String TAG_TOKEN_EXPIRE = "tokenExpire";
     public static final String TAG_ONLINE = "online";
     public static final String TAG_AUTHENTIFICATION_ECHOUE = "authentification_Echoue";

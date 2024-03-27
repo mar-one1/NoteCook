@@ -73,7 +73,7 @@ public class Frg_Recipe_Profil extends Fragment {
         binding = FragmentFrgRecipeProfilBinding.inflate(inflater, container, false);
         // Inflate the layout for this fragment
         recipeVM = new RecipeViewModel(getContext(), getActivity());
-        userVM = new UserViewModel(getContext());
+        userVM = new UserViewModel(getContext(),getActivity());
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         return binding.getRoot();
     }

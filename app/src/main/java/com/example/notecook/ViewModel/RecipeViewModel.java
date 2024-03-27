@@ -74,6 +74,10 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.insertRecipeLocally(recipe, id_user);
     }
 
+    public LiveData<List<Recipe>> SearchRecipe(String s) {
+        return repository.searchRecipes(s);
+    }
+
 
 
 

@@ -1,6 +1,7 @@
 package com.example.notecook.Repo;
 
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
+import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
@@ -58,12 +59,12 @@ public class RecipeRepository {
 
     public RecipeRepository(Context context, Activity appCompatActivity) {
         this.context = context;
+        this.appCompatActivity = appCompatActivity;
         apiService = ApiClient.getClient().create(ApiService.class);
         recipeDatasource = new RecipeDatasource(context);
         userDatasource = new UserDatasource(context);
         detailRecipeRepository = new DetailRecipeRepository(context);
-        userRepo = new UserRepository(context);
-        this.appCompatActivity = appCompatActivity;
+        userRepo = new UserRepository(context,appCompatActivity);
     }
 
     public RecipeRepository(Context context) {
@@ -197,33 +198,12 @@ public class RecipeRepository {
                 Constants.AffichageMessage("Internal Server Error", appCompatActivity);
             } else if (statusCode == 406) {
                 // Handle other status codes or generic error handling.
-                Constants.AffichageMessage("User not found", appCompatActivity);
+                Constants.AffichageMessage("Recipe not found", appCompatActivity);
             } else Constants.AffichageMessage(message, appCompatActivity);
         }
     }
 
-    public void searchRecipes(String key) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        Call<List<Recipe>> call = apiService.searchRecipes(Token, key);
-        call.enqueue(new Callback<List<Recipe>>() {
-            @Override
-            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
-                if (response.isSuccessful()) {
-                    Constants.Search_list = response.body();
-                    Log.d("TAG", Constants.Search_list.toString());
-                    // Handle the list of products obtained from the server
-                } else {
-                    // Handle unsuccessful response
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                // Handle failure to make the API call
-            }
-        });
-    }
 
 
     private void handleNetworkFailure(Throwable t) {
@@ -420,6 +400,32 @@ public class RecipeRepository {
     private void updateRecipeRemotely(Recipe recipe) {
         // Implement logic to update recipe remotely if needed
         // This will depend on your API implementation
+    }
+
+    public LiveData<List<Recipe>> searchRecipes(String key) {
+        MutableLiveData<List<Recipe>> SearchRecipeList = new MutableLiveData<>();
+        apiService.searchRecipes(Token, key).enqueue(new Callback<List<Recipe>>() {
+            @Override
+            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+                if (response.isSuccessful()) {
+                    Search_list = response.body();
+                    SearchRecipeList.setValue(Search_list);
+                    if (Search_list.size() > 0)
+                        Log.d("TAG", Constants.Search_list.toString());
+                    // Handle the list of products obtained from the server
+                } else {
+                    // Handle unsuccessful response
+                    handleErrorResponse(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+                // Handle failure to make the API call
+                handleNetworkFailure(t);
+            }
+        });
+        return SearchRecipeList;
     }
 
 }

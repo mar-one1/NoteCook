@@ -1,16 +1,21 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_ERREUR_SYSTEM;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.TAG_PAS_RESULTAT;
+import static com.example.notecook.Utils.Constants.TAG_SERVEUR_HORS_SERVICE;
 
 import android.app.Activity;
+import android.content.Context;
+import android.widget.Toast;
 
 import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Utils.Constants;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import retrofit2.Response;
 
@@ -41,14 +46,31 @@ public class ErrorHandler {
                 } else if (statusCode == 404) {
                     // Not found, handle accordingly (e.g., show a 404 error message).
                     Constants.AffichageMessage(TAG_OFFLINE, appCompatActivity);
-                } else if (statusCode >= 500) {
+                } else if (statusCode == 500) {
                     // Handle other status codes or generic error handling.
                     Constants.AffichageMessage(TAG_ERREUR_SYSTEM, appCompatActivity);
                 } else if (statusCode == 406) {
                     // Handle other status codes or generic error handling.
                     Constants.AffichageMessage(TAG_PAS_RESULTAT, appCompatActivity);
+                } else if (statusCode == 502) {
+                    // Handle other status codes or generic error handling.
+                    Constants.AffichageMessage(TAG_SERVEUR_HORS_SERVICE, appCompatActivity);
                 } else Constants.AffichageMessage(message, appCompatActivity);
             }
+    }
+    private void handleNetworkFailure(Throwable t, Context context) {
+        // Handle network failure
+        TAG_CONNEXION_MESSAGE = t.toString();
+        // Handle network failure or timeout
+        if (t instanceof SocketTimeoutException) {
+            // Handle timeout exception
+            System.out.println("Timeout occurred");
+        } else {
+            // Handle other network failures
+            t.printStackTrace();
+        }
+        //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
+        Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
     }
 
 }

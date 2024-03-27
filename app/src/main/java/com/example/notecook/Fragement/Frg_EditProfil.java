@@ -103,7 +103,7 @@ public class Frg_EditProfil extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentFrgEditProfilBinding.inflate(inflater, container, false);
-        userVM  = new UserViewModel(getContext());
+        userVM  = new UserViewModel(getContext(),getActivity());
         User user = new User();
         user = user_login.getUser();
         //Log.d("TAG",user_login.getUser().getUser_name().toString());

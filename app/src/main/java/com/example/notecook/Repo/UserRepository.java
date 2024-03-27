@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -51,11 +52,6 @@ public class UserRepository {
     private SharedPreferences sharedPreferences;
     private Activity appCompatActivity;
 
-    public UserRepository(Context context) {
-        this.context = context;
-        apiService = ApiClient.getClient().create(ApiService.class);
-        userDatasource = new UserDatasource(context);
-    }
     public UserRepository(Context context, Activity appCompatActivity) {
         this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
@@ -72,7 +68,7 @@ public class UserRepository {
                 if (response.isSuccessful()) {
                     User UserResponse = response.body();
                     if (UserResponse != null) {
-                        UserResponse.setId_User(user_login.getUser().getId_User());
+                        //UserResponse.setId_User(user_login.getUser().getId_User());
                         //userLogin.setValue(UserResponse);
                         user_login.setUser(UserResponse);
                         userLogin.setValue(getLocalUserLogin(username, "success").getValue());
@@ -288,9 +284,17 @@ public class UserRepository {
         }
     }
 
-    private void handleNetworkFailure(Call<?> call) {
+    private void handleNetworkFailure(Throwable t) {
         // Handle network failure
-        TAG_CONNEXION_MESSAGE = call.toString();
+        TAG_CONNEXION_MESSAGE = t.toString();
+        // Handle network failure or timeout
+        if (t instanceof SocketTimeoutException) {
+            // Handle timeout exception
+            System.out.println("Timeout occurred");
+        } else {
+            // Handle other network failures
+            t.printStackTrace();
+        }
         //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
         Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
     }
