@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.example.notecook.Model.User;
 import com.example.notecook.Repo.AccessRepository;
 import com.example.notecook.Repo.RecipeRepository;
 
-public class AccessViewModel {
+public class AccessViewModel extends ViewModel {
 
     private AccessRepository repository;
 
