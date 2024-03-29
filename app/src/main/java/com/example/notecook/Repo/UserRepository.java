@@ -84,7 +84,7 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                handleNetworkFailure(call);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
                 userLogin.setValue(getLocalUserLogin(username, "").getValue());
             }
         });
@@ -124,6 +124,7 @@ public class UserRepository {
                 } else {
                     // Handle unsuccessful download
                     Toast.makeText(context, "unsuccessful download" + response.message(), Toast.LENGTH_SHORT).show();
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
                 }
             }
 
@@ -131,6 +132,7 @@ public class UserRepository {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 // Handle failure
                 Toast.makeText(context, "Handle failure getimage url", Toast.LENGTH_SHORT).show();
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
     }
@@ -156,13 +158,13 @@ public class UserRepository {
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "user updated To Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    handleErrorResponse(response);
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                handleNetworkFailure(call);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
         return userUpdated;
@@ -236,67 +238,18 @@ public class UserRepository {
                 } else {
                     // Handle unsuccessful upload
                     Toast.makeText(context, "Not upload image : " + response.message(), Toast.LENGTH_SHORT).show();
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
                 }
+
             }
 
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(context, "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
-    }
-
-
-    private void handleErrorResponse(Response<?> response) {
-        int statusCode = response.code();
-        String message = response.message();
-        if (response.errorBody() != null) {
-            if (statusCode == 400) {
-                try {
-                    String errorBody = response.errorBody().string();
-                    Gson gson = new Gson();
-                    ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
-                    // Now you have the validation errors in the validationError object
-                    // Handle them accordingly
-                    StringBuilder errorMessages = new StringBuilder();
-                    for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
-                        errorMessages.append(", ").append(error.getMessage());
-                    }
-                    Constants.AffichageMessage(errorMessages.toString(), appCompatActivity);
-                } catch (IOException e) {
-                    // Handle error parsing error body
-                }
-                // Unauthorized, handle accordingly (e.g., reauthentication).
-            } else if (statusCode == 409) {
-                Constants.AffichageMessage("User already exists", appCompatActivity);
-                // Unauthorized, handle accordingly (e.g., reauthentication).
-            } else if (statusCode == 404) {
-                // Not found, handle accordingly (e.g., show a 404 error message).
-                Constants.AffichageMessage(TAG_OFFLINE, appCompatActivity);
-            } else if (statusCode >= 500) {
-                // Handle other status codes or generic error handling.
-                Constants.AffichageMessage("Internal Server Error", appCompatActivity);
-            } else if (statusCode == 406) {
-                // Handle other status codes or generic error handling.
-                Constants.AffichageMessage("User not found", appCompatActivity);
-            } else Constants.AffichageMessage(message, appCompatActivity);
-        }
-    }
-
-    private void handleNetworkFailure(Throwable t) {
-        // Handle network failure
-        TAG_CONNEXION_MESSAGE = t.toString();
-        // Handle network failure or timeout
-        if (t instanceof SocketTimeoutException) {
-            // Handle timeout exception
-            System.out.println("Timeout occurred");
-        } else {
-            // Handle other network failures
-            t.printStackTrace();
-        }
-        //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
-        Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
     }
 
     public LiveData<User> getUserByIdRecipeApi(int Recipeid) {
@@ -316,14 +269,14 @@ public class UserRepository {
                     //MainFragment.viewPager2.setCurrentItem(1);
                 } else {
                     // Handle error response here
-                    handleErrorResponse(response);
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 TAG_CONNEXION = call.hashCode();
-                handleNetworkFailure(call);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
         return userMutableLiveData;
@@ -369,18 +322,18 @@ public class UserRepository {
                         else if (!url.isEmpty()) {
                             updateGoogleUserImage(user.getUsername(), url).getValue();
                         }
-                        Constants.AffichageMessage("Vous avez Register avec succes with server", appCompatActivity);
+                        Constants.AffichageMessage("Vous avez Register avec succes with server","200", appCompatActivity);
                         Log.d("TAG", TAG_CONNEXION_MESSAGE + " " + "Add User To Api");
                     }
                 } else {
-                    handleErrorResponse(response);
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
 
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                handleNetworkFailure(call);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
         return userInsered;
@@ -410,7 +363,7 @@ public class UserRepository {
 
                 } else {
                     // Handle unsuccessful upload
-                    handleErrorResponse(response);
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
                     pathImageUser.setValue("");
                 }
             }
@@ -418,7 +371,7 @@ public class UserRepository {
             @Override
             public void onFailure(Call<String> call, Throwable t) {
                 // Handle failure
-                handleNetworkFailure(call);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
                 pathImageUser.setValue("");
             }
         });

@@ -2,9 +2,11 @@ package com.example.notecook.Repo;
 
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_ERREUR_SYSTEM;
+import static com.example.notecook.Utils.Constants.TAG_NOT_FOUND;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.TAG_PAS_RESULTAT;
 import static com.example.notecook.Utils.Constants.TAG_SERVEUR_HORS_SERVICE;
+import static com.example.notecook.Utils.Constants.alertDialog;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,6 +26,9 @@ public class ErrorHandler {
             int statusCode = response.code();
             String message = response.message();
             if (response.errorBody() != null) {
+                if (Constants.alertDialog != null && Constants.alertDialog.isShowing() && alertDialog.getTitleText().equals(String.valueOf(statusCode))) {
+                    Constants.alertDialog.dismiss();
+                }
                 if (statusCode == 400) {
                     try {
                         String errorBody = response.errorBody().string();
@@ -35,30 +40,30 @@ public class ErrorHandler {
                         for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
                             errorMessages.append(", ").append(error.getMessage());
                         }
-                        Constants.AffichageMessage(errorMessages.toString(), appCompatActivity);
+                        Constants.AffichageMessage(errorMessages.toString(),"400", appCompatActivity);
                     } catch (IOException e) {
                         // Handle error parsing error body
                     }
                     // Unauthorized, handle accordingly (e.g., reauthentication).
                 } else if (statusCode == 409) {
-                    Constants.AffichageMessage("Record already exists", appCompatActivity);
+                    Constants.AffichageMessage("Record already exists","409", appCompatActivity);
                     // Unauthorized, handle accordingly (e.g., reauthentication).
                 } else if (statusCode == 404) {
                     // Not found, handle accordingly (e.g., show a 404 error message).
-                    Constants.AffichageMessage(TAG_OFFLINE, appCompatActivity);
+                    Constants.AffichageMessage(TAG_NOT_FOUND,"404", appCompatActivity);
                 } else if (statusCode == 500) {
                     // Handle other status codes or generic error handling.
-                    Constants.AffichageMessage(TAG_ERREUR_SYSTEM, appCompatActivity);
+                    Constants.AffichageMessage(TAG_ERREUR_SYSTEM,"500", appCompatActivity);
                 } else if (statusCode == 406) {
                     // Handle other status codes or generic error handling.
-                    Constants.AffichageMessage(TAG_PAS_RESULTAT, appCompatActivity);
+                    Constants.AffichageMessage(TAG_PAS_RESULTAT,"406", appCompatActivity);
                 } else if (statusCode == 502) {
                     // Handle other status codes or generic error handling.
-                    Constants.AffichageMessage(TAG_SERVEUR_HORS_SERVICE, appCompatActivity);
-                } else Constants.AffichageMessage(message, appCompatActivity);
+                    Constants.AffichageMessage(TAG_SERVEUR_HORS_SERVICE,"502", appCompatActivity);
+                } else Constants.AffichageMessage(message,"message", appCompatActivity);
             }
     }
-    private void handleNetworkFailure(Throwable t, Context context) {
+    public static void handleNetworkFailure(Throwable t, Context context) {
         // Handle network failure
         TAG_CONNEXION_MESSAGE = t.toString();
         // Handle network failure or timeout

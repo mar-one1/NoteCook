@@ -113,7 +113,7 @@ public class RecipeRepository {
                 } else {
                     // Handle unsuccessful download
                     Toast.makeText(context, "unsuccessful Created Api" + response.message(), Toast.LENGTH_SHORT).show();
-                    handleErrorResponse(response);
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
                 }
 
             }
@@ -121,7 +121,7 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<Recipe> call, Throwable t) {
                 Toast.makeText(context, "Handle failure Insert Recipe to api", Toast.LENGTH_SHORT).show();
-                handleNetworkFailure(t);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
         return null;
@@ -154,72 +154,19 @@ public class RecipeRepository {
                         //MainFragment.viewPager2.setCurrentItem(1, false);
                     }
                 } else {
-                    handleErrorResponse(response);
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<RecipeResponse> call, Throwable t) {
                 TAG_CONNEXION = call.hashCode();
-                handleNetworkFailure(t);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
         return recipeResponseMutableLiveData;
     }
 
-    private void handleErrorResponse(Response<?> response) {
-        int statusCode = response.code();
-        String message = response.message();
-        if (response.errorBody() != null) {
-            if (statusCode == 400) {
-                try {
-                    String errorBody = response.errorBody().string();
-                    Gson gson = new Gson();
-                    ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
-                    // Now you have the validation errors in the validationError object
-                    // Handle them accordingly
-                    StringBuilder errorMessages = new StringBuilder();
-                    for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
-                        errorMessages.append(", ").append(error.getMessage());
-                    }
-                    Constants.AffichageMessage(errorMessages.toString(), appCompatActivity);
-                } catch (IOException e) {
-                    // Handle error parsing error body
-                }
-                // Unauthorized, handle accordingly (e.g., reauthentication).
-            } else if (statusCode == 409) {
-                Constants.AffichageMessage("Recipe already exists", appCompatActivity);
-                // Unauthorized, handle accordingly (e.g., reauthentication).
-            } else if (statusCode == 404) {
-                // Not found, handle accordingly (e.g., show a 404 error message).
-                Constants.AffichageMessage(TAG_OFFLINE, appCompatActivity);
-            } else if (statusCode >= 500) {
-                // Handle other status codes or generic error handling.
-                Constants.AffichageMessage("Internal Server Error", appCompatActivity);
-            } else if (statusCode == 406) {
-                // Handle other status codes or generic error handling.
-                Constants.AffichageMessage("Recipe not found", appCompatActivity);
-            } else Constants.AffichageMessage(message, appCompatActivity);
-        }
-    }
-
-
-
-
-    private void handleNetworkFailure(Throwable t) {
-        // Handle network failure
-        TAG_CONNEXION_MESSAGE = t.toString();
-        // Handle network failure or timeout
-        if (t instanceof SocketTimeoutException) {
-            // Handle timeout exception
-            System.out.println("Timeout occurred");
-        } else {
-            // Handle other network failures
-            t.printStackTrace();
-        }
-        //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
-        Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
-    }
 
     public LiveData<List<Recipe>> getRecipes() {
         MutableLiveData<List<Recipe>> remoteRecipeList = new MutableLiveData<>();
@@ -230,13 +177,13 @@ public class RecipeRepository {
                     List<Recipe> recipes = response.body();
                     remoteRecipeList.setValue(recipes);
                 } else {
-                    handleErrorResponse(response);
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                handleNetworkFailure(t);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
         return remoteRecipeList;
@@ -260,14 +207,14 @@ public class RecipeRepository {
 
                 } else {
                     // Handle error response here
-                    if (response != null) handleErrorResponse(response);
+                    if (response != null) ErrorHandler.handleErrorResponse(response,appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle network failure
-                handleNetworkFailure(t);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
         return remoteRecipeListByUser;
@@ -415,14 +362,14 @@ public class RecipeRepository {
                     // Handle the list of products obtained from the server
                 } else {
                     // Handle unsuccessful response
-                    handleErrorResponse(response);
+                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle failure to make the API call
-                handleNetworkFailure(t);
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
         return SearchRecipeList;

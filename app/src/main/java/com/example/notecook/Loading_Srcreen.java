@@ -59,7 +59,7 @@ public class Loading_Srcreen extends AppCompatActivity {
         Intent i = new Intent(getBaseContext(), Login.class);
         Intent iM = new Intent(getBaseContext(), MainActivity.class);
         if (!isConnected() && Objects.equals(getToken(Loading_Srcreen.this), "")) {
-            Constants.AffichageMessage("Welcome to Notebook APP!!!", Loading_Srcreen.this);
+            Constants.AffichageMessage("Welcome to Notebook APP!!!","ok", Loading_Srcreen.this);
             startActivity(i);
         } else if (!Objects.equals(getToken(Loading_Srcreen.this), "") && isConnected()) {
             accessVM.verifyToken().observe(this, new Observer<String>() {

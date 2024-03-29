@@ -574,7 +574,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 userVM.postUser(Newuser,jsonInputString,null,"google").observe(this, new Observer<User>() {
                     @Override
                     public void onChanged(User user) {
-                        Constants.AffichageMessage("Registre Success",Login.this);
+                        Constants.AffichageMessage("Registre Success","",Login.this);
                     }
                 });
                 if (!isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
@@ -583,7 +583,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             "0", password, "Chef ", "active");
                     if (userInsered.equals(Newuser)) vrai = true;
 
-                    Constants.AffichageMessage("Vous avez Register avec succes Localy", Login.this);
+                    Constants.AffichageMessage("Vous avez Register avec succes Localy","", Login.this);
                 }
 
 
@@ -614,14 +614,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         userVM.postUser(newUser,"",bitmap,"registre").observe(this, new Observer<User>() {
                             @Override
                             public void onChanged(User user) {
-                                Constants.AffichageMessage("Registre Success",Login.this);
+                                Constants.AffichageMessage("Registre Success","",Login.this);
                             }
                         });
                     }
                     if (!Objects.equals(newUser.getUsername(), ""))
-                        Constants.AffichageMessage("Vous avez Register avec succes in local", Login.this);
+                        Constants.AffichageMessage("Vous avez Register avec succes in local","", Login.this);
                 } else
-                    Constants.AffichageMessage("Votre Email est existe dans la base Changer Email or Sign_in", Login.this);
+                    Constants.AffichageMessage("Votre Email est existe dans la base Changer Email or Sign_in","", Login.this);
             }
             dataSourceUser.close();
         }
@@ -682,109 +682,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onResume();
         //TokenApi();
     }
-
-
-    private void connectionApi() {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-        // Example: Fetch users from the API
-        //Call<List<User>> call = apiService.getAllUsers();
-        //Call<List<User>> call = apiService.getData("Bearer " + Token);
-        String username = binding.etUsername.getText().toString();
-        String password = binding.etPassword.getText().toString();
-
-
-        LoginResponse login = new LoginResponse();
-        login.setUsername(username);
-        login.setPassword(password);
-
-        Call<LoginResponse> call = apiService.authontification(login);
-
-        call.enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.isSuccessful()) {
-                    LoginResponse loginResponse = response.body();
-                    if (loginResponse != null) {
-                        String token = loginResponse.getToken();
-                        // Store the token securely (e.g., in SharedPreferences) for later use
-                        TAG_CONNEXION = response.code();
-                        TAG_CONNEXION_MESSAGE = response.message();
-
-                            Log.d("TAG", TAG_CONNEXION_MESSAGE);
-                            try {
-                                User user = new User();
-                                user.setUsername(username);
-                                passwordHasher = new PasswordHasher();
-                                String password = passwordHasher.hashPassword(binding.etPassword.getText().toString());
-                                user.setPassWord(password);
-                                user_login.setUser(user);
-                                userDatasource.open();
-                                if(!isRecordExist(TABLE_USER,COLUMN_USERNAME,username)) {
-                                    insertUser(user);
-                                    Log.e("tag",user.getUsername());
-                                }
-                                userDatasource.close();
-                                saveToken(token);
-                                saveUserInput(username,password);
-                                saveUserSynch(username,false,getBaseContext());
-                                Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, Login.this);
-                            } catch (Exception e) {
-                                Log.e("tag", e.toString());
-                            }
-                            Intent i = new Intent(getBaseContext(), MainActivity.class);
-                            startActivity(i);
-                        }
-                    } else {
-
-                    // Handle error response here
-                    // The HTTP request was not successful (status code is not 2xx).
-                    // You can handle errors here based on the response status code.
-                    int statusCode = response.code();
-                    Constants.TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
-                    // Handle different status codes as per your API's conventions.
-                    if (statusCode == 401) {
-                        Constants.AffichageMessage(TAG_AUTHENTIFICATION_ECHOUE, Login.this);
-                        // Unauthorized, handle accordingly (e.g., reauthentication).
-                    } else if (statusCode == 404) {
-                        // Not found, handle accordingly (e.g., show a 404 error message).
-                        Constants.AffichageMessage(TAG_OFFLINE, Login.this);
-                    } else if (statusCode >= 500) {
-                        // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("Internal Server Error", Login.this);
-                    } else if (statusCode == 406) {
-                        // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("User not found", Login.this);
-                    } else Constants.AffichageMessage(response.message(), Login.this);
-                }
-
-//                if (response.errorBody() != null) {
-//                    try {
-//                        String errorResponse = response.errorBody().string();
-//                        // Print or log the errorResponse for debugging
-//                        TAG_CONNEXION_MESSAGE = errorResponse;
-//                        Constants.AffichageMessage(TAG_ERREUR_SYSTEM,Login.this);
-//                        //Constants.DisplayErrorMessage(Login.this,TAG_CONNEXION_MESSAGE);
-//                        TAG_CONNEXION = response.code();
-//                        Log.e("token", "Error Response: " + errorResponse);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-            }
-
-            @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
-
-                TAG_CONNEXION_MESSAGE = call.toString();
-                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, Login.this);
-            }
-        });
-
-    }
-
-
 
 
 

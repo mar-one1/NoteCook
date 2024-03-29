@@ -61,53 +61,6 @@ public class AccessRepository {
         this.activity = activity;
     }
 
-    private static void handleErrorResponse(Context context, String model, Response<?> response) {
-        int statusCode = response.code();
-        String message = response.message();
-        if (response.errorBody() != null) {
-            if (response.code() == 400) {
-                try {
-                    String errorBody = response.errorBody().string();
-                    Gson gson = new Gson();
-                    ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
-                    // Now you have the validation errors in the validationError object
-                    // Handle them accordingly
-                    StringBuilder errorMessages = new StringBuilder();
-                    for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
-                        errorMessages.append(", ").append(error.getMessage());
-                    }
-                    Toast.makeText(context, errorMessages, Toast.LENGTH_LONG).show();
-                } catch (IOException e) {
-                    // Handle error parsing error body
-                }
-            }
-        } else if (statusCode == 409) {
-            //Constants.AffichageMessage("User already exists", context);
-            //Toast.makeText(context, "User already exists", Toast.LENGTH_SHORT).show();
-            // Unauthorized, handle accordingly (e.g., reauthentication).
-        } else if (statusCode == 404) {
-            // Not found, handle accordingly (e.g., show a 404 error message).
-            //Constants.AffichageMessage(TAG_OFFLINE, context);
-            Toast.makeText(context, TAG_OFFLINE, Toast.LENGTH_SHORT).show();
-        } else if (statusCode >= 500) {
-            // Handle other status codes or generic error handling.
-            //Constants.AffichageMessage("Internal Server Error", context);
-            Toast.makeText(context, "Internal Server Error", Toast.LENGTH_SHORT).show();
-        } else if (statusCode == 406) {
-            // Handle other status codes or generic error handling.
-            // Constants.AffichageMessage("User not found", context);
-        } else Toast.makeText(context, model + " not found", Toast.LENGTH_SHORT).show();
-        //Constants.AffichageMessage(response.message(), context);
-
-    }
-
-    private static void handleNetworkFailure(Context context, Call<User> call) {
-        // Handle network failure
-        TAG_CONNEXION_MESSAGE = call.toString();
-        //Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, context);
-        Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
-    }
-
     // TODO make insert user local in methode
     public LiveData<String> connectionApi(String username, String password) {
         MutableLiveData<String> TokenMutableLiveData = new MutableLiveData<>();
@@ -147,7 +100,7 @@ public class AccessRepository {
                             userDatasource.close();
                             saveToken(token, context);
                             saveUserInput(username, password, context);
-                            Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, activity);
+                            Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE,"message", activity);
                         } catch (Exception e) {
                             Log.e("tag", e.toString());
                         }
@@ -156,50 +109,15 @@ public class AccessRepository {
                     }
                 } else {
                     // TODO make handle response error and failure
-                    // Handle error response here
-                    // The HTTP request was not successful (status code is not 2xx).
-                    // You can handle errors here based on the response status code.
-                    int statusCode = response.code();
-                    Constants.TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    // Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, activity);
-                    // Handle different status codes as per your API's conventions.
-                    if (statusCode == 401) {
-                        Constants.AffichageMessage(TAG_AUTHENTIFICATION_ECHOUE, activity);
-                        // Unauthorized, handle accordingly (e.g., reauthentication).
-                    } else if (statusCode == 404) {
-                        // Not found, handle accordingly (e.g., show a 404 error message).
-                        Constants.AffichageMessage(TAG_OFFLINE, activity);
-                    } else if (statusCode >= 500) {
-                        // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("Internal Server Error", activity);
-                    } else if (statusCode == 406) {
-                        // Handle other status codes or generic error handling.
-                        Constants.AffichageMessage("User not found", activity);
-                    } else
-                        Constants.AffichageMessage(response.message(), activity);
+                    ErrorHandler.handleErrorResponse(response,activity);
                 }
-
-//                if (response.errorBody() != null) {
-//                    try {
-//                        String errorResponse = response.errorBody().string();
-//                        // Print or log the errorResponse for debugging
-//                        TAG_CONNEXION_MESSAGE = errorResponse;
-//                        Constants.AffichageMessage(TAG_ERREUR_SYSTEM,activity);
-//                        //Constants.DisplayErrorMessage(activity,TAG_CONNEXION_MESSAGE);
-//                        TAG_CONNEXION = response.code();
-//                        Log.e("token", "Error Response: " + errorResponse);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
 
                 TAG_CONNEXION_MESSAGE = call.toString();
-                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, activity);
+                ErrorHandler.handleNetworkFailure(t,activity);
             }
         });
         return TokenMutableLiveData;
@@ -271,7 +189,7 @@ public class AccessRepository {
                         Toast.makeText(context, "Validation : " + statusCode, Toast.LENGTH_SHORT).show();
 
 //                        i.putExtra("TAG","online");
-                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, activity);
+                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE,"", activity);
                         activity.startActivity(iM);
                         activity.finish();
                     }
@@ -279,18 +197,15 @@ public class AccessRepository {
                     // TODO check this start activity logic
                     // The HTTP request was not successful (status code is not 2xx).
                     // You can handle errors here based on the response status code.
-
-                    Constants.TAG_CONNEXION = statusCode;
+                    ErrorHandler.handleErrorResponse(response,activity);
 
                     // Handle different status codes as per your API's conventions.
                     if (statusCode == 401) {
                         // Unauthorized, handle accordingly (e.g., reauthentication).
                         saveToken("", context);
-                        Constants.AffichageMessage("Erreur Unauthorized by server ", activity);
                         context.startActivity(iLg);
                     } else {
                         //(statusCode == 404) {
-                        Constants.AffichageMessage("Erreur 404", activity);
 //                        i.putExtra("TAG","online");
                         activity.startActivity(iM);
                         activity.finish();
@@ -300,8 +215,7 @@ public class AccessRepository {
 
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
-                Constants.AffichageMessage(TAG_ERREUR_SYSTEM, activity);
-                Constants.TAG_CONNEXION = call.hashCode();
+                ErrorHandler.handleNetworkFailure(t,activity);
                 String s1 = getUserInput(context);
                 if (s1.equals("")) {
                     context.startActivity(iLg);
@@ -316,11 +230,10 @@ public class AccessRepository {
 
     // TODO make response error and failure handle
     public LiveData<String> TokenApi() {
-        MutableLiveData<String> mutableLiveDataToken = new MutableLiveData<>();
 
         Call<TokenResponse> call = apiService.getVerifyToken(getToken(context));
 
-        mutableLiveDataToken = (MutableLiveData<String>) simulateTimeout(call, 5000);
+        MutableLiveData<String> mutableLiveDataToken = (MutableLiveData<String>) simulateTimeout(call, 5000);
 
         return mutableLiveDataToken;
     }

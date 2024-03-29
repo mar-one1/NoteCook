@@ -306,9 +306,6 @@ public class MainActivity extends AppCompatActivity {
 //                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, requestCode);
 //
             if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                if (!isConnected()) {
-                    Constants.DisplayErrorMessage(MainActivity.this, "Mode Offline");
-                } else Constants.DisplayErrorMessage(MainActivity.this, "Mode Online");
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this,
                             new String[]{Manifest.permission.INTERNET}, requestCode);

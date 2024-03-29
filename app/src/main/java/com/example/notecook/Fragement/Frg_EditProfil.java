@@ -177,7 +177,7 @@ public class Frg_EditProfil extends Fragment {
                         pDialog.dismissWithAnimation();
                         Vp2.setCurrentItem(0, false);
                         Vp2.setCurrentItem(4, false);
-                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, (AppCompatActivity) getContext());
+                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE,"", (AppCompatActivity) getContext());
                     } else if (value == 0) {
                         insertUser(getUser);
                         Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "User insert success");

@@ -42,6 +42,7 @@ public class Frg_Recipe_Profil extends Fragment {
             recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
                 @Override
                 public void onChanged(List<Recipe> recipes) {
+                    if(recipes!=null)
                     bindingRcV_recipes(binding.RcRecipeProfil, recipes);
                 }
             });
@@ -49,6 +50,7 @@ public class Frg_Recipe_Profil extends Fragment {
             userVM.getUserLocal(getUserInput(getContext()), "success").observe(getActivity(), new Observer<User>() {
                 @Override
                 public void onChanged(User user) {
+                    if(user!=null)
                     recipeVM.getRecipesLocal(user.getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
                         @Override
                         public void onChanged(List<Recipe> recipes) {

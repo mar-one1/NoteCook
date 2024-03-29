@@ -47,11 +47,12 @@ public class Constants {
     public static final String TAG_ERREUR_SYSTEM = "erreur_Systeme";
     public static final String TAG_CHARGEMENT_VALIDE = "chargement_Valide";
     public static final String TAG_PAS_RESULTAT = "pasDeResultat";
-    public static final String TAG_SERVEUR_HORS_SERVICE = "Serveur en maintenance ,hors service";
+    public static final String TAG_SERVEUR_HORS_SERVICE = "502 Serveur en maintenance ,hors service ,Mode Offline On";
     public static final String TAG_TOKEN_EXPIRE = "tokenExpire";
     public static final String TAG_ONLINE = "online";
     public static final String TAG_AUTHENTIFICATION_ECHOUE = "authentification_Echoue";
     public static final String TAG_OFFLINE = "Offline";
+    public static final String TAG_NOT_FOUND = "404 Not Found";
     public static final String TAG_REMOTE = "Remote";
     public static final String TAG_LOCAL = "Local";
     public static final String lOGIN_KEY = "Connection_complete";
@@ -144,12 +145,12 @@ public class Constants {
         //pDialog.cancel();
     }
 
-    public static void AffichageMessage(String _tag, final Activity _context) {
+    public static void AffichageMessage(String _tag,String title, final Activity _context) {
         SweetAlertDialog sd;
         switch (_tag) {
             case TAG_CHARGEMENT_VALIDE:
                 sd = new SweetAlertDialog(_context, SweetAlertDialog.SUCCESS_TYPE);
-                sd.setTitleText("")
+                sd.setTitleText(title)
                         .setContentText(_context.getResources().getString(R.string.message_chargement_valide));
                 break;
             case TAG_ERREUR_SYSTEM:
@@ -159,7 +160,7 @@ public class Constants {
                 break;
             case TAG_PAS_RESULTAT:
                 sd = new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);
-                sd.setTitleText("")
+                sd.setTitleText(title)
                         .setContentText(_context.getResources().getString(R.string.message_erreur_pas_resultat));
                 break;
             case TAG_TOKEN_EXPIRE:
@@ -175,12 +176,12 @@ public class Constants {
                 break;
             case TAG_OFFLINE:
                 sd = new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);
-                sd.setTitleText("")
+                sd.setTitleText(title)
                         .setContentText(_context.getResources().getString(R.string.message_erreur_offline));
                 break;
             default:
                 sd = new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);
-                sd.setTitleText("")
+                sd.setTitleText(title)
                         .setContentText(_tag);
                 break;
         }
