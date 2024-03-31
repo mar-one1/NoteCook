@@ -220,6 +220,38 @@ public class RecipeRepository {
         return remoteRecipeListByUser;
     }
 
+    //TODO make synch with recipe with it image and with full data
+    public LiveData<List<RecipeResponse>> getFullRecipesByUsername(String username) {
+        MutableLiveData<List<RecipeResponse>> remoteRecipeListByUser = new MutableLiveData<>();
+        apiService.getFullRecipesByIdUsername(Token, username).enqueue(new Callback<List<RecipeResponse>>() {
+            @Override
+            public void onResponse(Call<List<RecipeResponse>> call, Response<List<RecipeResponse>> response) {
+                if (response.isSuccessful()) {
+                    remoteRecipeListByUser.setValue(response.body());
+                    /*if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size())
+                    {
+                        if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0)
+                        {
+                            synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
+                        }
+                    } else {
+                        saveUserSynch(username, true, context);}*/
+                   }
+                else {
+                    // Handle error response here
+                    if (response != null) ErrorHandler.handleErrorResponse(response,appCompatActivity);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RecipeResponse>> call, Throwable t) {
+                // Handle network failure
+                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
+            }
+        });
+        return remoteRecipeListByUser;
+    }
+
     public void uploadImageRecipe(int idRecipe, Bitmap bitmp) {
 
         File filesDir = context.getFilesDir();

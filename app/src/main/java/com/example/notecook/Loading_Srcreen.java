@@ -2,6 +2,7 @@ package com.example.notecook;
 
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_ERREUR_SYSTEM;
+import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.isConnected;
@@ -55,13 +56,14 @@ public class Loading_Srcreen extends AppCompatActivity {
         binding = ActivityLoadingSrcreenBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         accessVM = new AccessViewModel(this,this);
-
+        Token = getToken(this);
+        Log.e("tag",Token);
         Intent i = new Intent(getBaseContext(), Login.class);
         Intent iM = new Intent(getBaseContext(), MainActivity.class);
-        if (!isConnected() && Objects.equals(getToken(Loading_Srcreen.this), "")) {
+        if (!isConnected() && Objects.equals(Token, "")) {
             Constants.AffichageMessage("Welcome to Notebook APP!!!","ok", Loading_Srcreen.this);
             startActivity(i);
-        } else if (!Objects.equals(getToken(Loading_Srcreen.this), "") && isConnected()) {
+        } else if (!Objects.equals(Token, "") && isConnected()) {
             accessVM.verifyToken().observe(this, new Observer<String>() {
                 @Override
                 public void onChanged(String s) {
@@ -70,7 +72,7 @@ public class Loading_Srcreen extends AppCompatActivity {
                 }
             });
             //TokenApi();
-        }else if (!Objects.equals(getToken(Loading_Srcreen.this), "") && !isConnected()) {
+        }else if (!Objects.equals(Token, "") && !isConnected()) {
             startActivity(iM);
         } else
             startActivity(i);

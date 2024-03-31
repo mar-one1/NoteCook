@@ -11,6 +11,7 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_ERREUR_SYSTEM;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
+import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.saveToken;
@@ -99,6 +100,7 @@ public class AccessRepository {
                             }
                             userDatasource.close();
                             saveToken(token, context);
+                            Token = token;
                             saveUserInput(username, password, context);
                             Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE,"message", activity);
                         } catch (Exception e) {
