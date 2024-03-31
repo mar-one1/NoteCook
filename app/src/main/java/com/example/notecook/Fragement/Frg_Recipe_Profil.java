@@ -39,7 +39,7 @@ public class Frg_Recipe_Profil extends Fragment {
 
     private void fetchRecipeUser() {
         if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
-            recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
+            recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
                 @Override
                 public void onChanged(List<Recipe> recipes) {
                     if(recipes!=null)
@@ -47,11 +47,12 @@ public class Frg_Recipe_Profil extends Fragment {
                 }
             });
         } else {
-            userVM.getUserLocal(getUserInput(getContext()), "success").observe(getActivity(), new Observer<User>() {
+            userVM.getUserLocal(getUserInput(getContext()), "success").observe(requireActivity(), new Observer<User>() {
                 @Override
                 public void onChanged(User user) {
                     if(user!=null)
-                    recipeVM.getRecipesLocal(user.getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
+
+                    recipeVM.getRecipesLocal(user.getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
                         @Override
                         public void onChanged(List<Recipe> recipes) {
                             bindingRcV_recipes(binding.RcRecipeProfil, recipes);
@@ -74,9 +75,9 @@ public class Frg_Recipe_Profil extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFrgRecipeProfilBinding.inflate(inflater, container, false);
         // Inflate the layout for this fragment
-        recipeVM = new RecipeViewModel(getContext(), getActivity());
-        userVM = new UserViewModel(getContext(),getActivity());
-        recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
+        recipeVM = new RecipeViewModel(requireContext(), requireActivity());
+        userVM = new UserViewModel(requireContext(),requireActivity());
+        //recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
         return binding.getRoot();
     }
 

@@ -5,6 +5,7 @@ import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.pathimageuser;
@@ -32,6 +33,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
+import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
@@ -174,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Constants.init();
+        Token = getToken(this);
 
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
@@ -184,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
             if (Objects.equals(tag, Constants.TAG_MODE_INVITE))
                 Type_User = tag;
         }
-        Token = Constants.getToken(this);
         SweetAlertDialog pDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(Color.parseColor("#E41818"));
         pDialog.setTitleText("Chargement ...");
@@ -199,8 +201,8 @@ public class MainActivity extends AppCompatActivity {
 
         recipeVM = new RecipeViewModel(this, MainActivity.this);
         userVM = new UserViewModel(this, MainActivity.this);
-        recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
-        userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
+        // recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
+        //userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
 //            fetchData();
             String s1 = getUserInput(this);
@@ -217,83 +219,45 @@ public class MainActivity extends AppCompatActivity {
                             });
                         }
                     });
+
                 }
 
+
+            });
+            recipeVM.getFullRecipesByUsername(s1).observe(MainActivity.this, new Observer<List<RecipeResponse>>() {
+                @Override
+                public void onChanged(List<RecipeResponse> recipes) {
+                    if (recipes != null)
+                        Toast.makeText(MainActivity.this, "" + recipes.get(0).getRecipe().getNom_recipe(), Toast.LENGTH_SHORT).show();
+                }
             });
         }
         pDialog.cancel();
 
 
-        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+    swipeRefreshLayout =
+
+    findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+
+    {
+        @Override
+        public void onRefresh () {
+        // Perform your data refreshing operations here
+        onResume();
+        // Simulate refresh delay (remove this in your actual code)
+        new android.os.Handler().postDelayed(new Runnable() {
             @Override
-            public void onRefresh() {
-                // Perform your data refreshing operations here
-                onResume();
-                // Simulate refresh delay (remove this in your actual code)
-                new android.os.Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Finish refreshing
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 2000); // 2 seconds simulated refresh time (adjust as needed)
+            public void run() {
+                // Finish refreshing
+                swipeRefreshLayout.setRefreshing(false);
             }
-        });
-
+        }, 2000); // 2 seconds simulated refresh time (adjust as needed)
     }
+    });
 
-    private void fetchData() {
-        String userInput = getUserInput(getApplicationContext()); // Assuming getUserInput is a method defined elsewhere
-        if (userInput == null || userInput.isEmpty()) {
-            // Handle empty or null user input
-            return;
-        }
+}
 
-        userVM.getUser(userInput).observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                if (user != null) {
-                    // User data retrieved successfully
-                    observeLocalRecipes(user.getId_User(), userInput);
-                } else {
-                    // Handle user not found
-                    Toast.makeText(getApplicationContext(), "User not found", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void observeLocalRecipes(int userId, String username) {
-        recipeVM.getRecipesLocal(userId).observe(MainActivity.this, new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(List<Recipe> recipes) {
-                if (recipes != null) {
-                    // Local recipes retrieved successfully
-                    observeRemoteRecipes(username);
-                } else {
-                    // Handle local recipes not found
-                    Toast.makeText(getApplicationContext(), "Local recipes not found", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void observeRemoteRecipes(String username) {
-        recipeVM.getRecipesByUsername(username).observe(MainActivity.this, new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(List<Recipe> recipes) {
-                if (recipes != null) {
-                    // Remote recipes retrieved successfully
-                    RemotelistByIdUser_recipe.setValue(recipes);
-                    Toast.makeText(getApplicationContext(), "Changed main " + recipes.size(), Toast.LENGTH_SHORT).show();
-                } else {
-                    // Handle remote recipes not found
-                    Toast.makeText(getApplicationContext(), "Remote recipes not found", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

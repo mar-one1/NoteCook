@@ -693,14 +693,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             Constants.alertDialog.dismiss();
         }
     }
-
-    private void saveToken(String token) {
-        SharedPreferences preferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString("token", token);
-        editor.apply();
-    }
-
     private void saveUserInput(String username, String password) {
         SharedPreferences sharedPreferences = getSharedPreferences(lOGIN_KEY, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

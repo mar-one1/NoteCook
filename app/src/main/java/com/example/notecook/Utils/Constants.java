@@ -119,7 +119,7 @@ public class Constants {
 
     public static void init()
     {
-        Token = "";
+        //Token = "";
         TAG_CONNEXION = -1;
         TAG_CONNEXION_MESSAGE = "";
         list_recipe = new MutableLiveData<>();
