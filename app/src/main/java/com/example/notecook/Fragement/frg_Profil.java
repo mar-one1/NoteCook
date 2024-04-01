@@ -19,7 +19,6 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
@@ -68,19 +67,19 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                 binding.txtUsername.setText(user.getUsername());
                 binding.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
 
-                if (user.getPathimageuser() != null && !user.getPathimageuser().equals("")) {
+                if (user_login.getUser().getPathimageuser() != null && !user_login.getUser().getPathimageuser().equals("")) {
                     String imageUrl = "";
-                    if (user.getPathimageuser().startsWith("http"))
-                        imageUrl = user.getPathimageuser();
+                    if (user_login.getUser().getPathimageuser().startsWith("http"))
+                        imageUrl = user_login.getUser().getPathimageuser();
                     else
-                        imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
+                        imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
                     Picasso.get().load(imageUrl).into(binding.iconProfil);
                     //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
-                } else if (user.getIcon() != null) {
-                    binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 } else if (user_login_local.getUser() != null && user_login_local.getUser().getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 }
+            } else if (user_login_local.getUser() != null) {
+                user_login.setUser(user_login_local.getUser());
             }
         }
     }
@@ -107,8 +106,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
 
         recipeVM = new RecipeViewModel(getContext(), requireActivity());
         userVM = new UserViewModel(getContext(), requireActivity());
-        recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
-        userVM = new ViewModelProvider(this,userVM).get(UserViewModel.class);
         getUserInfo();
 
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
@@ -202,8 +199,8 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         if (!Type_User.equals(TAG_MODE_INVITE)) {
 //            fetchData();
             Constants.loading_ui(getContext(),"Loading...");
-            String s1 = getUserInput(getContext());
-            userVM.getUser(s1).observe(getActivity(), new Observer<User>() {
+            String s1 = getUserInput(requireContext());
+            userVM.getUser(s1).observe(requireActivity(), new Observer<User>() {
                 @Override
                 public void onChanged(User user) {
                     Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
