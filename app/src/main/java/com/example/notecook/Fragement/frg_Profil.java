@@ -3,6 +3,9 @@ package com.example.notecook.Fragement;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.MainActivity.Type_User;
 import static com.example.notecook.MainActivity.decod;
+
+import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
+import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -15,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
@@ -22,6 +26,8 @@ import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.FragmentLifecycle;
+import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgProfilBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -36,6 +42,8 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     private ViewPager2 viewPager2;
     private User user;
     private FloatingActionButton b;
+    private RecipeViewModel recipeVM;
+    private UserViewModel userVM;
 
 
     public frg_Profil() {
@@ -46,11 +54,12 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     public void onResume() {
         super.onResume();
         onResumeFragment();
-        extracted();
+        //extracted();
     }
 
 
     private void extracted() {
+
         if (!Type_User.equals(Constants.TAG_MODE_INVITE)) {
             user = new User();
             if (user_login.getUser() != null) {
@@ -76,6 +85,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     }
 
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,8 +102,11 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         b.show();
         tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
         tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
-
         viewPager2.setUserInputEnabled(true);
+
+        recipeVM = new RecipeViewModel(getContext(), requireActivity());
+        userVM = new UserViewModel(getContext(), requireActivity());
+        getUserInfo();
 
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
         tabLayout.setSelectedTabIndicatorHeight((int) (3 * getResources().getDisplayMetrics().density));
@@ -176,6 +189,26 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     public void onPause() {
         super.onPause();
         onPauseFragment();
+    }
+
+    private void getUserInfo()
+    {
+
+        // recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
+        //userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
+        if (!Type_User.equals(TAG_MODE_INVITE)) {
+//            fetchData();
+            Constants.loading_ui(getContext(),"Loading...");
+            String s1 = getUserInput(requireContext());
+            userVM.getUser(s1).observe(requireActivity(), new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
+                    extracted();
+                    Constants.stop_loading();
+                }
+            });
+        }
     }
 
 

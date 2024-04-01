@@ -1,13 +1,9 @@
 package com.example.notecook;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
-import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
-import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.getToken;
-import static com.example.notecook.Utils.Constants.getUserInput;
-import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
 
@@ -17,7 +13,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Base64;
@@ -27,16 +22,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
-import com.example.notecook.Model.Recipe;
-import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
 import com.example.notecook.ViewModel.RecipeViewModel;
@@ -47,10 +37,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -70,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTransaction fragmentTransaction;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
+
 
     private boolean doubleBackToExitPressedOnce = false;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -181,17 +170,14 @@ public class MainActivity extends AppCompatActivity {
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
 
+
+
         String tag = "";
         if (getIntent().getExtras() != null) {
             tag = getIntent().getStringExtra("TAG");
             if (Objects.equals(tag, Constants.TAG_MODE_INVITE))
                 Type_User = tag;
         }
-        SweetAlertDialog pDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(Color.parseColor("#E41818"));
-        pDialog.setTitleText("Chargement ...");
-        pDialog.setCancelable(true);
-        pDialog.show();
         // get Recipe From Api
 
 
@@ -199,64 +185,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
 
-        recipeVM = new RecipeViewModel(this, MainActivity.this);
-        userVM = new UserViewModel(this, MainActivity.this);
-        // recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
-        //userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
-        if (!Type_User.equals(TAG_MODE_INVITE)) {
-//            fetchData();
-            String s1 = getUserInput(this);
-            userVM.getUser(s1).observe(this, new Observer<User>() {
-                @Override
-                public void onChanged(User user) {
-                    Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
-                    recipeVM.getRecipesLocal(user.getId_User()).observe(MainActivity.this, new Observer<List<Recipe>>() {
-                        @Override
-                        public void onChanged(List<Recipe> recipes) {
-                            recipeVM.getRecipesByUsername(s1).observe(MainActivity.this, recipeList -> {
-                                RemotelistByIdUser_recipe.setValue(recipeList);
-                                Toast.makeText(getBaseContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                            });
-                        }
-                    });
 
-                }
-
-
-            });
-            recipeVM.getFullRecipesByUsername(s1).observe(MainActivity.this, new Observer<List<RecipeResponse>>() {
-                @Override
-                public void onChanged(List<RecipeResponse> recipes) {
-                    if (recipes != null)
-                        Toast.makeText(MainActivity.this, "" + recipes.get(0).getRecipe().getNom_recipe(), Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-        pDialog.cancel();
-
-
-    swipeRefreshLayout =
-
-    findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
-
-    {
-        @Override
-        public void onRefresh () {
-        // Perform your data refreshing operations here
-        onResume();
-        // Simulate refresh delay (remove this in your actual code)
-        new android.os.Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Finish refreshing
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        }, 2000); // 2 seconds simulated refresh time (adjust as needed)
     }
-    });
-
-}
 
 
     @Override

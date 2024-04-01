@@ -8,10 +8,13 @@ import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Loading;
+import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
 import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
+import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.annotation.SuppressLint;
@@ -31,9 +34,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
+import com.example.notecook.Loading_Srcreen;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
+import com.example.notecook.Utils.Constants;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.squareup.picasso.MemoryPolicy;
@@ -97,8 +102,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         else holder.txt_time.setText("Remote");
 
 
-
-
         holder.heat.setOnClickListener(view -> {
             Drawable pic = holder.heat.getDrawable().getCurrent();
             Toast.makeText(view.getContext(), "" + pic, Toast.LENGTH_SHORT).show();
@@ -112,9 +115,11 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         });
 
         holder.Image.setOnClickListener(v -> {
+
             // Get the FragmentActivity associated with the context of the clicked view
             FragmentActivity fragmentActivity = (FragmentActivity) v.getContext();
             if (CURRENT_RECIPE != recipe) {
+                Constants.loading_ui(context,"Chargement Recipe");
                 if(!Objects.equals(b, TAG_LOCAL)) {
                     //CURRENT_RECIPE = recipe;
                     recipeVM.getRecipe(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
@@ -127,13 +132,17 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                             Review_CurrentRecipe = recipeResponses.getReviews();
                             Ingredients_CurrentRecipe = recipeResponses.getIngredients();
                             MainFragment.viewPager2.setCurrentItem(1);
+                            Constants.stop_loading();
                         }
                     });
                 }
                 else{
                     //recipeVM.getRecipesLocal(user_login_local.getUser().getId_User());
+                    Constants.stop_loading();
                 }
             } else viewPager2.setCurrentItem(1, false);
+
+            //Constants.stop_loading();
 
         });
 

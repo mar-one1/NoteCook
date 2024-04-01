@@ -9,6 +9,7 @@ import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
+import static com.example.notecook.Utils.Constants.saveToken;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
@@ -37,6 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.viewpager2.widget.ViewPager2;
@@ -81,6 +83,7 @@ public class Frg_EditProfil extends Fragment {
     GoogleSignInOptions gso;
     private SharedPreferences sharedPreferences;
     private UserViewModel userVM;
+    private FragmentActivity fragmentActivity;
 
 
     public Frg_EditProfil() {
@@ -104,6 +107,7 @@ public class Frg_EditProfil extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFrgEditProfilBinding.inflate(inflater, container, false);
         userVM  = new UserViewModel(getContext(),getActivity());
+        fragmentActivity = (FragmentActivity) getContext();
         User user = new User();
         user = user_login.getUser();
         //Log.d("TAG",user_login.getUser().getUser_name().toString());
@@ -261,7 +265,7 @@ public class Frg_EditProfil extends Fragment {
                 signOut();
                 Intent lointent = new Intent(getContext(), Login.class);
                 startActivity(lointent);
-                saveToken("");
+                saveToken("",getContext());
                 TAG_CONNEXION = 0;
                 TAG_CONNEXION_LOCAL = "";
                 Constants.alertDialog.cancel();
@@ -353,13 +357,6 @@ public class Frg_EditProfil extends Fragment {
 
     void putPicture(Bitmap bitmap) {
         binding.iconEditprofil.setImageBitmap(bitmap);
-    }
-
-    private void saveToken(String token) {
-        sharedPreferences = requireContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("token", token);
-        editor.apply();
     }
 
     public void showDatePickerDialog(View view) {

@@ -1,23 +1,15 @@
 package com.example.notecook;
 
-import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
-import static com.example.notecook.Utils.Constants.TAG_ERREUR_SYSTEM;
+import static com.example.notecook.Utils.Constants.MODE_ONLINE;
+
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.getToken;
-import static com.example.notecook.Utils.Constants.getUserInput;
-import static com.example.notecook.Utils.Constants.isConnected;
-import static com.example.notecook.Utils.Constants.saveToken;
-import static com.example.notecook.Utils.Constants.user_login;
 
-import android.content.Context;
+
+
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.os.Build;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,20 +18,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
-import com.example.notecook.Api.ApiClient;
-import com.example.notecook.Api.ApiService;
-import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
-import com.example.notecook.Utils.SimpleService;
+
 import com.example.notecook.ViewModel.AccessViewModel;
 import com.example.notecook.databinding.ActivityLoadingSrcreenBinding;
 
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
 
 public class Loading_Srcreen extends AppCompatActivity {
 
@@ -60,10 +47,10 @@ public class Loading_Srcreen extends AppCompatActivity {
         Log.e("tag",Token);
         Intent i = new Intent(getBaseContext(), Login.class);
         Intent iM = new Intent(getBaseContext(), MainActivity.class);
-        if (!isConnected() && Objects.equals(Token, "")) {
+        if (!MODE_ONLINE && Objects.equals(Token, "")) {
             Constants.AffichageMessage("Welcome to Notebook APP!!!","ok", Loading_Srcreen.this);
             startActivity(i);
-        } else if (!Objects.equals(Token, "") && isConnected()) {
+        } else if (!Objects.equals(Token, "") && MODE_ONLINE) {
             accessVM.verifyToken().observe(this, new Observer<String>() {
                 @Override
                 public void onChanged(String s) {
@@ -72,7 +59,7 @@ public class Loading_Srcreen extends AppCompatActivity {
                 }
             });
             //TokenApi();
-        }else if (!Objects.equals(Token, "") && !isConnected()) {
+        }else if (!Objects.equals(Token, "") && !MODE_ONLINE) {
             startActivity(iM);
         } else
             startActivity(i);

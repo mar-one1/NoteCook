@@ -15,9 +15,9 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         if (checkInternet(context)) {
             showToast(context, "Network Available Do operations");
             MODE_ONLINE = true;
-        } else
+        } else{
             showToast(context, "No Network Available Do operations offline");
-        MODE_ONLINE = false;
+        MODE_ONLINE = false; }
     }
 
     boolean checkInternet(Context context) {

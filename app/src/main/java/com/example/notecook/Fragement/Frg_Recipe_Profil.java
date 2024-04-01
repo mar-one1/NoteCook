@@ -1,7 +1,10 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
+import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.getUserInput;
+import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -9,6 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -17,8 +21,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
+import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
+import com.example.notecook.Utils.Constants;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeProfilBinding;
@@ -44,6 +50,10 @@ public class Frg_Recipe_Profil extends Fragment {
                 public void onChanged(List<Recipe> recipes) {
                     if(recipes!=null)
                     bindingRcV_recipes(binding.RcRecipeProfil, recipes);
+                    recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
+                        RemotelistByIdUser_recipe.setValue(recipeList);
+                        Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                    });
                 }
             });
         } else {
@@ -56,8 +66,20 @@ public class Frg_Recipe_Profil extends Fragment {
                         @Override
                         public void onChanged(List<Recipe> recipes) {
                             bindingRcV_recipes(binding.RcRecipeProfil, recipes);
+                                recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
+                                    RemotelistByIdUser_recipe.setValue(recipeList);
+                                    Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                                });
                         }
                     });
+//                    recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
+//                        @Override
+//                        public void onChanged(List<RecipeResponse> recipes) {
+//                            if (recipes != null)
+//                                RemotelistFullRecipe.setValue(recipes);
+//                                Toast.makeText(getContext(), "full recipe list :" + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
                 }
             });
         }

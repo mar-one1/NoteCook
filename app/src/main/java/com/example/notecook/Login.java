@@ -6,6 +6,7 @@ import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
 import static com.example.notecook.Data.UserDatasource.createUserlogin;
 import static com.example.notecook.Data.UserDatasource.insertUser;
 import static com.example.notecook.Data.UserDatasource.isRecordExist;
+import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.TAG_AUTHENTIFICATION_ECHOUE;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
@@ -14,6 +15,7 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
+import static com.example.notecook.Utils.Constants.saveUserInput;
 import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
@@ -225,7 +227,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE)
             if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                if (!isConnected()) {
+                if (!MODE_ONLINE) {
                     Constants.DisplayErrorMessage(Login.this, "Veuillez vérifier votre connectivité réseau SVP");
                     return;
                 }
@@ -502,7 +504,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             //Toast.makeText(getBaseContext(), "user : " + item.getUser_name() + " pass : " + item.getPassWord(), Toast.LENGTH_SHORT).show();
             if (Objects.equals(item.getFirstname(), username) && passwordHasher.verifyPassword(Pass, item.getPassWord())) {
                 if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
-                    saveUserInput(username, Pass);
+                    saveUserInput(username, Pass,this);
                 }
                 TAG_CONNEXION_LOCAL = "success";
                 user_login.setUser(item);
@@ -692,14 +694,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         if (Constants.alertDialog != null && Constants.alertDialog.isShowing()) {
             Constants.alertDialog.dismiss();
         }
-    }
-    private void saveUserInput(String username, String password) {
-        SharedPreferences sharedPreferences = getSharedPreferences(lOGIN_KEY, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("username", username);
-        editor.putString("password", password);
-        editor.apply();
-
     }
 
 

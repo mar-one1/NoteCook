@@ -6,6 +6,7 @@ import static org.chromium.base.ThreadUtils.runOnUiThread;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
@@ -88,6 +90,7 @@ public class Constants {
     public static List<Recipe> Recipes_Fav_User = new ArrayList<>();
     public static MutableLiveData<List<Recipe>> Remotelist_recipe = new MutableLiveData<>();
     public static MutableLiveData<List<Recipe>> RemotelistByIdUser_recipe = new MutableLiveData<>();
+    public static MutableLiveData<List<RecipeResponse>> RemotelistFullRecipe = new MutableLiveData<>();
     public static String TAG_CONNEXION_LOCAL = "";
     public static TokenResponse user_login = new TokenResponse();
     public static TokenResponse user_login_local = new TokenResponse();
@@ -96,8 +99,7 @@ public class Constants {
     public static SweetAlertDialog alertDialog;
     public static List<User> listUser = new ArrayList<>();
     public static Recipe CURRENT_RECIPE = null;
-    public static Detail_Recipe DETAIL_RECIPE = null;
-    public static Drawable DEFAUL_IMAGE = null;
+    public static SweetAlertDialog loadingDialog;
 
     public static boolean fingerprint_id = false;
 
@@ -115,6 +117,35 @@ public class Constants {
             text.setLines(5);
         });
         sd.show();
+    }
+
+    public static void loading_ui(final Context _context, String message) {
+
+        loadingDialog = new SweetAlertDialog(_context, SweetAlertDialog.PROGRESS_TYPE);
+        loadingDialog.getProgressHelper().setBarColor(Color.parseColor("#86BFDC"));
+        loadingDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                SweetAlertDialog alertDialog = (SweetAlertDialog) dialog;
+                TextView text = (TextView) alertDialog.findViewById(cn.pedant.SweetAlert.R.id.title_text);
+                text.setSingleLine(false);
+                text.setGravity(Gravity.CENTER);
+                text.setTextAppearance(_context, android.R.style.TextAppearance_Large);
+                text.setMaxLines(6);
+            }
+        });
+        loadingDialog.setTitleText(message);
+        loadingDialog.setCancelable(false);
+        loadingDialog.show();
+    }
+
+    public static void progression(String val) {
+        loadingDialog.setTitleText(val);
+    }
+
+    public static void stop_loading() {
+        loadingDialog.dismiss();
+        loadingDialog = null;
     }
 
     public static void init()
