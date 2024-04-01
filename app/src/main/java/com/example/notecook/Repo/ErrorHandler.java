@@ -62,6 +62,8 @@ public class ErrorHandler {
                     Constants.AffichageMessage(TAG_SERVEUR_HORS_SERVICE,"502", appCompatActivity);
                 } else Constants.AffichageMessage(message,"message", appCompatActivity);
             }
+
+
     }
     public static void handleNetworkFailure(Throwable t, Context context) {
         // Handle network failure
