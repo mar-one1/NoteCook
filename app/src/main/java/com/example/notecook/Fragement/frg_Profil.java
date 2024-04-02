@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
@@ -106,6 +107,8 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
 
         recipeVM = new RecipeViewModel(getContext(), requireActivity());
         userVM = new UserViewModel(getContext(), requireActivity());
+        recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
+        userVM = new ViewModelProvider(this,userVM).get(UserViewModel.class);
         getUserInfo();
 
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
@@ -199,8 +202,8 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         if (!Type_User.equals(TAG_MODE_INVITE)) {
 //            fetchData();
             Constants.loading_ui(getContext(),"Loading...");
-            String s1 = getUserInput(requireContext());
-            userVM.getUser(s1).observe(requireActivity(), new Observer<User>() {
+            String s1 = getUserInput(getContext());
+            userVM.getUser(s1).observe(getActivity(), new Observer<User>() {
                 @Override
                 public void onChanged(User user) {
                     Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
