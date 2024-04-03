@@ -55,6 +55,7 @@ public class Constants {
     public static final String TAG_AUTHENTIFICATION_ECHOUE = "authentification_Echoue";
     public static final String TAG_OFFLINE = "Offline";
     public static final String TAG_NOT_FOUND = "404 Not Found";
+    public static final String TAG_INFO_ERONEE = "Username or password Invalide!!  ";
     public static final String TAG_REMOTE = "Remote";
     public static final String TAG_LOCAL = "Local";
     public static final String lOGIN_KEY = "Connection_complete";

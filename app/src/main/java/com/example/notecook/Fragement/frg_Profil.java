@@ -68,19 +68,19 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                 binding.txtUsername.setText(user.getUsername());
                 binding.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
 
-                if (user_login.getUser().getPathimageuser() != null && !user_login.getUser().getPathimageuser().equals("")) {
+                if (user.getPathimageuser() != null && !user.getPathimageuser().equals("")) {
                     String imageUrl = "";
-                    if (user_login.getUser().getPathimageuser().startsWith("http"))
-                        imageUrl = user_login.getUser().getPathimageuser();
+                    if (user.getPathimageuser().startsWith("http"))
+                        imageUrl = user.getPathimageuser();
                     else
-                        imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
+                        imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
                     Picasso.get().load(imageUrl).into(binding.iconProfil);
                     //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+                } else if (user.getIcon() != null) {
+                    binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 } else if (user_login_local.getUser() != null && user_login_local.getUser().getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 }
-            } else if (user_login_local.getUser() != null) {
-                user_login.setUser(user_login_local.getUser());
             }
         }
     }
