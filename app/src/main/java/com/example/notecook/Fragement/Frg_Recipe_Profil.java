@@ -61,7 +61,6 @@ public class Frg_Recipe_Profil extends Fragment {
                 @Override
                 public void onChanged(User user) {
                     if(user!=null)
-
                     recipeVM.getRecipesLocal(user.getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
                         @Override
                         public void onChanged(List<Recipe> recipes) {
@@ -72,14 +71,14 @@ public class Frg_Recipe_Profil extends Fragment {
                                 });
                         }
                     });
-//                    recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
-//                        @Override
-//                        public void onChanged(List<RecipeResponse> recipes) {
-//                            if (recipes != null)
-//                                RemotelistFullRecipe.setValue(recipes);
-//                                Toast.makeText(getContext(), "full recipe list :" + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
+                    recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
+                        @Override
+                        public void onChanged(List<RecipeResponse> recipes) {
+                            if (recipes != null)
+                                RemotelistFullRecipe.setValue(recipes);
+                                Toast.makeText(getContext(), "full recipe list :" + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             });
         }

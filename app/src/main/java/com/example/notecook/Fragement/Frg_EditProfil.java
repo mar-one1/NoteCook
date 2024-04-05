@@ -1,6 +1,5 @@
 package com.example.notecook.Fragement;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Data.UserDatasource.insertUser;
 import static com.example.notecook.MainActivity.decod;
@@ -8,7 +7,6 @@ import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
-import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.saveToken;
 import static com.example.notecook.Utils.Constants.user_login;
 
@@ -62,7 +60,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -106,7 +103,7 @@ public class Frg_EditProfil extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentFrgEditProfilBinding.inflate(inflater, container, false);
-        userVM  = new UserViewModel(getContext(),getActivity());
+        userVM = new UserViewModel(getContext(), getActivity());
         fragmentActivity = (FragmentActivity) getContext();
         User user = new User();
         user = user_login.getUser();
@@ -124,18 +121,16 @@ public class Frg_EditProfil extends Fragment {
             }
         });
 
-        if (user_login != null) {
-            if (user_login.getUser().getPathimageuser() != null && !user_login.getUser().getPathimageuser().equals("")) {
-                String imageUrl = "";
-                if (user_login.getUser().getPathimageuser().startsWith("http"))
-                    imageUrl = user_login.getUser().getPathimageuser();
-                else
-                    imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
-                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
-                //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
-            } else if (user.getIcon() != null) {
-                binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
-            }
+        if (user.getPathimageuser() != null && !user.getPathimageuser().equals("")) {
+            String imageUrl = "";
+            if (user.getPathimageuser().startsWith("http"))
+                imageUrl = user.getPathimageuser();
+            else
+                imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
+            Picasso.get().load(imageUrl).into(binding.iconEditprofil);
+            //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+        } else if (user.getIcon() != null) {
+            binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
         }
 
         ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
@@ -181,7 +176,7 @@ public class Frg_EditProfil extends Fragment {
                         pDialog.dismissWithAnimation();
                         Vp2.setCurrentItem(0, false);
                         Vp2.setCurrentItem(4, false);
-                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE,"", (AppCompatActivity) getContext());
+                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "", (AppCompatActivity) getContext());
                     } else if (value == 0) {
                         insertUser(getUser);
                         Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "User insert success");
@@ -201,13 +196,17 @@ public class Frg_EditProfil extends Fragment {
                     currentuser.setIcon(null);
                     getUser.setIcon(null);
                     if (!currentuser.equals(getUser))
-                        userVM.UpdateUser(getUser,bitmap).observe(getActivity(), new Observer<User>() {
+                        userVM.UpdateUser(getUser, bitmap).observe(getViewLifecycleOwner(), new Observer<User>() {
                             @Override
                             public void onChanged(User user) {
                                 user_login.setUser(user);
                             }
                         });
-                }catch(Exception e){Log.e("tag",""+e);}
+                    else
+                        Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "Non Modified no change yet!!");
+                } catch (Exception e) {
+                    Log.e("tag", "" + e);
+                }
             });
             pDialog.show();
         });
@@ -265,10 +264,10 @@ public class Frg_EditProfil extends Fragment {
                 signOut();
                 Intent lointent = new Intent(getContext(), Login.class);
                 startActivity(lointent);
-                saveToken("",getContext());
+                saveToken("", getContext());
                 TAG_CONNEXION = 0;
                 TAG_CONNEXION_LOCAL = "";
-                Constants.alertDialog.cancel();
+                //Constants.alertDialog.cancel();
                 getActivity().finish();
             });
 

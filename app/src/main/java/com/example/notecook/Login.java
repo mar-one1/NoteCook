@@ -4,19 +4,11 @@ import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_EMAIL_USER;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
 import static com.example.notecook.Data.UserDatasource.createUserlogin;
-import static com.example.notecook.Data.UserDatasource.insertUser;
 import static com.example.notecook.Data.UserDatasource.isRecordExist;
-import static com.example.notecook.Utils.Constants.MODE_ONLINE;
-import static com.example.notecook.Utils.Constants.TAG_AUTHENTIFICATION_ECHOUE;
-import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
-import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
 import static com.example.notecook.Utils.Constants.saveUserInput;
-import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -43,9 +35,7 @@ import android.os.CancellationSignal;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -53,11 +43,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
-import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.notecook.Api.ApiClient;
-import com.example.notecook.Api.ApiService;
-import com.example.notecook.Dto.LoginResponse;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
@@ -80,9 +66,6 @@ import java.io.IOException;
 import java.util.Objects;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
@@ -123,8 +106,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         view = binding.getRoot();
         m = new MainActivity();
         userDatasource = new UserDatasource(getBaseContext());
-        userVM = new UserViewModel(this,this);
-        accessVM = new AccessViewModel(this,this);
+        userVM = new UserViewModel(this, this);
+        accessVM = new AccessViewModel(this, this);
 
         // Check FingerPrint In Device
         try {
@@ -214,7 +197,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         setContentView(view);
     }
-    private  void getLocalUser(String username) {
+
+    private void getLocalUser(String username) {
         UserDatasource userDatasource = new UserDatasource(this);
         userDatasource.open();
         User user = userDatasource.select_User_BYUsername(username);
@@ -227,7 +211,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE)
             if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-                if (!MODE_ONLINE) {
+                if (!Constants.NetworkIsConnected(this)) {
                     Constants.DisplayErrorMessage(Login.this, "Veuillez vérifier votre connectivité réseau SVP");
                     return;
                 }
@@ -476,13 +460,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 if (Constants.NetworkIsConnected(Login.this)) {
                     String username = binding.etUsername.getText().toString();
                     String password = binding.etPassword.getText().toString();
-                    accessVM.connectApi(username,password).observe(this, new Observer<String>() {
+                    accessVM.connectApi(username, password).observe(this, new Observer<String>() {
                         @Override
                         public void onChanged(String s) {
                             //if(!s.equals("")) saveToken(s);
                         }
                     });
-                            //connectionApi();
+                    //connectionApi();
                 } else Constants.DisplayErrorMessage(Login.this, "Verifier la Connectivitee!!!");
                 pDialog.cancel();
             }
@@ -504,7 +488,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             //Toast.makeText(getBaseContext(), "user : " + item.getUser_name() + " pass : " + item.getPassWord(), Toast.LENGTH_SHORT).show();
             if (Objects.equals(item.getFirstname(), username) && passwordHasher.verifyPassword(Pass, item.getPassWord())) {
                 if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
-                    saveUserInput(username, Pass,this);
+                    saveUserInput(username, Pass, this);
                 }
                 TAG_CONNEXION_LOCAL = "success";
                 user_login.setUser(item);
@@ -564,19 +548,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             boolean b = isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail());
 
             if (!b) {
-                String jsonInputString="";
+                String jsonInputString = "";
                 if (acct.getPhotoUrl() != null)
-                jsonInputString = "{\"url\": \"" + acct.getPhotoUrl().toString() + "\"}";
-                else jsonInputString="";
+                    jsonInputString = "{\"url\": \"" + acct.getPhotoUrl().toString() + "\"}";
+                else jsonInputString = "";
                 passwordHasher = new PasswordHasher();
                 String password = passwordHasher.hashPassword(acct.getId().toString());
                 User Newuser = new User(username, acct.getFamilyName(), acct.getGivenName(), "00/00/0000", acct.getEmail(),
                         null, "000000000000", password, "active", "good");
 
-                userVM.postUser(Newuser,jsonInputString,null,"google").observe(this, new Observer<User>() {
+                userVM.postUser(Newuser, jsonInputString, null, "google").observe(this, new Observer<User>() {
                     @Override
                     public void onChanged(User user) {
-                        Constants.AffichageMessage("Registre Success","",Login.this);
+                        Constants.AffichageMessage("Registre Success", "", Login.this);
                     }
                 });
                 if (!isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
@@ -585,9 +569,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             "0", password, "Chef ", "active");
                     if (userInsered.equals(Newuser)) vrai = true;
 
-                    Constants.AffichageMessage("Vous avez Register avec succes Localy","", Login.this);
+                    Constants.AffichageMessage("Vous avez Register avec succes Localy", "", Login.this);
                 }
-
 
 
                 //MainActivity.uploadImage(Newuser.getUsername(),bitmap,getBaseContext());
@@ -613,17 +596,17 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     vrai = true;
                     if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
                         newUser.setIcon(null);
-                        userVM.postUser(newUser,"",bitmap,"registre").observe(this, new Observer<User>() {
+                        userVM.postUser(newUser, "", bitmap, "registre").observe(this, new Observer<User>() {
                             @Override
                             public void onChanged(User user) {
-                                Constants.AffichageMessage("Registre Success","",Login.this);
+                                Constants.AffichageMessage("Registre Success", "", Login.this);
                             }
                         });
                     }
                     if (!Objects.equals(newUser.getUsername(), ""))
-                        Constants.AffichageMessage("Vous avez Register avec succes in local","", Login.this);
+                        Constants.AffichageMessage("Vous avez Register avec succes in local", "", Login.this);
                 } else
-                    Constants.AffichageMessage("Votre Email est existe dans la base Changer Email or Sign_in","", Login.this);
+                    Constants.AffichageMessage("Votre Email est existe dans la base Changer Email or Sign_in", "", Login.this);
             }
             dataSourceUser.close();
         }
@@ -684,8 +667,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onResume();
         //TokenApi();
     }
-
-
 
 
     @Override

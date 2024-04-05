@@ -109,7 +109,7 @@ public class Frg_Search extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchRecipes(String.valueOf(s));
-                recipeVM.SearchRecipe(s.toString()).observe(fragmentActivity, new Observer<List<Recipe>>() {
+                recipeVM.SearchRecipe(s.toString()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
                     @Override
                     public void onChanged(List<Recipe> recipes) {
                         if (recipes!=null && recipes.size() > 0)

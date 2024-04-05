@@ -1,9 +1,11 @@
 package com.example.notecook;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
+import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.getToken;
+import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.pathimageuser;
 import static com.example.notecook.Utils.Constants.user_login;
 
@@ -17,20 +19,27 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Fragement.MainFragment;
+import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
+import com.example.notecook.databinding.ActivityLoginBinding;
+import com.example.notecook.databinding.ActivityMainBinding;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -58,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTransaction fragmentTransaction;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
+    private ActivityMainBinding binding;
+    private View view;
 
 
     private boolean doubleBackToExitPressedOnce = false;
@@ -162,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding  = ActivityMainBinding.inflate(getLayoutInflater());
+        view = binding.getRoot();
 
         Constants.init();
         Token = getToken(this);
@@ -170,21 +182,43 @@ public class MainActivity extends AppCompatActivity {
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
 
-
+        recipeVM = new RecipeViewModel(this, this);
+        userVM = new UserViewModel(this, this);
+        recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
+        userVM = new ViewModelProvider(this,userVM).get(UserViewModel.class);
+        getUserInfo();
 
         String tag = "";
         if (getIntent().getExtras() != null) {
             tag = getIntent().getStringExtra("TAG");
-            if (Objects.equals(tag, Constants.TAG_MODE_INVITE))
+            if (Objects.equals(tag, TAG_MODE_INVITE))
                 Type_User = tag;
         }
         // get Recipe From Api
-
+        if (!Type_User.equals(TAG_MODE_INVITE)) {
+            getUserInfo();
+        }
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fl_main, new MainFragment());
         fragmentTransaction.commit();
 
+        setContentView(view);
+    }
+
+    private void getUserInfo()
+    {
+//            fetchData();
+            //Constants.loading_ui(this,"Loading...");
+            String s1 = getUserInput(this);
+            userVM.getUser(s1).observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
+                    //extracted();
+                   // Constants.stop_loading();
+                }
+            });
 
     }
 

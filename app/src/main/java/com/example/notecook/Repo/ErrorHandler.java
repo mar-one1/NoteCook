@@ -27,10 +27,10 @@ public class ErrorHandler {
         int statusCode = response.code();
         String message = response.message();
         if (response.errorBody() != null) {
-                /*if (Constants.alertDialog != null && Constants.alertDialog.isShowing() && alertDialog.getTitleText().equals(String.valueOf(statusCode))) {
-                    //Constants.alertDialog.dismiss();
+                if (Constants.alertDialog != null && Constants.alertDialog.isShowing() && alertDialog.getTitleText().equals(String.valueOf(statusCode))) {
+                    Constants.alertDialog.dismiss();
                     return;
-                }*/
+                }
             if (statusCode == 400) {
                 try {
                     String errorBody = response.errorBody().string();

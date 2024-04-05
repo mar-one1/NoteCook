@@ -55,7 +55,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     public void onResume() {
         super.onResume();
         onResumeFragment();
-        //extracted();
+        extracted();
     }
 
 
@@ -67,20 +67,19 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                 user = user_login.getUser();
                 binding.txtUsername.setText(user.getUsername());
                 binding.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
-
-                if (user_login.getUser().getPathimageuser() != null && !user_login.getUser().getPathimageuser().equals("")) {
+                if (user.getPathimageuser() != null && !user.getPathimageuser().equals("")) {
                     String imageUrl = "";
-                    if (user_login.getUser().getPathimageuser().startsWith("http"))
-                        imageUrl = user_login.getUser().getPathimageuser();
+                    if (user.getPathimageuser().startsWith("http"))
+                        imageUrl = user.getPathimageuser();
                     else
-                        imageUrl = BASE_URL + "uploads/" + user_login.getUser().getPathimageuser();
+                        imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
                     Picasso.get().load(imageUrl).into(binding.iconProfil);
                     //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+                } else if (user.getIcon() != null) {
+                    binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 } else if (user_login_local.getUser() != null && user_login_local.getUser().getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));
                 }
-            } else if (user_login_local.getUser() != null) {
-                user_login.setUser(user_login_local.getUser());
             }
         }
     }
@@ -104,12 +103,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
         tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
         viewPager2.setUserInputEnabled(true);
-
-        recipeVM = new RecipeViewModel(getContext(), requireActivity());
-        userVM = new UserViewModel(getContext(), requireActivity());
-        recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
-        userVM = new ViewModelProvider(this,userVM).get(UserViewModel.class);
-        getUserInfo();
 
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
         tabLayout.setSelectedTabIndicatorHeight((int) (3 * getResources().getDisplayMetrics().density));
@@ -194,25 +187,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         onPauseFragment();
     }
 
-    private void getUserInfo()
-    {
 
-        // recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
-        //userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
-        if (!Type_User.equals(TAG_MODE_INVITE)) {
-//            fetchData();
-            Constants.loading_ui(getContext(),"Loading...");
-            String s1 = getUserInput(getContext());
-            userVM.getUser(s1).observe(getActivity(), new Observer<User>() {
-                @Override
-                public void onChanged(User user) {
-                    Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
-                    extracted();
-                    Constants.stop_loading();
-                }
-            });
-        }
-    }
 
 
 }

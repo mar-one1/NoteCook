@@ -111,7 +111,7 @@ public class Acceuill_Frg extends Fragment {
 
     private void fetchRecipe()
     {
-        recipeVM.getRecipes().observe(fragmentActivity,new Observer<List<Recipe>>() {
+        recipeVM.getRecipes().observe(getViewLifecycleOwner(),new Observer<List<Recipe>>() {
             @Override
             public void onChanged(@Nullable List<Recipe> recipeList) {
                 if(recipeList!=null) {
