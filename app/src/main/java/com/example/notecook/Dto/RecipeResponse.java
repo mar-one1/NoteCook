@@ -5,6 +5,7 @@ import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
+import com.example.notecook.Model.User;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.List;
 public class RecipeResponse {
     @SerializedName("recipe")
     private Recipe recipe;
+    @SerializedName("user")
+    private User user;
     @SerializedName("detailRecipe")
     private Detail_Recipe detail_recipe;
     @SerializedName("ingredients")
@@ -21,6 +24,13 @@ public class RecipeResponse {
     @SerializedName("steps")
     private List<Step> steps;
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Recipe getRecipe() {
         return recipe;

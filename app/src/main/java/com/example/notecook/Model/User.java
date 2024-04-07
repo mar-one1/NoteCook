@@ -25,7 +25,7 @@ public class User {
     private String Status;
     @SerializedName("grade")
     private String Grade;
-    //@SerializedName("icon")
+    @SerializedName("url")
     private String pathimageuser;
 
     public User() {

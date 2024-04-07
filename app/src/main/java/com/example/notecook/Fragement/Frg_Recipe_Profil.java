@@ -33,8 +33,8 @@ import java.util.List;
 
 
 public class Frg_Recipe_Profil extends Fragment {
-    Recipe mRecipe;
-    FragmentFrgRecipeProfilBinding binding;
+    private Recipe mRecipe;
+    private FragmentFrgRecipeProfilBinding binding;
     private RecyclerView recyclerView;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;

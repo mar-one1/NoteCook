@@ -64,7 +64,7 @@ public class Frg_recipe_fav extends Fragment {
         adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(),list, TAG_ONLINE);
         // adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe,true);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
-        manager.setOrientation(HORIZONTAL);
+        manager.setOrientation(RecyclerView.VERTICAL);
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(adapter_rc_recipeDt);
     }

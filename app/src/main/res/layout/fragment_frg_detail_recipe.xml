@@ -5,58 +5,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@color/graywhite"
-
     android:orientation="vertical">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         tools:context=".Fragement.Frg_detail_recipe">
 
-        <com.google.android.material.card.MaterialCardView
-            style="@style/MyCardView"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/graywhite">
+            android:layout_height="345dp"
+            android:orientation="vertical">
 
             <LinearLayout
-
                 android:layout_width="match_parent"
-                android:layout_height="345dp"
-                android:orientation="vertical"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:background="@color/graywhite">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/btn_backDR"
+                    android:layout_width="34dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="start"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:src="@drawable/ic_arrow_back_fill0_wght400_grad0_opsz48" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_gravity="start"
+                    android:layout_weight="1" />
 
-                    <ImageView
-                        android:id="@+id/btn_backDR"
-                        android:layout_width="34dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="start"
-                        android:layout_marginLeft="12dp"
-                        android:layout_marginRight="12dp"
-                        android:src="@drawable/ic_arrow_back_fill0_wght400_grad0_opsz48" />
+                <ImageView
+                    android:id="@+id/btn_shareDR"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="right"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:src="@drawable/ic_share_fill0_wght400_grad0_opsz48" />
+            </LinearLayout>
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_weight="1" />
-
-                    <ImageView
-                        android:id="@+id/btn_shareDR"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="right"
-                        android:layout_marginLeft="12dp"
-                        android:layout_marginRight="12dp"
-                        android:src="@drawable/ic_share_fill0_wght400_grad0_opsz48" />
-                </LinearLayout>
+            <com.google.android.material.card.MaterialCardView
+                style="@style/MyCardView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/graywhite">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -71,9 +67,10 @@
                         android:src="@drawable/ic_share_fill0_wght400_grad0_opsz48" />
 
                 </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,15 +110,15 @@
                                 android:layout_gravity="top"
                                 android:layout_weight="1"
                                 android:text="Recipe Name..."
+                                android:textDirection="firstStrong"
                                 android:textSize="25sp"
-                                android:textStyle="bold"
-                                android:textDirection="firstStrong"/>
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:visibility="gone"
-                                android:text="Createur name..." />
+                                android:text="Createur name..."
+                                android:visibility="gone" />
                         </LinearLayout>
 
                         <LinearLayout

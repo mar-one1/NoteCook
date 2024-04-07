@@ -72,7 +72,8 @@ public class UserRepository {
                         //userLogin.setValue(UserResponse);
                         user_login.setUser(UserResponse);
                         userLogin.setValue(getLocalUserLogin(username, "success").getValue());
-                        getImageUserUrl(user_login.getUser().getUsername(), "user_login", context);
+                        Log.e("tag","image url"+userLogin.getValue().getPathimageuser());
+                        //getImageUserUrl(user_login.getUser().getUsername(), "user_login", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get user from Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
@@ -262,7 +263,7 @@ public class UserRepository {
                     User user = response.body();
                     userMutableLiveData.setValue(user);
                     User_CurrentRecipe = user;
-                    getImageUserUrl(User_CurrentRecipe.getUsername(), "recipe_user", context);
+                    //getImageUserUrl(User_CurrentRecipe.getUsername(), "recipe_user", context);
                     Log.d("TAG", user.getUsername().toString());
                     TAG_CONNEXION_MESSAGE = response.message();
                     TAG_CONNEXION = response.code();

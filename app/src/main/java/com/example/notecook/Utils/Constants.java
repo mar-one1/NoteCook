@@ -120,8 +120,8 @@ public class Constants {
         sd.show();
     }
 
-    public static void loading_ui(final Context _context, String message) {
-
+    public static void loading_ui(final Context _context, final Activity activity, String message) {
+        // Initialize loadingDialog
         loadingDialog = new SweetAlertDialog(_context, SweetAlertDialog.PROGRESS_TYPE);
         loadingDialog.getProgressHelper().setBarColor(Color.parseColor("#86BFDC"));
         loadingDialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -138,16 +138,36 @@ public class Constants {
         loadingDialog.setTitleText(message);
         loadingDialog.setCancelable(false);
         loadingDialog.show();
+
+        // Initialize Handler
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        // Dismiss the loading dialog and show another message after 10 seconds
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Dismiss the loading dialog if it is showing
+                if (loadingDialog != null && loadingDialog.isShowing()) {
+                    loadingDialog.dismiss();
+                    // Show your pop-up dialog here
+                    AffichageMessage(TAG_NOT_FOUND, "404", activity);
+                }
+            }
+        }, 10000); // 10 seconds delay
     }
+
+    // Method to dismiss the loading dialog from another place in your code
+    public static void dismissLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
+        }
+    }
+
 
     public static void progression(String val) {
         loadingDialog.setTitleText(val);
     }
 
-    public static void stop_loading() {
-        loadingDialog.dismiss();
-        loadingDialog = null;
-    }
 
     public static void init()
     {

@@ -26,6 +26,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.MainActivity;
+import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -60,7 +61,7 @@ public class Frg_detail_recipe extends Fragment {
     public void onResume() {
         super.onResume();
         Log.e("tag resume detaile recipe","true");
-        binding.vp2Detairecipe.setCurrentItem(0,true);
+        //binding.vp2Detairecipe.setCurrentItem(0,true);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
             if (Detail_CurrentRecipe != null) {
                 if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {
@@ -202,6 +203,7 @@ public class Frg_detail_recipe extends Fragment {
         fragmentList.add(new Frg_Fav());
 
         viewPager2Adapter.setData(fragmentList);
+        viewPager2Adapter.notifyDataSetChanged();
         //set the data for the adapter
         binding.vp2Detairecipe.setAdapter(viewPager2Adapter);
     }

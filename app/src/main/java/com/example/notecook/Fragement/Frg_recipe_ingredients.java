@@ -37,6 +37,7 @@ public class Frg_recipe_ingredients extends Fragment {
     private RecyclerView mRecyclerView;
     private Button btn_plus,btn_moins;
     private TextView txt_cal;
+    private Adapter_Rc_Ingredents adapter;
 
 
 
@@ -47,7 +48,7 @@ public class Frg_recipe_ingredients extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        bindingRcV_Ingredients(mRecyclerView);
+        //bindingRcV_Ingredients(mRecyclerView);
         Toast.makeText(getContext(), "onDestroyView", Toast.LENGTH_SHORT).show();
     }
 
@@ -61,7 +62,7 @@ public class Frg_recipe_ingredients extends Fragment {
     public void onPause() {
         super.onPause();
         Toast.makeText(getContext(), "onPause Frg_ingredient", Toast.LENGTH_SHORT).show();
-        bindingRcV_Ingredients(mRecyclerView);
+        //bindingRcV_Ingredients(mRecyclerView);
     }
 
     @Override
@@ -128,7 +129,7 @@ public class Frg_recipe_ingredients extends Fragment {
         ingredientsDataSource.close();
 
         // Create and set adapter for RecyclerView
-        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(Ingredients_CurrentRecipe);
+        adapter = new Adapter_Rc_Ingredents(Ingredients_CurrentRecipe);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setAdapter(adapter);
@@ -151,4 +152,5 @@ public class Frg_recipe_ingredients extends Fragment {
 
 
     }
+
 }

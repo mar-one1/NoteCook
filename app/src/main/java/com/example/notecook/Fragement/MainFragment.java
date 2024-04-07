@@ -41,7 +41,6 @@ public class MainFragment extends Fragment  {
         binding = FragmentMainBinding.inflate(inflater, container, false);
         viewPager2 = binding.vp2;
 
-
         Flbtn = getActivity().findViewById(R.id.floating_action_button);
         Flbtn.show();
 
@@ -98,7 +97,6 @@ public class MainFragment extends Fragment  {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
                 Flbtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_plus_one_24));
                 Flbtn.show();
-
             }
             @Override
             public void onPageSelected(int position) {
