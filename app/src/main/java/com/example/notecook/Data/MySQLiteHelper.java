@@ -15,22 +15,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
      */
 
     private static final String DATABASE_NAME = "DB_Notebook.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
 
     /*
      * Commande sql pour la création de la table USER
      */
+
     private static final String DATABASE_CREATE_USER = "create table "
             + TABLE_USER + "(" + COLUMN_ID_USER
             + " integer primary key autoincrement, " + COLUMN_USERNAME + " text, " + COLUMN_FIRSTNAME_USER + " text, " + COLUMN_LASTNAME_USER + " text, "
             + COLUMN_ICON + " BLOB, " + COLUMN_ICON_PATH + " text, " + COLUMN_PASSWORD + " text, "
-            + COLUMN_BIRTHDAY_USER + " integer, " + COLUMN_PHONENUMBER_USER + " text, " + COLUMN_EMAIL_USER + " integer ,"
+            + COLUMN_BIRTHDAY_USER + " text, " + COLUMN_PHONENUMBER_USER + " text, " + COLUMN_EMAIL_USER + " integer ,"
             + COLUMN_STATUS + " text, " + COLUMN_GRADE + " text );";
 
     /*
      * Commande sql pour la création de la table RECIPE
      */
+
     private static final String DATABASE_CREATE_RECIPE = "create table "
             + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE
             + " integer primary key autoincrement, " + COLUMN_ICON_RECIPE
@@ -41,6 +43,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     /*
      * Commande sql pour la création de la table Detail_Recipe
      */
+
     private static final String DATABASE_CREATE_DETAIL_RECIPE = "create table "
             + TABLE_DETAIL_RECIPE + "(" + COLUMN_ID_DETAIL_RECIPE
             + " integer primary key autoincrement, " + COLUMN_DETAIL
@@ -55,6 +58,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     /*
      * Commande sql pour la création de la table Ingredients_Recipe
      */
+
     private static final String DATABASE_CREATE_INGREDIENTS_RECIPE = "create table "
             + TABLE_INGREDIENT_RECIPE + "(" + COLUMN_ID_INGREDIENT_RECIPE
             + " integer primary key autoincrement, " + COLUMN_INGREDIENT_RECIPE
