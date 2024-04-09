@@ -2,6 +2,7 @@ package com.example.notecook.Utils;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static org.chromium.base.ThreadUtils.runOnUiThread;
 
 import android.app.Activity;
@@ -24,8 +25,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.notecook.Api.ApiClient;
+import com.example.notecook.Api.ApiService;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.TokenResponse;
+import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
@@ -39,9 +43,14 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Constants {
 
@@ -325,7 +334,7 @@ public class Constants {
         try {
             // Create a Socket and connect to a known reliable host (google.com)
             Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("google.com", 80), 1500); // Port 80 is commonly used for HTTP
+            socket.connect(new InetSocketAddress("google.com", 80), 1000); // Port 80 is commonly used for HTTP
             socket.close();
             return true;
         } catch (IOException e) {
@@ -349,6 +358,54 @@ public class Constants {
         });
     }
 
+    public static void fetchImage(String s, String tag, int position, Context context) {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+        // URL of the image you want to download
+        //String imageUrl = "https://da97-196-75-207-18.ngrok.io/uploads/1701348093930-989771596-image.jpg"; // Replace with your image URL
+        String imageUrl = BASE_URL + "uploads/" + s; // Replace with your image URL
+
+        // Enqueue the download request
+        Call<ResponseBody> call = apiService.downloadImage(imageUrl);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    //ResponseBody responseBody = response.body();
+                    byte[] bytes = new byte[0];
+                    try {
+                        bytes = response.body().bytes();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length)
+                    // ;
+                    if (Objects.equals(tag, "user_login"))
+                        user_login.getUser().setIcon(bytes);
+                    pathimageuser = s;
+                    if (Objects.equals(tag, "recipe_user")) {
+                        User_CurrentRecipe.setIcon(bytes);
+                        MainFragment.viewPager2.setCurrentItem(1, false);
+                    }
+//                    if(Objects.equals(tag, "image_recipe"))
+//                    {
+//                        Remotelist_recipe.get(position).setIcon_recipe(bytes);
+//
+//                    }
+                    Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful download" + response.message(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                Toast.makeText(context, "Handle failure", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 }
 

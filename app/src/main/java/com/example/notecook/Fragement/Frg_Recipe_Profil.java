@@ -1,8 +1,10 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.MainActivity.Type_User;
 import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
 import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
+import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.list_recipe;
@@ -44,43 +46,45 @@ public class Frg_Recipe_Profil extends Fragment {
     }
 
     private void fetchRecipeUser() {
-        if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
-            recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
-                @Override
-                public void onChanged(List<Recipe> recipes) {
-                    if(recipes!=null)
-                    bindingRcV_recipes(binding.RcRecipeProfil, recipes);
-                    recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
-                        RemotelistByIdUser_recipe.setValue(recipeList);
-                        Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                    });
-                }
-            });
-        } else {
-            userVM.getUserLocal(getUserInput(getContext()), "success").observe(requireActivity(), new Observer<User>() {
-                @Override
-                public void onChanged(User user) {
-                    if(user!=null)
-                    recipeVM.getRecipesLocal(user.getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
-                        @Override
-                        public void onChanged(List<Recipe> recipes) {
+        if (!Type_User.equals(TAG_MODE_INVITE)) {
+            if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
+                recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
+                    @Override
+                    public void onChanged(List<Recipe> recipes) {
+                        if (recipes != null)
                             bindingRcV_recipes(binding.RcRecipeProfil, recipes);
-                                recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
-                                    RemotelistByIdUser_recipe.setValue(recipeList);
-                                    Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                                });
-                        }
-                    });
-                    recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
-                        @Override
-                        public void onChanged(List<RecipeResponse> recipes) {
-                            if (recipes != null)
-                                RemotelistFullRecipe.setValue(recipes);
+                        recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
+                            RemotelistByIdUser_recipe.setValue(recipeList);
+                            Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                        });
+                    }
+                });
+            } else {
+                userVM.getUserLocal(getUserInput(getContext()), "success").observe(requireActivity(), new Observer<User>() {
+                    @Override
+                    public void onChanged(User user) {
+                        if (user != null)
+                            recipeVM.getRecipesLocal(user.getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
+                                @Override
+                                public void onChanged(List<Recipe> recipes) {
+                                    bindingRcV_recipes(binding.RcRecipeProfil, recipes);
+                                    recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
+                                        RemotelistByIdUser_recipe.setValue(recipeList);
+                                        Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                                    });
+                                }
+                            });
+                        recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
+                            @Override
+                            public void onChanged(List<RecipeResponse> recipes) {
+                                if (recipes != null)
+                                    RemotelistFullRecipe.setValue(recipes);
                                 Toast.makeText(getContext(), "full recipe list :" + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            });
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
 
@@ -97,7 +101,7 @@ public class Frg_Recipe_Profil extends Fragment {
         binding = FragmentFrgRecipeProfilBinding.inflate(inflater, container, false);
         // Inflate the layout for this fragment
         recipeVM = new RecipeViewModel(requireContext(), requireActivity());
-        userVM = new UserViewModel(requireContext(),requireActivity());
+        userVM = new UserViewModel(requireContext(), requireActivity());
         //recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
         return binding.getRoot();
     }

@@ -3,7 +3,9 @@ package com.example.notecook.Fragement;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.MainActivity.Type_User;
 import static com.example.notecook.MainActivity.decod;
+import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
+import static com.example.notecook.Utils.Constants.TAG_ONLINE;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
@@ -102,6 +104,11 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
         tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
         viewPager2.setUserInputEnabled(true);
+        recipeVM = new RecipeViewModel(requireContext(), requireActivity());
+        userVM = new UserViewModel(requireContext(), requireActivity());
+        recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
+        userVM = new ViewModelProvider(this,userVM).get(UserViewModel.class);
+        getUserInfo();
 
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
         tabLayout.setSelectedTabIndicatorHeight((int) (3 * getResources().getDisplayMetrics().density));
@@ -187,6 +194,34 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     }
 
 
+    private void getUserInfo()
+    {
+        if (!Type_User.equals(TAG_MODE_INVITE)) {
+            Constants.loading_ui(getContext(),getActivity(),"Loading...");
+            String s1 = getUserInput(getContext());
+            if(MODE_ONLINE)
+            userVM.getUser(s1).observe(getViewLifecycleOwner(), new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    if(user!=null) {
+                        Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
+                        extracted();
+                    }
+                    Constants.dismissLoadingDialog();
+                }
+            });
+            else userVM.getUserLocal(s1,"").observe(getViewLifecycleOwner(), new Observer<User>() {
+                @Override
+                public void onChanged(User user) {
+                    if(user!=null) {
+                        Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
+                        extracted();
+                    }
+                    Constants.dismissLoadingDialog();
+                }
+            });
+        }
+    }
 
 
 }
