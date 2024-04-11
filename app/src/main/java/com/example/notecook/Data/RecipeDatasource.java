@@ -120,9 +120,8 @@ public class RecipeDatasource {
         close();
         return ListRecipe;
     }
-    public LiveData<List<Recipe>> getRecipeByIdUser(int id) {
-        MutableLiveData<List<Recipe>> ListRecipe = new MutableLiveData<>();
-        List<Recipe> list  = new ArrayList<>();
+    public List<Recipe> getRecipeByIdUser(int id) {
+        List<Recipe> ListRecipe = new ArrayList<>();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
                 allColumns, MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE + " = " + id, null, null, null, null);
@@ -130,13 +129,28 @@ public class RecipeDatasource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Recipe Recipe = cursorToComment(cursor);
-            list.add(Recipe);
+            ListRecipe.add(Recipe);
             cursor.moveToNext();
         }
-        ListRecipe.setValue(list);
+
         // assurez-vous de la fermeture du curseur
         cursor.close();
         return ListRecipe;
+    }
+
+    public Recipe getRecipe(int id) {
+        Recipe recipe = new Recipe();
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
+                allColumns, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            recipe = cursorToComment(cursor);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return recipe;
     }
 
     public void UpdateRecipe(Recipe recipe,int id) {

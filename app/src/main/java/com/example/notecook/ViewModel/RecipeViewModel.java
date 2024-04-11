@@ -51,8 +51,8 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.getFullRecipesByUsername(username);
     }
 
-    public LiveData<RecipeResponse> getRecipe(int id_recipe) {
-        return repository.getFullRecipeApi(id_recipe);
+    public LiveData<Recipe> getRecipe(int id_recipe) {
+        return repository.getLocalRecipe(id_recipe);
     }
 
     public LiveData<List<Recipe>> getRecipesLocal(int id_user) {

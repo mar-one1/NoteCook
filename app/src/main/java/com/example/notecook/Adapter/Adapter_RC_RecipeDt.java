@@ -17,6 +17,7 @@ import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -30,7 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
+import androidx.lifecycle.*;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Dto.RecipeResponse;
@@ -61,15 +62,19 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private Context context;
     private Activity activity;
 
+
+
     public Adapter_RC_RecipeDt(Context context, Activity activity, List<Recipe> recipes, String bb) {
         this.recipes = recipes;
         b = bb;
         this.context = context;
         this.activity = activity;
-        recipeVM = new RecipeViewModel(context,activity);
-        userVM = new UserViewModel(context,activity);
+        recipeVM = new RecipeViewModel(context, activity);
+        userVM = new UserViewModel(context, activity);
         notifyDataSetChanged();
     }
+
+
 
 
     @Override
@@ -122,8 +127,8 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             // Get the FragmentActivity associated with the context of the clicked view
             FragmentActivity fragmentActivity = (FragmentActivity) v.getContext();
             if (CURRENT_RECIPE != recipe) {
-                Constants.loading_ui(context,fragmentActivity,"Chargement Recipe");
-                if(!Objects.equals(b, TAG_LOCAL)) {
+                Constants.loading_ui(context, activity, "Chargement Recipe");
+                if (!Objects.equals(b, TAG_LOCAL)) {
                     //CURRENT_RECIPE = recipe;
                     recipeVM.getRecipe(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
                         @Override
@@ -137,21 +142,20 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                                 Review_CurrentRecipe = recipeResponses.getReviews();
                                 Ingredients_CurrentRecipe = recipeResponses.getIngredients();
                                 MainFragment.viewPager2.setCurrentItem(1);
-                                Constants.dismissLoadingDialog();
                             }
+                            Constants.dismissLoadingDialog();
                         }
                     });
-                }
-                else{
-                    //recipeVM.getRecipesLocal(user_login_local.getUser().getId_User());
-                    Constants.dismissLoadingDialog();
+
+                }else {
+                   CURRENT_RECIPE = recipeVM.getRecipe(recipe.getId_recipe()).getValue();
                 }
             } else viewPager2.setCurrentItem(1, false);
 
             //Constants.stop_loading();
 
-        });
 
+        });
     }
 
 

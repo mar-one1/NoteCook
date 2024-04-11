@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.SocketTimeoutException;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -129,10 +130,19 @@ public class RecipeRepository {
 
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
         recipeDatasource.open();
-        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i).getValue());
+        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
         //detailRecipeRepository.getLocalDetailsRecipes();
         recipeDatasource.close();
         return list_recipe;
+    }
+
+    public LiveData<Recipe> getLocalRecipe(int i) {
+        MutableLiveData<Recipe> recipe = new MutableLiveData<>();
+        recipeDatasource.open();
+        recipe.setValue(recipeDatasource.getRecipe(i));
+        //detailRecipeRepository.getLocalDetailsRecipes();
+        recipeDatasource.close();
+        return recipe;
     }
 
     public LiveData<RecipeResponse> getFullRecipeApi(int Recipeid) {

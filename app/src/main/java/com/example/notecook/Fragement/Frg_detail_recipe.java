@@ -6,9 +6,11 @@ import static com.example.notecook.MainActivity.Type_User;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -24,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
+import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Ingredients;
@@ -90,6 +93,14 @@ public class Frg_detail_recipe extends Fragment {
 
         }
 
+    }
+
+    // Method to update the data set of the adapter
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateData() {
+        if (viewPager2Adapter != null) {
+            viewPager2Adapter.notifyDataSetChanged();
+        }
     }
 
 
@@ -193,6 +204,7 @@ public class Frg_detail_recipe extends Fragment {
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setViewPagerAdapter() {
         viewPager2Adapter = new
                 Adapter_Vp2_recipeProfil(getActivity());
