@@ -71,7 +71,7 @@ public class DetailRecipeDataSource {
         return newDR;
     }
 
-    private static Detail_Recipe cursorToComment(Cursor cursor) {
+    public static Detail_Recipe cursorToComment(Cursor cursor) {
 
         Detail_Recipe detail_recipe = new Detail_Recipe();
         detail_recipe.setId_detail_recipe(cursor.getInt(0));

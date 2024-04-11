@@ -1,5 +1,6 @@
 package com.example.notecook.Data;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,9 +11,17 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Model.Detail_Recipe;
+import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Model.Review;
+import com.example.notecook.Model.Step;
+import com.example.notecook.Model.User;
 
 import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +29,7 @@ public class RecipeDatasource {
 
     private static SQLiteDatabase database;
     private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_RECIPE,
-            MySQLiteHelper.COLUMN_ICON_RECIPE, MySQLiteHelper.COLUMN_FAV_RECIPE,MySQLiteHelper.COLUMN_NOM_RECIPE,
+            MySQLiteHelper.COLUMN_ICON_RECIPE, MySQLiteHelper.COLUMN_FAV_RECIPE, MySQLiteHelper.COLUMN_NOM_RECIPE,
             MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE};
     private MySQLiteHelper dbHelper;
 
@@ -31,13 +40,13 @@ public class RecipeDatasource {
     /*
      * insert the value in the Image table
      */
-    public Recipe createRecipe(byte[] ICONBYTE,String nom_recipe, int fav , int frk) {
+    public Recipe createRecipe(byte[] ICONBYTE, String nom_recipe, int fav, int frk) {
         open();
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, ICONBYTE);
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, fav);
-        values.put(MySQLiteHelper.COLUMN_NOM_RECIPE,nom_recipe );
-        values.put(MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE,frk);
+        values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, nom_recipe);
+        values.put(MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE, frk);
 
         long insertId = database.insert(MySQLiteHelper.TABLE_RECIPE, null,
                 values);
@@ -51,15 +60,15 @@ public class RecipeDatasource {
         return newRecipe;
     }
 
-    public long InsertRecipe(Recipe recipe,int id) {
+    public long InsertRecipe(Recipe recipe, int id) {
         open();
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
-        values.put(MySQLiteHelper.COLUMN_NOM_RECIPE,recipe.getNom_recipe() );
+        values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, recipe.getFav());
-        values.put(MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE,id);
+        values.put(MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE, id);
 
-       // long insertId = database.insert(MySQLiteHelper.TABLE_RECIPE, null, values);
+        // long insertId = database.insert(MySQLiteHelper.TABLE_RECIPE, null, values);
 
         long insertId = database.insert(MySQLiteHelper.TABLE_RECIPE,
                 null, values);
@@ -120,6 +129,7 @@ public class RecipeDatasource {
         close();
         return ListRecipe;
     }
+
     public List<Recipe> getRecipeByIdUser(int id) {
         List<Recipe> ListRecipe = new ArrayList<>();
 
@@ -153,12 +163,101 @@ public class RecipeDatasource {
         return recipe;
     }
 
-    public void UpdateRecipe(Recipe recipe,int id) {
+    @SuppressLint("Range")
+    public RecipeResponse getFullRecipe(int recipeId) {
+        RecipeResponse recipeResponse = new RecipeResponse();
+        Cursor cursor = null;
+        try {
+            cursor = database.query(
+                    MySQLiteHelper.TABLE_RECIPE + " LEFT JOIN " +
+                            MySQLiteHelper.TABLE_USER + " ON " +
+                            MySQLiteHelper.TABLE_RECIPE + "." + MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE + " = " +
+                            MySQLiteHelper.TABLE_USER + "." + MySQLiteHelper.COLUMN_ID_USER +
+                            " LEFT JOIN " +
+                            MySQLiteHelper.TABLE_DETAIL_RECIPE + " ON " +
+                            MySQLiteHelper.TABLE_RECIPE + "." + MySQLiteHelper.COLUMN_ID_RECIPE + " = " +
+                            MySQLiteHelper.TABLE_DETAIL_RECIPE + "." + MySQLiteHelper.COLUMN_FRK_RECIPE +
+                            " LEFT JOIN " +
+                            MySQLiteHelper.TABLE_INGREDIENT_RECIPE + " ON " +
+                            MySQLiteHelper.TABLE_RECIPE + "." + MySQLiteHelper.COLUMN_ID_RECIPE + " = " +
+                            MySQLiteHelper.TABLE_INGREDIENT_RECIPE + "." + MySQLiteHelper.COLUMN_FRK_RECIPE +
+                            " LEFT JOIN " +
+                            MySQLiteHelper.TABLE_STEP_RECIPE + " ON " +
+                            MySQLiteHelper.TABLE_RECIPE + "." + MySQLiteHelper.COLUMN_ID_RECIPE + " = " +
+                            MySQLiteHelper.TABLE_STEP_RECIPE + "." + MySQLiteHelper.COLUMN_FRK_RECIPE +
+                            " LEFT JOIN " +
+                            MySQLiteHelper.TABLE_REVIEW_RECIPE + " ON " +
+                            MySQLiteHelper.TABLE_RECIPE + "." + MySQLiteHelper.COLUMN_ID_RECIPE + " = " +
+                            MySQLiteHelper.TABLE_REVIEW_RECIPE + "." + MySQLiteHelper.COLUMN_FRK_RECIPE,
+                    allColumns,
+                    MySQLiteHelper.TABLE_RECIPE + "." + MySQLiteHelper.COLUMN_ID_RECIPE + " = ?",
+                    new String[]{String.valueOf(recipeId)},
+                    null, null, null
+            );
+
+
+            try {
+                    // SQL query to fetch recipe data
+
+                    // Populate RecipeResponse object
+                    if (cursor != null && cursor.moveToFirst()) {
+                        // Populate Recipe object
+                        Recipe recipe = new Recipe();
+                        recipe.setId_recipe(Integer.parseInt(cursor.getString(cursor.getColumnIndex("Id_recipe"))));
+                        recipe.setNom_recipe(cursor.getString(cursor.getColumnIndex("Nom_Recipe")));
+                        // Populate other properties of Recipe object
+
+                        // Populate User object
+                        User user = new User();
+                        user.setId_User(Integer.parseInt(cursor.getString(cursor.getColumnIndex("Id_user"))));
+                        user.setUsername(cursor.getString(cursor.getColumnIndex("username")));
+                        // Populate other properties of User object
+
+                        // Populate Detail_Recipe object
+                        Detail_Recipe detailRecipe = new Detail_Recipe();
+                        detailRecipe.setId_detail_recipe(cursor.getInt(cursor.getColumnIndex("Id_detail_recipe")));
+                        detailRecipe.setDt_recipe(cursor.getString(cursor.getColumnIndex("description")));
+                        // Populate other properties of Detail_Recipe object
+
+                        // Populate Ingredients list
+                        List<Ingredients> ingredientsList = new ArrayList<>();
+                        // Populate ingredientsList from resultSet
+
+                        // Populate Reviews list
+                        List<Review> reviewsList = new ArrayList<>();
+                        // Populate reviewsList from resultSet
+
+                        // Populate Steps list
+                        List<Step> stepsList = new ArrayList<>();
+                        // Populate stepsList from resultSet
+
+                        // Set populated objects in RecipeResponse
+                        recipeResponse.setRecipe(recipe);
+                        recipeResponse.setUser(user);
+                        recipeResponse.setDetail_recipe(detailRecipe);
+                        recipeResponse.setIngredients(ingredientsList);
+                        recipeResponse.setReviews(reviewsList);
+                        recipeResponse.setSteps(stepsList);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } finally {
+                if (cursor != null) {
+                    cursor.close();
+                }
+                database.close(); // Close the database connection
+            }
+
+            return recipeResponse;
+    }
+
+    public void UpdateRecipe(Recipe recipe, int id) {
         open();
         ContentValues values = new ContentValues();
         //values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, recipe.getFav());
-        values.put(MySQLiteHelper.COLUMN_NOM_RECIPE,recipe.getNom_recipe());
+        values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());
         database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
         close();
     }

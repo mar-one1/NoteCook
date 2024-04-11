@@ -55,6 +55,10 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.getLocalRecipe(id_recipe);
     }
 
+    public LiveData<RecipeResponse> getFullRecipeLocal(int id_recipe) {
+        return repository.getFullLocalRecipe(id_recipe);
+    }
+
     public LiveData<List<Recipe>> getRecipesLocal(int id_user) {
         return repository.getLocalRecipes(id_user);
     }

@@ -31,7 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.*;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Dto.RecipeResponse;
@@ -130,25 +130,35 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                 Constants.loading_ui(context, activity, "Chargement Recipe");
                 if (!Objects.equals(b, TAG_LOCAL)) {
                     //CURRENT_RECIPE = recipe;
-                    recipeVM.getRecipe(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
-                        @Override
-                        public void onChanged(RecipeResponse recipeResponses) {
-                            if (recipeResponses != null) {
-                                //viewPager2.setCurrentItem(1);
-                                User_CurrentRecipe = recipeResponses.getUser();
-                                CURRENT_RECIPE = recipeResponses.getRecipe();
-                                Detail_CurrentRecipe = recipeResponses.getDetail_recipe();
-                                Steps_CurrentRecipe = recipeResponses.getSteps();
-                                Review_CurrentRecipe = recipeResponses.getReviews();
-                                Ingredients_CurrentRecipe = recipeResponses.getIngredients();
-                                MainFragment.viewPager2.setCurrentItem(1);
-                            }
-                            Constants.dismissLoadingDialog();
-                        }
-                    });
+//                    recipeVM.getRecipe(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
+//                        @Override
+//                        public void onChanged(RecipeResponse recipeResponses) {
+//                            if (recipeResponses != null) {
+//                                //viewPager2.setCurrentItem(1);
+//                                User_CurrentRecipe = recipeResponses.getUser();
+//                                CURRENT_RECIPE = recipeResponses.getRecipe();
+//                                Detail_CurrentRecipe = recipeResponses.getDetail_recipe();
+//                                Steps_CurrentRecipe = recipeResponses.getSteps();
+//                                Review_CurrentRecipe = recipeResponses.getReviews();
+//                                Ingredients_CurrentRecipe = recipeResponses.getIngredients();
+//                                MainFragment.viewPager2.setCurrentItem(1);
+//                            }
+//                            Constants.dismissLoadingDialog();
+//                        }
+//                    });
 
                 }else {
-                   CURRENT_RECIPE = recipeVM.getRecipe(recipe.getId_recipe()).getValue();
+                    RecipeResponse recipeResponses = recipeVM.getFullRecipeLocal(recipe.getId_recipe()).getValue();
+                    if (recipeResponses != null) {
+                        //viewPager2.setCurrentItem(1);
+                        User_CurrentRecipe = recipeResponses.getUser();
+                        CURRENT_RECIPE = recipeResponses.getRecipe();
+                        Detail_CurrentRecipe = recipeResponses.getDetail_recipe();
+                        Steps_CurrentRecipe = recipeResponses.getSteps();
+                        Review_CurrentRecipe = recipeResponses.getReviews();
+                        Ingredients_CurrentRecipe = recipeResponses.getIngredients();
+                        MainFragment.viewPager2.setCurrentItem(1);
+                    }
                 }
             } else viewPager2.setCurrentItem(1, false);
 

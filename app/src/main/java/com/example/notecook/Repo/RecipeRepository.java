@@ -145,6 +145,15 @@ public class RecipeRepository {
         return recipe;
     }
 
+    public LiveData<RecipeResponse> getFullLocalRecipe(int i) {
+        MutableLiveData<RecipeResponse> recipe = new MutableLiveData<>();
+        recipeDatasource.open();
+        recipe.setValue(recipeDatasource.getFullRecipe(i));
+        //detailRecipeRepository.getLocalDetailsRecipes();
+        recipeDatasource.close();
+        return recipe;
+    }
+
     public LiveData<RecipeResponse> getFullRecipeApi(int Recipeid) {
         MutableLiveData<RecipeResponse> recipeResponseMutableLiveData = new MutableLiveData<>();
         apiService.getRecipeById(Token, Recipeid).enqueue(new Callback<RecipeResponse>() {

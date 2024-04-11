@@ -93,7 +93,7 @@ public class UserDatasource {
         return newUser;
     }
 
-    private static User cursorToComment(Cursor cursor) {
+    public static User cursorToComment(Cursor cursor) {
 
         User user = new User();
         user.setId_User(cursor.getInt(0));
