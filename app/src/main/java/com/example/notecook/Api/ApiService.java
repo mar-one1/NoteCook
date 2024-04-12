@@ -12,6 +12,7 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -28,6 +29,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 
 
@@ -52,6 +54,9 @@ public interface ApiService {
 
     @GET("recipes/{id}")
     Call<RecipeResponse> getRecipeById(@Header("Authorization") String token, @Path("id") int recipeId);
+
+    @GET("recipes")
+    Call<List<Recipe>> getRecipesByConditions(@QueryMap Map<String, String> conditions);
 
     @GET("recipes/user/{id}")
     Call<List<Recipe>> getRecipeByIdUser(@Header("Authorization") String token, @Path("id") int recipeId);

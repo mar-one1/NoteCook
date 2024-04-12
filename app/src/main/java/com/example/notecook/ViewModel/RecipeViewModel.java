@@ -13,6 +13,7 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.Repo.RecipeRepository;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class RecipeViewModel extends ViewModel implements ViewModelProvider.Factory {
@@ -28,13 +29,14 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
     public RecipeViewModel(Context context, Activity appCompatActivity) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;
-        repository = new RecipeRepository(context,appCompatActivity);
+        repository = new RecipeRepository(context, appCompatActivity);
 
     }
+
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(RecipeViewModel.class)) {
-            return (T) new RecipeViewModel(context,appCompatActivity);
+            return (T) new RecipeViewModel(context, appCompatActivity);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }
@@ -43,7 +45,11 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.getRecipes();
     }
 
-    public LiveData<List<Recipe>> getRecipesByUsername( String username) {
+    public LiveData<List<Recipe>> getRecipesByFilter(Map<String, String> conditions) {
+        return repository.getRecipesByConditionApi(conditions);
+    }
+
+    public LiveData<List<Recipe>> getRecipesByUsername(String username) {
         return repository.getRecipesByUsername(username);
     }
 
@@ -54,6 +60,7 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
     public LiveData<Recipe> getRecipe(int id_recipe) {
         return repository.getLocalRecipe(id_recipe);
     }
+
     public LiveData<RecipeResponse> getFullRecipeApi(int id_recipe) {
         return repository.getFullRecipeApi(id_recipe);
     }
@@ -61,6 +68,7 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
     public LiveData<RecipeResponse> getFullRecipeLocal(Recipe recipe) {
         return repository.getFullLocalRecipe(recipe);
     }
+
 
     public LiveData<List<Recipe>> getRecipesLocal(int id_user) {
         return repository.getLocalRecipes(id_user);
@@ -75,10 +83,8 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
     }
 
 
-
-    public LiveData<Recipe> postRecipe(Recipe recipe,Bitmap bitmap)
-    {
-        return repository.InsertRecipeApi(recipe,bitmap);
+    public LiveData<Recipe> postRecipe(Recipe recipe, Bitmap bitmap) {
+        return repository.InsertRecipeApi(recipe, bitmap);
     }
 
     public int postRecipeLocal(Recipe recipe, int id_user) {
@@ -88,9 +94,6 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
     public LiveData<List<Recipe>> SearchRecipe(String s) {
         return repository.searchRecipes(s);
     }
-
-
-
 
 
 }

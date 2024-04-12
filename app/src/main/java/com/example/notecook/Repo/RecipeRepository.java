@@ -1,12 +1,9 @@
 package com.example.notecook.Repo;
 
-import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
-import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.getUserSynch;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.saveUserSynch;
@@ -24,7 +21,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.DetailRecipeDataSource;
 import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Data.RecipeDatasource;
@@ -32,21 +28,17 @@ import com.example.notecook.Data.ReviewDataSource;
 import com.example.notecook.Data.StepsDataSource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.RecipeResponse;
-import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Model.Review;
-import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.SocketTimeoutException;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -80,7 +72,7 @@ public class RecipeRepository {
         ingredientsDataSource = new IngredientsDataSource(context);
         reviewDataSource = new ReviewDataSource(context);
         detailRecipeRepository = new DetailRecipeRepository(context);
-        userRepo = new UserRepository(context,appCompatActivity);
+        userRepo = new UserRepository(context, appCompatActivity);
     }
 
     public RecipeRepository(Context context) {
@@ -133,7 +125,7 @@ public class RecipeRepository {
                 } else {
                     // Handle unsuccessful download
                     Toast.makeText(context, "unsuccessful Created Api" + response.message(), Toast.LENGTH_SHORT).show();
-                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
                 }
 
             }
@@ -141,7 +133,7 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<Recipe> call, Throwable t) {
                 Toast.makeText(context, "Handle failure Insert Recipe to api", Toast.LENGTH_SHORT).show();
-                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
         return null;
@@ -204,19 +196,45 @@ public class RecipeRepository {
 //                        //MainFragment.viewPager2.setCurrentItem(1, false);
 //                    }
                 } else {
-                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<RecipeResponse> call, Throwable t) {
                 TAG_CONNEXION = call.hashCode();
-                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
         return recipeResponseMutableLiveData;
     }
 
+
+    public LiveData<List<Recipe>> getRecipesByConditionApi(Map<String, String> conditions) {
+        MutableLiveData<List<Recipe>> data = new MutableLiveData<>();
+        Map<String, String> condition = new HashMap<>();
+        conditions.put("recipeName", "Spaghetti");
+        conditions.put("ingredientName", "Tomato");
+        conditions.put("userId", "1");
+
+        apiService.getRecipesByConditions(conditions).enqueue(new Callback<List<Recipe>>() {
+            @Override
+            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+                if (response.isSuccessful()) {
+                    data.setValue(response.body());
+                } else {
+                    // Handle error
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+
+            }
+        });
+        return data;
+
+    }
 
     public LiveData<List<Recipe>> getRecipes() {
         MutableLiveData<List<Recipe>> remoteRecipeList = new MutableLiveData<>();
@@ -227,13 +245,13 @@ public class RecipeRepository {
                     List<Recipe> recipes = response.body();
                     remoteRecipeList.setValue(recipes);
                 } else {
-                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
         return remoteRecipeList;
@@ -257,14 +275,15 @@ public class RecipeRepository {
 
                 } else {
                     // Handle error response here
-                    if (response != null) ErrorHandler.handleErrorResponse(response,appCompatActivity);
+                    if (response != null)
+                        ErrorHandler.handleErrorResponse(response, appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle network failure
-                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
         return remoteRecipeListByUser;
@@ -286,17 +305,17 @@ public class RecipeRepository {
                         }
                     } else {
                         saveUserSynch(username, true, context);}*/
-                   }
-                else {
+                } else {
                     // Handle error response here
-                    if (response != null) ErrorHandler.handleErrorResponse(response,appCompatActivity);
+                    if (response != null)
+                        ErrorHandler.handleErrorResponse(response, appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<List<RecipeResponse>> call, Throwable t) {
                 // Handle network failure
-                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
         return remoteRecipeListByUser;
@@ -444,14 +463,14 @@ public class RecipeRepository {
                     // Handle the list of products obtained from the server
                 } else {
                     // Handle unsuccessful response
-                    ErrorHandler.handleErrorResponse(response,appCompatActivity);
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle failure to make the API call
-                ErrorHandler.handleNetworkFailure(t,appCompatActivity);
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
         return SearchRecipeList;
