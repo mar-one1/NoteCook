@@ -25,10 +25,17 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Api.ValidationError;
+import com.example.notecook.Data.DetailRecipeDataSource;
+import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Data.RecipeDatasource;
+import com.example.notecook.Data.ReviewDataSource;
+import com.example.notecook.Data.StepsDataSource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Model.Review;
+import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.google.gson.Gson;
@@ -53,6 +60,10 @@ public class RecipeRepository {
     private ApiService apiService;
     private RecipeDatasource recipeDatasource;
     private UserDatasource userDatasource;
+    private DetailRecipeDataSource detailRecipeDataSource;
+    private StepsDataSource stepsDataSource;
+    private IngredientsDataSource ingredientsDataSource;
+    private ReviewDataSource reviewDataSource;
     private Context context;
     private DetailRecipeRepository detailRecipeRepository;
     private UserRepository userRepo;
@@ -64,6 +75,10 @@ public class RecipeRepository {
         apiService = ApiClient.getClient().create(ApiService.class);
         recipeDatasource = new RecipeDatasource(context);
         userDatasource = new UserDatasource(context);
+        detailRecipeDataSource = new DetailRecipeDataSource(context);
+        stepsDataSource = new StepsDataSource(context);
+        ingredientsDataSource = new IngredientsDataSource(context);
+        reviewDataSource = new ReviewDataSource(context);
         detailRecipeRepository = new DetailRecipeRepository(context);
         userRepo = new UserRepository(context,appCompatActivity);
     }
@@ -73,7 +88,11 @@ public class RecipeRepository {
         apiService = ApiClient.getClient().create(ApiService.class);
         recipeDatasource = new RecipeDatasource(context);
         userDatasource = new UserDatasource(context);
+        detailRecipeDataSource = new DetailRecipeDataSource(context);
+        stepsDataSource = new StepsDataSource(context);
+        ingredientsDataSource = new IngredientsDataSource(context);
         detailRecipeRepository = new DetailRecipeRepository(context);
+        reviewDataSource = new ReviewDataSource(context);
         userRepo = new UserRepository(context, appCompatActivity);
     }
 
@@ -145,12 +164,24 @@ public class RecipeRepository {
         return recipe;
     }
 
-    public LiveData<RecipeResponse> getFullLocalRecipe(int i) {
+    public LiveData<RecipeResponse> getFullLocalRecipe(Recipe RC) {
         MutableLiveData<RecipeResponse> recipe = new MutableLiveData<>();
+        RecipeResponse responseRecipe = new RecipeResponse();
         recipeDatasource.open();
-        recipe.setValue(recipeDatasource.getFullRecipe(i));
+        detailRecipeDataSource.open();
+        userDatasource.open();
+        ingredientsDataSource.open();
+        stepsDataSource.open();
+        reviewDataSource.open();
+        responseRecipe.setRecipe(recipeDatasource.getRecipe(RC.getId_recipe()));
+        responseRecipe.setDetail_recipe(detailRecipeDataSource.getDrByIdRecipe(RC.getId_recipe()));
+        responseRecipe.setUser(userDatasource.getUserBYid(RC.getFrk_user()));
+        responseRecipe.setIngredients(ingredientsDataSource.getListIngerdientsByidRecipe(RC.getId_recipe()));
+        responseRecipe.setSteps(stepsDataSource.getStepByIdRecipe(RC.getId_recipe()));
+        responseRecipe.setReviews(reviewDataSource.getReviewsByIdRecipe(RC.getId_recipe()));
         //detailRecipeRepository.getLocalDetailsRecipes();
         recipeDatasource.close();
+        recipe.setValue(responseRecipe);
         return recipe;
     }
 

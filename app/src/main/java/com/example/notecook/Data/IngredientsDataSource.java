@@ -100,17 +100,31 @@ public class IngredientsDataSource {
         return ListIngerdeients;
     }
 
-    public Ingredients select_Ingerdeients_BYid(int id) {
-        Ingredients ListingerdeientsByid = new Ingredients();
+    public ArrayList<Ingredients> getListIngerdientsByidRecipe(int id_recipe) {
+        ArrayList<Ingredients> ListingerdeientsByid = new ArrayList<>();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_INGREDIENT_RECIPE,
-                allColumns , MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE + " = " + id , null, null, null, null);
+                allColumns, MySQLiteHelper.COLUMN_FRK_DETAIL_INGREDIENT_RECIPE + " = " + id_recipe, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            ListingerdeientsByid = cursorToComment(cursor);
+            Ingredients DR = cursorToComment(cursor);
+            ListingerdeientsByid.add(DR);
             cursor.moveToNext();
         }
         return ListingerdeientsByid;
+    }
+
+    public Ingredients getIngerdientsByidRecipe(int id_recipe) {
+        Ingredients ingerdeientsByid = new Ingredients();
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_INGREDIENT_RECIPE,
+                allColumns, MySQLiteHelper.COLUMN_FRK_DETAIL_INGREDIENT_RECIPE + " = " + id_recipe, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            ingerdeientsByid = cursorToComment(cursor);
+            cursor.moveToNext();
+        }
+        return ingerdeientsByid;
     }
 
     public void Update_Ingerdeients(Ingredients ingerdeients,int id) {

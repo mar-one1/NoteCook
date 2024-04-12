@@ -129,17 +129,30 @@ public class DetailRecipeDataSource {
         return ListDR;
     }
 
-    public Detail_Recipe select_DR_BYid(int id) {
-        Detail_Recipe ListDRByid = new Detail_Recipe();
+    public Detail_Recipe getDrById(int id) {
+        Detail_Recipe DRByid = new Detail_Recipe();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_DETAIL_RECIPE,
                 allColumns , MySQLiteHelper.COLUMN_ID_DETAIL_RECIPE + " = " + id , null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            ListDRByid = cursorToComment(cursor);
+            DRByid = cursorToComment(cursor);
             cursor.moveToNext();
         }
-        return ListDRByid;
+        return DRByid;
+    }
+
+    public Detail_Recipe getDrByIdRecipe(int id_recipe) {
+        Detail_Recipe DRByIdRecipe = new Detail_Recipe();
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_DETAIL_RECIPE,
+                allColumns , MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL + " = " + id_recipe , null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            DRByIdRecipe = cursorToComment(cursor);
+            cursor.moveToNext();
+        }
+        return DRByIdRecipe;
     }
 
     public ArrayList<Detail_Recipe> select_DR_BYidRecipe(int id) {

@@ -27,8 +27,7 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
     private List<Ingredients> list_idIngredient =new ArrayList<>();
     private LayoutInflater mInflater;
 
-    public Adapter_Rc_Ingredents(Context context, List<Ingredients> list_ingredients) {
-        this.mInflater = LayoutInflater.from(context);
+    public Adapter_Rc_Ingredents(List<Ingredients> list_ingredients) {
         this.listidIngredient = list_ingredients;
     }
 

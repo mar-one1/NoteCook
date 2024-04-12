@@ -120,7 +120,7 @@ public class StepsDataSource {
         }
         return ListDRByid;
     }
-    public ArrayList<Step> select_DR_BYidRECIPE(int id) {
+    public ArrayList<Step> getStepByIdRecipe(int id) {
         ArrayList<Step> ListDRByidRecipe = new ArrayList<>();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_STEP_RECIPE,
                 allColumns , MySQLiteHelper.COLUMN_FRK_STEP_RECIPE + " = " + id , null, null, null, null);

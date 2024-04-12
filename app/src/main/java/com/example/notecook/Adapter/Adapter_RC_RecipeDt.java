@@ -8,16 +8,12 @@ import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Loading;
-import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
 import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -33,10 +29,10 @@ import android.widget.Toast;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
-import com.example.notecook.Loading_Srcreen;
 import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
@@ -49,6 +45,7 @@ import com.squareup.picasso.Picasso;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,7 +60,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private Activity activity;
 
 
-
     public Adapter_RC_RecipeDt(Context context, Activity activity, List<Recipe> recipes, String bb) {
         this.recipes = recipes;
         b = bb;
@@ -73,8 +69,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         userVM = new UserViewModel(context, activity);
         notifyDataSetChanged();
     }
-
-
 
 
     @Override
@@ -130,35 +124,41 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                 Constants.loading_ui(context, activity, "Chargement Recipe");
                 if (!Objects.equals(b, TAG_LOCAL)) {
                     //CURRENT_RECIPE = recipe;
-//                    recipeVM.getRecipe(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
-//                        @Override
-//                        public void onChanged(RecipeResponse recipeResponses) {
-//                            if (recipeResponses != null) {
-//                                //viewPager2.setCurrentItem(1);
-//                                User_CurrentRecipe = recipeResponses.getUser();
-//                                CURRENT_RECIPE = recipeResponses.getRecipe();
-//                                Detail_CurrentRecipe = recipeResponses.getDetail_recipe();
-//                                Steps_CurrentRecipe = recipeResponses.getSteps();
-//                                Review_CurrentRecipe = recipeResponses.getReviews();
-//                                Ingredients_CurrentRecipe = recipeResponses.getIngredients();
-//                                MainFragment.viewPager2.setCurrentItem(1);
-//                            }
-//                            Constants.dismissLoadingDialog();
-//                        }
-//                    });
+                    recipeVM.getFullRecipeApi(recipe.getId_recipe()).observe(fragmentActivity, new Observer<RecipeResponse>() {
+                        @Override
+                        public void onChanged(RecipeResponse recipe) {
+                            if (recipe != null) {
+                                //viewPager2.setCurrentItem(1);
+                                User_CurrentRecipe = recipe.getUser();
+                                CURRENT_RECIPE = recipe.getRecipe();
+                                Detail_CurrentRecipe = recipe.getDetail_recipe();
+                                Steps_CurrentRecipe = recipe.getSteps();
+                                Review_CurrentRecipe = recipe.getReviews();
+                                Ingredients_CurrentRecipe = recipe.getIngredients();
+                                MainFragment.viewPager2.setCurrentItem(1,false);
+                            }
+                            Constants.dismissLoadingDialog();
+                        }
+                    });
 
-                }else {
-                    RecipeResponse recipeResponses = recipeVM.getFullRecipeLocal(recipe.getId_recipe()).getValue();
-                    if (recipeResponses != null) {
-                        //viewPager2.setCurrentItem(1);
-                        User_CurrentRecipe = recipeResponses.getUser();
-                        CURRENT_RECIPE = recipeResponses.getRecipe();
-                        Detail_CurrentRecipe = recipeResponses.getDetail_recipe();
-                        Steps_CurrentRecipe = recipeResponses.getSteps();
-                        Review_CurrentRecipe = recipeResponses.getReviews();
-                        Ingredients_CurrentRecipe = recipeResponses.getIngredients();
-                        MainFragment.viewPager2.setCurrentItem(1);
-                    }
+                } else {
+                    recipeVM.getFullRecipeLocal(recipe).observe(fragmentActivity, new Observer<RecipeResponse>() {
+                                @Override
+                                public void onChanged(RecipeResponse recipeResponse) {
+                                    if (recipeResponse != null) {
+                                    //viewPager2.setCurrentItem(1);
+                                    User_CurrentRecipe = user_login.getUser();
+                                    CURRENT_RECIPE = recipeResponse.getRecipe();
+                                    Detail_CurrentRecipe = recipeResponse.getDetail_recipe();
+                                    Steps_CurrentRecipe = recipeResponse.getSteps();
+                                    Review_CurrentRecipe = recipeResponse.getReviews();
+                                    Ingredients_CurrentRecipe = recipeResponse.getIngredients();
+                                    Review_CurrentRecipe = recipeResponse.getReviews();
+                                    MainFragment.viewPager2.setCurrentItem(1,false);
+                                     }
+                                    Constants.dismissLoadingDialog();
+                                }
+                    });
                 }
             } else viewPager2.setCurrentItem(1, false);
 

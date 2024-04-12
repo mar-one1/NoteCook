@@ -48,7 +48,7 @@ public class Frg_recipe_ingredients extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //bindingRcV_Ingredients(mRecyclerView);
+        bindingRcV_Ingredients(mRecyclerView);
         Toast.makeText(getContext(), "onDestroyView", Toast.LENGTH_SHORT).show();
     }
 
@@ -129,7 +129,7 @@ public class Frg_recipe_ingredients extends Fragment {
         ingredientsDataSource.close();
 
         // Create and set adapter for RecyclerView
-        adapter = new Adapter_Rc_Ingredents(requireContext(),Ingredients_CurrentRecipe);
+        adapter = new Adapter_Rc_Ingredents(Ingredients_CurrentRecipe);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setAdapter(adapter);
@@ -144,7 +144,7 @@ public class Frg_recipe_ingredients extends Fragment {
         List_ingredient=ingredientsDataSource1.getAllIngerdeients();
         ingredientsDataSource1.close();
 
-        Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(requireContext(),List_ingredient);
+        Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(List_ingredient);
         GridLayoutManager manager = new GridLayoutManager(getContext(),1);
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setLayoutManager(manager);

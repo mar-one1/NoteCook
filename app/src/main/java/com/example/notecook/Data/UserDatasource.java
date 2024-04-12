@@ -150,7 +150,7 @@ public class UserDatasource {
         return ListUser;
     }
 
-    public User select_User_BYid(int id) {
+    public User getUserBYid(int id) {
         User ListUserByid = new User();
         Cursor cursor = database.query(TABLE_USER,
                 allColumns, MySQLiteHelper.COLUMN_ID_USER + " = " + id, null, null, null, null);

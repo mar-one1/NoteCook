@@ -10,6 +10,7 @@ import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ public class Frg_Recipe_Profil extends Fragment {
     private RecyclerView recyclerView;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
+    private Adapter_RC_RecipeDt adapter_rc_recipeDt;
 
     public Frg_Recipe_Profil() {
         // Required empty public constructor
@@ -106,8 +108,9 @@ public class Frg_Recipe_Profil extends Fragment {
         return binding.getRoot();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void bindingRcV_recipes(RecyclerView recyclerView, List<Recipe> recipes) {
-        Adapter_RC_RecipeDt adapter_rc_recipeDt;
+
         adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), recipes, TAG_LOCAL);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(manager);
