@@ -31,6 +31,7 @@ import com.example.notecook.Api.ApiService;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
+import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityMainBinding;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTransaction fragmentTransaction;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
+    private IngredientsViewModel ingredientsVM;
     private ActivityMainBinding binding;
     private View view;
 
@@ -125,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
         view = binding.getRoot();
         Constants.init();
         Token = getToken(this);
+
+        //Get All Ingredients Recipes
+        ingredientsVM = new IngredientsViewModel(this,this);
+        ingredientsVM.getAllIngredientsApi();
 
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);

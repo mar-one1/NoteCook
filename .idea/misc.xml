@@ -4,13 +4,33 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/activity_main.xml" value="0.12685185185185185" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/baseline_123_24.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/baseline_shopping_basket_24.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/face_profil.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/filtre_search_24.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/ic__.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/ic_baseline_plus_one_24.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/ic_icecream.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/ic_lunch_dining.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/ic_restaurant_fill0.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/ic_soup_kitchen_.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/pin_create_24.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/skeleton.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/tab_indicator_color.xml" value="0.1455" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_add_recipe.xml" value="0.221025641025641" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg__edit_profil.xml" value="0.17407407407407408" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg__profil.xml" value="0.20277777777777778" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg__recipe__profil.xml" value="0.20277777777777778" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg__search.xml" value="0.221025641025641" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg_detail_recipe.xml" value="0.17407407407407408" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg_recipe_fav.xml" value="0.1" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_search_filter.xml" value="0.22447916666666667" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/mipmap-anydpi-v26/ic_icon_app.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/mipmap-anydpi-v26/ic_launcher_icon.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/mipmap-anydpi-v26/ic_launcher_icon_round.xml" value="0.1455" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1455" />
       </map>
     </option>
   </component>

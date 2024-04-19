@@ -45,7 +45,7 @@ import retrofit2.Response;
 public class Frg_Search extends Fragment {
 
     Recipe mRecipe;
-    FragmentFrgSearchBinding binding;
+    private FragmentFrgSearchBinding binding;
     private RecyclerView mRecyclerView;
     private Drawable defaultImagelike;
     private RecipeViewModel recipeVM;
@@ -80,18 +80,22 @@ public class Frg_Search extends Fragment {
         //defaultImagelike=binding.HeartImgeclk;
         defaultImagelike = getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
 
-        binding.HeartImgeclk.setOnClickListener(view -> {
-
-            if (!defaultImagelike.getConstantState().equals(binding.HeartImgeclk.getDrawable().getConstantState())) {
-                binding.HeartImgeclk.setImageDrawable(defaultImagelike);
-            } else
-                binding.HeartImgeclk.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
-        });
-
-        binding.HeartImgeclk.setOnClickListener(new View.OnClickListener() {
+        binding.filtreSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openSettings();
+                //openSettings();
+                // Construct filter parameters
+                binding.llFiltre.setVisibility(binding.llFiltre.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            }
+        });
+        binding.filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String searchText = !(binding.txtRecherche.getText().equals("")) ? binding.txtRecherche.getText().toString().trim() : binding.txtRecherche.getText().toString();
+                //double minPrice = Double.parseDouble(binding.minPriceEditText.getText().toString().trim());
+                //double maxPrice = Double.parseDouble(binding.maxPriceEditText.getText().toString().trim());
+                //String category = binding.categorySpinner.getSelectedItem().toString().trim();
+                binding.llFiltre.setVisibility(View.GONE);
             }
         });
 

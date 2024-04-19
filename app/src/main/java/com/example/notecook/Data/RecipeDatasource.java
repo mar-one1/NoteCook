@@ -29,7 +29,7 @@ public class RecipeDatasource {
 
     private static SQLiteDatabase database;
     private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_RECIPE,
-            MySQLiteHelper.COLUMN_ICON_RECIPE, MySQLiteHelper.COLUMN_FAV_RECIPE, MySQLiteHelper.COLUMN_NOM_RECIPE,
+            MySQLiteHelper.COLUMN_ICON_RECIPE,MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, MySQLiteHelper.COLUMN_FAV_RECIPE, MySQLiteHelper.COLUMN_NOM_RECIPE,
             MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE};
     private MySQLiteHelper dbHelper;
 
@@ -40,10 +40,11 @@ public class RecipeDatasource {
     /*
      * insert the value in the Image table
      */
-    public Recipe createRecipe(byte[] ICONBYTE, String nom_recipe, int fav, int frk) {
+    public Recipe createRecipe(byte[] ICONBYTE,String Pathicon, String nom_recipe, int fav, int frk) {
         open();
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, ICONBYTE);
+        values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, Pathicon);
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, fav);
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, nom_recipe);
         values.put(MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE, frk);
@@ -64,6 +65,7 @@ public class RecipeDatasource {
         open();
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
+        values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, recipe.getPathimagerecipe());
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, recipe.getFav());
         values.put(MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE, id);
@@ -80,9 +82,10 @@ public class RecipeDatasource {
         Recipe recipe = new Recipe();
         recipe.setId_recipe(cursor.getInt(0));
         recipe.setIcon_recipe(cursor.getBlob(1));
-        recipe.setFav(cursor.getInt(2));
-        recipe.setNom_recipe(cursor.getString(3));
-        recipe.setFrk_user(cursor.getInt(4));
+        recipe.setPathimagerecipe(cursor.getString(2));
+        recipe.setFav(cursor.getInt(3));
+        recipe.setNom_recipe(cursor.getString(4));
+        recipe.setFrk_user(cursor.getInt(5));
         return recipe;
     }
 
@@ -167,11 +170,10 @@ public class RecipeDatasource {
         open();
         ContentValues values = new ContentValues();
         //values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
+        values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, recipe.getPathimagerecipe());
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, recipe.getFav());
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());
         database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
         close();
     }
-
-
 }

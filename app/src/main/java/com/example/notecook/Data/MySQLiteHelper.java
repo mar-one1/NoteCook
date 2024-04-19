@@ -15,7 +15,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
      */
 
     private static final String DATABASE_NAME = "DB_Notebook.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
 
 
     /*
@@ -36,7 +36,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     private static final String DATABASE_CREATE_RECIPE = "create table "
             + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE
             + " integer primary key autoincrement, " + COLUMN_ICON_RECIPE
-            + " integer , " + COLUMN_FAV_RECIPE + " integer, " + COLUMN_NOM_RECIPE + " text, "+ COLUMN_ICON_RECIPE_PATH + " text , "
+             +" text, "+ COLUMN_ICON_RECIPE_PATH +" text, " + COLUMN_FAV_RECIPE + " integer, " + COLUMN_NOM_RECIPE + " text , "
             + COLUMN_ID_FRK_USER_RECIPE + " integer, " + COLUMN_ID_FRK_CATEGORIE_RECIPE + " integer, " + " FOREIGN KEY (" + COLUMN_ID_FRK_USER_RECIPE + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + ") ON DELETE CASCADE , "
             + " FOREIGN KEY (" + COLUMN_ID_FRK_CATEGORIE_RECIPE + ") REFERENCES " + TABLE_CATEGORIE_RECIPE + "(" + COLUMN_ID_CATEGORIE_RECIPE + ") ON DELETE CASCADE );";
 

@@ -6,10 +6,16 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.Token;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
+import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Review;
 
@@ -22,17 +28,27 @@ import retrofit2.Response;
 
 public class IngredientsRecipeRepository {
 
-    public void getIngredientsRecipeApi() {
+    private IngredientsDataSource ingredientsDataSource;
+    private  Context context;
+    private Activity activity;
+    private ApiService apiService;
 
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+    public IngredientsRecipeRepository(Activity activity) {
+        this.context = context;
+        this.activity = activity;
+        apiService = ApiClient.getClient().create(ApiService.class);
+        ingredientsDataSource = new IngredientsDataSource(context);
+    }
 
-        Call<List<Ingredients>> call = apiService.getAllIngredients(Token);
+    public LiveData<List<Ingredients>> getIngredientsRecipeApi() {
+        MutableLiveData<List<Ingredients>> ingredients = new MutableLiveData<>();
 
-        call.enqueue(new Callback<List<Ingredients>>() {
+        apiService.getAllIngredients(Token).enqueue(new Callback<List<Ingredients>>() {
             @Override
             public void onResponse(Call<List<Ingredients>> call, Response<List<Ingredients>> response) {
                 if (response.isSuccessful()) {
                     All_Ingredients_Recipe = response.body();
+                    ingredients.setValue(response.body());
                     TAG_CONNEXION_MESSAGE = response.message();
                     TAG_CONNEXION = response.code();
                 } else {
@@ -57,5 +73,6 @@ public class IngredientsRecipeRepository {
                 TAG_CONNEXION = call.hashCode();
             }
         });
+        return ingredients;
     }
 }

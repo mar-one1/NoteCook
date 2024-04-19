@@ -160,7 +160,7 @@ public class Frg_Step_Recipe extends Fragment {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher_round)
+                .setSmallIcon(R.mipmap.ic_icon_app)
                 .setContentTitle("")
                 .setContentText(s + " " + chan);
 

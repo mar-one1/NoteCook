@@ -22,37 +22,80 @@
             android:drawableStart="@drawable/ic_search_fill_gray"
             android:drawableEnd="@drawable/ic_keyboard_voice_fill0_wght400_grad0_opsz48"
             android:hint="Ingredients / Dish"
-            android:singleLine="true"
-            android:imeOptions="actionSend"/>
+            android:imeOptions="actionSend"
+            android:singleLine="true" />
 
         <ImageView
-            android:id="@+id/Heart_imgeclk"
+            android:id="@+id/filtre_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:src="@drawable/ic_favorite_border_black_24dp" />
+            android:src="@drawable/filtre_search_24" />
 
     </LinearLayout>
 
-
+    <!-- fragment_search_filter.xml -->
     <RelativeLayout
+        android:id="@+id/rl_filtre"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:layout_margin="20dp"
-        android:orientation="vertical">
+        android:padding="16dp">
 
+        <LinearLayout
+            android:id="@+id/ll_filtre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerHorizontal="true"
+            >
+            <!-- Filter parameters -->
+            <EditText
+                android:id="@+id/minPriceEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="32dp"
+                android:hint="Min Price"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/maxPriceEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/minPriceEditText"
+                android:layout_marginTop="16dp"
+                android:hint="Max Price"
+                android:inputType="numberDecimal" />
+
+            <Spinner
+                android:id="@+id/categorySpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/maxPriceEditText"
+                android:layout_marginTop="16dp" />
+
+            <Button
+                android:id="@+id/filterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/categorySpinner"
+                android:layout_marginTop="16dp"
+                android:text="Apply Filter" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/Rc_recipe_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/ll_filtre"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_gravity="center_horizontal|center"
             android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp" />
+            android:layout_marginEnd="0dp"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="1dp" />
 
 
     </RelativeLayout>

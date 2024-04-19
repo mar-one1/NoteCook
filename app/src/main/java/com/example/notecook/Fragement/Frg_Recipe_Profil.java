@@ -1,10 +1,12 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.MainActivity.Type_User;
+import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
 import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
+import static com.example.notecook.Utils.Constants.TAG_ONLINE;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.list_recipe;
@@ -70,16 +72,19 @@ public class Frg_Recipe_Profil extends Fragment {
                                 @Override
                                 public void onChanged(List<Recipe> recipes) {
                                     bindingRcV_recipes(binding.RcRecipeProfil, recipes);
+                                    if(MODE_ONLINE)
                                     recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
                                         RemotelistByIdUser_recipe.setValue(recipeList);
                                         Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
                                     });
                                 }
                             });
+                        if(MODE_ONLINE)
                         recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
                             @Override
                             public void onChanged(List<RecipeResponse> recipes) {
                                 if (recipes != null)
+
                                     RemotelistFullRecipe.setValue(recipes);
                                 Toast.makeText(getContext(), "full recipe list :" + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
                             }
