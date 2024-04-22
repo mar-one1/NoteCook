@@ -1,7 +1,6 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
-import static com.example.notecook.Data.UserDatasource.insertUser;
 import static com.example.notecook.MainActivity.decod;
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
@@ -151,7 +150,6 @@ public class Frg_EditProfil extends Fragment {
                     String urlold = user_login.getUser().getPathimageuser();
                     User currentuser = user_login.getUser();
                     mUserDatasource = new UserDatasource(getContext());
-                    mUserDatasource.open();
                     String nom = binding.Nome.getText().toString();
                     String prenom = binding.myEditText.getText().toString();
                     String naissance = binding.txtBirth.getText().toString();
@@ -178,7 +176,7 @@ public class Frg_EditProfil extends Fragment {
                         Vp2.setCurrentItem(4, false);
                         Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "", (AppCompatActivity) getContext());
                     } else if (value == 0) {
-                        insertUser(getUser);
+                        mUserDatasource.insertUser(getUser);
                         Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "User insert success");
                         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.detach(Frg_EditProfil.this);
@@ -190,7 +188,6 @@ public class Frg_EditProfil extends Fragment {
                         Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "the Change Not saved");
                     }
                     //user_login.setUser(mUserDatasource.select_User_BYid(user_login.getUser().getId_User()));
-                    mUserDatasource.close();
 
 //                if (!Objects.equals(user_login.getMessage(), TAG_LOCAL)) {
                     currentuser.setIcon(null);

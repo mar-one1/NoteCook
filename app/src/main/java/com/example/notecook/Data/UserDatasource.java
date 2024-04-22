@@ -23,7 +23,7 @@ public class UserDatasource {
             MySQLiteHelper.COLUMN_PHONENUMBER_USER,
             MySQLiteHelper.COLUMN_PASSWORD, MySQLiteHelper.COLUMN_GRADE, MySQLiteHelper.COLUMN_STATUS
     };
-    private MySQLiteHelper dbHelper;
+    private  MySQLiteHelper dbHelper;
 
 
     public UserDatasource(Context context) {
@@ -32,21 +32,24 @@ public class UserDatasource {
 
 
     // Method to check if a record exists
-    public static boolean isRecordExist (String tableName,String columnName, String value) {
-
+    public  boolean isRecordExist(String tableName, String columnName, String value) {
+        open();
         Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{value}, null, null, null);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
+        close();
         return exists;
     }
+
     /*
      * insert the value in the Image table
      */
-    public static User insertUser(User user) {
+    public  User insertUser(User user) {
+        open();
         ContentValues values = new ContentValues();
 
-        values.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
         values.put(MySQLiteHelper.COLUMN_USERNAME, user.getUsername());
+        values.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
         values.put(MySQLiteHelper.COLUMN_FIRSTNAME_USER, user.getFirstname());
         values.put(MySQLiteHelper.COLUMN_LASTNAME_USER, user.getLastname());
         values.put(MySQLiteHelper.COLUMN_BIRTHDAY_USER, user.getBirthday());
@@ -64,11 +67,13 @@ public class UserDatasource {
         cursor.moveToFirst();
         User newUser = cursorToComment(cursor);
         cursor.close();
+        close();
         return newUser;
     }
 
 
-    public static User createUserlogin(byte[] icon, String username, String firstname, String lastname, String birthday, String email, String tel, String Password, String grade, String status) {
+    public  User createUserlogin(byte[] icon, String username, String firstname, String lastname, String birthday, String email, String tel, String Password, String grade, String status) {
+        open();
         ContentValues values = new ContentValues();
 
         values.put(MySQLiteHelper.COLUMN_USERNAME, username);
@@ -90,10 +95,11 @@ public class UserDatasource {
         cursor.moveToFirst();
         User newUser = cursorToComment(cursor);
         cursor.close();
+        close();
         return newUser;
     }
 
-    public static User cursorToComment(Cursor cursor) {
+    public  User cursorToComment(Cursor cursor) {
 
         User user = new User();
         user.setId_User(cursor.getInt(0));
@@ -114,14 +120,14 @@ public class UserDatasource {
     /*
      * Open DataBase
      */
-    public void open() throws SQLException {
+    public  void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
     }
 
     /*
      * close DataBase
      */
-    public void close() {
+    public  void close() {
         dbHelper.close();
     }
 
@@ -129,13 +135,16 @@ public class UserDatasource {
      * delete item from the table of images
      */
     public void deleteImage(User user) {
+        open();
         long id = user.getId_User();
         Log.d("gps", "Image  deleted with id: " + id);
         database.delete(TABLE_USER, MySQLiteHelper.COLUMN_ID_USER
                 + " = " + id, null);
+        close();
     }
 
     public ArrayList<User> getAllUser() {
+        open();
         ArrayList<User> ListUser = new ArrayList<>();
         Cursor cursor = database.query(TABLE_USER,
                 allColumns, null, null, null, null, null);
@@ -147,10 +156,12 @@ public class UserDatasource {
         }
         // assurez-vous de la fermeture du curseur
         cursor.close();
+        close();
         return ListUser;
     }
 
     public User getUserBYid(int id) {
+        open();
         User ListUserByid = new User();
         Cursor cursor = database.query(TABLE_USER,
                 allColumns, MySQLiteHelper.COLUMN_ID_USER + " = " + id, null, null, null, null);
@@ -161,10 +172,12 @@ public class UserDatasource {
             cursor.moveToNext();
         }
         cursor.close();
+        close();
         return ListUserByid;
     }
 
     public User select_User_BYUsername(String username) {
+        open();
         User user = new User();
         String[] selectionArgs = {username};
         Cursor cursor = database.query(TABLE_USER,
@@ -176,11 +189,12 @@ public class UserDatasource {
             cursor.moveToNext();
         }
         cursor.close();
+        close();
         return user;
     }
 
-    public int  UpdateUser(User user, int id) {
-
+    public int UpdateUser(User user, int id) {
+        open();
         ContentValues data = new ContentValues();
         data.put(MySQLiteHelper.COLUMN_BIRTHDAY_USER, user.getBirthday());
         if (!Objects.equals(user.getUsername(), ""))
@@ -194,11 +208,13 @@ public class UserDatasource {
         if (!Objects.equals(user.getStatus(), ""))
             data.put(MySQLiteHelper.COLUMN_STATUS, user.getStatus());
         data.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
-        int value =database.update(TABLE_USER, data, MySQLiteHelper.COLUMN_ID_USER + " = " + id, null);
+        int value = database.update(TABLE_USER, data, MySQLiteHelper.COLUMN_ID_USER + " = " + id, null);
+        close();
         return value;
     }
 
     public int UpdateUserByUsername(User user, String username) {
+        open();
         String[] selectionArgs = {username};
         ContentValues data = new ContentValues();
         data.put(MySQLiteHelper.COLUMN_BIRTHDAY_USER, user.getBirthday());
@@ -210,7 +226,8 @@ public class UserDatasource {
         data.put(MySQLiteHelper.COLUMN_GRADE, user.getGrade());
         data.put(MySQLiteHelper.COLUMN_STATUS, user.getStatus());
         data.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
-        int value =database.update(TABLE_USER, data, MySQLiteHelper.COLUMN_USERNAME +  "= ?", selectionArgs);
+        int value = database.update(TABLE_USER, data, MySQLiteHelper.COLUMN_USERNAME + "= ?", selectionArgs);
+        close();
         return value;
     }
 

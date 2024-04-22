@@ -3,8 +3,6 @@ package com.example.notecook;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_EMAIL_USER;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
-import static com.example.notecook.Data.UserDatasource.createUserlogin;
-import static com.example.notecook.Data.UserDatasource.isRecordExist;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.lOGIN_KEY;
@@ -82,10 +80,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private final int GALLERY_REQUEST_CODE = 24;
     private final int INTERNET_REQUEST_CODE = 25;
     // Variable used for storing the key in the Android Keystore container
-    ActivityLoginBinding binding;
-    MainActivity m;
-    GoogleSignInClient mGoogleSignInClient;
-    GoogleSignInOptions gso;
+    private ActivityLoginBinding binding;
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInOptions gso;
     // create an authenticationCallback
     private BiometricPrompt.AuthenticationCallback authenticationCallback;
     private SharedPreferences sharedPreferences;
@@ -104,8 +101,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
-        m = new MainActivity();
-        userDatasource = new UserDatasource(getBaseContext());
         userVM = new UserViewModel(this, this);
         accessVM = new AccessViewModel(this, this);
 
@@ -122,7 +117,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
                 String s1 = sharedPreferences.getString("username", "");
                 String s2 = sharedPreferences.getString("password", "");
-                getLocalUser(s1);
+                userVM.getUserLocal(s1,"success");
                 binding.etUsername.setText(s1);
                 binding.etPassword.setText(s2);
                 secoundLogin();
@@ -196,14 +191,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
 
         setContentView(view);
-    }
-
-    private void getLocalUser(String username) {
-        UserDatasource userDatasource = new UserDatasource(this);
-        userDatasource.open();
-        User user = userDatasource.select_User_BYUsername(username);
-        user_login_local.setUser(user);
-        userDatasource.close();
     }
 
     @Override
@@ -545,7 +532,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             String username = acct.getDisplayName();
             if (username.contains(" "))
                 username = username.replace(" ", "_");
-            boolean b = isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail());
+            boolean b = userDatasource.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail());
 
             if (!b) {
                 String jsonInputString = "";
@@ -563,8 +550,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         Constants.AffichageMessage("Registre Success", "", Login.this);
                     }
                 });
-                if (!isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
-                    User userInsered = createUserlogin(null, username, acct.getGivenName(),
+                if (!userDatasource.isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !userDatasource.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
+                    User userInsered = userDatasource.createUserlogin(null, username, acct.getGivenName(),
                             acct.getFamilyName(), "00/00/0000", acct.getEmail(),
                             "0", password, "Chef ", "active");
                     if (userInsered.equals(Newuser)) vrai = true;
@@ -582,7 +569,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         if (check.equals("registre")) {
             if (inputValidator.isValidRegistration(binding.txtUsername, binding.txtFirstnameLast, binding.txtTel,
                     binding.txtEmail, binding.txtPassword, binding.txtConfirmationPassword)) {
-                boolean b = isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, String.valueOf(binding.txtEmail.getText()));
+                boolean b = userDatasource.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, String.valueOf(binding.txtEmail.getText()));
 
                 if (!b) {
                     String username = (binding.txtUsername.getText().toString()) + "_" + binding.txtFirstnameLast.getText().toString();
@@ -592,7 +579,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     String password = passwordHasher.hashPassword(binding.txtPassword.getText().toString());
                     byte[] icon = MainActivity.iconUser;
                     User newUser;
-                    newUser = createUserlogin(icon, username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), binding.txtTel.getText().toString(), password, "Chef", "active");
+                    newUser = userDatasource.createUserlogin(icon, username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), binding.txtTel.getText().toString(), password, "Chef", "active");
                     vrai = true;
                     if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
                         newUser.setIcon(null);

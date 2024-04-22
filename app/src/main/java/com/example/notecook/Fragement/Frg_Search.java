@@ -1,5 +1,6 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.Remotelist_recipe;
 import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_REMOTE;
@@ -35,7 +36,11 @@ import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgSearchBinding;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,7 +80,7 @@ public class Frg_Search extends Fragment {
         binding = FragmentFrgSearchBinding.inflate(inflater, container, false);
         // Inflate the layout for this fragment
         fragmentActivity = (FragmentActivity) getContext();
-        recipeVM = new RecipeViewModel(getContext(),getActivity());
+        recipeVM = new RecipeViewModel(getContext(), getActivity());
         bindingRcV_recipes(binding.RcRecipeSearch, null, "default");
         //defaultImagelike=binding.HeartImgeclk;
         defaultImagelike = getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
@@ -100,33 +105,40 @@ public class Frg_Search extends Fragment {
         });
 
         binding.txtRecherche.addTextChangedListener(new TextWatcher() {
-            List<String> list = new ArrayList<>();
+            Set<String> list = new HashSet<>();
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 //Search_list.clear();
                 // binding.txtRecherche.setText(s + " \n");
-                if(!list.contains(s.toString()) && s!="")
-                list.add(s.toString());
+                String txt = s.toString().trim();
+                if (!list.contains(txt) && !txt.isEmpty()) {
+                    list.add(txt);
+                }
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                searchRecipes(String.valueOf(s));
-                recipeVM.SearchRecipe(s.toString()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-                    @Override
-                    public void onChanged(List<Recipe> recipes) {
-                        if (recipes!=null && recipes.size() > 0)
-                            bindingRcV_recipes(binding.RcRecipeSearch, Search_list, "search");
-                    }
-                });
+                //searchRecipes(String.valueOf(s));
+                Map<String, String> condition = new HashMap<>();
+                condition.put("searchText", s.toString());
+                //condition.put("ingredientName", "Tomato");
+                //condition.put("userId", "1");
+                if (MODE_ONLINE)
+                    recipeVM.SearchRecipeByCondition(condition).observe(requireActivity(), new Observer<List<Recipe>>() {
+                        @Override
+                        public void onChanged(List<Recipe> recipes) {
+                            if (recipes != null && recipes.size() > 0)
+                                bindingRcV_recipes(binding.RcRecipeSearch, recipes, "search");
+                        }
+                    });
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                List<String> listcurrent =new ArrayList<>();
-                for (String item: list){
-                    if(item.contains(s) && !listcurrent.contains(s)) listcurrent.add(s.toString());
+                List<String> listcurrent = new ArrayList<>();
+                for (String item : list) {
+                    if (item.contains(s) && !listcurrent.contains(s)) listcurrent.add(s.toString());
                 }
                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, listcurrent);
                 binding.txtRecherche.setAdapter(arrayAdapter);
@@ -135,9 +147,9 @@ public class Frg_Search extends Fragment {
         });
 
 
-
         return binding.getRoot();
     }
+
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null);
@@ -147,17 +159,13 @@ public class Frg_Search extends Fragment {
     }
 
     public void bindingRcV_recipes(RecyclerView recyclerView, List<Recipe> searchList, String tag) {
-
-        List<Recipe> list_recipes = new ArrayList<>();
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-        for (int i = 0; i < 8; i++) {
-//            mRecipe = new Recipe(getResources().getDrawable(R.drawable.ic_search_fill_gray), "jus orange",true);
-            mRecipe = new Recipe();
-            list_recipes.add(mRecipe);
+        if (!tag.equals("search") && Remotelist_recipe.getValue() != null)
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), Remotelist_recipe.getValue(), TAG_REMOTE);
+        else {
+            if (searchList == null) searchList = new ArrayList<>();
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), searchList, TAG_REMOTE);
         }
-        if (!tag.equals("search") && Remotelist_recipe.getValue()!=null)
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(),Remotelist_recipe.getValue(), TAG_REMOTE);
-        else adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(),Search_list, TAG_REMOTE);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(manager);
         adapter_rc_recipeDt.notifyDataSetChanged();

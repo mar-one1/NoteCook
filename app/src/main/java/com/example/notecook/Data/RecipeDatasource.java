@@ -36,7 +36,15 @@ public class RecipeDatasource {
     public RecipeDatasource(Context context) {
         dbHelper = new MySQLiteHelper(context);
     }
-
+    // Method to check if a record exists
+    public  boolean isRecordExist(String tableName, String columnName, String value) {
+        open();
+        Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{value}, null, null, null);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        close();
+        return exists;
+    }
     /*
      * insert the value in the Image table
      */
@@ -66,8 +74,8 @@ public class RecipeDatasource {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, recipe.getPathimagerecipe());
-        values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, recipe.getFav());
+        values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());
         values.put(MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE, id);
 
         // long insertId = database.insert(MySQLiteHelper.TABLE_RECIPE, null, values);
@@ -134,6 +142,7 @@ public class RecipeDatasource {
     }
 
     public List<Recipe> getRecipeByIdUser(int id) {
+        open();
         List<Recipe> ListRecipe = new ArrayList<>();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
@@ -148,10 +157,12 @@ public class RecipeDatasource {
 
         // assurez-vous de la fermeture du curseur
         cursor.close();
+        close();
         return ListRecipe;
     }
 
     public Recipe getRecipe(int id) {
+        open();
         Recipe recipe = new Recipe();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
@@ -163,13 +174,14 @@ public class RecipeDatasource {
             cursor.moveToNext();
         }
         cursor.close();
+        close();
         return recipe;
     }
 
     public void UpdateRecipe(Recipe recipe, int id) {
         open();
         ContentValues values = new ContentValues();
-        //values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
+        values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, recipe.getPathimagerecipe());
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, recipe.getFav());
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());

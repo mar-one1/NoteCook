@@ -358,54 +358,7 @@ public class Constants {
         });
     }
 
-    public static void fetchImage(String s, String tag, int position, Context context) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        // URL of the image you want to download
-        //String imageUrl = "https://da97-196-75-207-18.ngrok.io/uploads/1701348093930-989771596-image.jpg"; // Replace with your image URL
-        String imageUrl = BASE_URL + "uploads/" + s; // Replace with your image URL
-
-        // Enqueue the download request
-        Call<ResponseBody> call = apiService.downloadImage(imageUrl);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    //ResponseBody responseBody = response.body();
-                    byte[] bytes = new byte[0];
-                    try {
-                        bytes = response.body().bytes();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length)
-                    // ;
-                    if (Objects.equals(tag, "user_login"))
-                        user_login.getUser().setIcon(bytes);
-                    pathimageuser = s;
-                    if (Objects.equals(tag, "recipe_user")) {
-                        User_CurrentRecipe.setIcon(bytes);
-                        MainFragment.viewPager2.setCurrentItem(1, false);
-                    }
-//                    if(Objects.equals(tag, "image_recipe"))
-//                    {
-//                        Remotelist_recipe.get(position).setIcon_recipe(bytes);
-//
-//                    }
-                    Toast.makeText(context, "succes  image down : ", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Handle unsuccessful download
-                    Toast.makeText(context, "unsuccessful download" + response.message(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                // Handle failure
-                Toast.makeText(context, "Handle failure", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
 }
 

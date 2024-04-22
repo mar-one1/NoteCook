@@ -55,8 +55,8 @@ public interface ApiService {
     @GET("recipes/{id}")
     Call<RecipeResponse> getRecipeById(@Header("Authorization") String token, @Path("id") int recipeId);
 
-    @GET("recipes")
-    Call<List<Recipe>> getRecipesByConditions(@QueryMap Map<String, String> conditions);
+    @GET("recipes/filters/recipes")
+    Call<List<Recipe>> getRecipesByConditions(@Header("Authorization") String token,@QueryMap Map<String, String> conditions);
 
     @GET("recipes/user/{id}")
     Call<List<Recipe>> getRecipeByIdUser(@Header("Authorization") String token, @Path("id") int recipeId);

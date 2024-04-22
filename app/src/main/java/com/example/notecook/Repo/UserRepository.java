@@ -284,9 +284,10 @@ public class UserRepository {
     }
 
 
+
+
     public LiveData<User> getLocalUserLogin(String username, String tag) {
         MutableLiveData<User> user = new MutableLiveData<>();
-        userDatasource.open();
         if (user_login == null) {
             user_login = new TokenResponse();
         }
@@ -301,7 +302,6 @@ public class UserRepository {
             user_login.setMessage(TAG_LOCAL);
             user_login_local.setUser(user.getValue());
         }
-        userDatasource.close();
         return  user;
     }
 

@@ -1,5 +1,6 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
@@ -7,6 +8,7 @@ import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.getUserSynch;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.saveUserSynch;
+import static com.example.notecook.Utils.Constants.showToast;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -16,6 +18,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.databinding.Observable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -28,6 +31,7 @@ import com.example.notecook.Data.ReviewDataSource;
 import com.example.notecook.Data.StepsDataSource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
@@ -39,6 +43,7 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -90,16 +95,12 @@ public class RecipeRepository {
 
     private static void markRecipeAsDeletedLocally(Recipe localRecipe, Context context) {
         RecipeDatasource recipeDatasource = new RecipeDatasource(context);
-        recipeDatasource.open();
         recipeDatasource.deleteRecipe(localRecipe);
-        recipeDatasource.close();
     }
 
     private static User getUserRecipe(Context context, String username) {
         UserDatasource userDatasource = new UserDatasource(context);
-        userDatasource.open();
         User user = userDatasource.select_User_BYUsername(username);
-        userDatasource.close();
         return user;
     }
 
@@ -140,26 +141,19 @@ public class RecipeRepository {
     }
 
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
-        recipeDatasource.open();
         list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
-        //detailRecipeRepository.getLocalDetailsRecipes();
-        recipeDatasource.close();
         return list_recipe;
     }
 
     public LiveData<Recipe> getLocalRecipe(int i) {
         MutableLiveData<Recipe> recipe = new MutableLiveData<>();
-        recipeDatasource.open();
         recipe.setValue(recipeDatasource.getRecipe(i));
-        //detailRecipeRepository.getLocalDetailsRecipes();
-        recipeDatasource.close();
         return recipe;
     }
 
     public LiveData<RecipeResponse> getFullLocalRecipe(Recipe RC) {
         MutableLiveData<RecipeResponse> recipe = new MutableLiveData<>();
         RecipeResponse responseRecipe = new RecipeResponse();
-        recipeDatasource.open();
         detailRecipeDataSource.open();
         userDatasource.open();
         ingredientsDataSource.open();
@@ -212,28 +206,28 @@ public class RecipeRepository {
 
     public LiveData<List<Recipe>> getRecipesByConditionApi(Map<String, String> conditions) {
         MutableLiveData<List<Recipe>> data = new MutableLiveData<>();
-        Map<String, String> condition = new HashMap<>();
+        /*Map<String, String> condition = new HashMap<>();
         conditions.put("recipeName", "Spaghetti");
         conditions.put("ingredientName", "Tomato");
-        conditions.put("userId", "1");
+        conditions.put("userId", "1");*/
 
-        apiService.getRecipesByConditions(conditions).enqueue(new Callback<List<Recipe>>() {
+        apiService.getRecipesByConditions(Token,conditions).enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
-                    data.setValue(response.body());
+                    data.postValue(response.body());
                 } else {
                     // Handle error
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
-
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
         return data;
-
     }
 
     public LiveData<List<Recipe>> getRecipes() {
@@ -405,13 +399,15 @@ public class RecipeRepository {
                     // Match recipes using a unique identifier, e.g., recipe ID
                     if (remoteRecipe.getNom_recipe().equals(localRecipe.getNom_recipe())) {
                         // Recipe exists locally; update it with remote data
-                        updateRecipeLocally(remoteRecipe, localRecipe.getId_recipe());
+                        //updateRecipeLocally(remoteRecipe, localRecipe.getId_recipe());
                         foundLocally = true;
                         break;
                     }
                 }
                 if (!foundLocally) {
                     // Recipe doesn't exist locally; add it to the local list
+//                    fetchImage(remoteRecipe.getPathimagerecipe(), context).observe(appCompatActivity,);
+//                    remoteRecipe.setIcon_recipe(fetchImage(remoteRecipe.getPathimagerecipe(), context).getValue());
                     insertRecipeLocally(remoteRecipe, user_login_local.getUser().getId_User());
                 }
             }
@@ -440,9 +436,7 @@ public class RecipeRepository {
 
     private void updateRecipeLocally(Recipe remoteRecipe, int id) {
         // Implement logic to update the local recipe with data from the remote recipe
-        recipeDatasource.open();
         recipeDatasource.UpdateRecipe(remoteRecipe, id);
-        recipeDatasource.close();
     }
 
     private void updateRecipeRemotely(Recipe recipe) {
@@ -476,4 +470,41 @@ public class RecipeRepository {
         return SearchRecipeList;
     }
 
+    public LiveData<byte[]> fetchImage(String imageUrl, Context context) {
+        MutableLiveData<byte[]> byteImage = new MutableLiveData<>();
+
+        // Enqueue the download request
+        apiService.downloadImage(imageUrl).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    try {
+                        // Convert response body to byte array
+                        byte[] bytes = response.body().bytes();
+                        // Set byte array value to LiveData
+                        byteImage.postValue(bytes);
+                        // Show success message on UI thread
+                        showToast(context, "Image download successful");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        // Show error message on UI thread
+                        showToast(context, "Error: " + e.getMessage());
+                    }
+                } else {
+                    // Handle unsuccessful download
+                    // Show error message on UI thread
+                    showToast(context, "Unsuccessful download: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                // Handle failure
+                // Show error message on UI thread
+                showToast(context, "Failed to connect to server: " + t.getMessage());
+            }
+        });
+
+        return byteImage;
+    }
 }

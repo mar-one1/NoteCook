@@ -2,8 +2,6 @@ package com.example.notecook.Repo;
 
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
-import static com.example.notecook.Data.UserDatasource.insertUser;
-import static com.example.notecook.Data.UserDatasource.isRecordExist;
 import static com.example.notecook.Utils.Constants.TAG_AUTHENTIFICATION_ECHOUE;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
@@ -93,12 +91,10 @@ public class AccessRepository {
                             String passwordHacher = passwordHasher.hashPassword(password);
                             user.setPassWord(passwordHacher);
                             user_login.setUser(user);
-                            userDatasource.open();
-                            if (!isRecordExist(TABLE_USER, COLUMN_USERNAME, username)) {
-                                insertUser(user);
+                            if (!userDatasource.isRecordExist(TABLE_USER, COLUMN_USERNAME, username)) {
+                                userDatasource.insertUser(user);
                                 Log.e("tag", user.getUsername());
                             }
-                            userDatasource.close();
                             saveToken(token, context);
                             Token = token;
                             saveUserInput(username, password, context);
@@ -127,9 +123,7 @@ public class AccessRepository {
 
     private String ConnectLocal(String username, String password) {
         TAG_CONNEXION_LOCAL = "";
-        userDatasource.open();
         Constants.listUser = userDatasource.getAllUser();
-        userDatasource.close();
         passwordHasher = new PasswordHasher();
         for (User item : Constants.listUser) {
             //Toast.makeText(getBaseContext(), "user : " + item.getUser_name() + " pass : " + item.getPassWord(), Toast.LENGTH_SHORT).show();
