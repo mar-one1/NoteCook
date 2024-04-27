@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.fragment.app.Fragment;
 
+import com.example.notecook.Adapter.Adapter_Rc_Steps;
 import com.example.notecook.Login;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
@@ -42,6 +43,7 @@ public class Frg_Step_Recipe extends Fragment {
     private int current_id_step;
     private View.OnClickListener startListener = v -> getActivity().startService(new Intent(getActivity(), SimpleService.class));
     private View.OnClickListener stopListener = v -> getActivity().stopService(new Intent(getActivity(), SimpleService.class));
+    private Adapter_Rc_Steps adapter_rc_steps;
 
     public Frg_Step_Recipe() {
         // Required empty public constructor
@@ -66,7 +68,7 @@ public class Frg_Step_Recipe extends Fragment {
         btn_cancel = binding.btnCancel;
         /*picker_minute.setMinValue(0);
         picker_minute.setMaxValue(60);*/
-
+        adapter_rc_steps = new Adapter_Rc_Steps(Constants.Steps_CurrentRecipe);
 //        StepsDataSource stepsDataSource = new StepsDataSource(getContext());
 //        stepsDataSource.open();
 //        steps = stepsDataSource.getAllSTEP();

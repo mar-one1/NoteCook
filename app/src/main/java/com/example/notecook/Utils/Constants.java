@@ -24,9 +24,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
+import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Fragement.MainFragment;
@@ -359,6 +363,18 @@ public class Constants {
     }
 
 
+    public static  void bindingRcV_Ingredients(RecyclerView recyclerView,List<Ingredients> list,Context context) {
+        // Fetch ingredient data from the database
+        IngredientsDataSource ingredientsDataSource = new IngredientsDataSource(context);
+        ingredientsDataSource.open();
+        List<Ingredients> list_ingredient = ingredientsDataSource.getAllIngerdeients();
+        ingredientsDataSource.close();
+        // Create and set adapter for RecyclerView
+        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list);
+        recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
+        recyclerView.setHorizontalScrollBarEnabled(true);
+        recyclerView.setAdapter(adapter);
+    }
 
 }
 

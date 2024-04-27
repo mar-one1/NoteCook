@@ -37,7 +37,6 @@ public class Frg_recipe_ingredients extends Fragment {
     private RecyclerView mRecyclerView;
     private Button btn_plus,btn_moins;
     private TextView txt_cal;
-    private Adapter_Rc_Ingredents adapter;
 
 
 
@@ -48,7 +47,7 @@ public class Frg_recipe_ingredients extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        bindingRcV_Ingredients(mRecyclerView);
+        Constants.bindingRcV_Ingredients(mRecyclerView,Ingredients_CurrentRecipe,getContext());
         Toast.makeText(getContext(), "onDestroyView", Toast.LENGTH_SHORT).show();
     }
 
@@ -76,7 +75,7 @@ public class Frg_recipe_ingredients extends Fragment {
     public void onResume() {
         super.onResume();
 
-        bindingRcV_Ingredients(mRecyclerView);
+        Constants.bindingRcV_Ingredients(mRecyclerView,Ingredients_CurrentRecipe,getContext());
         Toast.makeText(getContext(), "onResume Frg_ingredient", Toast.LENGTH_SHORT).show();
     }
 
@@ -90,7 +89,7 @@ public class Frg_recipe_ingredients extends Fragment {
         txt_cal = binding.txtTot;
         // Inflate the layout for this fragment
         mRecyclerView =binding.RcIngred;
-        bindingRcV_Ingredients(mRecyclerView);
+        Constants.bindingRcV_Ingredients(mRecyclerView,Ingredients_CurrentRecipe,getContext());
         Toast.makeText(getContext(), "onCreateView", Toast.LENGTH_SHORT).show();
 
         binding.btnMoins.setOnClickListener(view -> {
@@ -119,20 +118,6 @@ public class Frg_recipe_ingredients extends Fragment {
         });
 
         return binding.getRoot();
-    }
-
-    public void bindingRcV_Ingredients(RecyclerView recyclerView) {
-        // Fetch ingredient data from the database
-        IngredientsDataSource ingredientsDataSource = new IngredientsDataSource(getContext());
-        ingredientsDataSource.open();
-        List<Ingredients> list_ingredient = ingredientsDataSource.getAllIngerdeients();
-        ingredientsDataSource.close();
-
-        // Create and set adapter for RecyclerView
-        adapter = new Adapter_Rc_Ingredents(Ingredients_CurrentRecipe);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        recyclerView.setHorizontalScrollBarEnabled(true);
-        recyclerView.setAdapter(adapter);
     }
 
     public void bindingRcV_Nutrition(RecyclerView recyclerView)

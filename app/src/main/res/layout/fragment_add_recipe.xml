@@ -97,6 +97,22 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="16dp"
                     android:hint="Enter cooking instructions" />
+                <Button
+                    android:id="@+id/add_Ingredients"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="ADD ingredient"
+                    android:layout_gravity="center"
+                    />
+                <!-- RecyclerView for Reviews -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewIngredients"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp" />
             </LinearLayout>
 
             <TextView
@@ -121,7 +137,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -250,7 +266,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
 
                     <LinearLayout
@@ -296,12 +312,13 @@
                             android:text="+"
                             android:textColor="@color/red"
                             android:textSize="15sp" />
+
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="match_parent"
@@ -313,13 +330,27 @@
 
                         <EditText
                             android:id="@+id/edt_detail"
-                            android:layout_width="572dp"
-                            android:layout_height="94dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_margin="15dp"
-                            android:layout_weight="1"
                             android:editable="true"
-
-                            android:lines="10" />
+                            android:lines="5" />
+                        <Button
+                            android:id="@+id/add_Step"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="15dp"
+                            android:text="ADD step"
+                            android:layout_gravity="center"
+                            />
+                        <!-- RecyclerView for Steps -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewSteps"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginEnd="16dp" />
                     </LinearLayout>
 
 

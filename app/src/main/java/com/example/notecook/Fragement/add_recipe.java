@@ -2,6 +2,7 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
+import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
@@ -34,14 +35,20 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
+import com.example.notecook.Adapter.Adapter_Rc_Review;
 import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Model.Review;
+import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Repo.UserRepository;
+import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.levelRecipe;
 import com.example.notecook.ViewModel.RecipeViewModel;
@@ -64,6 +71,10 @@ public class add_recipe extends Fragment {
     private UserViewModel userVM;
     private InputValidator inputValidator;
     private List<Recipe> recipes;
+    private List<Step> stepsList = new ArrayList<>();
+    private List<Review> reviewsList = new ArrayList<>();
+    private List<Ingredients> ingredientsList = new ArrayList<>();
+
 
     public add_recipe() {
         // Required empty public constructor
@@ -92,14 +103,12 @@ public class add_recipe extends Fragment {
         for (int i = 0; i < values.length; i++) {
             displayNames[i] = values[i].name();
         }
-
         binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 captureImage(getContext());
             }
         });
-
         // Create an ArrayAdapter
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, displayNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -113,11 +122,15 @@ public class add_recipe extends Fragment {
 
 // Create an ArrayAdapter
         ArrayAdapter<String> adapterIngredients = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ingredientNames);
-
 // Set the adapter to your ListView or RecyclerView
         binding.spIngredients.setAdapter(adapterIngredients);
-        // Set the ArrayAdapter to the Spinner
-
+        binding.addIngredients.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ingredientsList.add(All_Ingredients_Recipe.get(binding.spIngredients.getSelectedItemPosition()));
+                Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients,ingredientsList,getContext());
+            }
+        });
 
         binding.dtRecipeTxt.setOnClickListener(new View.OnClickListener() {
             @Override
