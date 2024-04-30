@@ -2,8 +2,6 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
-import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -33,21 +31,18 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
 
-import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
-import com.example.notecook.Adapter.Adapter_Rc_Review;
-import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.UserDatasource;
+import com.example.notecook.Dto.RecipeRequest;
+import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
-import com.example.notecook.Repo.UserRepository;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.levelRecipe;
@@ -92,8 +87,8 @@ public class add_recipe extends Fragment {
         int bnvId = R.id.bottom_nav;
         BottomNavigationView btnV = getActivity().findViewById(bnvId);
         recipes = new ArrayList<>();
-        recipeVM = new RecipeViewModel(getContext(),getActivity());
-        userVM = new UserViewModel(getContext(),getActivity());
+        recipeVM = new RecipeViewModel(getContext(), getActivity());
+        userVM = new UserViewModel(getContext(), getActivity());
         inputValidator = new InputValidator();
         // Get the values of the enum
         levelRecipe[] values = levelRecipe.values();
@@ -103,6 +98,7 @@ public class add_recipe extends Fragment {
         for (int i = 0; i < values.length; i++) {
             displayNames[i] = values[i].name();
         }
+
         binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,20 +111,25 @@ public class add_recipe extends Fragment {
         binding.levelRecipe.setAdapter(adapter);
 
         List<String> ingredientNames = new ArrayList<>();
-// Iterate over All_Ingredients_Recipe to collect all ingredient names
+        // Iterate over All_Ingredients_Recipe to collect all ingredient names
         for (Ingredients ingredient : All_Ingredients_Recipe) {
-            ingredientNames.add(ingredient.getNome());
+            String name = ingredient.getNome();
+            if (name != null) {
+                ingredientNames.add(name);
+            }
         }
+        // Create an ArrayAdapter
+                ArrayAdapter<String> adapterIngredients = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ingredientNames);
 
-// Create an ArrayAdapter
-        ArrayAdapter<String> adapterIngredients = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ingredientNames);
-// Set the adapter to your ListView or RecyclerView
+        // Set the adapter to your ListView or RecyclerView
         binding.spIngredients.setAdapter(adapterIngredients);
         binding.addIngredients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ingredientsList.add(All_Ingredients_Recipe.get(binding.spIngredients.getSelectedItemPosition()));
-                Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients,ingredientsList,getContext());
+                if (All_Ingredients_Recipe != null && All_Ingredients_Recipe.size() != 0) {
+                    ingredientsList.add(All_Ingredients_Recipe.get(binding.spIngredients.getSelectedItemPosition()));
+                    Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext());
+                }
             }
         });
 
@@ -152,11 +153,22 @@ public class add_recipe extends Fragment {
                 InputValidator inp = new InputValidator();
                 if (inp.isValidAddRecipe(binding.editTextRecipeName, binding.editTextInstructions, binding.edtDetail)) {
                     Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
-                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
-                    Log.d("TAG", "" + user_login.getUser().getId_User());
-                    recipeVM.postRecipe(recipe, bitmap);
-                    recipe.setIcon_recipe(encod(bitmap));
+                    RecipeRequest recipeR= new RecipeRequest();
+                    Detail_Recipe detail_recipe = new Detail_Recipe();
+                    List<Step> steps = new ArrayList<>();
+                    List<Review> reviews = new ArrayList<>();
+                    if (user_login.getUser() != null) {
+                        Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
+                        recipeR.setRecipe(recipe);
+                        recipeR.setIngredients(ingredientsList);
+                        recipeR.setDetail_recipe(detail_recipe);
+                        recipeR.setSteps(steps);
+                        recipeVM.postFullRecipe(recipeR, bitmap);
+                        recipe.setIcon_recipe(encod(bitmap));
+                        Log.d("TAG", "" + user_login.getUser().getId_User());
+                    } else Constants.showToast(getContext(), "Error");
                     int i;
+                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0);
                     if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
                         i = recipeVM.postRecipeLocal(recipe, user_login_local.getUser().getId_User());
                     } else {

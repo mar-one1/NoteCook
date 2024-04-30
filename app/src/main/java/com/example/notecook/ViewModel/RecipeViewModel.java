@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Repo.RecipeRepository;
@@ -85,6 +86,10 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
 
     public LiveData<Recipe> postRecipe(Recipe recipe, Bitmap bitmap) {
         return repository.InsertRecipeApi(recipe, bitmap);
+    }
+
+    public LiveData<Recipe> postFullRecipe(RecipeRequest recipe, Bitmap bitmap) {
+        return repository.insertFullRecipeApi(recipe, bitmap);
     }
 
     public int postRecipeLocal(Recipe recipe, int id_user) {

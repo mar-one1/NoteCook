@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notecook.Fragement.Frg_Step_Recipe;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
 
@@ -31,9 +30,9 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-       Step step = steps.get(position);
+        Step step = steps.get(position);
         holder.textViewDetailStep.setText(steps.get(position).getDetail_step());
-        holder.textViewOrderStep.setText(steps.size() + "/" + (position+1));
+        holder.textViewOrderStep.setText(steps.size() + "/" + (position + 1));
         holder.textViewTimeStep.setText(step.getTime_step());
     }
 
@@ -52,6 +51,30 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
             textViewOrderStep = itemView.findViewById(R.id.order_step);
             textViewDetailStep = itemView.findViewById(R.id.detail_step);
             textViewTimeStep = itemView.findViewById(R.id.edit_time);
+        }
+
+        public TextView getTextViewDetailStep() {
+            return textViewDetailStep;
+        }
+
+        public void setTextViewDetailStep(TextView textViewDetailStep) {
+            this.textViewDetailStep = textViewDetailStep;
+        }
+
+        public TextView getTextViewTimeStep() {
+            return textViewTimeStep;
+        }
+
+        public void setTextViewTimeStep(TextView textViewTimeStep) {
+            this.textViewTimeStep = textViewTimeStep;
+        }
+
+        public TextView getTextViewOrderStep() {
+            return textViewOrderStep;
+        }
+
+        public void setTextViewOrderStep(TextView textViewOrderStep) {
+            this.textViewOrderStep = textViewOrderStep;
         }
     }
 

@@ -1,6 +1,7 @@
 package com.example.notecook.Api;
 
 import com.example.notecook.Dto.LoginResponse;
+import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Fragement.Favorite_User_Recipe;
@@ -69,6 +70,9 @@ public interface ApiService {
 
     @GET("recipes/user/full/{username}")
     Call<List<RecipeResponse>> getFullRecipesByIdUsername(@Header("Authorization") String token, @Path("username") String username);
+
+    @POST("recipes/recipe")
+    Call<Integer> postFullRecipe(@Header("Authorization") String token, @Body RecipeRequest recipeRequest);
 
     @POST("recipes")
         //@Headers("Content-Type: application/json")
