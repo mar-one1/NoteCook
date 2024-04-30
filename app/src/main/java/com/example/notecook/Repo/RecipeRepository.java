@@ -1,6 +1,5 @@
 package com.example.notecook.Repo;
 
-import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
@@ -18,7 +17,6 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.databinding.Observable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -30,8 +28,8 @@ import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.ReviewDataSource;
 import com.example.notecook.Data.StepsDataSource;
 import com.example.notecook.Data.UserDatasource;
+import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
-import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
@@ -40,10 +38,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -140,6 +136,36 @@ public class RecipeRepository {
         return null;
     }
 
+    public LiveData<Recipe> insertFullRecipeApi(RecipeRequest recipe, Bitmap bitmap) {
+
+        // Enqueue the download request
+        apiService.postFullRecipe(Token, recipe).enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    int recipeId = response.body();
+                    //Log.d("TAG", recipe1.getId_recipe() + "et nom :  " + recipe1.getNom_recipe());
+                    //ResponseBody responseBody = response.body();
+                    uploadImageRecipe(recipeId, bitmap);
+                    //fetchImage(str,tag,0,context);
+                    Toast.makeText(context, "succes Full Created Api ", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle unsuccessful download
+                    Toast.makeText(context, "unsuccessful Full Created Api" + response.message(), Toast.LENGTH_SHORT).show();
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                Toast.makeText(context, "Handle failure Insert Full Recipe to api", Toast.LENGTH_SHORT).show();
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
+            }
+        });
+        return null;
+    }
+
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
         list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
         return list_recipe;
@@ -211,7 +237,7 @@ public class RecipeRepository {
         conditions.put("ingredientName", "Tomato");
         conditions.put("userId", "1");*/
 
-        apiService.getRecipesByConditions(Token,conditions).enqueue(new Callback<List<Recipe>>() {
+        apiService.getRecipesByConditions(Token, conditions).enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
@@ -319,7 +345,6 @@ public class RecipeRepository {
 
         File filesDir = context.getFilesDir();
         File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
-
         // Convert bitmap to file
         try {
             OutputStream os = new FileOutputStream(imageFile);
@@ -331,12 +356,11 @@ public class RecipeRepository {
         }
         // Create a File instance with the path to the file to upload
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
-
-// Create MultipartBody.Part instance from the RequestBody
+        // Create MultipartBody.Part instance from the RequestBody
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
-// Create a service using the Retrofit interface
+        // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-// Call the method to upload the file
+        // Call the method to upload the file
         apiService.uploadRecipeFile(Token, idRecipe, filePart).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

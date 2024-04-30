@@ -431,7 +431,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         stackBuilder.addNextIntent(resultIntent);
         // PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         //builder.setContentIntent(resultPendingIntent);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        notificationManager.notify(NOTIFICATION_ID, builder.build()) ;
     }
 
 
@@ -465,9 +465,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private String ConnectLocal() {
         TAG_CONNEXION_LOCAL = "";
         UserDatasource dataSourceUser = new UserDatasource(this);
-        dataSourceUser.open();
         Constants.listUser = dataSourceUser.getAllUser();
-        dataSourceUser.close();
         String username = binding.etUsername.getText().toString();
         String Pass = binding.etPassword.getText().toString();
         passwordHasher = new PasswordHasher();
@@ -532,7 +530,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             String username = acct.getDisplayName();
             if (username.contains(" "))
                 username = username.replace(" ", "_");
-            boolean b = userDatasource.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail());
+            boolean b = dataSourceUser.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail());
 
             if (!b) {
                 String jsonInputString = "";
@@ -550,8 +548,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         Constants.AffichageMessage("Registre Success", "", Login.this);
                     }
                 });
-                if (!userDatasource.isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !userDatasource.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
-                    User userInsered = userDatasource.createUserlogin(null, username, acct.getGivenName(),
+                if (!dataSourceUser.isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !dataSourceUser.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
+                    User userInsered = dataSourceUser.createUserlogin(null, username, acct.getGivenName(),
                             acct.getFamilyName(), "00/00/0000", acct.getEmail(),
                             "0", password, "Chef ", "active");
                     if (userInsered.equals(Newuser)) vrai = true;
@@ -569,7 +567,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         if (check.equals("registre")) {
             if (inputValidator.isValidRegistration(binding.txtUsername, binding.txtFirstnameLast, binding.txtTel,
                     binding.txtEmail, binding.txtPassword, binding.txtConfirmationPassword)) {
-                boolean b = userDatasource.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, String.valueOf(binding.txtEmail.getText()));
+                boolean b = dataSourceUser.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, String.valueOf(binding.txtEmail.getText()));
 
                 if (!b) {
                     String username = (binding.txtUsername.getText().toString()) + "_" + binding.txtFirstnameLast.getText().toString();
@@ -579,7 +577,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     String password = passwordHasher.hashPassword(binding.txtPassword.getText().toString());
                     byte[] icon = MainActivity.iconUser;
                     User newUser;
-                    newUser = userDatasource.createUserlogin(icon, username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), binding.txtTel.getText().toString(), password, "Chef", "active");
+                    newUser = dataSourceUser.createUserlogin(icon, username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), binding.txtTel.getText().toString(), password, "Chef", "active");
                     vrai = true;
                     if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
                         newUser.setIcon(null);
