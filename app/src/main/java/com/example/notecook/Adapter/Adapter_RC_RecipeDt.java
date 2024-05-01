@@ -85,10 +85,9 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
 
 
-        if (recipe.getIcon_recipe() != null && !Arrays.toString(recipe.getIcon_recipe()).equals("")) {
+        if (recipe.getIcon_recipe() != null) {
             holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
         } else if (recipe.getPathimagerecipe() != null) {
-            //holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
             String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
             Picasso.get()
                     .load(url)

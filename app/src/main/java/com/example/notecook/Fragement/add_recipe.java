@@ -2,6 +2,7 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
+import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -18,7 +19,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +32,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.RecipeRequest;
-import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
@@ -119,7 +119,7 @@ public class add_recipe extends Fragment {
             }
         }
         // Create an ArrayAdapter
-                ArrayAdapter<String> adapterIngredients = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ingredientNames);
+        ArrayAdapter<String> adapterIngredients = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ingredientNames);
 
         // Set the adapter to your ListView or RecyclerView
         binding.spIngredients.setAdapter(adapterIngredients);
@@ -153,37 +153,34 @@ public class add_recipe extends Fragment {
                 InputValidator inp = new InputValidator();
                 if (inp.isValidAddRecipe(binding.editTextRecipeName, binding.editTextInstructions, binding.edtDetail)) {
                     Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
-                    RecipeRequest recipeR= new RecipeRequest();
+                    RecipeRequest recipeR = new RecipeRequest();
                     Detail_Recipe detail_recipe = new Detail_Recipe();
                     List<Step> steps = new ArrayList<>();
-                    List<Review> reviews = new ArrayList<>();
+                    recipeR.setIngredients(ingredientsList);
+                    recipeR.setDetail_recipe(detail_recipe);
+                    recipeR.setSteps(stepsList);
+
+                    if(isConnected())
                     if (user_login.getUser() != null) {
                         Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
-                        recipeR.setRecipe(recipe);
-                        recipeR.setIngredients(ingredientsList);
-                        recipeR.setDetail_recipe(detail_recipe);
-                        recipeR.setSteps(steps);
-                        recipeVM.postFullRecipe(recipeR, bitmap);
-                        recipe.setIcon_recipe(encod(bitmap));
-                        Log.d("TAG", "" + user_login.getUser().getId_User());
-                    } else Constants.showToast(getContext(), "Error");
-                    int i;
+                        postRecipeToRemote(recipeR, recipe, bitmap);
+                    }
+
                     Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0);
-                    if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
-                        i = recipeVM.postRecipeLocal(recipe, user_login_local.getUser().getId_User());
-                    } else {
-                        userVM.getUserLocal(user_login.getUser().getUsername(), "success");
-                        i = recipeVM.postRecipeLocal(recipe, user_login_local.getUser().getId_User());
+                    recipe.setIcon_recipe(encod(bitmap));
+                    if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0)
+                        recipe.setFrk_user(user_login_local.getUser().getId_User());
+                    else {
+                        userVM.getUserLocal(Constants.getUserInput(requireContext()), "success");
+                        recipe.setFrk_user(user_login_local.getUser().getId_User());
                     }
-                    if (i != 0) {
-                        Toast.makeText(getContext(), "recipe add successly in localy", Toast.LENGTH_SHORT).show();
-//                        recipes = list_recipe.getValue();
-//                        recipes.add(recipe);
-//                        list_recipe.setValue(recipes);
-                    }
+                    postRecipeToLocal(recipeR, recipe);
                 }
             }
         });
+
+
+
 
         binding.btnPlusTime.setOnClickListener(view -> {
             clickPlus(binding.txtTotTime, binding.btnPlusTime, binding.btnMoinsTime);
@@ -230,8 +227,30 @@ public class add_recipe extends Fragment {
                     MainFragment.viewPager2.setCurrentItem(i, false);
                     return false;
                 });
-        // Inflate the layout for this fragmentè
+        // Inflate the layout for this fragment
         return binding.getRoot();
+    }
+
+    private void postRecipeToRemote(RecipeRequest recipeR, Recipe recipe, Bitmap bitmap) {
+        recipeR.setRecipe(recipe);
+        recipeVM.postFullRecipe(recipeR, bitmap).observe(requireActivity(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer recipe) {
+                if(recipe != -1)
+                    Toast.makeText(getContext(), "recipe add success in Remote", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void postRecipeToLocal(RecipeRequest recipeR, Recipe recipe) {
+        recipeR.setRecipe(recipe);
+        recipeVM.postFullRecipeLocal(recipeR).observe(requireActivity(), new Observer<RecipeRequest>() {
+            @Override
+            public void onChanged(RecipeRequest recipeRequest) {
+                if(recipeRequest != null)
+                    Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

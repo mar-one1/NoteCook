@@ -28,7 +28,7 @@ public class DetailRecipeDataSource {
     /*
      * insert the value in the Image table
      */
-    public  Detail_Recipe insertDetail_recipe(Detail_Recipe detail_recipe) {
+    public  Detail_Recipe insertDetail_recipe(Detail_Recipe detail_recipe,int id) {
         open();
         ContentValues values = new ContentValues();
 
@@ -36,7 +36,7 @@ public class DetailRecipeDataSource {
         values.put(MySQLiteHelper.COLUMN_RATE_DR, detail_recipe.getRate());
         values.put(MySQLiteHelper.COLUMN_LEVEL_DR, detail_recipe.getLevel());
         values.put(MySQLiteHelper.COLUMN_CALORIES, detail_recipe.getCal());
-        values.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, detail_recipe.getFrk_recipe());
+        values.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, id);
         values.put(MySQLiteHelper.COLUMN_DETAIL, detail_recipe.getDt_recipe());
 
         long insertId = database.insert(MySQLiteHelper.TABLE_DETAIL_RECIPE, null,

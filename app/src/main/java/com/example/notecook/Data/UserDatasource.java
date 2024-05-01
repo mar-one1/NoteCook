@@ -162,18 +162,18 @@ public class UserDatasource {
 
     public User getUserBYid(int id) {
         open();
-        User ListUserByid = new User();
+        User UserByid = new User();
         Cursor cursor = database.query(TABLE_USER,
                 allColumns, MySQLiteHelper.COLUMN_ID_USER + " = " + id, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            ListUserByid = cursorToComment(cursor);
+            UserByid = cursorToComment(cursor);
             cursor.moveToNext();
         }
         cursor.close();
         close();
-        return ListUserByid;
+        return UserByid;
     }
 
     public User select_User_BYUsername(String username) {

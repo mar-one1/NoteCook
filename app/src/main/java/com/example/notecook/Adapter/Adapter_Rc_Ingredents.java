@@ -23,7 +23,7 @@ import java.util.List;
 
 public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingredents.ViewHolder> {
 
-    private List<Ingredients> listidIngredient ;
+    private List<Ingredients> listidIngredient;
     private List<Ingredients> list_idIngredient =new ArrayList<>();
     private LayoutInflater mInflater;
 

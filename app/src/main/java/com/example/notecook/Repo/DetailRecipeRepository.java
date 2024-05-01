@@ -138,7 +138,7 @@ public class DetailRecipeRepository {
     private static void insertDetailRecipeLocally(Detail_Recipe remotedetailRecipe, Context context) {
         DetailRecipeDataSource detailRecipeDataSource = new DetailRecipeDataSource(context);
         detailRecipeDataSource.open();
-        detailRecipeDataSource.insertDetail_recipe(remotedetailRecipe);
+        detailRecipeDataSource.insertDetail_recipe(remotedetailRecipe,remotedetailRecipe.getFrk_recipe());
         detailRecipeDataSource.close();
     }
 

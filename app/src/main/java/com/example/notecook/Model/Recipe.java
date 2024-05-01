@@ -1,7 +1,5 @@
 package com.example.notecook.Model;
 
-import android.database.Cursor;
-
 import com.google.gson.annotations.SerializedName;
 
 public class Recipe {
@@ -19,14 +17,6 @@ public class Recipe {
     @SerializedName("icon")
     private String pathimagerecipe;
 
-    public String getPathimagerecipe() {
-        return pathimagerecipe;
-    }
-
-    public void setPathimagerecipe(String pathimagerecipe) {
-        this.pathimagerecipe = pathimagerecipe;
-    }
-
     public Recipe() {
     }
 
@@ -35,6 +25,14 @@ public class Recipe {
         Icon_recipe = icon_recipe;
         Fav = fav;
         Frk_user = frk_user;
+    }
+
+    public String getPathimagerecipe() {
+        return pathimagerecipe;
+    }
+
+    public void setPathimagerecipe(String pathimagerecipe) {
+        this.pathimagerecipe = pathimagerecipe;
     }
 
     public int getId_recipe() {

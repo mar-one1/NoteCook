@@ -1,5 +1,7 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_NOM_RECIPE;
+import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
 import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
@@ -30,6 +32,7 @@ import com.example.notecook.Data.StepsDataSource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
@@ -136,14 +139,15 @@ public class RecipeRepository {
         return null;
     }
 
-    public LiveData<Recipe> insertFullRecipeApi(RecipeRequest recipe, Bitmap bitmap) {
-
+    public LiveData<Integer> insertFullRecipeApi(RecipeRequest recipe, Bitmap bitmap) {
+        MutableLiveData<Integer> fullRecipeLiveData = new MutableLiveData<>();
         // Enqueue the download request
         apiService.postFullRecipe(Token, recipe).enqueue(new Callback<Integer>() {
             @Override
             public void onResponse(Call<Integer> call, Response<Integer> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     int recipeId = response.body();
+                    fullRecipeLiveData.postValue(recipeId);
                     //Log.d("TAG", recipe1.getId_recipe() + "et nom :  " + recipe1.getNom_recipe());
                     //ResponseBody responseBody = response.body();
                     uploadImageRecipe(recipeId, bitmap);
@@ -163,7 +167,7 @@ public class RecipeRepository {
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
-        return null;
+        return fullRecipeLiveData;
     }
 
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
@@ -180,11 +184,6 @@ public class RecipeRepository {
     public LiveData<RecipeResponse> getFullLocalRecipe(Recipe RC) {
         MutableLiveData<RecipeResponse> recipe = new MutableLiveData<>();
         RecipeResponse responseRecipe = new RecipeResponse();
-        detailRecipeDataSource.open();
-        userDatasource.open();
-        ingredientsDataSource.open();
-        stepsDataSource.open();
-        reviewDataSource.open();
         responseRecipe.setRecipe(recipeDatasource.getRecipe(RC.getId_recipe()));
         responseRecipe.setDetail_recipe(detailRecipeDataSource.getDrByIdRecipe(RC.getId_recipe()));
         responseRecipe.setUser(userDatasource.getUserBYid(RC.getFrk_user()));
@@ -192,10 +191,29 @@ public class RecipeRepository {
         responseRecipe.setSteps(stepsDataSource.getStepByIdRecipe(RC.getId_recipe()));
         responseRecipe.setReviews(reviewDataSource.getReviewsByIdRecipe(RC.getId_recipe()));
         //detailRecipeRepository.getLocalDetailsRecipes();
-        recipeDatasource.close();
         recipe.setValue(responseRecipe);
         return recipe;
     }
+
+    public LiveData<RecipeRequest> insertFullRecipeInLocal(RecipeRequest RC) {
+        MutableLiveData<RecipeRequest> fullRecipeLiveData = new MutableLiveData<>();
+        if(!recipeDatasource.isRecordExist(TABLE_RECIPE,COLUMN_NOM_RECIPE,RC.getRecipe().getNom_recipe())){
+        boolean isInsertionSuccessful = true;
+        long id_recipe =recipeDatasource.InsertRecipe(RC.getRecipe(), RC.getRecipe().getFrk_user());
+        if(id_recipe==-1) {
+            // Failed to insert recipe
+            isInsertionSuccessful = false;
+        }
+        else{
+            detailRecipeDataSource.insertDetail_recipe(RC.getDetail_recipe(), (int) id_recipe);
+            ingredientsDataSource.insertIngredients(RC.getIngredients());
+            stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
+            fullRecipeLiveData.setValue(RC);
+        }
+        }
+        return fullRecipeLiveData;
+    }
+
 
     public LiveData<RecipeResponse> getFullRecipeApi(int Recipeid) {
         MutableLiveData<RecipeResponse> recipeResponseMutableLiveData = new MutableLiveData<>();

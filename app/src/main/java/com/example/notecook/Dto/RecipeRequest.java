@@ -14,8 +14,8 @@ public class RecipeRequest {
     private Recipe recipe;
     @SerializedName("detailRecipe")
     private Detail_Recipe detail_recipe;
-    @SerializedName("ingredients")
-    private List<com.example.notecook.Model.Ingredients> Ingredients;
+    @SerializedName("Ingredients")
+    private List<Ingredients> Ingredients;
     @SerializedName("steps")
     private List<Step> steps;
 

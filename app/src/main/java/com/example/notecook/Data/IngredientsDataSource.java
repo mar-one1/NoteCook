@@ -10,6 +10,7 @@ import android.util.Log;
 import com.example.notecook.Model.Ingredients;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class IngredientsDataSource {
 
@@ -31,11 +32,11 @@ public class IngredientsDataSource {
      */
 
 
-    public static Ingredients Create_Ingerdeients(String nome, double poid) {
+    public Ingredients insert_Ingerdeient(Ingredients ingredients) {
+        open();
         ContentValues values = new ContentValues();
-
-        values.put(MySQLiteHelper.COLUMN_INGREDIENT_RECIPE, nome);
-        values.put(MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE, poid);
+        values.put(MySQLiteHelper.COLUMN_INGREDIENT_RECIPE, ingredients.getNome());
+        values.put(MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE, ingredients.getPoid_unite());
 
 
         long insertId = database.insert(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, null,
@@ -46,10 +47,36 @@ public class IngredientsDataSource {
         cursor.moveToFirst();
         Ingredients ingerdeients = cursorToComment(cursor);
         cursor.close();
+        close();
         return ingerdeients;
     }
 
-    private static Ingredients cursorToComment(Cursor cursor) {
+    public List<Ingredients> insertIngredients(List<Ingredients> ingredientsList) {
+        List<Ingredients> insertedIngredients = new ArrayList<>();
+
+        open();
+        for (Ingredients ingredients : ingredientsList) {
+            ContentValues values = new ContentValues();
+            values.put(MySQLiteHelper.COLUMN_INGREDIENT_RECIPE, ingredients.getNome());
+            values.put(MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE, ingredients.getPoid_unite());
+
+            long insertId = database.insert(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, null, values);
+
+            Cursor cursor = database.query(MySQLiteHelper.TABLE_INGREDIENT_RECIPE,
+                    allColumns, MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE + " = " + insertId, null,
+                    null, null, null);
+            cursor.moveToFirst();
+            Ingredients insertedIngredient = cursorToComment(cursor);
+            cursor.close();
+
+            insertedIngredients.add(insertedIngredient);
+        }
+        close();
+        return insertedIngredients;
+    }
+
+
+    private Ingredients cursorToComment(Cursor cursor) {
 
         Ingredients ingerdeients = new Ingredients();
         ingerdeients.setId(cursor.getInt(0));
@@ -77,13 +104,16 @@ public class IngredientsDataSource {
      * delete item from the table of images
      */
     public void deleteIngerdeient(Ingredients ingerdeients) {
+        open();
         long id = ingerdeients.getId();
         Log.d("gps", "Image  deleted with id: " + id);
         database.delete(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE
                 + " = " + id, null);
+        close();
     }
 
     public ArrayList<Ingredients> getAllIngerdeients() {
+        open();
         ArrayList<Ingredients> ListIngerdeients = new ArrayList<>();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_INGREDIENT_RECIPE,
@@ -97,10 +127,12 @@ public class IngredientsDataSource {
         }
         // assurez-vous de la fermeture du curseur
         cursor.close();
+        close();
         return ListIngerdeients;
     }
 
     public ArrayList<Ingredients> getListIngerdientsByidRecipe(int id_recipe) {
+        open();
         ArrayList<Ingredients> ListingerdeientsByid = new ArrayList<>();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_INGREDIENT_RECIPE,
                 allColumns, MySQLiteHelper.COLUMN_FRK_DETAIL_INGREDIENT_RECIPE + " = " + id_recipe, null, null, null, null);
@@ -111,10 +143,12 @@ public class IngredientsDataSource {
             ListingerdeientsByid.add(DR);
             cursor.moveToNext();
         }
+        close();
         return ListingerdeientsByid;
     }
 
     public Ingredients getIngerdientsByidRecipe(int id_recipe) {
+        open();
         Ingredients ingerdeientsByid = new Ingredients();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_INGREDIENT_RECIPE,
                 allColumns, MySQLiteHelper.COLUMN_FRK_DETAIL_INGREDIENT_RECIPE + " = " + id_recipe, null, null, null, null);
@@ -124,16 +158,17 @@ public class IngredientsDataSource {
             ingerdeientsByid = cursorToComment(cursor);
             cursor.moveToNext();
         }
+        close();
         return ingerdeientsByid;
     }
 
     public void Update_Ingerdeients(Ingredients ingerdeients,int id) {
-
+        open();
         ContentValues data = new ContentValues();
         data.put(MySQLiteHelper.COLUMN_INGREDIENT_RECIPE , ingerdeients.getNome());
         data.put(MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE, ingerdeients.getPoid_unite());
 
         database.update(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, data, MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE + " = " + id, null);
-
+        close();
     }
 }
