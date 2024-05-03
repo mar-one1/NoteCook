@@ -221,6 +221,8 @@ public class Frg_EditProfil extends Fragment {
     }
 
 
+
+
     private void signOut() {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()

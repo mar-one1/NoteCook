@@ -122,7 +122,7 @@ public class Frg_Search extends Fragment {
                 //searchRecipes(String.valueOf(s));
                 Map<String, String> condition = new HashMap<>();
                 condition.put("searchText", s.toString());
-                //condition.put("ingredientName", "Tomato");
+                condition.put("Level_recipe", binding.levelRecipeSearch.getSelectedItem().toString());
                 //condition.put("userId", "1");
                 if (MODE_ONLINE)
                     recipeVM.SearchRecipeByCondition(condition).observe(requireActivity(), new Observer<List<Recipe>>() {
@@ -145,6 +145,8 @@ public class Frg_Search extends Fragment {
                 binding.txtRecherche.setThreshold(2);
             }
         });
+
+        Constants.level(binding.levelRecipeSearch,getContext());
 
 
         return binding.getRoot();

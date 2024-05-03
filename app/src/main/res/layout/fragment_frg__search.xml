@@ -45,9 +45,8 @@
             android:id="@+id/ll_filtre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_centerHorizontal="true"
-            >
+            android:orientation="vertical">
             <!-- Filter parameters -->
             <EditText
                 android:id="@+id/minPriceEditText"
@@ -68,7 +67,7 @@
                 android:inputType="numberDecimal" />
 
             <Spinner
-                android:id="@+id/categorySpinner"
+                android:id="@+id/level_recipe_search"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/maxPriceEditText"
@@ -78,7 +77,7 @@
                 android:id="@+id/filterButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/categorySpinner"
+                android:layout_below="@id/level_recipe_search"
                 android:layout_marginTop="16dp"
                 android:text="Apply Filter" />
         </LinearLayout>

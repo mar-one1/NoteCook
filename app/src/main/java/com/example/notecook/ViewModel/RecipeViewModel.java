@@ -46,9 +46,6 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.getRecipes();
     }
 
-    public LiveData<List<Recipe>> getRecipesByFilter(Map<String, String> conditions) {
-        return repository.getRecipesByConditionApi(conditions);
-    }
 
     public LiveData<List<Recipe>> getRecipesByUsername(String username) {
         return repository.getRecipesByUsername(username);

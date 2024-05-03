@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,39 +91,14 @@ public class add_recipe extends Fragment {
         recipeVM = new RecipeViewModel(getContext(), getActivity());
         userVM = new UserViewModel(getContext(), getActivity());
         inputValidator = new InputValidator();
-        // Get the values of the enum
-        levelRecipe[] values = levelRecipe.values();
-//
-//        // Create an array of display names
-        String[] displayNames = new String[values.length];
-        for (int i = 0; i < values.length; i++) {
-            displayNames[i] = values[i].name();
-        }
-
+        Constants.level(binding.levelRecipe,getContext());
         binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 captureImage(getContext());
             }
         });
-        // Create an ArrayAdapter
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, displayNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.levelRecipe.setAdapter(adapter);
 
-        List<String> ingredientNames = new ArrayList<>();
-        // Iterate over All_Ingredients_Recipe to collect all ingredient names
-        for (Ingredients ingredient : All_Ingredients_Recipe) {
-            String name = ingredient.getNome();
-            if (name != null) {
-                ingredientNames.add(name);
-            }
-        }
-        // Create an ArrayAdapter
-        ArrayAdapter<String> adapterIngredients = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ingredientNames);
-
-        // Set the adapter to your ListView or RecyclerView
-        binding.spIngredients.setAdapter(adapterIngredients);
         binding.addIngredients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,11 +136,11 @@ public class add_recipe extends Fragment {
                     recipeR.setDetail_recipe(detail_recipe);
                     recipeR.setSteps(stepsList);
 
-                    if(isConnected())
-                    if (user_login.getUser() != null) {
-                        Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
-                        postRecipeToRemote(recipeR, recipe, bitmap);
-                    }
+                    if (isConnected())
+                        if (user_login.getUser() != null) {
+                            Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
+                            postRecipeToRemote(recipeR, recipe, bitmap);
+                        }
 
                     Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0);
                     recipe.setIcon_recipe(encod(bitmap));
@@ -178,9 +154,6 @@ public class add_recipe extends Fragment {
                 }
             }
         });
-
-
-
 
         binding.btnPlusTime.setOnClickListener(view -> {
             clickPlus(binding.txtTotTime, binding.btnPlusTime, binding.btnMoinsTime);
@@ -200,7 +173,31 @@ public class add_recipe extends Fragment {
         binding.btnMoinsCal.setOnClickListener(view -> {
             clickMoins(binding.txtTotCal, binding.btnMoinsCal, binding.btnMoinsCal);
         });
+        IngredientToSp(binding.spIngredients);
+        navigation(btnV);
+        // Inflate the layout for this fragment
+        return binding.getRoot();
+    }
 
+    public void IngredientToSp(Spinner sp)
+    {
+        List<String> ingredientNames = new ArrayList<>();
+        // Iterate over All_Ingredients_Recipe to collect all ingredient names
+        for (Ingredients ingredient : All_Ingredients_Recipe) {
+            String name = ingredient.getNome();
+            if (name != null) {
+                ingredientNames.add(name);
+            }
+        }
+        // Create an ArrayAdapter
+        ArrayAdapter<String> adapterIngredients = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, ingredientNames);
+
+        // Set the adapter to your ListView or RecyclerView
+        sp.setAdapter(adapterIngredients);
+    }
+
+    public void navigation(BottomNavigationView btnV)
+    {
         btnV.setOnNavigationItemSelectedListener(
                 item -> {
                     FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -227,8 +224,6 @@ public class add_recipe extends Fragment {
                     MainFragment.viewPager2.setCurrentItem(i, false);
                     return false;
                 });
-        // Inflate the layout for this fragment
-        return binding.getRoot();
     }
 
     private void postRecipeToRemote(RecipeRequest recipeR, Recipe recipe, Bitmap bitmap) {
@@ -236,7 +231,7 @@ public class add_recipe extends Fragment {
         recipeVM.postFullRecipe(recipeR, bitmap).observe(requireActivity(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer recipe) {
-                if(recipe != -1)
+                if (recipe != -1)
                     Toast.makeText(getContext(), "recipe add success in Remote", Toast.LENGTH_SHORT).show();
             }
         });
@@ -247,7 +242,7 @@ public class add_recipe extends Fragment {
         recipeVM.postFullRecipeLocal(recipeR).observe(requireActivity(), new Observer<RecipeRequest>() {
             @Override
             public void onChanged(RecipeRequest recipeRequest) {
-                if(recipeRequest != null)
+                if (recipeRequest != null)
                     Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
             }
         });
@@ -314,7 +309,6 @@ public class add_recipe extends Fragment {
         });
         builder.show();
     }
-
 
     private void expand(LinearLayout linearLayout) {
         linearLayout.setVisibility(View.VISIBLE);

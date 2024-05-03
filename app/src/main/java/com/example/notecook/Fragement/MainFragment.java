@@ -15,6 +15,7 @@ import com.example.notecook.MainActivity;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.databinding.FragmentMainBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
@@ -56,8 +57,14 @@ public class MainFragment extends Fragment  {
 
         setViewPagerAdapter();
         viewPager2.setUserInputEnabled(false);
+        navigation(binding.bottomNav,viewPager2);
 
-        binding.bottomNav.setOnNavigationItemSelectedListener(
+        return binding.getRoot();
+    }
+
+    public void navigation(BottomNavigationView menu,ViewPager2 viewPager2)
+    {
+        menu.setOnNavigationItemSelectedListener(
                 item -> {
                     int i = 0;
                     switch (item.getItemId()) {
@@ -110,7 +117,6 @@ public class MainFragment extends Fragment  {
 
             }
         });
-        return binding.getRoot();
     }
 
 

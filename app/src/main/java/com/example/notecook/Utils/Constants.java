@@ -19,6 +19,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -374,6 +376,19 @@ public class Constants {
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setAdapter(adapter);
+    }
+
+    public static void level(Spinner sp,Context context) {
+        levelRecipe[] values = levelRecipe.values();
+        // Create an array of display names
+        String[] displayNames = new String[values.length];
+        for (int i = 0; i < values.length; i++) {
+            displayNames[i] = values[i].name();
+        }
+        // Create an ArrayAdapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, displayNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp.setAdapter(adapter);
     }
 
 }
