@@ -361,16 +361,10 @@ public class Frg_EditProfil extends Fragment {
             Toast.makeText(getContext(), String.valueOf(value), Toast.LENGTH_SHORT).show();
             if (value == 1) {
                 user_login.setUser(getUser);
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.detach(Frg_EditProfil.this);
-                fragmentTransaction.commitNow();
                 Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "", (AppCompatActivity) getContext());
             } else if (value == 0) {
                 mUserDatasource.insertUser(getUser);
                 Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "User insert success");
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.detach(Frg_EditProfil.this);
-                fragmentTransaction.commitNow();
             } else {
                 Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "the Change Not saved");
             }
@@ -383,7 +377,9 @@ public class Frg_EditProfil extends Fragment {
                 userVM.UpdateUser(getUser, bitmap).observe(getViewLifecycleOwner(), new Observer<User>() {
                     @Override
                     public void onChanged(User user) {
-                        user_login.setUser(user);
+                        if(user!=null) {
+                            user_login.setUser(user);
+                        }
                     }
                 });
             else
@@ -391,6 +387,15 @@ public class Frg_EditProfil extends Fragment {
         } catch (Exception e) {
             Log.e("tag", "" + e);
         }
+    }
+
+    private void detach()
+    {
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.detach(Frg_EditProfil.this);
+        fragmentTransaction.commitNow();
+
+
     }
 
 }

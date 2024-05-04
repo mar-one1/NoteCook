@@ -99,8 +99,8 @@ public class Frg_Search extends Fragment {
                 String searchText = !(binding.txtRecherche.getText().equals("")) ? binding.txtRecherche.getText().toString().trim() : binding.txtRecherche.getText().toString();
                 //double minPrice = Double.parseDouble(binding.minPriceEditText.getText().toString().trim());
                 //double maxPrice = Double.parseDouble(binding.maxPriceEditText.getText().toString().trim());
-                //String category = binding.categorySpinner.getSelectedItem().toString().trim();
                 binding.llFiltre.setVisibility(View.GONE);
+                search(searchText,false);
             }
         });
 
@@ -120,18 +120,7 @@ public class Frg_Search extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //searchRecipes(String.valueOf(s));
-                Map<String, String> condition = new HashMap<>();
-                condition.put("searchText", s.toString());
-                condition.put("Level_recipe", binding.levelRecipeSearch.getSelectedItem().toString());
-                //condition.put("userId", "1");
-                if (MODE_ONLINE)
-                    recipeVM.SearchRecipeByCondition(condition).observe(requireActivity(), new Observer<List<Recipe>>() {
-                        @Override
-                        public void onChanged(List<Recipe> recipes) {
-                            if (recipes != null && recipes.size() > 0)
-                                bindingRcV_recipes(binding.RcRecipeSearch, recipes, "search");
-                        }
-                    });
+                search(s,false);
             }
 
             @Override
@@ -150,6 +139,23 @@ public class Frg_Search extends Fragment {
 
 
         return binding.getRoot();
+    }
+
+    private void search(CharSequence s,boolean Filtred)
+    {
+        Map<String, String> condition = new HashMap<>();
+        condition.put("searchText", s.toString());
+        String level = binding.levelRecipeSearch.getSelectedItem().toString().trim();
+        if(!level.equals("autre"))
+        condition.put("Level_recipe", level);
+        //condition.put("userId", "1");
+            recipeVM.SearchRecipeByCondition(condition).observe(requireActivity(), new Observer<List<Recipe>>() {
+                @Override
+                public void onChanged(List<Recipe> recipes) {
+                    if (recipes != null && recipes.size() > 0)
+                        bindingRcV_recipes(binding.RcRecipeSearch, recipes, "search");
+                }
+            });
     }
 
     private void openSettings() {
