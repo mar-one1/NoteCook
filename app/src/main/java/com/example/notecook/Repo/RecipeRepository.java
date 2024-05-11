@@ -1,5 +1,6 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_NOM_RECIPE;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
 import static com.example.notecook.Utils.Constants.Search_list;
@@ -16,7 +17,10 @@ import static com.example.notecook.Utils.Constants.user_login_local;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -32,10 +36,15 @@ import com.example.notecook.Data.StepsDataSource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.MainActivity;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
+import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -105,6 +114,34 @@ public class RecipeRepository {
 
     public int insertRecipeLocally(Recipe recipe, int id) {
         // Insert the recipe locally using your createRecipe method
+        if (recipe.getPathimagerecipe() != null && !recipe.getPathimagerecipe().isEmpty()) {
+            String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
+
+            // Load the image using Picasso
+            Picasso.get().load(url)
+                    .memoryPolicy(MemoryPolicy.NO_STORE)
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            // Image loaded successfully
+                            recipe.setIcon_recipe(MainActivity.encod(bitmap));
+                            Log.d("tag","image loaded success");
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                            // Error occurred while loading the image
+                            Log.d("tag","image loaded onBitmapFailed");
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            // Image is being prepared to load
+                        }
+                    });
+        }
+
+
         return (int) recipeDatasource.InsertRecipe(recipe, id);
     }
 
@@ -197,19 +234,18 @@ public class RecipeRepository {
 
     public LiveData<RecipeRequest> insertFullRecipeInLocal(RecipeRequest RC) {
         MutableLiveData<RecipeRequest> fullRecipeLiveData = new MutableLiveData<>();
-        if(!recipeDatasource.isRecordExist(TABLE_RECIPE,COLUMN_NOM_RECIPE,RC.getRecipe().getNom_recipe())){
-        boolean isInsertionSuccessful = true;
-        long id_recipe =recipeDatasource.InsertRecipe(RC.getRecipe(), RC.getRecipe().getFrk_user());
-        if(id_recipe==-1) {
-            // Failed to insert recipe
-            isInsertionSuccessful = false;
-        }
-        else{
-            detailRecipeDataSource.insertDetail_recipe(RC.getDetail_recipe(), (int) id_recipe);
-            ingredientsDataSource.insertIngredients(RC.getIngredients());
-            stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
-            fullRecipeLiveData.setValue(RC);
-        }
+        if (!recipeDatasource.isRecordExist(TABLE_RECIPE, COLUMN_NOM_RECIPE, RC.getRecipe().getNom_recipe())) {
+            boolean isInsertionSuccessful = true;
+            long id_recipe = recipeDatasource.InsertRecipe(RC.getRecipe(), RC.getRecipe().getFrk_user());
+            if (id_recipe == -1) {
+                // Failed to insert recipe
+                isInsertionSuccessful = false;
+            } else {
+                detailRecipeDataSource.insertDetail_recipe(RC.getDetail_recipe(), (int) id_recipe);
+                ingredientsDataSource.insertIngredients(RC.getIngredients());
+                stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
+                fullRecipeLiveData.setValue(RC);
+            }
         }
         return fullRecipeLiveData;
     }
