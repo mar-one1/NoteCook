@@ -2,6 +2,7 @@ package com.example.notecook.Utils;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static org.chromium.base.ThreadUtils.runOnUiThread;
 
@@ -27,9 +28,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
+import com.example.notecook.Adapter.Adapter_Rc_Steps;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Data.IngredientsDataSource;
@@ -375,6 +378,14 @@ public class Constants {
         Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
         recyclerView.setHorizontalScrollBarEnabled(true);
+        recyclerView.setAdapter(adapter);
+    }
+
+    public static  void bindingRcV_Steps(RecyclerView recyclerView,List<Step> list,Context context) {
+        Adapter_Rc_Steps adapter = new Adapter_Rc_Steps(list,context);
+        LinearLayoutManager manager = new LinearLayoutManager(context);
+        manager.setOrientation(HORIZONTAL);
+        recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
     }
 

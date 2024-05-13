@@ -123,6 +123,15 @@ public class add_recipe extends Fragment {
             }
         });
 
+        binding.addStep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Step step = new Step(binding.edtDetail.getText().toString(),null,Integer.parseInt(binding.txtTotTiemsp.getText().toString()),0);
+                stepsList.add(step);
+                Constants.bindingRcV_Steps(binding.recyclerViewSteps,stepsList,getContext());
+            }
+        });
+
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

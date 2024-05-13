@@ -174,6 +174,7 @@ The worst kind of blah-blah has no function; it's pure filler — platitudes,
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ly_play"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
