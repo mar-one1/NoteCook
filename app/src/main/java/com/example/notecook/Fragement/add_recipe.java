@@ -70,6 +70,7 @@ public class add_recipe extends Fragment {
     private List<Step> stepsList = new ArrayList<>();
     private List<Review> reviewsList = new ArrayList<>();
     private List<Ingredients> ingredientsList = new ArrayList<>();
+    private static RecipeRequest recipeR;
 
 
     public add_recipe() {
@@ -131,36 +132,11 @@ public class add_recipe extends Fragment {
                 Constants.bindingRcV_Steps(binding.recyclerViewSteps,stepsList,getContext());
             }
         });
-
+        recipeR = new RecipeRequest();
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                InputValidator inp = new InputValidator();
-                if (inp.isValidAddRecipe(binding.editTextRecipeName, binding.editTextInstructions, binding.edtDetail)) {
-                    Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
-                    RecipeRequest recipeR = new RecipeRequest();
-                    Detail_Recipe detail_recipe = new Detail_Recipe();
-                    List<Step> steps = new ArrayList<>();
-                    recipeR.setIngredients(ingredientsList);
-                    recipeR.setDetail_recipe(detail_recipe);
-                    recipeR.setSteps(stepsList);
-
-                    if (isConnected())
-                        if (user_login.getUser() != null) {
-                            Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
-                            postRecipeToRemote(recipeR, recipe, bitmap);
-                        }
-
-                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0);
-                    recipe.setIcon_recipe(encod(bitmap));
-                    if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0)
-                        recipe.setFrk_user(user_login_local.getUser().getId_User());
-                    else {
-                        userVM.getUserLocal(Constants.getUserInput(requireContext()), "success");
-                        recipe.setFrk_user(user_login_local.getUser().getId_User());
-                    }
-                    postRecipeToLocal(recipeR, recipe);
-                }
+                insertRecipe();
             }
         });
 
@@ -186,6 +162,40 @@ public class add_recipe extends Fragment {
         navigation(btnV);
         // Inflate the layout for this fragment
         return binding.getRoot();
+    }
+
+    private void insertRecipe()
+    {
+        InputValidator inp = new InputValidator();
+        if (inp.isValidAddRecipe(binding.editTextRecipeName, binding.editTextInstructions, binding.edtDetail)) {
+            Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
+            RecipeRequest recipeDetail = new RecipeRequest();
+            Detail_Recipe detail_recipe = new Detail_Recipe();
+            recipeR.setIngredients(ingredientsList);
+            recipeR.setDetail_recipe(detail_recipe);
+            recipeR.setSteps(stepsList);
+
+            if(recipeDetail.equals(recipeR) && recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
+                Constants.showToast(getContext(), "Recipe is success added before!!!");
+                return;
+            }
+
+            if (isConnected())
+                if (user_login.getUser() != null) {
+                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
+                    postRecipeToRemote(recipeR, recipe, bitmap);
+                }
+
+            Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0);
+            recipe.setIcon_recipe(encod(bitmap));
+            if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0)
+                recipe.setFrk_user(user_login_local.getUser().getId_User());
+            else {
+                userVM.getUserLocal(Constants.getUserInput(requireContext()), "success");
+                recipe.setFrk_user(user_login_local.getUser().getId_User());
+            }
+            postRecipeToLocal(recipeR, recipe);
+        }
     }
 
     public void IngredientToSp(Spinner sp)
@@ -241,6 +251,7 @@ public class add_recipe extends Fragment {
             @Override
             public void onChanged(Integer recipe) {
                 if (recipe != -1)
+                    add_recipe.recipeR = recipeR;
                     Toast.makeText(getContext(), "recipe add success in Remote", Toast.LENGTH_SHORT).show();
             }
         });
