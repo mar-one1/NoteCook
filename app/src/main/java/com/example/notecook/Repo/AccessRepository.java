@@ -2,13 +2,10 @@ package com.example.notecook.Repo;
 
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
-import static com.example.notecook.Utils.Constants.TAG_AUTHENTIFICATION_ECHOUE;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.TAG_ERREUR_SYSTEM;
-import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
@@ -28,18 +25,15 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.LoginResponse;
 import com.example.notecook.Dto.TokenResponse;
-import com.example.notecook.Login;
-import com.example.notecook.MainActivity;
+import com.example.notecook.Activity.Login;
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.PasswordHasher;
-import com.google.gson.Gson;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import retrofit2.Call;

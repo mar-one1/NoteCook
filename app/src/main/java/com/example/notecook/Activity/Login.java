@@ -1,4 +1,4 @@
-package com.example.notecook;
+package com.example.notecook.Activity;
 
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_EMAIL_USER;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
@@ -44,6 +44,7 @@ import androidx.lifecycle.Observer;
 
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
+import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;

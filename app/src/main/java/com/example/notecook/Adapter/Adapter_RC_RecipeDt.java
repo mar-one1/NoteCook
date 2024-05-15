@@ -3,7 +3,7 @@ package com.example.notecook.Adapter;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
-import static com.example.notecook.MainActivity.decod;
+import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
@@ -32,7 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
-import com.example.notecook.MainActivity;
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -43,7 +43,6 @@ import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 

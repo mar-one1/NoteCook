@@ -1,8 +1,8 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
-import static com.example.notecook.MainActivity.decod;
-import static com.example.notecook.MainActivity.encod;
+import static com.example.notecook.Activity.MainActivity.decod;
+import static com.example.notecook.Activity.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
@@ -41,8 +41,8 @@ import androidx.lifecycle.Observer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Data.UserDatasource;
-import com.example.notecook.Login;
-import com.example.notecook.MainActivity;
+import com.example.notecook.Activity.Login;
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;

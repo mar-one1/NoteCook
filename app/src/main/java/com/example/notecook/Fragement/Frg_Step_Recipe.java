@@ -20,8 +20,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.fragment.app.Fragment;
 
-import com.example.notecook.Adapter.Adapter_Rc_Steps;
-import com.example.notecook.Login;
+import com.example.notecook.Activity.Login;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;

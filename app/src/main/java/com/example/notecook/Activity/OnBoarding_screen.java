@@ -1,8 +1,10 @@
-package com.example.notecook;
+package com.example.notecook.Activity;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.notecook.R;
 
 public class OnBoarding_screen extends AppCompatActivity {
 

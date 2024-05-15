@@ -2,11 +2,10 @@ package com.example.notecook.Fragement;
 
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
-import static com.example.notecook.MainActivity.Type_User;
-import static com.example.notecook.MainActivity.decod;
+import static com.example.notecook.Activity.MainActivity.Type_User;
+import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 
@@ -18,21 +17,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
-import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
-import com.example.notecook.MainActivity;
-import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
-import com.example.notecook.Utils.Constants;
 import com.example.notecook.databinding.FragmentFrgDetailRecipeBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;

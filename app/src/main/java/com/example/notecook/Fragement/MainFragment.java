@@ -11,7 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.AdapterFragment;
-import com.example.notecook.MainActivity;
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.databinding.FragmentMainBinding;

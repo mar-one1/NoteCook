@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:padding="20dp"
-    tools:context=".OnBoarding_screen"
+    tools:context=".Activity.OnBoarding_screen"
     android:orientation="horizontal">
 
     <androidx.viewpager.widget.ViewPager

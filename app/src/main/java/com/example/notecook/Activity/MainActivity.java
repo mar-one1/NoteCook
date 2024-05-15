@@ -1,4 +1,4 @@
-package com.example.notecook;
+package com.example.notecook.Activity;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
@@ -33,6 +33,7 @@ import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.User;
+import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
 import com.example.notecook.ViewModel.IngredientsViewModel;

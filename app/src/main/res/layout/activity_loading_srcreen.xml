@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Loading_Srcreen"
+    tools:context=".Activity.Loading_Srcreen"
     android:background="@color/red">
 
     <LinearLayout

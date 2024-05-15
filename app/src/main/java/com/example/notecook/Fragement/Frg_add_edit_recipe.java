@@ -16,7 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.Data.DetailRecipeDataSource;
 import com.example.notecook.Data.RecipeDatasource;
-import com.example.notecook.MainActivity;
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;

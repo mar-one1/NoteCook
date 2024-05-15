@@ -1,4 +1,4 @@
-package com.example.notecook;
+package com.example.notecook.Activity;
 
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 
@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
+import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
 

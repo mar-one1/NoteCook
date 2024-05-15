@@ -1,6 +1,6 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.MainActivity.Type_User;
+import static com.example.notecook.Activity.MainActivity.Type_User;
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
 import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;

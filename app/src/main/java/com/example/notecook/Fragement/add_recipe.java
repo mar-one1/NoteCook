@@ -1,6 +1,6 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.MainActivity.encod;
+import static com.example.notecook.Activity.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.user_login;
@@ -46,7 +46,6 @@ import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
-import com.example.notecook.Utils.levelRecipe;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
