@@ -1,16 +1,11 @@
 package com.example.notecook.Activity;
 
-import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.Token;
-import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
-import static com.example.notecook.Utils.Constants.pathimageuser;
-import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -29,8 +24,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.notecook.Api.ApiClient;
-import com.example.notecook.Api.ApiService;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
@@ -44,14 +37,8 @@ import com.example.notecook.databinding.ActivityMainBinding;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -105,8 +92,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
@@ -126,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding  = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
@@ -134,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         Token = getToken(this);
 
         //Get All Ingredients Recipes
-        ingredientsVM = new IngredientsViewModel(this,this);
+        ingredientsVM = new IngredientsViewModel(this, this);
         ingredientsVM.getAllIngredientsApi();
 
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
@@ -142,8 +127,8 @@ public class MainActivity extends AppCompatActivity {
 
         recipeVM = new RecipeViewModel(this, this);
         userVM = new UserViewModel(this, this);
-        recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
-        userVM = new ViewModelProvider(this,userVM).get(UserViewModel.class);
+        recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
+        userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
 
         String tag = "";
         if (getIntent().getExtras() != null) {
@@ -163,19 +148,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(view);
     }
 
-    private void getUserInfo()
-    {
+    private void getUserInfo() {
 //            fetchData();
-            //Constants.loading_ui(this,"Loading...");
-            String s1 = getUserInput(this);
-            userVM.getUser(s1).observe(this, new Observer<User>() {
-                @Override
-                public void onChanged(User user) {
-                    Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
-                    //extracted();
-                   // Constants.stop_loading();
-                }
-            });
+        //Constants.loading_ui(this,"Loading...");
+        String s1 = getUserInput(this);
+        userVM.getUser(s1).observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                Toast.makeText(getBaseContext(), "user get by observe", Toast.LENGTH_SHORT).show();
+                //extracted();
+                // Constants.stop_loading();
+            }
+        });
     }
 
 

@@ -1,6 +1,5 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.Remotelist_recipe;
 import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_REMOTE;
@@ -137,25 +136,23 @@ public class Frg_Search extends Fragment {
 
         Constants.level(binding.levelRecipeSearch,getContext());
 
-
         return binding.getRoot();
     }
 
-    private void search(CharSequence s,boolean Filtred)
-    {
+    private void search(CharSequence s, boolean Filtred) {
         Map<String, String> condition = new HashMap<>();
         condition.put("searchText", s.toString());
         String level = binding.levelRecipeSearch.getSelectedItem().toString().trim();
-        if(!level.equals("autre"))
-        condition.put("Level_recipe", level);
+        if (!level.equals("autre"))
+            condition.put("Level_recipe", level);
         //condition.put("userId", "1");
-            recipeVM.SearchRecipeByCondition(condition).observe(requireActivity(), new Observer<List<Recipe>>() {
-                @Override
-                public void onChanged(List<Recipe> recipes) {
-                    if (recipes != null && recipes.size() > 0)
-                        bindingRcV_recipes(binding.RcRecipeSearch, recipes, "search");
-                }
-            });
+        recipeVM.SearchRecipeByCondition(condition).observe(requireActivity(), new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(List<Recipe> recipes) {
+                if (recipes != null && recipes.size() > 0)
+                    bindingRcV_recipes(binding.RcRecipeSearch, recipes, "search");
+            }
+        });
     }
 
     private void openSettings() {
