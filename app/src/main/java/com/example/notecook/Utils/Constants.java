@@ -40,12 +40,14 @@ import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Detail_Recipe;
+import com.example.notecook.Model.Favorite_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
+import com.google.android.material.bottomappbar.BottomAppBar;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -102,6 +104,7 @@ public class Constants {
     public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
     public static List<Review> Review_CurrentRecipe = new ArrayList<>();
     public static List<Ingredients> Ingredients_CurrentRecipe = new ArrayList<>();
+    public static List<Favorite_Recipe> Favorite_CurrentRecipe = new ArrayList<>();
     public static List<Ingredients> All_Ingredients_Recipe = new ArrayList<>();
     public static List<Recipe> Search_list = new ArrayList<>();
     public static List<Recipe> Basket_list = new ArrayList<>();

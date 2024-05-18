@@ -1,6 +1,7 @@
 package com.example.notecook.Dto;
 
 import com.example.notecook.Model.Detail_Recipe;
+import com.example.notecook.Model.Favorite_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
@@ -23,6 +24,16 @@ public class RecipeResponse {
     private List<Review> Reviews;
     @SerializedName("steps")
     private List<Step> steps;
+    @SerializedName("favs")
+    private List<Favorite_Recipe> Favorites;
+
+    public List<Favorite_Recipe> getFavorites() {
+        return Favorites;
+    }
+
+    public void setFavorites(List<Favorite_Recipe> favorites) {
+        Favorites = favorites;
+    }
 
     public User getUser() {
         return user;

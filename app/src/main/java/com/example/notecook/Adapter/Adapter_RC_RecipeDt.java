@@ -7,6 +7,7 @@ import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Favorite_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
 import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
@@ -75,11 +76,12 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         return new Adapter_RC_RecipeDt.ViewHolder(view);
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Recipe recipe = recipes.get(position);
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagelike = holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
-        @SuppressLint("UseCompatLoadingForDrawables") Drawable defaultImagenot = holder.itemView.getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
+        Drawable defaultImagelike = holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
+        Drawable defaultImagenot = holder.itemView.getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
         holder.detail.setText(recipe.getNom_recipe());
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
 
@@ -93,7 +95,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                     .error(R.drawable.eror_image_download)
                     .memoryPolicy(MemoryPolicy.NO_STORE)
                     .into(holder.Image);
-        }
+        }else holder.Image.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
 
         if (Objects.equals(b, TAG_LOCAL))
             holder.txt_time.setText("Local");
@@ -125,12 +127,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                         public void onChanged(RecipeResponse recipe) {
                             if (recipe != null) {
                                 //viewPager2.setCurrentItem(1);
-                                User_CurrentRecipe = recipe.getUser();
-                                CURRENT_RECIPE = recipe.getRecipe();
-                                Detail_CurrentRecipe = recipe.getDetail_recipe();
-                                Steps_CurrentRecipe = recipe.getSteps();
-                                Review_CurrentRecipe = recipe.getReviews();
-                                Ingredients_CurrentRecipe = recipe.getIngredients();
+                                fetchRecipe(recipe);
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();
@@ -143,13 +140,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                         public void onChanged(RecipeResponse recipeResponse) {
                             if (recipeResponse != null) {
                                 //viewPager2.setCurrentItem(1);
-                                User_CurrentRecipe = user_login.getUser();
-                                CURRENT_RECIPE = recipeResponse.getRecipe();
-                                Detail_CurrentRecipe = recipeResponse.getDetail_recipe();
-                                Steps_CurrentRecipe = recipeResponse.getSteps();
-                                Review_CurrentRecipe = recipeResponse.getReviews();
-                                Ingredients_CurrentRecipe = recipeResponse.getIngredients();
-                                Review_CurrentRecipe = recipeResponse.getReviews();
+                                fetchRecipe(recipeResponse);
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();
@@ -163,6 +154,16 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         });
     }
 
+    private void fetchRecipe(RecipeResponse recipeResponse) {
+        User_CurrentRecipe = user_login.getUser();
+        CURRENT_RECIPE = recipeResponse.getRecipe();
+        Detail_CurrentRecipe = recipeResponse.getDetail_recipe();
+        Steps_CurrentRecipe = recipeResponse.getSteps();
+        Review_CurrentRecipe = recipeResponse.getReviews();
+        Ingredients_CurrentRecipe = recipeResponse.getIngredients();
+        Review_CurrentRecipe = recipeResponse.getReviews();
+        Favorite_CurrentRecipe = recipeResponse.getFavorites();
+    }
 
     @Override
     public int getItemCount() {
