@@ -92,7 +92,7 @@ public class AccessRepository {
                             saveToken(token, context);
                             Token = token;
                             saveUserInput(username, password, context);
-                            Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE,"message", activity);
+                            Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "message", activity);
                         } catch (Exception e) {
                             Log.e("tag", e.toString());
                         }
@@ -101,7 +101,7 @@ public class AccessRepository {
                     }
                 } else {
                     // TODO make handle response error and failure
-                    ErrorHandler.handleErrorResponse(response,activity);
+                    ErrorHandler.handleErrorResponse(response, activity);
                 }
             }
 
@@ -109,7 +109,7 @@ public class AccessRepository {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
 
                 TAG_CONNEXION_MESSAGE = call.toString();
-                ErrorHandler.handleNetworkFailure(t,activity);
+                ErrorHandler.handleNetworkFailure(t, activity);
             }
         });
         return TokenMutableLiveData;
@@ -179,7 +179,7 @@ public class AccessRepository {
                         Toast.makeText(context, "Validation : " + statusCode, Toast.LENGTH_SHORT).show();
 
 //                        i.putExtra("TAG","online");
-                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE,"", activity);
+                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "", activity);
                         activity.startActivity(iM);
                         activity.finish();
                     }
@@ -187,7 +187,7 @@ public class AccessRepository {
                     // TODO check this start activity logic
                     // The HTTP request was not successful (status code is not 2xx).
                     // You can handle errors here based on the response status code.
-                    ErrorHandler.handleErrorResponse(response,activity);
+                    ErrorHandler.handleErrorResponse(response, activity);
 
                     // Handle different status codes as per your API's conventions.
                     if (statusCode == 401) {
@@ -205,7 +205,7 @@ public class AccessRepository {
 
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
-                ErrorHandler.handleNetworkFailure(t,activity);
+                ErrorHandler.handleNetworkFailure(t, activity);
                 String s1 = getUserInput(context);
                 if (s1.equals("")) {
                     context.startActivity(iLg);
@@ -220,12 +220,8 @@ public class AccessRepository {
 
     // TODO make response error and failure handle
     public LiveData<String> TokenApi() {
-
         Call<TokenResponse> call = apiService.getVerifyToken(getToken(context));
-
-        MutableLiveData<String> mutableLiveDataToken = (MutableLiveData<String>) simulateTimeout(call, 5000);
-
-        return mutableLiveDataToken;
+        return (MutableLiveData<String>) simulateTimeout(call, 10000);
     }
 
 

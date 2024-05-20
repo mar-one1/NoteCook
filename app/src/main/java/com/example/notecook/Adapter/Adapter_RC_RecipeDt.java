@@ -51,7 +51,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
 
     private String b;
     private List<Recipe> recipes;
-    private MainActivity m = new MainActivity();
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
     private Context context;

@@ -15,7 +15,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
      */
 
     private static final String DATABASE_NAME = "DB_Notebook.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
 
 
     /*
