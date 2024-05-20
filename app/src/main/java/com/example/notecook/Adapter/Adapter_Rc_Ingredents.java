@@ -52,7 +52,8 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
         Ingredients Ingredients = listidIngredient.get(position);
         holder.getDetail().setText(String.valueOf(Ingredients.getNome()));
         holder.getPoid().setText(String.valueOf(Ingredients.getPoid_unite()));
-        //holder.getUnite().setText(String.valueOf(Ingredients.get()));
+        String unitText = (Ingredients.getUnit() == null) ? "/unite" : "/"+Ingredients.getUnit();
+        holder.getUnite().setText(unitText);
 
         CheckBox ckb = holder.itemView.findViewById(R.id.checkBox);
         ckb.setOnClickListener(view -> {

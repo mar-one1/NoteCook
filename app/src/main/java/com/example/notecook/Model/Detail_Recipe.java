@@ -13,7 +13,7 @@ public class Detail_Recipe {
     @SerializedName("calories")
     private int cal;
     @SerializedName("rate")
-    private int rate;
+    private float rate;
     @SerializedName("level")
     private String Level;
     @SerializedName("recipeId")
@@ -24,7 +24,7 @@ public class Detail_Recipe {
 
 
 
-    public Detail_Recipe(int time, int cal, int rate, String level, int frk_recipe) {
+    public Detail_Recipe(int time, int cal, float rate, String level, int frk_recipe) {
         Time = time;
         this.cal = cal;
         this.rate = rate;
@@ -32,7 +32,7 @@ public class Detail_Recipe {
         Frk_recipe = frk_recipe;
     }
 
-    public Detail_Recipe(String dt_recipe, int time, int cal, int rate, String level, int frk_recipe) {
+    public Detail_Recipe(String dt_recipe, int time, int cal, float rate, String level, int frk_recipe) {
         Dt_recipe = dt_recipe;
         Time = time;
         this.cal = cal;
@@ -74,11 +74,11 @@ public class Detail_Recipe {
         this.cal = cal;
     }
 
-    public int getRate() {
+    public float getRate() {
         return rate;
     }
 
-    public void setRate(int rate) {
+    public void setRate(float rate) {
         this.rate = rate;
     }
 

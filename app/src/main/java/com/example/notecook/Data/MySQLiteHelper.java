@@ -15,7 +15,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
      */
 
     private static final String DATABASE_NAME = "DB_Notebook.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
 
     /*
@@ -48,7 +48,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             + TABLE_DETAIL_RECIPE + "(" + COLUMN_ID_DETAIL_RECIPE
             + " integer primary key autoincrement, " + COLUMN_DETAIL
             + " text, " + COLUMN_LEVEL_DR + " integer , " + COLUMN_TIME_DR
-            + " integer , " + COLUMN_RATE_DR + " integer, "
+            + " integer , " + COLUMN_RATE_DR + " float, "
             + COLUMN_CALORIES + " integer , "
             + COLUMN_FRK_RECIPE_DETAIL + " integer, "
             + " FOREIGN KEY (" + COLUMN_FRK_RECIPE_DETAIL + ") REFERENCES " + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE + ") ON DELETE CASCADE );";
@@ -62,7 +62,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     private static final String DATABASE_CREATE_INGREDIENTS_RECIPE = "create table "
             + TABLE_INGREDIENT_RECIPE + "(" + COLUMN_ID_INGREDIENT_RECIPE
             + " integer primary key autoincrement, " + COLUMN_INGREDIENT_RECIPE
-            + " text, " + COLUMN_POIDINGREDIENT_RECIPE + " double, "
+            + " text, " + COLUMN_POIDINGREDIENT_RECIPE + " double, " + COLUMN_UNITEINGREDIENT_RECIPE + " text, "
             + COLUMN_FRK_DETAIL_INGREDIENT_RECIPE + " integer, " + " FOREIGN KEY (" + COLUMN_FRK_DETAIL_INGREDIENT_RECIPE + ") REFERENCES " + TABLE_DETAIL_RECIPE + "(" + COLUMN_ID_DETAIL_RECIPE + ") ON DELETE CASCADE );";
 
     // SQL statement to create the table Produit
@@ -71,7 +71,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
                     COLUMN_ID_PRODUIT + "  integer primary key autoincrement, " +
                     COLUMN_PRODUIT + " text, " +
                     COLUMN_POIDPRODUIT + " text)";
-
     /*
      * Commande sql pour la création de la table Recipe_produit
      */

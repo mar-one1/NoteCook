@@ -49,6 +49,7 @@ public interface MySQLiteHelperTable extends AutoCloseable {
     String COLUMN_ID_INGREDIENT_RECIPE = "Id_Ingredient_recipe";
     String COLUMN_INGREDIENT_RECIPE = "Ingredient_recipe";
     String COLUMN_POIDINGREDIENT_RECIPE = "PoidIngredient_recipe";
+    String COLUMN_UNITEINGREDIENT_RECIPE = "UnitIngredient_recipe";
     String COLUMN_FRK_DETAIL_INGREDIENT_RECIPE = "FRK_recipe";
 
 

@@ -18,7 +18,8 @@ public class IngredientsDataSource {
     private static String[] allColumns = {
             MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE,
             MySQLiteHelper.COLUMN_INGREDIENT_RECIPE,
-            MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE
+            MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE,
+            MySQLiteHelper.COLUMN_UNITEINGREDIENT_RECIPE
     };
     private MySQLiteHelper dbHelper;
 
@@ -37,7 +38,7 @@ public class IngredientsDataSource {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_INGREDIENT_RECIPE, ingredients.getNome());
         values.put(MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE, ingredients.getPoid_unite());
-
+        values.put(MySQLiteHelper.COLUMN_UNITEINGREDIENT_RECIPE, ingredients.getUnit());
 
         long insertId = database.insert(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, null,
                 values);
@@ -59,6 +60,7 @@ public class IngredientsDataSource {
             ContentValues values = new ContentValues();
             values.put(MySQLiteHelper.COLUMN_INGREDIENT_RECIPE, ingredients.getNome());
             values.put(MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE, ingredients.getPoid_unite());
+            values.put(MySQLiteHelper.COLUMN_UNITEINGREDIENT_RECIPE, ingredients.getUnit());
 
             long insertId = database.insert(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, null, values);
 
@@ -81,7 +83,8 @@ public class IngredientsDataSource {
         Ingredients ingerdeients = new Ingredients();
         ingerdeients.setId(cursor.getInt(0));
         ingerdeients.setNome(cursor.getString(1));
-        ingerdeients.setPoid_unite(cursor.getInt(2));
+        ingerdeients.setPoid_unite(cursor.getDouble(2));
+        ingerdeients.setUnit(cursor.getString(3));
 
         return ingerdeients;
     }
@@ -167,6 +170,7 @@ public class IngredientsDataSource {
         ContentValues data = new ContentValues();
         data.put(MySQLiteHelper.COLUMN_INGREDIENT_RECIPE , ingerdeients.getNome());
         data.put(MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE, ingerdeients.getPoid_unite());
+        data.put(MySQLiteHelper.COLUMN_UNITEINGREDIENT_RECIPE, ingerdeients.getUnit());
 
         database.update(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, data, MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE + " = " + id, null);
         close();

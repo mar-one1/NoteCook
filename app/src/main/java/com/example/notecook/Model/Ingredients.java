@@ -10,6 +10,8 @@ public class Ingredients {
     private String Nome;
     @SerializedName("poidIngredient")
     private double Poid_unite;
+    @SerializedName("unite")
+    private String unit;
     private Double NutritionServing;
 
 
@@ -41,5 +43,11 @@ public class Ingredients {
         Nome = nome;
     }
 
+    public String getUnit() {
+        return unit;
+    }
 
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
 }
