@@ -25,7 +25,29 @@ public class RecipeResponse {
     @SerializedName("steps")
     private List<Step> steps;
     @SerializedName("favs")
+
+    // Parameter to track if the data has been added locally
+    private boolean addedToLocal;
+
+    // Parameter to track if the data has been added remotely
+    private boolean addedToRemote;
     private List<Favorite_Recipe> Favorites;
+
+    public boolean isAddedToLocal() {
+        return addedToLocal;
+    }
+
+    public void setAddedToLocal(boolean addedToLocal) {
+        this.addedToLocal = addedToLocal;
+    }
+
+    public boolean isAddedToRemote() {
+        return addedToRemote;
+    }
+
+    public void setAddedToRemote(boolean addedToRemote) {
+        this.addedToRemote = addedToRemote;
+    }
 
     public List<Favorite_Recipe> getFavorites() {
         return Favorites;

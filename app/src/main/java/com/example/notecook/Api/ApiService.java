@@ -72,7 +72,7 @@ public interface ApiService {
     Call<List<RecipeResponse>> getFullRecipesByIdUsername(@Header("Authorization") String token, @Path("username") String username);
 
     @POST("recipes/recipe")
-    Call<Integer> postFullRecipe(@Header("Authorization") String token, @Body RecipeRequest recipeRequest);
+    Call<Integer> postFullRecipe(@Header("Authorization") String token, @Body RecipeResponse recipeRequest);
 
     @POST("recipes")
         //@Headers("Content-Type: application/json")

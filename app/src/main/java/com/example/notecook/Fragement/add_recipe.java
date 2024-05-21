@@ -37,6 +37,7 @@ import androidx.lifecycle.Observer;
 
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.RecipeRequest;
+import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
@@ -59,7 +60,7 @@ import javax.annotation.Nullable;
 public class add_recipe extends Fragment {
 
     private static final int CAMERA_REQUEST = 1888;
-    private static RecipeRequest recipeR;
+    private static RecipeResponse recipeR;
     private final int STORAGE_PERMISSION_CODE = 23;
     private final int GALLERY_REQUEST_CODE = 24;
     FragmentAddRecipeBinding binding;
@@ -131,7 +132,7 @@ public class add_recipe extends Fragment {
                 Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());
             }
         });
-        recipeR = new RecipeRequest();
+        recipeR = new RecipeResponse();
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,7 +238,7 @@ public class add_recipe extends Fragment {
                 });
     }
 
-    private void postRecipeToRemote(RecipeRequest recipeR, Recipe recipe, Bitmap bitmap) {
+    private void postRecipeToRemote(RecipeResponse recipeR, Recipe recipe, Bitmap bitmap) {
         recipeR.setRecipe(recipe);
         recipeVM.postFullRecipe(recipeR, bitmap).observe(requireActivity(), new Observer<Integer>() {
             @Override
@@ -249,12 +250,12 @@ public class add_recipe extends Fragment {
         });
     }
 
-    private void postRecipeToLocal(RecipeRequest recipeR, Recipe recipe) {
+    private void postRecipeToLocal(RecipeResponse recipeR, Recipe recipe) {
         recipeR.setRecipe(recipe);
-        recipeVM.postFullRecipeLocal(recipeR).observe(requireActivity(), new Observer<RecipeRequest>() {
+        recipeVM.postFullRecipeLocal(recipeR).observe(requireActivity(), new Observer<RecipeResponse>() {
             @Override
-            public void onChanged(RecipeRequest recipeRequest) {
-                if (recipeRequest != null) {
+            public void onChanged(RecipeResponse RecipeResponse) {
+                if (RecipeResponse != null) {
                     add_recipe.recipeR.setAddedToLocal(true);
                     Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
                 }

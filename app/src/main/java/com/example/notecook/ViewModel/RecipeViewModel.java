@@ -85,7 +85,7 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.InsertRecipeApi(recipe, bitmap);
     }
 
-    public LiveData<Integer> postFullRecipe(RecipeRequest recipe, Bitmap bitmap) {
+    public LiveData<Integer> postFullRecipe(RecipeResponse recipe, Bitmap bitmap) {
         return repository.insertFullRecipeApi(recipe, bitmap);
     }
 
@@ -93,7 +93,7 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.insertRecipeLocally(recipe, id_user);
     }
 
-    public LiveData<RecipeRequest> postFullRecipeLocal(RecipeRequest recipe) {
+    public LiveData<RecipeResponse> postFullRecipeLocal(RecipeResponse recipe) {
         return repository.insertFullRecipeInLocal(recipe);
     }
 
