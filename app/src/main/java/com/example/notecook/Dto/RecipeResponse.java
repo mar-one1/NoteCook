@@ -25,6 +25,7 @@ public class RecipeResponse {
     @SerializedName("steps")
     private List<Step> steps;
     @SerializedName("favs")
+    private List<Favorite_Recipe> favs;
 
     // Parameter to track if the data has been added locally
     private boolean addedToLocal;

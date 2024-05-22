@@ -3,6 +3,7 @@ package com.example.notecook.Repo;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_NOM_RECIPE;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
+import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;
 import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
@@ -366,6 +367,7 @@ public class RecipeRepository {
             @Override
             public void onResponse(Call<List<RecipeResponse>> call, Response<List<RecipeResponse>> response) {
                 if (response.isSuccessful()) {
+                    RemotelistFullRecipe.setValue(response.body());
                     remoteRecipeListByUser.setValue(response.body());
                     if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
                         if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {

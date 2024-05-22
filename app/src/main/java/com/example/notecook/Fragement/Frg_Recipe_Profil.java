@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
+import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
@@ -50,12 +51,17 @@ public class Frg_Recipe_Profil extends Fragment {
                 recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
                     @Override
                     public void onChanged(List<Recipe> recipes) {
-                        if (recipes != null)
+                        if (recipes != null) {
                             bindingRcV_recipes(binding.RcRecipeProfil, recipes);
-                        recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
-                            RemotelistByIdUser_recipe.setValue(recipeList);
-                            Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                        });
+                            recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
+                                @Override
+                                public void onChanged(List<RecipeResponse> recipes) {
+                                    if (recipes != null)
+                                        RemotelistFullRecipe.setValue(recipes);
+                                    Toast.makeText(getContext(), "changed main " + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                     }
                 });
             } else {

@@ -254,8 +254,8 @@ public class add_recipe extends Fragment {
         recipeR.setRecipe(recipe);
         recipeVM.postFullRecipeLocal(recipeR).observe(requireActivity(), new Observer<RecipeResponse>() {
             @Override
-            public void onChanged(RecipeResponse RecipeResponse) {
-                if (RecipeResponse != null) {
+            public void onChanged(RecipeResponse recipeResponse) {
+                if (recipeResponse != null) {
                     add_recipe.recipeR.setAddedToLocal(true);
                     Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
                 }
