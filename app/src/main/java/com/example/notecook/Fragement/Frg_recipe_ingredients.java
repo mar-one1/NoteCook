@@ -3,9 +3,7 @@ package com.example.notecook.Fragement;
 import static com.example.notecook.Utils.Constants.Basket_list;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.user_login_local;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,16 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Model.Ingredients;
-import com.example.notecook.Model.Recipe;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeIngredientsBinding;
 
 import java.util.ArrayList;
@@ -35,9 +30,8 @@ public class Frg_recipe_ingredients extends Fragment {
     private FragmentFrgRecipeIngredientsBinding binding;
     private List<Ingredients> List_ingredient;
     private RecyclerView mRecyclerView;
-    private Button btn_plus,btn_moins;
+    private Button btn_plus, btn_moins;
     private TextView txt_cal;
-
 
 
     public Frg_recipe_ingredients() {
@@ -47,7 +41,7 @@ public class Frg_recipe_ingredients extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Constants.bindingRcV_Ingredients(mRecyclerView,Ingredients_CurrentRecipe,getContext());
+        Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe, getContext());
         Toast.makeText(getContext(), "onDestroyView", Toast.LENGTH_SHORT).show();
     }
 
@@ -75,7 +69,7 @@ public class Frg_recipe_ingredients extends Fragment {
     public void onResume() {
         super.onResume();
 
-        Constants.bindingRcV_Ingredients(mRecyclerView,Ingredients_CurrentRecipe,getContext());
+        Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe, getContext());
         Toast.makeText(getContext(), "onResume Frg_ingredient", Toast.LENGTH_SHORT).show();
     }
 
@@ -88,25 +82,23 @@ public class Frg_recipe_ingredients extends Fragment {
         btn_moins = binding.btnMoins;
         txt_cal = binding.txtTot;
         // Inflate the layout for this fragment
-        mRecyclerView =binding.RcIngred;
-        Constants.bindingRcV_Ingredients(mRecyclerView,Ingredients_CurrentRecipe,getContext());
+        mRecyclerView = binding.RcIngred;
+        Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe, getContext());
         Toast.makeText(getContext(), "onCreateView", Toast.LENGTH_SHORT).show();
 
         binding.btnMoins.setOnClickListener(view -> {
             int t = Integer.parseInt(txt_cal.getText().toString());
-            if(t<=0)
-            {
+            if (t <= 0) {
                 btn_moins.setEnabled(false);
-            }
-            else
-            t--;
-            txt_cal.setText(""+t);
+            } else
+                t--;
+            txt_cal.setText("" + t);
         });
 
         binding.btnPlus.setOnClickListener(view -> {
             int t = Integer.parseInt(txt_cal.getText().toString());
             btn_moins.setEnabled(true);
-                t++;
+            t++;
             txt_cal.setText("" + t);
         });
 
@@ -120,17 +112,16 @@ public class Frg_recipe_ingredients extends Fragment {
         return binding.getRoot();
     }
 
-    public void bindingRcV_Nutrition(RecyclerView recyclerView)
-    {
+    public void bindingRcV_Nutrition(RecyclerView recyclerView) {
         List_ingredient = new ArrayList<>();
 
         IngredientsDataSource ingredientsDataSource1 = new IngredientsDataSource(getContext());
         ingredientsDataSource1.open();
-        List_ingredient=ingredientsDataSource1.getAllIngerdeients();
+        List_ingredient = ingredientsDataSource1.getAllIngredeients();
         ingredientsDataSource1.close();
 
         Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(List_ingredient);
-        GridLayoutManager manager = new GridLayoutManager(getContext(),1);
+        GridLayoutManager manager = new GridLayoutManager(getContext(), 1);
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter_rc_ingredents);

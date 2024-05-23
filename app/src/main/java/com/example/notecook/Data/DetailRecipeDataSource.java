@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class DetailRecipeDataSource {
 
     private static SQLiteDatabase database;
-    private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_DETAIL_RECIPE, MySQLiteHelper.COLUMN_DETAIL,MySQLiteHelper.COLUMN_TIME_DR,
-            MySQLiteHelper.COLUMN_RATE_DR, MySQLiteHelper.COLUMN_LEVEL_DR,
+    private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_DETAIL_RECIPE, MySQLiteHelper.COLUMN_DETAIL, MySQLiteHelper.COLUMN_LEVEL_DR,
+            MySQLiteHelper.COLUMN_TIME_DR, MySQLiteHelper.COLUMN_RATE_DR,
             MySQLiteHelper.COLUMN_CALORIES, MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL
     };
     private MySQLiteHelper dbHelper;
@@ -31,13 +31,12 @@ public class DetailRecipeDataSource {
     public  Detail_Recipe insertDetail_recipe(Detail_Recipe detail_recipe,int id) {
         open();
         ContentValues values = new ContentValues();
-
+        values.put(MySQLiteHelper.COLUMN_DETAIL, detail_recipe.getDt_recipe());
+        values.put(MySQLiteHelper.COLUMN_LEVEL_DR, detail_recipe.getLevel());
         values.put(MySQLiteHelper.COLUMN_TIME_DR, detail_recipe.getTime());
         values.put(MySQLiteHelper.COLUMN_RATE_DR, detail_recipe.getRate());
-        values.put(MySQLiteHelper.COLUMN_LEVEL_DR, detail_recipe.getLevel());
         values.put(MySQLiteHelper.COLUMN_CALORIES, detail_recipe.getCal());
         values.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, id);
-        values.put(MySQLiteHelper.COLUMN_DETAIL, detail_recipe.getDt_recipe());
 
         long insertId = database.insert(MySQLiteHelper.TABLE_DETAIL_RECIPE, null,
                 values);
@@ -55,13 +54,12 @@ public class DetailRecipeDataSource {
         open();
         ContentValues values = new ContentValues();
 
-
+        values.put(MySQLiteHelper.COLUMN_DETAIL, detail);
+        values.put(MySQLiteHelper.COLUMN_LEVEL_DR, level);
         values.put(MySQLiteHelper.COLUMN_TIME_DR, time);
         values.put(MySQLiteHelper.COLUMN_RATE_DR, rate);
-        values.put(MySQLiteHelper.COLUMN_LEVEL_DR, level);
         values.put(MySQLiteHelper.COLUMN_CALORIES, calories);
         values.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, frk_recipe);
-        values.put(MySQLiteHelper.COLUMN_DETAIL, detail);
 
         long insertId = database.insert(MySQLiteHelper.TABLE_DETAIL_RECIPE, null,
                 values);
@@ -186,12 +184,13 @@ public class DetailRecipeDataSource {
     public void Update_Detail_Recipe(Detail_Recipe DR,int id) {
         open();
         ContentValues data = new ContentValues();
+
+        data.put(MySQLiteHelper.COLUMN_DETAIL, DR.getDt_recipe());
+        data.put(MySQLiteHelper.COLUMN_LEVEL_DR, DR.getLevel());
         data.put(MySQLiteHelper.COLUMN_TIME_DR , DR.getTime());
         data.put(MySQLiteHelper.COLUMN_RATE_DR, DR.getRate());
-        data.put(MySQLiteHelper.COLUMN_LEVEL_DR, DR.getLevel());
         data.put(MySQLiteHelper.COLUMN_CALORIES, DR.getCal());
         data.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, DR.getFrk_recipe());
-        data.put(MySQLiteHelper.COLUMN_DETAIL, DR.getDt_recipe());
 
         database.update(MySQLiteHelper.TABLE_DETAIL_RECIPE, data, MySQLiteHelper.COLUMN_ID_DETAIL_RECIPE + " = " + id, null);
         close();
@@ -199,12 +198,12 @@ public class DetailRecipeDataSource {
     public void Update_Detail_RecipeByIdRecipe(Detail_Recipe DR,int id) {
     open();
         ContentValues data = new ContentValues();
+        data.put(MySQLiteHelper.COLUMN_DETAIL, DR.getDt_recipe());
+        data.put(MySQLiteHelper.COLUMN_LEVEL_DR, DR.getLevel());
         data.put(MySQLiteHelper.COLUMN_TIME_DR , DR.getTime());
         data.put(MySQLiteHelper.COLUMN_RATE_DR, DR.getRate());
-        data.put(MySQLiteHelper.COLUMN_LEVEL_DR, DR.getLevel());
         data.put(MySQLiteHelper.COLUMN_CALORIES, DR.getCal());
         data.put(MySQLiteHelper.COLUMN_FRK_RECIPE_DETAIL, DR.getFrk_recipe());
-        data.put(MySQLiteHelper.COLUMN_DETAIL, DR.getDt_recipe());
         Log.d("found","update"+id);
         database.update(MySQLiteHelper.TABLE_DETAIL_RECIPE, data, MySQLiteHelper.COLUMN_FRK_RECIPE + " = " + id, null);
         close();

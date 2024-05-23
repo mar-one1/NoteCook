@@ -76,6 +76,7 @@ public class Frg_detail_recipe extends Fragment {
                     }
 
                     Log.d("TAG", String.valueOf(Detail_CurrentRecipe.getId_detail_recipe()));
+                    binding.rateDtRecipe.setText(String.valueOf(Detail_CurrentRecipe.getRate()));
                     binding.icludeRoxDetailRecipe.vlTime.setText(String.valueOf(Detail_CurrentRecipe.getTime()));
                     binding.icludeRoxDetailRecipe.valCal.setText(String.valueOf(Detail_CurrentRecipe.getCal()));
                     binding.icludeRoxDetailRecipe.valLevel.setText(String.valueOf(Detail_CurrentRecipe.getLevel()));

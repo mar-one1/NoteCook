@@ -376,7 +376,7 @@ public class Constants {
         // Fetch ingredient data from the database
         IngredientsDataSource ingredientsDataSource = new IngredientsDataSource(context);
         ingredientsDataSource.open();
-        List<Ingredients> list_ingredient = ingredientsDataSource.getAllIngerdeients();
+        List<Ingredients> list_ingredient = ingredientsDataSource.getAllIngredeients();
         ingredientsDataSource.close();
         // Create and set adapter for RecyclerView
         Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list);
@@ -384,6 +384,7 @@ public class Constants {
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setAdapter(adapter);
     }
+
 
     public static  void bindingRcV_Steps(RecyclerView recyclerView,List<Step> list,Context context) {
         Adapter_Rc_Steps adapter = new Adapter_Rc_Steps(list,context);

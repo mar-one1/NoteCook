@@ -224,7 +224,6 @@ public class RecipeRepository {
         responseRecipe.setIngredients(ingredientsDataSource.getListIngerdientsByidRecipe(RC.getId_recipe()));
         responseRecipe.setSteps(stepsDataSource.getStepByIdRecipe(RC.getId_recipe()));
         responseRecipe.setReviews(reviewDataSource.getReviewsByIdRecipe(RC.getId_recipe()));
-        //detailRecipeRepository.getLocalDetailsRecipes();
         recipe.setValue(responseRecipe);
         return recipe;
     }
@@ -239,7 +238,7 @@ public class RecipeRepository {
                 isInsertionSuccessful = false;
             } else {
                 detailRecipeDataSource.insertDetail_recipe(RC.getDetail_recipe(), (int) id_recipe);
-                ingredientsDataSource.insertIngredients(RC.getIngredients());
+                ingredientsDataSource.insertIngredients(RC.getIngredients(),(int) id_recipe);
                 stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
                 fullRecipeLiveData.setValue(RC);
             }
@@ -468,7 +467,7 @@ public class RecipeRepository {
         // Step 1: Update local recipes with data from remote recipes
         for (RecipeResponse remoteRecipe : remoteRecipes) {
             // Check if the remote recipe belongs to the specified user
-            if (remoteRecipe.getRecipe().getFrk_user() == user_login.getUser().getId_User()) {
+            //if (remoteRecipe.getRecipe().getFrk_user() == user_login.getUser().getId_User()) {
                 boolean foundLocally = false;
                 for (Recipe localRecipe : localRecipes) {
                     // Match recipes using a unique identifier, e.g., recipe ID
@@ -486,7 +485,7 @@ public class RecipeRepository {
                     remoteRecipe.getRecipe().setFrk_user(id);
                     insertFullRecipeInLocal(remoteRecipe);
                 }
-            }
+            //}
         }
 
         // Step 2: Update remote recipes with data from local recipes (if needed)

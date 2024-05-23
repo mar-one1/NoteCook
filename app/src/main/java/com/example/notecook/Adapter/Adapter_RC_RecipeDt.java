@@ -161,7 +161,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         Review_CurrentRecipe = recipeResponse.getReviews();
         Ingredients_CurrentRecipe = recipeResponse.getIngredients();
         Review_CurrentRecipe = recipeResponse.getReviews();
-        Favorite_CurrentRecipe = recipeResponse.getFavorites();
+        Favorite_CurrentRecipe = recipeResponse.getFavs();
     }
 
     @Override

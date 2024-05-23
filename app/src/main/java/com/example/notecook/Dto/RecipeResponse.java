@@ -16,7 +16,7 @@ public class RecipeResponse {
     private Recipe recipe;
     @SerializedName("user")
     private User user;
-    @SerializedName("detailRecipe")
+    @SerializedName("detail_recipe")
     private Detail_Recipe detail_recipe;
     @SerializedName("ingredients")
     private List<Ingredients> Ingredients;
@@ -32,7 +32,6 @@ public class RecipeResponse {
 
     // Parameter to track if the data has been added remotely
     private boolean addedToRemote;
-    private List<Favorite_Recipe> Favorites;
 
     public boolean isAddedToLocal() {
         return addedToLocal;
@@ -50,12 +49,12 @@ public class RecipeResponse {
         this.addedToRemote = addedToRemote;
     }
 
-    public List<Favorite_Recipe> getFavorites() {
-        return Favorites;
+    public List<Favorite_Recipe> getFavs() {
+        return favs;
     }
 
-    public void setFavorites(List<Favorite_Recipe> favorites) {
-        Favorites = favorites;
+    public void setFavs(List<Favorite_Recipe> favs) {
+        this.favs = favs;
     }
 
     public User getUser() {
