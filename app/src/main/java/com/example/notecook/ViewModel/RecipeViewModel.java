@@ -97,6 +97,10 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.insertFullRecipeInLocal(recipe);
     }
 
+    public int putImageRecipeLocal(byte[] image,int id) {
+        return repository.updateRecipeImageLocally(image,id);
+    }
+
     public LiveData<List<Recipe>> SearchRecipe(String s) {
         return repository.searchRecipes(s);
     }

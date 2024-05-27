@@ -23,7 +23,7 @@ public class UserDatasource {
             MySQLiteHelper.COLUMN_PHONENUMBER_USER,
             MySQLiteHelper.COLUMN_PASSWORD, MySQLiteHelper.COLUMN_GRADE, MySQLiteHelper.COLUMN_STATUS
     };
-    private  MySQLiteHelper dbHelper;
+    private MySQLiteHelper dbHelper;
 
 
     public UserDatasource(Context context) {
@@ -32,7 +32,7 @@ public class UserDatasource {
 
 
     // Method to check if a record exists
-    public  boolean isRecordExist(String tableName, String columnName, String value) {
+    public boolean isRecordExist(String tableName, String columnName, String value) {
         open();
         Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{value}, null, null, null);
         boolean exists = (cursor.getCount() > 0);
@@ -44,7 +44,7 @@ public class UserDatasource {
     /*
      * insert the value in the Image table
      */
-    public  User insertUser(User user) {
+    public User insertUser(User user) {
         open();
         ContentValues values = new ContentValues();
 
@@ -72,7 +72,7 @@ public class UserDatasource {
     }
 
 
-    public  User createUserlogin(byte[] icon, String username, String firstname, String lastname, String birthday, String email, String tel, String Password, String grade, String status) {
+    public User createUserlogin(byte[] icon, String username, String firstname, String lastname, String birthday, String email, String tel, String Password, String grade, String status) {
         open();
         ContentValues values = new ContentValues();
 
@@ -99,8 +99,7 @@ public class UserDatasource {
         return newUser;
     }
 
-    public  User cursorToComment(Cursor cursor) {
-
+    public User cursorToComment(Cursor cursor) {
         User user = new User();
         user.setId_User(cursor.getInt(0));
         user.setUsername(cursor.getString(1));
@@ -113,21 +112,20 @@ public class UserDatasource {
         user.setPassWord(cursor.getString(8));
         user.setGrade(cursor.getString(9));
         user.setStatus(cursor.getString(10));
-
         return user;
     }
 
     /*
      * Open DataBase
      */
-    public  void open() throws SQLException {
+    public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
     }
 
     /*
      * close DataBase
      */
-    public  void close() {
+    public void close() {
         dbHelper.close();
     }
 

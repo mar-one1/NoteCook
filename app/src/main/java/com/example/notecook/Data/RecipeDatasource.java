@@ -1,8 +1,5 @@
 package com.example.notecook.Data;
 
-import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
-
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,20 +7,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import com.example.notecook.Dto.RecipeResponse;
-import com.example.notecook.Model.Detail_Recipe;
-import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Model.Review;
-import com.example.notecook.Model.Step;
-import com.example.notecook.Model.User;
 
-import java.sql.NClob;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,15 +16,16 @@ public class RecipeDatasource {
 
     private static SQLiteDatabase database;
     private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_RECIPE,
-            MySQLiteHelper.COLUMN_ICON_RECIPE,MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, MySQLiteHelper.COLUMN_FAV_RECIPE, MySQLiteHelper.COLUMN_NOM_RECIPE,
+            MySQLiteHelper.COLUMN_ICON_RECIPE, MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, MySQLiteHelper.COLUMN_FAV_RECIPE, MySQLiteHelper.COLUMN_NOM_RECIPE,
             MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE};
     private MySQLiteHelper dbHelper;
 
     public RecipeDatasource(Context context) {
         dbHelper = new MySQLiteHelper(context);
     }
+
     // Method to check if a record exists
-    public  boolean isRecordExist(String tableName, String columnName, String value) {
+    public boolean isRecordExist(String tableName, String columnName, String value) {
         open();
         Cursor cursor = database.query(tableName, null, columnName + " = ?", new String[]{value}, null, null, null);
         boolean exists = (cursor.getCount() > 0);
@@ -47,10 +33,33 @@ public class RecipeDatasource {
         close();
         return exists;
     }
+
+    public boolean isRecordExistX(String tableName, String columnName, String value) {
+        open();
+        boolean exists = false;
+        Cursor cursor = null;
+
+        try {
+            String[] projection = {columnName}; // Only select the column needed for checking existence
+            cursor = database.query(tableName, projection, columnName + " = ?", new String[]{value}, null, null, null);
+            exists = (cursor.getCount() > 0);
+        } catch (Exception e) {
+            // Handle any exceptions
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            close();
+        }
+
+        return exists;
+    }
+
     /*
      * insert the value in the Image table
      */
-    public Recipe createRecipe(byte[] ICONBYTE,String Pathicon, String nom_recipe, int fav, int frk) {
+    public Recipe createRecipe(byte[] ICONBYTE, String Pathicon, String nom_recipe, int fav, int frk) {
         open();
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, ICONBYTE);
@@ -143,22 +152,49 @@ public class RecipeDatasource {
         return ListRecipe;
     }
 
+    public List<Recipe> getRecipeByIdUser(int id, int pageNumber, int itemsPerPage) {
+        open();
+        List<Recipe> ListRecipe = new ArrayList<>();
+        int offset = (pageNumber - 1) * itemsPerPage; // Calculate the offset
+        try {
+            Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
+                    allColumns, MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE + " = ?",
+                    new String[]{String.valueOf(id)}, null, null, null, offset + "," + itemsPerPage);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Recipe Recipe = cursorToComment(cursor);
+                ListRecipe.add(Recipe);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        } catch (Exception e) {
+            // Handle any exceptions
+            e.printStackTrace();
+        }
+        // Close the cursor and database connection
+        close();
+        return ListRecipe;
+    }
+
     public List<Recipe> getRecipeByIdUser(int id) {
         open();
         List<Recipe> ListRecipe = new ArrayList<>();
-
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
-                allColumns, MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE + " = " + id, null, null, null, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Recipe Recipe = cursorToComment(cursor);
-            ListRecipe.add(Recipe);
-            cursor.moveToNext();
+        try {
+            Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
+                    allColumns, MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE + " = ?",
+                    new String[]{String.valueOf(id)}, null, null, null, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Recipe Recipe = cursorToComment(cursor);
+                ListRecipe.add(Recipe);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        } catch (Exception e) {
+            // Handle any exceptions
+            e.printStackTrace();
         }
-
-        // assurez-vous de la fermeture du curseur
-        cursor.close();
+        // Close the cursor and database connection
         close();
         return ListRecipe;
     }
@@ -190,5 +226,14 @@ public class RecipeDatasource {
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());
         database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
         close();
+    }
+
+    public int UpdateRecipe(byte[] image, int id) {
+        open();
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, image);
+        int updateid = database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
+        close();
+        return updateid;
     }
 }

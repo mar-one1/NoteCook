@@ -167,10 +167,15 @@ public class add_recipe extends Fragment {
     private void insertRecipe() {
         InputValidator inp = new InputValidator();
         if (recipeR.isAddedToRemote() && recipeR.isAddedToLocal()) {
+
             Constants.showToast(getContext(), "Recipe is success added before!!!");
         } else if (inp.isValidAddRecipe(binding.editTextRecipeName, binding.editTextInstructions, binding.edtDetail)) {
             Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
             Detail_Recipe detail_recipe = new Detail_Recipe();
+            detail_recipe.setDt_recipe(binding.editTextInstructions.getText().toString());
+            detail_recipe.setTime(Integer.parseInt(binding.txtTotTime.getText().toString()));
+            detail_recipe.setCal(Integer.parseInt(binding.txtTotCal.getText().toString()));
+            detail_recipe.setLevel(binding.levelRecipe.getSelectedItem().toString());
             recipeR.setIngredients(ingredientsList);
             recipeR.setDetail_recipe(detail_recipe);
             recipeR.setSteps(stepsList);

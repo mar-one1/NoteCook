@@ -12,7 +12,6 @@ import static com.example.notecook.Utils.Constants.getUserSynch;
 import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.showToast;
-import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.app.Activity;
@@ -34,7 +33,6 @@ import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.ReviewDataSource;
 import com.example.notecook.Data.StepsDataSource;
 import com.example.notecook.Data.UserDatasource;
-import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
@@ -204,6 +202,10 @@ public class RecipeRepository {
         return fullRecipeLiveData;
     }
 
+    public LiveData<List<Recipe>> getLocalRecipes(int i,int pages,int itemperpage) {
+        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i,3,3));
+        return list_recipe;
+    }
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
         list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
         return list_recipe;
@@ -512,6 +514,11 @@ public class RecipeRepository {
     private void updateRecipeLocally(Recipe remoteRecipe, int id) {
         // Implement logic to update the local recipe with data from the remote recipe
         recipeDatasource.UpdateRecipe(remoteRecipe, id);
+    }
+
+    public int updateRecipeImageLocally(byte[] image,  int id) {
+        // Implement logic to update the local recipe with data from the remote recipe
+        return recipeDatasource.UpdateRecipe(image, id);
     }
 
     private void updateRecipeRemotely(Recipe recipe) {
