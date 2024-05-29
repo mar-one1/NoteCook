@@ -234,9 +234,9 @@ public class RecipeDatasource {
         close();
     }
 
-    public int UpdateRecipe(Bitmap bitmap, int id) {
+    public int UpdateRecipe(Context context,Bitmap bitmap, int id) {
         open();
-        String imagePath = saveImageToInternalStorage(bitmap);
+        String imagePath = saveImageToInternalStorage(context,bitmap);
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, imagePath);
         int updateid = database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
@@ -245,9 +245,9 @@ public class RecipeDatasource {
     }
 
 
-    public String saveImageToInternalStorage(Bitmap imageBitmap) {
-        // Get the directory to store the image
-        File directory = new File(Environment.getExternalStorageDirectory(), "RecipeImages");
+    public static String saveImageToInternalStorage(Context context, Bitmap imageBitmap) {
+        // Get the directory to store the image (app's private storage)
+        File directory = new File(context.getFilesDir(), "RecipeImages");
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -267,5 +267,4 @@ public class RecipeDatasource {
         // Return the absolute path of the saved image file
         return imageFile.getAbsolutePath();
     }
-
 }

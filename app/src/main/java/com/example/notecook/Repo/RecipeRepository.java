@@ -121,7 +121,7 @@ public class RecipeRepository {
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                             // Image loaded successfully
 //                            recipe.setIcon_recipe(ImageHelper.bitmapToDrawable(context,bitmap));
-                            recipe.setPathimagerecipe(recipeDatasource.saveImageToInternalStorage(bitmap));
+                            recipe.setPathimagerecipe(recipeDatasource.saveImageToInternalStorage(context,bitmap));
                             Log.d("tag","image loaded success");
                         }
 
@@ -520,7 +520,7 @@ public class RecipeRepository {
 
     public int updateRecipeImageLocally(Bitmap image,  int id) {
         // Implement logic to update the local recipe with data from the remote recipe
-        return recipeDatasource.UpdateRecipe(image, id);
+        return recipeDatasource.UpdateRecipe(context,image, id);
     }
 
     private void updateRecipeRemotely(Recipe recipe) {

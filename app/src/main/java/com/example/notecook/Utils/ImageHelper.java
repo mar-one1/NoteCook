@@ -6,8 +6,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 public class ImageHelper {
 
@@ -37,7 +39,13 @@ public class ImageHelper {
     }
 
     public static Bitmap loadImageFromPath(String path) {
-        return BitmapFactory.decodeFile(path);
+        File imgFile = new File(path);
+        if (imgFile.exists()) {
+            return BitmapFactory.decodeFile(path);
+        } else {
+            Log.e("ImageHelper", "File not found at path: " + path);
+            return null;
+        }
     }
 }
 

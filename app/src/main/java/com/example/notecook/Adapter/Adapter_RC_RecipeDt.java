@@ -89,23 +89,27 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         if (recipe.getIcon_recipe() != null) {
             holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
         } else if (recipe.getPathimagerecipe() != null) {
-            String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
-            Picasso.get()
-                    .load(url)
-                    .error(R.drawable.eror_image_download)
-                    .memoryPolicy(MemoryPolicy.NO_STORE)
-                    .into(holder.Image, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            if (Objects.equals(b, TAG_LOCAL))
-                                recipeVM.putImageRecipeLocal(ImageHelper.drawableToBitmap(holder.Image.getDrawable()), recipe.getId_recipe());
-                        }
+            if(recipe.getPathimagerecipe().startsWith("/s")){
+                holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
+            }else {
+                String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
+                Picasso.get()
+                        .load(url)
+                        .error(R.drawable.eror_image_download)
+                        .memoryPolicy(MemoryPolicy.NO_STORE)
+                        .into(holder.Image, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                if (Objects.equals(b, TAG_LOCAL))
+                                    recipeVM.putImageRecipeLocal(ImageHelper.drawableToBitmap(holder.Image.getDrawable()), recipe.getId_recipe());
+                            }
 
-                        @Override
-                        public void onError(Exception e) {
-                            holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
-                        }
-                    });
+                            @Override
+                            public void onError(Exception e) {
+                                holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
+                            }
+                        });
+            }
 
         } else
             holder.Image.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
