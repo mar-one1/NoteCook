@@ -5,10 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Log;
 
 import com.example.notecook.Model.Recipe;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -228,12 +234,38 @@ public class RecipeDatasource {
         close();
     }
 
-    public int UpdateRecipe(byte[] image, int id) {
+    public int UpdateRecipe(Bitmap bitmap, int id) {
         open();
+        String imagePath = saveImageToInternalStorage(bitmap);
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, image);
+        values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, imagePath);
         int updateid = database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
         close();
         return updateid;
     }
+
+
+    public String saveImageToInternalStorage(Bitmap imageBitmap) {
+        // Get the directory to store the image
+        File directory = new File(Environment.getExternalStorageDirectory(), "RecipeImages");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Create a file to save the image
+        File imageFile = new File(directory, "image_" + System.currentTimeMillis() + ".png");
+
+        // Save the image to the file
+        try {
+            FileOutputStream fos = new FileOutputStream(imageFile);
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Return the absolute path of the saved image file
+        return imageFile.getAbsolutePath();
+    }
+
 }

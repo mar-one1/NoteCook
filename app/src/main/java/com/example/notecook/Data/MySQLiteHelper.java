@@ -36,7 +36,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     private static final String DATABASE_CREATE_RECIPE = "create table "
             + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE
             + " integer primary key autoincrement, " + COLUMN_ICON_RECIPE
-             +" text, "+ COLUMN_ICON_RECIPE_PATH +" text, " + COLUMN_FAV_RECIPE + " integer, " + COLUMN_NOM_RECIPE + " text , "
+            + " text, " + COLUMN_ICON_RECIPE_PATH + " text, " + COLUMN_FAV_RECIPE + " integer, " + COLUMN_NOM_RECIPE + " text , "
             + COLUMN_ID_FRK_USER_RECIPE + " integer, " + COLUMN_ID_FRK_CATEGORIE_RECIPE + " integer, " + " FOREIGN KEY (" + COLUMN_ID_FRK_USER_RECIPE + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + ") ON DELETE CASCADE , "
             + " FOREIGN KEY (" + COLUMN_ID_FRK_CATEGORIE_RECIPE + ") REFERENCES " + TABLE_CATEGORIE_RECIPE + "(" + COLUMN_ID_CATEGORIE_RECIPE + ") ON DELETE CASCADE );";
 
@@ -107,7 +107,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     private static final String DATABASE_CREATE_CATEGORIE_RECIPE = "create table "
             + TABLE_CATEGORIE_RECIPE + "(" + COLUMN_ID_CATEGORIE_RECIPE
             + " integer primary key autoincrement, " + COLUMN_ICON_CATEGORIE_RECIPE
-            + " text, " + COLUMN_DETAIL_CATEGORIE_RECIPE + " text );";
+            + " BLOB, " + COLUMN_ICON_PATH_CATEGORIE_RECIPE + " text, " + COLUMN_DETAIL_CATEGORIE_RECIPE + " text );";
 
     /*
      * Commande sql pour la création de la table list_Ingredients_recipe
@@ -119,12 +119,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     /*
      * Commande sql pour la création de la table FAV_RECIPE_USER
      */
-        private static final String DATABASE_CREATE_FAV_RECIPE_USER = "create table "
+    private static final String DATABASE_CREATE_FAV_RECIPE_USER = "create table "
             + TABLE_FAV_RECIPE_USER + "(" + COLUMN_ID_FAV_USER + " integer primary key autoincrement, "
             + COLUMN_FRK_RECIPE_FAV + " integer , "
             + COLUMN_FRK_USER_FAV + " integer , "
             + " FOREIGN KEY (" + COLUMN_FRK_USER_FAV + ") REFERENCES " + TABLE_USER + "(" + COLUMN_ID_USER + ") ON DELETE CASCADE , "
-            +  "FOREIGN KEY (" + COLUMN_FRK_RECIPE_FAV + ") REFERENCES " + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE + ") ON DELETE CASCADE )";
+            + "FOREIGN KEY (" + COLUMN_FRK_RECIPE_FAV + ") REFERENCES " + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE + ") ON DELETE CASCADE )";
 
     /*
      * Commande sql pour la création des champs dans les table intial
@@ -229,6 +229,18 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             "('Perfect cake, my family loved it.', 5, 2);";
 
 
+    private static final String InsertDataCategory = "INSERT INTO " + TABLE_CATEGORIE_RECIPE + "" +
+            " (\"" + COLUMN_ICON_CATEGORIE_RECIPE + "\",\"" + COLUMN_DETAIL_CATEGORIE_RECIPE + "\") values " +
+            "('barbecue.jpg','barbecue'),"+
+            "('breakfast.jpg','breakfast'),"+
+            "('brunch.jpg','brunch'),"+
+            "('chicken.jpg','chicken'),"+
+            "('dinner.jpg','dinner'),"+
+            "('italian.jpg','italian'),"+
+            "('wine.jpg','wine'),"+
+            "('beef.jpg','beef');";
+
+
     public MySQLiteHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -247,6 +259,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
         sqLiteDatabase.execSQL(DATABASE_CREATE_RECIPE_PRODUIT);
         sqLiteDatabase.execSQL(DATABASE_CREATE_FAV_RECIPE_USER);
         sqLiteDatabase.execSQL(InsertDataUser);
+        sqLiteDatabase.execSQL(InsertDataCategory);
 //        sqLiteDatabase.execSQL(InsertDataRecipe);
 //        sqLiteDatabase.execSQL(InsertDataDetailRecipe);
 //        sqLiteDatabase.execSQL(InsertDataIngredient);
@@ -266,6 +279,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_LIST_INGREDIENT_RECIPE);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUIT);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPEPRODIUT);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIE_RECIPE);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_FAV_RECIPE_USER);
 
         onCreate(sqLiteDatabase);

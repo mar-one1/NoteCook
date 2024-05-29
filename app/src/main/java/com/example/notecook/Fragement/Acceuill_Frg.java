@@ -6,6 +6,7 @@ import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.TAG_ONLINE;
 import static com.example.notecook.Utils.Constants.list_recipe;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,9 +25,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Adapter.Adapter_RC_MenuCat;
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
-import com.example.notecook.Model.Categorie_Food;
+import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -41,7 +43,7 @@ import javax.annotation.Nullable;
 public class Acceuill_Frg extends Fragment {
 
     public LayoutInflater inflater;
-    Categorie_Food categorie_food;
+    Category_Recipe mCategoryRecipe;
     private FragmentAcceuillFrgBinding binding;
     private SwipeRefreshLayout swipeRefreshLayout;
     private  RecipeViewModel recipeVM;
@@ -143,23 +145,23 @@ public class Acceuill_Frg extends Fragment {
     }
     // TODO Make category recipe git from server
     public void bindingRcV_categories(RecyclerView recyclerView, boolean isgarde) {
-        List<Categorie_Food> list_categorie_foods = new ArrayList<>();
+        List<Category_Recipe> list_categoryRecipes = new ArrayList<>();
         Adapter_RC_MenuCat adapter_rc_menuCat;
-        List<Drawable> drs = new ArrayList<>();
-        drs.add(getResources().getDrawable(R.drawable.barbecue));
-        drs.add(getResources().getDrawable(R.drawable.breakfast));
-        drs.add(getResources().getDrawable(R.drawable.chicken));
-        drs.add(getResources().getDrawable(R.drawable.beef));
-        drs.add(getResources().getDrawable(R.drawable.brunch));
-        drs.add(getResources().getDrawable(R.drawable.dinner));
-        drs.add(getResources().getDrawable(R.drawable.wine));
-        drs.add(getResources().getDrawable(R.drawable.italian));
+        List<Bitmap> drs = new ArrayList<>();
+        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.barbecue));
+        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.breakfast));
+        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.chicken));
+        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.beef));
+        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.brunch));
+        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.dinner));
+        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.wine));
+        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.italian));
 
         for (int i = 0; i < 8; i++) {
-            categorie_food = new Categorie_Food(drs.get(i), Constants.DEFAULT_SEARCH_CATEGORIES[i]);
-            list_categorie_foods.add(categorie_food);
+            mCategoryRecipe = new Category_Recipe( Constants.DEFAULT_SEARCH_CATEGORIES[i],MainActivity.encod(drs.get(i)));
+            list_categoryRecipes.add(mCategoryRecipe);
         }
-        adapter_rc_menuCat = new Adapter_RC_MenuCat(list_categorie_foods, true);
+        adapter_rc_menuCat = new Adapter_RC_MenuCat(list_categoryRecipes, true);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 4);
         recyclerView.setLayoutManager(manager);
         adapter_rc_menuCat.notifyDataSetChanged();

@@ -37,6 +37,7 @@ import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.ImageHelper;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -119,7 +120,8 @@ public class RecipeRepository {
                         @Override
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                             // Image loaded successfully
-                            recipe.setIcon_recipe(MainActivity.encod(bitmap));
+//                            recipe.setIcon_recipe(ImageHelper.bitmapToDrawable(context,bitmap));
+                            recipe.setPathimagerecipe(recipeDatasource.saveImageToInternalStorage(bitmap));
                             Log.d("tag","image loaded success");
                         }
 
@@ -475,7 +477,7 @@ public class RecipeRepository {
                     // Match recipes using a unique identifier, e.g., recipe ID
                     if (remoteRecipe.getRecipe().getNom_recipe().equals(localRecipe.getNom_recipe())) {
                         // Recipe exists locally; update it with remote data
-                        //updateRecipeLocally(remoteRecipe, localRecipe.getId_recipe());
+                        //updateRecipeLocally(remoteRecipe.getRecipe(), localRecipe.getId_recipe());
                         foundLocally = true;
                         break;
                     }
@@ -516,7 +518,7 @@ public class RecipeRepository {
         recipeDatasource.UpdateRecipe(remoteRecipe, id);
     }
 
-    public int updateRecipeImageLocally(byte[] image,  int id) {
+    public int updateRecipeImageLocally(Bitmap image,  int id) {
         // Implement logic to update the local recipe with data from the remote recipe
         return recipeDatasource.UpdateRecipe(image, id);
     }

@@ -19,7 +19,6 @@ import static com.example.notecook.Utils.Constants.user_login;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,18 +31,17 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -99,14 +97,16 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                     .into(holder.Image, new Callback() {
                         @Override
                         public void onSuccess() {
-
+                            if (Objects.equals(b, TAG_LOCAL))
+                                recipeVM.putImageRecipeLocal(ImageHelper.drawableToBitmap(holder.Image.getDrawable()), recipe.getId_recipe());
                         }
 
                         @Override
                         public void onError(Exception e) {
-
+                            holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
                         }
                     });
+
         } else
             holder.Image.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
 

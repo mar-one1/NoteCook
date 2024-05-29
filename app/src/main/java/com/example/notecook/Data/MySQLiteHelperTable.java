@@ -86,6 +86,7 @@ public interface MySQLiteHelperTable extends AutoCloseable {
     String TABLE_CATEGORIE_RECIPE = "Categorie_recipe";
     String COLUMN_ID_CATEGORIE_RECIPE = "Id_Categorie_recipe";
     String COLUMN_ICON_CATEGORIE_RECIPE = "Icon_Categorie_recipe";
+    String COLUMN_ICON_PATH_CATEGORIE_RECIPE = "Icon_Path_Categorie_recipe";
     String COLUMN_DETAIL_CATEGORIE_RECIPE = "Detail_Categorie_recipe";
 
     /*

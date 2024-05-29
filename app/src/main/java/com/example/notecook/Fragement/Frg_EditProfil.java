@@ -46,6 +46,7 @@ import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgEditProfilBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;

@@ -33,7 +33,7 @@ public class StepsDataSource {
      */
 
 
-    public Step Create_Step(String detail,int time,byte[] image, int rate, int frk_recipe) {
+    public Step Create_Step(String detail, int time, byte[] image, int rate, int frk_recipe) {
         open();
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_DETAIL_STEP_RECIPE, detail);
@@ -73,7 +73,7 @@ public class StepsDataSource {
         return newDR;
     }
 
-    public List<Step> insert_Steps(List<Step> steps,int id) {
+    public List<Step> insert_Steps(List<Step> steps, int id) {
         List<Step> insertedSteps = new ArrayList<>();
 
         open();
@@ -161,7 +161,7 @@ public class StepsDataSource {
         open();
         Step ListDRByid = new Step();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_STEP_RECIPE,
-                allColumns , MySQLiteHelper.COLUMN_ID_STEP_RECIPE + " = " + id , null, null, null, null);
+                allColumns, MySQLiteHelper.COLUMN_ID_STEP_RECIPE + " = " + id, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -171,11 +171,12 @@ public class StepsDataSource {
         close();
         return ListDRByid;
     }
+
     public ArrayList<Step> getStepByIdRecipe(int id) {
         open();
         ArrayList<Step> ListDRByidRecipe = new ArrayList<>();
         Cursor cursor = database.query(MySQLiteHelper.TABLE_STEP_RECIPE,
-                allColumns , MySQLiteHelper.COLUMN_FRK_STEP_RECIPE + " = " + id , null, null, null, null);
+                allColumns, MySQLiteHelper.COLUMN_FRK_STEP_RECIPE + " = " + id, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -187,10 +188,10 @@ public class StepsDataSource {
         return ListDRByidRecipe;
     }
 
-    public void Update_Step(Step step,int id) {
+    public void Update_Step(Step step, int id) {
         open();
         ContentValues data = new ContentValues();
-        data.put(MySQLiteHelper.COLUMN_DETAIL_STEP_RECIPE , step.getDetail_step());
+        data.put(MySQLiteHelper.COLUMN_DETAIL_STEP_RECIPE, step.getDetail_step());
         data.put(MySQLiteHelper.COLUMN_IMAGE_STEP, step.getImage_step());
         data.put(MySQLiteHelper.COLUMN_TIME_STEP, step.getTime_step());
         data.put(MySQLiteHelper.COLUMN_FRK_STEP_RECIPE, step.getFRK_recipe_step());

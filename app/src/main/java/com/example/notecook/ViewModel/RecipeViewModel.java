@@ -97,7 +97,7 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.insertFullRecipeInLocal(recipe);
     }
 
-    public int putImageRecipeLocal(byte[] image,int id) {
+    public int putImageRecipeLocal(Bitmap image,int id) {
         return repository.updateRecipeImageLocally(image,id);
     }
 

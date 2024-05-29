@@ -9,8 +9,9 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Fragement.MainFragment;
-import com.example.notecook.Model.Categorie_Food;
+import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.R;
+import com.example.notecook.Utils.ImageHelper;
 
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -19,11 +20,11 @@ import java.util.List;
 
 public class Adapter_RC_MenuCat extends RecyclerView.Adapter<Adapter_RC_MenuCat.ViewHolder> {
 
-    private List<Categorie_Food> categorie_foods;
+    private List<Category_Recipe> mCategoryRecipes;
     private boolean b=true;
 
-    public Adapter_RC_MenuCat(List<Categorie_Food> categorie_foodsA,boolean bb) {
-        categorie_foods = categorie_foodsA;
+    public Adapter_RC_MenuCat(List<Category_Recipe> categorie_foodsA, boolean bb) {
+        mCategoryRecipes = categorie_foodsA;
         b=bb;
     }
 
@@ -43,9 +44,9 @@ public class Adapter_RC_MenuCat extends RecyclerView.Adapter<Adapter_RC_MenuCat.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        Categorie_Food categories = categorie_foods.get(position);
-        holder.detail.setText( categories.getDetail_Cat_food());
-        holder.Image.setImageDrawable(categories.getIcon_food());
+        Category_Recipe categories = mCategoryRecipes.get(position);
+        holder.detail.setText(categories.getDetail_category());
+        holder.Image.setImageBitmap(ImageHelper.byteArrayToBitmap(categories.getIcon_category()));
 
         holder.Image.setOnClickListener(v -> {
             MainFragment mainFragment = new MainFragment();
@@ -54,7 +55,7 @@ public class Adapter_RC_MenuCat extends RecyclerView.Adapter<Adapter_RC_MenuCat.
 
     @Override
     public int getItemCount() {
-        return categorie_foods.size();
+        return mCategoryRecipes.size();
     }
 
 

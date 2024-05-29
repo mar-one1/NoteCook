@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -405,6 +406,19 @@ public class Constants {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, displayNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
+    }
+
+    public static Bitmap drawableToBitmap(Context context, int drawableId) {
+        // Get a reference to the drawable resource
+        Drawable drawable = context.getResources().getDrawable(drawableId);
+
+        // Convert the drawable to a Bitmap
+        Bitmap bitmap = null;
+        if (drawable != null) {
+            bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId);
+        }
+
+        return bitmap;
     }
 
 }
