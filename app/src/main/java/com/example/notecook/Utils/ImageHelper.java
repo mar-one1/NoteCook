@@ -8,13 +8,15 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class ImageHelper {
 
 
     public static Bitmap drawableToBitmap(Drawable drawable) {
+
         if (drawable instanceof BitmapDrawable) {
             return ((BitmapDrawable) drawable).getBitmap();
         }
@@ -27,7 +29,6 @@ public class ImageHelper {
         drawable.draw(canvas);
         return bitmap;
     }
-
 
 
     public static Drawable bitmapToDrawable(Context context, Bitmap bitmap) {
@@ -46,6 +47,29 @@ public class ImageHelper {
             Log.e("ImageHelper", "File not found at path: " + path);
             return null;
         }
+    }
+
+    public static String saveImageToInternalStorage(Context context, Bitmap imageBitmap) {
+        // Get the directory to store the image (app's private storage)
+        File directory = new File(context.getFilesDir(), "RecipeImages");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Create a file to save the image
+        File imageFile = new File(directory, "image_" + System.currentTimeMillis() + ".png");
+
+        // Save the image to the file
+        try {
+            FileOutputStream fos = new FileOutputStream(imageFile);
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Return the absolute path of the saved image file
+        return imageFile.getAbsolutePath();
     }
 }
 
