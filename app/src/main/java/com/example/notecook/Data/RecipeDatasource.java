@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Utils.ImageHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -236,7 +237,7 @@ public class RecipeDatasource {
 
     public int UpdateRecipe(Context context,Bitmap bitmap, int id) {
         open();
-        String imagePath = saveImageToInternalStorage(context,bitmap);
+        String imagePath = ImageHelper.saveImageToInternalStorage(context,bitmap);
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, imagePath);
         int updateid = database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
@@ -245,26 +246,5 @@ public class RecipeDatasource {
     }
 
 
-    public static String saveImageToInternalStorage(Context context, Bitmap imageBitmap) {
-        // Get the directory to store the image (app's private storage)
-        File directory = new File(context.getFilesDir(), "RecipeImages");
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
 
-        // Create a file to save the image
-        File imageFile = new File(directory, "image_" + System.currentTimeMillis() + ".png");
-
-        // Save the image to the file
-        try {
-            FileOutputStream fos = new FileOutputStream(imageFile);
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Return the absolute path of the saved image file
-        return imageFile.getAbsolutePath();
-    }
 }

@@ -121,7 +121,7 @@ public class RecipeRepository {
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                             // Image loaded successfully
 //                            recipe.setIcon_recipe(ImageHelper.bitmapToDrawable(context,bitmap));
-                            recipe.setPathimagerecipe(recipeDatasource.saveImageToInternalStorage(context,bitmap));
+                            recipe.setPathimagerecipe(ImageHelper.saveImageToInternalStorage(context,bitmap));
                             Log.d("tag","image loaded success");
                         }
 

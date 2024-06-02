@@ -89,7 +89,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         if (recipe.getIcon_recipe() != null) {
             holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
         } else if (recipe.getPathimagerecipe() != null) {
-            if(recipe.getPathimagerecipe().startsWith("/s")){
+            if(recipe.getPathimagerecipe().startsWith("/d")){
                 holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
             }else {
                 String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
