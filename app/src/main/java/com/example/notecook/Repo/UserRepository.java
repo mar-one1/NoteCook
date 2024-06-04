@@ -72,7 +72,7 @@ public class UserRepository {
                         //userLogin.setValue(UserResponse);
                         user_login.setUser(UserResponse);
                         userLogin.setValue(getLocalUserLogin(username, "success").getValue());
-                        Log.e("tag","image url"+userLogin.getValue().getPathimageuser());
+                        Log.e("tag","image url"+user_login.getUser().getPathimageuser());
                         //getImageUserUrl(user_login.getUser().getUsername(), "user_login", context);
                         Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get user from Api", Toast.LENGTH_LONG).show();
                     }
