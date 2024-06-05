@@ -1,10 +1,10 @@
 package com.example.notecook.Api;
 
 import com.example.notecook.Dto.LoginResponse;
-import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Fragement.Favorite_User_Recipe;
+import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
@@ -57,7 +57,7 @@ public interface ApiService {
     Call<RecipeResponse> getRecipeById(@Header("Authorization") String token, @Path("id") int recipeId);
 
     @GET("recipes/filters/recipes")
-    Call<List<Recipe>> getRecipesByConditions(@Header("Authorization") String token,@QueryMap Map<String, String> conditions);
+    Call<List<Recipe>> getRecipesByConditions(@Header("Authorization") String token, @QueryMap Map<String, String> conditions);
 
     @GET("recipes/user/{id}")
     Call<List<Recipe>> getRecipeByIdUser(@Header("Authorization") String token, @Path("id") int recipeId);
@@ -240,5 +240,12 @@ public interface ApiService {
     @POST("favorites")
     @Headers("Content-Type: application/json")
     Call<Favorite_User_Recipe> createFavorite(@Header("Authorization") String token, @Body Favorite_User_Recipe favorite);
+
+    // categories
+    @GET("category")
+    Call<List<Category_Recipe>> getAllCategories(@Header("Authorization") String token);
+
+    @GET("category/{id}")
+    Call<Category_Recipe> getCategory(@Path("id") int Id, @Header("Authorization") String token);
 
 }
