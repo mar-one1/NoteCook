@@ -25,6 +25,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
+import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.databinding.FragmentFrgDetailRecipeBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
@@ -55,7 +56,7 @@ public class Frg_detail_recipe extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("tag resume detaile recipe","true");
+        Log.e("tag resume detaile recipe", "true");
         //binding.vp2Detairecipe.setCurrentItem(0,true);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
             if (Detail_CurrentRecipe != null) {
@@ -64,10 +65,16 @@ public class Frg_detail_recipe extends Fragment {
                     binding.NomUserRecipe.setText(User_CurrentRecipe.getUsername());
                     if (CURRENT_RECIPE.getIcon_recipe() != null)
                         binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
-                    else {
-                        String url = BASE_URL + "data/uploads/" + CURRENT_RECIPE.getPathimagerecipe();
-                        Picasso.get().load(url).into(binding.iconRecipe);
+                    else if (CURRENT_RECIPE.getPathimagerecipe() != null) {
+                        if (CURRENT_RECIPE.getPathimagerecipe().startsWith("/d"))
+                            binding.iconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(CURRENT_RECIPE.getPathimagerecipe()));
+                        else {
+                            String url = BASE_URL + "data/uploads/" + CURRENT_RECIPE.getPathimagerecipe();
+                            Picasso.get().load(url).into(binding.iconRecipe);
+                        }
                     }
+
+
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
                     if (User_CurrentRecipe != null) {
                         String url = BASE_URL + "uploads/" + User_CurrentRecipe.getPathimageuser();

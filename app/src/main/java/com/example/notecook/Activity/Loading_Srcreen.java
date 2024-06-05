@@ -56,7 +56,7 @@ public class Loading_Srcreen extends AppCompatActivity {
                 @Override
                 public void onChanged(String s) {
                     if(s!=null && !s.equals(""))
-                        Toast.makeText(Loading_Srcreen.this, "welcome back", Toast.LENGTH_SHORT).show();
+                        Constants.showToast(Loading_Srcreen.this, "welcome back");
                 }
             });
             //TokenApi();
