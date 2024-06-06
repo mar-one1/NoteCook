@@ -25,10 +25,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Fragement.MainFragment;
+import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
+import com.example.notecook.ViewModel.CategoriesViewModel;
 import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
@@ -38,6 +40,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -54,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentTransaction fragmentTransaction;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
+    private CategoriesViewModel categoryVM;
     private IngredientsViewModel ingredientsVM;
     private ActivityMainBinding binding;
     private View view;
@@ -127,8 +131,10 @@ public class MainActivity extends AppCompatActivity {
 
         recipeVM = new RecipeViewModel(this, this);
         userVM = new UserViewModel(this, this);
+        categoryVM = new CategoriesViewModel(this, this);
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
+        categoryVM = new ViewModelProvider(this, categoryVM).get(CategoriesViewModel.class);
 
         String tag = "";
         if (getIntent().getExtras() != null) {
@@ -139,6 +145,15 @@ public class MainActivity extends AppCompatActivity {
         // get Recipe From Api
         if (!Type_User.equals(TAG_MODE_INVITE)) {
             getUserInfo();
+            categoryVM.getCategories().observe(this, new Observer<List<Category_Recipe>>() {
+                @Override
+                public void onChanged(List<Category_Recipe> category_recipes) {
+                    if(category_recipes!=null) {
+                        Constants.All_Categories_Recipe = category_recipes;
+                        Log.d("tag cat", String.valueOf(Constants.All_Categories_Recipe.size()));
+                    }
+                }
+            });
         }
 
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
