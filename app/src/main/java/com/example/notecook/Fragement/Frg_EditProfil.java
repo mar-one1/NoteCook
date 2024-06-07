@@ -71,13 +71,13 @@ public class Frg_EditProfil extends Fragment {
     private static final int CAMERA_REQUEST = 1888;
     private final int STORAGE_PERMISSION_CODE = 23;
     private final int GALLERY_REQUEST_CODE = 24;
-    FragmentFrgEditProfilBinding binding;
-    TextView txt_save;
-    UserDatasource mUserDatasource;
-    User getUser;
-    MainActivity m;
-    GoogleSignInClient mGoogleSignInClient;
-    GoogleSignInOptions gso;
+    private FragmentFrgEditProfilBinding binding;
+    private TextView txt_save;
+    private UserDatasource mUserDatasource;
+    private User getUser;
+    private MainActivity m;
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInOptions gso;
     private SharedPreferences sharedPreferences;
     private UserViewModel userVM;
     private FragmentActivity fragmentActivity;
@@ -93,6 +93,13 @@ public class Frg_EditProfil extends Fragment {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Constants.alertDialog != null && Constants.alertDialog.isShowing()) {
+            Constants.alertDialog.dismiss();
+        }
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -220,8 +227,6 @@ public class Frg_EditProfil extends Fragment {
 
         return binding.getRoot();
     }
-
-
 
 
     private void signOut() {
@@ -378,7 +383,7 @@ public class Frg_EditProfil extends Fragment {
                 userVM.UpdateUser(getUser, bitmap).observe(getViewLifecycleOwner(), new Observer<User>() {
                     @Override
                     public void onChanged(User user) {
-                        if(user!=null) {
+                        if (user != null) {
                             user_login.setUser(user);
                         }
                     }
@@ -390,8 +395,7 @@ public class Frg_EditProfil extends Fragment {
         }
     }
 
-    private void detach()
-    {
+    private void detach() {
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.detach(Frg_EditProfil.this);
         fragmentTransaction.commitNow();

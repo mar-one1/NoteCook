@@ -40,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.OnBoarding_screen"
+            android:name=".Activity.OnBoarding.OnBoarding_screen"
             android:exported="false" />
         <activity
             android:name=".Activity.Login"

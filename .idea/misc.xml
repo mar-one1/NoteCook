@@ -26,6 +26,8 @@
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/skeleton.xml" value="0.1455" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/drawable/tab_indicator_color.xml" value="0.1455" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/activity_on_boarding_screen.xml" value="0.22447916666666667" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_add_edit_recipe.xml" value="0.221025641025641" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_add_recipe.xml" value="0.221025641025641" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg__edit_profil.xml" value="0.17407407407407408" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg__profil.xml" value="0.20277777777777778" />
@@ -34,6 +36,7 @@
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg_detail_recipe.xml" value="0.17407407407407408" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg_recipe_fav.xml" value="0.1" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_frg_step_recipe.xml" value="0.221025641025641" />
+        <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_on_boarding_a.xml" value="0.22447916666666667" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/layout/fragment_search_filter.xml" value="0.22447916666666667" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/mipmap-anydpi-v26/ic_icon_app.xml" value="0.1455" />
         <entry key="..\:/backup notebook/2024 V2/2024/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1455" />

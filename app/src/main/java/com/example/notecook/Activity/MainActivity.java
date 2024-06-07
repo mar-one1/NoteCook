@@ -6,7 +6,9 @@ import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,6 +26,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.notecook.Activity.OnBoarding.OnBoarding_screen;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.User;
@@ -51,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     public static String Type_User = "";
     public static byte[] iconUser = null;
     private static ArrayList<String> array_image = new ArrayList<>();
-
     private IntentFilter filtreConectivite = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     private NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
     private FragmentTransaction fragmentTransaction;
@@ -61,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
     private IngredientsViewModel ingredientsVM;
     private ActivityMainBinding binding;
     private View view;
-
-
     private boolean doubleBackToExitPressedOnce = false;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -119,6 +119,18 @@ public class MainActivity extends AppCompatActivity {
         view = binding.getRoot();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
+
+        //check OnBoarding
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
+
+        if (isFirstRun) {
+            Intent intent = new Intent(this, OnBoarding_screen.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         Constants.init();
         Token = getToken(this);
 
