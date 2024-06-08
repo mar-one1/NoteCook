@@ -120,7 +120,8 @@ public class Acceuill_Frg extends Fragment {
                     Remotelist_recipe.setValue(recipeList);
                     bindingRcV_recipes(recipeList, binding.RcCatPopular, true);
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.size(), Toast.LENGTH_SHORT).show();
-                }
+                }else
+                    bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
             }
         });
     }

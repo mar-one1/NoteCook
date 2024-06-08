@@ -8,9 +8,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.example.notecook.Data.MySQLiteHelper;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImageHelper {
 
@@ -70,6 +74,46 @@ public class ImageHelper {
 
         // Return the absolute path of the saved image file
         return imageFile.getAbsolutePath();
+    }
+
+    public static void deleteUnusedImages(Context context,List<String> allImagePathsInDb) {
+        List<String> allImagePathsOnDevice = getAllImagePathsOnDevice();
+
+        // Delete unused image files
+        for (String imagePath : allImagePathsOnDevice) {
+            if (!allImagePathsInDb.contains(imagePath)) {
+                boolean deleted = deleteImageFile(imagePath);
+                if (deleted) {
+                    Log.d("ImageCleanupHelper", "Deleted unused image: " + imagePath);
+                } else {
+                    Log.e("ImageCleanupHelper", "Failed to delete image: " + imagePath);
+                }
+            }
+        }
+    }
+
+    private static List<String> getAllImagePathsOnDevice() {
+        List<String> imagePaths = new ArrayList<>();
+        // Specify the directory where your images are stored
+        String imageDirectoryPath = "/path/to/image/directory";
+        File imageDirectory = new File(imageDirectoryPath);
+
+        if (imageDirectory.exists() && imageDirectory.isDirectory()) {
+            File[] files = imageDirectory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        imagePaths.add(file.getAbsolutePath());
+                    }
+                }
+            }
+        }
+        return imagePaths;
+    }
+
+    private static boolean deleteImageFile(String imagePath) {
+        File imageFile = new File(imagePath);
+        return imageFile.exists() && imageFile.delete();
     }
 }
 

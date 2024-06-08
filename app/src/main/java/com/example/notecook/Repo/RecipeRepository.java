@@ -210,6 +210,7 @@ public class RecipeRepository {
     }
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
         list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
+        ImageHelper.deleteUnusedImages(context,recipeDatasource.getAllRecipesImagePath());
         return list_recipe;
     }
 

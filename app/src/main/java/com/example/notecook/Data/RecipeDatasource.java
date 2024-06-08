@@ -41,6 +41,8 @@ public class RecipeDatasource {
         return exists;
     }
 
+
+
     public boolean isRecordExistX(String tableName, String columnName, String value) {
         open();
         boolean exists = false;
@@ -158,6 +160,25 @@ public class RecipeDatasource {
         close();
         return ListRecipe;
     }
+
+    public ArrayList<String> getAllRecipesImagePath() {
+        open();
+        ArrayList<String> List = new ArrayList<>();
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_RECIPE,
+                allColumns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Recipe Recipe = cursorToComment(cursor);
+            List.add(Recipe.getPathimagerecipe());
+            cursor.moveToNext();
+        }
+        // assurez-vous de la fermeture du curseur
+        cursor.close();
+        close();
+        return List;
+    }
+
 
     public List<Recipe> getRecipeByIdUser(int id, int pageNumber, int itemsPerPage) {
         open();
