@@ -53,9 +53,9 @@ public class ImageHelper {
         }
     }
 
-    public static String saveImageToInternalStorage(Context context, Bitmap imageBitmap) {
+    public static String saveImageToInternalStorage(Context context, Bitmap imageBitmap,String table) {
         // Get the directory to store the image (app's private storage)
-        File directory = new File(context.getFilesDir(), "RecipeImages");
+        File directory = new File(context.getFilesDir(), table);
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -76,8 +76,8 @@ public class ImageHelper {
         return imageFile.getAbsolutePath();
     }
 
-    public static void deleteUnusedImages(Context context,List<String> allImagePathsInDb) {
-        List<String> allImagePathsOnDevice = getAllImagePathsOnDevice();
+    public static void deleteUnusedImages(Context context,List<String> allImagePathsInDb,String table) {
+        List<String> allImagePathsOnDevice = getAllImagePathsOnDevice(context,table);
 
         // Delete unused image files
         for (String imagePath : allImagePathsOnDevice) {
@@ -92,12 +92,10 @@ public class ImageHelper {
         }
     }
 
-    private static List<String> getAllImagePathsOnDevice() {
+    private static List<String> getAllImagePathsOnDevice(Context context,String table) {
         List<String> imagePaths = new ArrayList<>();
         // Specify the directory where your images are stored
-        String imageDirectoryPath = "/path/to/image/directory";
-        File imageDirectory = new File(imageDirectoryPath);
-
+        File imageDirectory = new File(context.getFilesDir(), table);
         if (imageDirectory.exists() && imageDirectory.isDirectory()) {
             File[] files = imageDirectory.listFiles();
             if (files != null) {

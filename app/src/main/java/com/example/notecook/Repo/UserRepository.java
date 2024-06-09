@@ -27,6 +27,7 @@ import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.ImageHelper;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -302,7 +303,9 @@ public class UserRepository {
             user_login.setMessage(TAG_LOCAL);
             user_login_local.setUser(user.getValue());
         }
+        ImageHelper.deleteUnusedImages(context,userDatasource.getAllUsersImagePath(),"UserImages");
         return  user;
+
     }
 
     public LiveData<User> InsertUserApi(User user, String url, Bitmap bitmap, String type) {

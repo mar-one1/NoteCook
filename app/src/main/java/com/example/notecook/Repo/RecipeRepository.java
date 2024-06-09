@@ -121,7 +121,7 @@ public class RecipeRepository {
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                             // Image loaded successfully
 //                            recipe.setIcon_recipe(ImageHelper.bitmapToDrawable(context,bitmap));
-                            recipe.setPathimagerecipe(ImageHelper.saveImageToInternalStorage(context,bitmap));
+                            recipe.setPathimagerecipe(ImageHelper.saveImageToInternalStorage(context,bitmap,"RecipeImages"));
                             Log.d("tag","image loaded success");
                         }
 
@@ -210,7 +210,7 @@ public class RecipeRepository {
     }
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
         list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
-        ImageHelper.deleteUnusedImages(context,recipeDatasource.getAllRecipesImagePath());
+        ImageHelper.deleteUnusedImages(context,recipeDatasource.getAllRecipesImagePath(),"RecipeImages");
         return list_recipe;
     }
 

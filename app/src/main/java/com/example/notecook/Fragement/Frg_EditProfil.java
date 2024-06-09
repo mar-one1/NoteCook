@@ -130,11 +130,15 @@ public class Frg_EditProfil extends Fragment {
 
         if (user.getPathimageuser() != null && !user.getPathimageuser().equals("")) {
             String imageUrl = "";
+            if(user.getPathimageuser().startsWith("/data")) {
+                binding.iconEditprofil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
+            }else
             if (user.getPathimageuser().startsWith("http"))
-                imageUrl = user.getPathimageuser();
-            else
-                imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
-            Picasso.get().load(imageUrl).into(binding.iconEditprofil);
+                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
+            else {
+               imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
+                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
+            }
             //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
         } else if (user.getIcon() != null) {
             binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
@@ -346,7 +350,6 @@ public class Frg_EditProfil extends Fragment {
 
     private void updateUser() {
         try {
-            String urlold = user_login.getUser().getPathimageuser();
             User currentuser = user_login.getUser();
             mUserDatasource = new UserDatasource(getContext());
             String nom = binding.Nome.getText().toString();
@@ -362,7 +365,8 @@ public class Frg_EditProfil extends Fragment {
             String username = user_login.getUser().getUsername();
             String Status = "active";
             String grade = user_login.getUser().getGrade();
-            getUser = new User(user_login.getUser().getId_User(), username, nom, prenom, naissance, mail, icon, tel, pass, Status, grade, currentuser.getPathimageuser());
+            String Path = ImageHelper.saveImageToInternalStorage(requireContext(),bitmap,"UserImages");
+            getUser = new User(user_login.getUser().getId_User(), username, nom, prenom, naissance, mail, icon1, tel, pass, Status, grade, Path);
             int value = mUserDatasource.UpdateUserByUsername(getUser, user_login.getUser().getUsername());
             Toast.makeText(getContext(), String.valueOf(value), Toast.LENGTH_SHORT).show();
             if (value == 1) {
@@ -385,6 +389,7 @@ public class Frg_EditProfil extends Fragment {
                     public void onChanged(User user) {
                         if (user != null) {
                             user_login.setUser(user);
+                            detach();
                         }
                     }
                 });

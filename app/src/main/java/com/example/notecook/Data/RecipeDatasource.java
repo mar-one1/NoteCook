@@ -258,7 +258,7 @@ public class RecipeDatasource {
 
     public int UpdateRecipe(Context context,Bitmap bitmap, int id) {
         open();
-        String imagePath = ImageHelper.saveImageToInternalStorage(context,bitmap);
+        String imagePath = ImageHelper.saveImageToInternalStorage(context,bitmap,"RecipeImages");
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, imagePath);
         int updateid = database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);

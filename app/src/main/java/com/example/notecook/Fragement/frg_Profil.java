@@ -9,6 +9,7 @@ import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.FragmentLifecycle;
+import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgProfilBinding;
@@ -67,13 +69,17 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                 user = user_login.getUser();
                 binding.txtUsername.setText(user.getUsername());
                 binding.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
-                if (user.getPathimageuser() != null && !user.getPathimageuser().equals("")) {
+                if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
                     String imageUrl = "";
-                    if (user.getPathimageuser().startsWith("http"))
-                        imageUrl = user.getPathimageuser();
-                    else
+                    if(user.getPathimageuser().startsWith("/data")) {
+                        binding.iconProfil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
+                    }
+                    else if (user.getPathimageuser().startsWith("http")) {
+                        Picasso.get().load(user.getPathimageuser()).into(binding.iconProfil);
+                    } else {
                         imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
-                    Picasso.get().load(imageUrl).into(binding.iconProfil);
+                        Picasso.get().load(imageUrl).into(binding.iconProfil);
+                    }
                     //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
                 } else if (user.getIcon() != null) {
                     binding.iconProfil.setImageBitmap(decod(user.getIcon()));

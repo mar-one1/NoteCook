@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.Objects;
 public class UserDatasource {
 
     private static SQLiteDatabase database;
-    private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_USER, MySQLiteHelper.COLUMN_USERNAME, MySQLiteHelper.COLUMN_ICON,
+    private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_USER, MySQLiteHelper.COLUMN_USERNAME, MySQLiteHelper.COLUMN_ICON,MySQLiteHelper.COLUMN_ICON_PATH,
             MySQLiteHelper.COLUMN_FIRSTNAME_USER, MySQLiteHelper.COLUMN_LASTNAME_USER,
             MySQLiteHelper.COLUMN_BIRTHDAY_USER, MySQLiteHelper.COLUMN_EMAIL_USER,
             MySQLiteHelper.COLUMN_PHONENUMBER_USER,
@@ -50,6 +51,7 @@ public class UserDatasource {
 
         values.put(MySQLiteHelper.COLUMN_USERNAME, user.getUsername());
         values.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
+        values.put(MySQLiteHelper.COLUMN_ICON_PATH, user.getPathimageuser());
         values.put(MySQLiteHelper.COLUMN_FIRSTNAME_USER, user.getFirstname());
         values.put(MySQLiteHelper.COLUMN_LASTNAME_USER, user.getLastname());
         values.put(MySQLiteHelper.COLUMN_BIRTHDAY_USER, user.getBirthday());
@@ -104,14 +106,15 @@ public class UserDatasource {
         user.setId_User(cursor.getInt(0));
         user.setUsername(cursor.getString(1));
         user.setIcon(cursor.getBlob(2));
-        user.setFirstname(cursor.getString(3));
-        user.setLastname(cursor.getString(4));
-        user.setBirthday(cursor.getString(5));
-        user.setEmail(cursor.getString(6));
-        user.setPhonenumber(cursor.getString(7));
-        user.setPassWord(cursor.getString(8));
-        user.setGrade(cursor.getString(9));
-        user.setStatus(cursor.getString(10));
+        user.setPathimageuser(cursor.getString(3));
+        user.setFirstname(cursor.getString(4));
+        user.setLastname(cursor.getString(5));
+        user.setBirthday(cursor.getString(6));
+        user.setEmail(cursor.getString(7));
+        user.setPhonenumber(cursor.getString(8));
+        user.setPassWord(cursor.getString(9));
+        user.setGrade(cursor.getString(10));
+        user.setStatus(cursor.getString(11));
         return user;
     }
 
@@ -191,6 +194,25 @@ public class UserDatasource {
         return user;
     }
 
+    public ArrayList<String> getAllUsersImagePath() {
+        open();
+        ArrayList<String> List = new ArrayList<>();
+        Cursor cursor = database.query(TABLE_USER,
+                allColumns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            User user = cursorToComment(cursor);
+            List.add(user.getPathimageuser());
+            cursor.moveToNext();
+        }
+        // assurez-vous de la fermeture du curseur
+        cursor.close();
+        close();
+        return List;
+    }
+
+
     public int UpdateUser(User user, int id) {
         open();
         ContentValues data = new ContentValues();
@@ -224,6 +246,7 @@ public class UserDatasource {
         data.put(MySQLiteHelper.COLUMN_GRADE, user.getGrade());
         data.put(MySQLiteHelper.COLUMN_STATUS, user.getStatus());
         data.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
+        data.put(MySQLiteHelper.COLUMN_ICON_PATH, user.getPathimageuser());
         int value = database.update(TABLE_USER, data, MySQLiteHelper.COLUMN_USERNAME + "= ?", selectionArgs);
         close();
         return value;
