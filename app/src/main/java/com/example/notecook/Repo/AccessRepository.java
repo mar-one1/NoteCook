@@ -117,14 +117,14 @@ public class AccessRepository {
 
     private String ConnectLocal(String username, String password) {
         TAG_CONNEXION_LOCAL = "";
-        Constants.listUser = userDatasource.getAllUser();
+        User user = userDatasource.select_User_BYUsername(username);
         passwordHasher = new PasswordHasher();
-        for (User item : Constants.listUser) {
+        if(user!=null)
             //Toast.makeText(getBaseContext(), "user : " + item.getUser_name() + " pass : " + item.getPassWord(), Toast.LENGTH_SHORT).show();
-            if (Objects.equals(item.getFirstname(), username) && passwordHasher.verifyPassword(password, item.getPassWord())) {
+            if (passwordHasher.verifyPassword(password, user.getPassWord())) {
                 saveUserInput(username, password, context);
                 TAG_CONNEXION_LOCAL = "success";
-                user_login.setUser(item);
+                user_login.setUser(user);
                 /*if (!Objects.equals(user_login.getUser(), null)) {
                     user_login.getUser().setUser_name(username);
                     user_login.getUser().setUser_name(item.getPassWord());
@@ -138,7 +138,6 @@ public class AccessRepository {
 
                 //break;
             }
-        }
         return TAG_CONNEXION_LOCAL;
     }
 
