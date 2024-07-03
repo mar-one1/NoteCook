@@ -172,7 +172,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     }
 
     private void fetchRecipe(RecipeResponse recipeResponse) {
-        User_CurrentRecipe = user_login.getUser();
+        User_CurrentRecipe = recipeResponse.getUser();
         CURRENT_RECIPE = recipeResponse.getRecipe();
         Detail_CurrentRecipe = recipeResponse.getDetail_recipe();
         Steps_CurrentRecipe = recipeResponse.getSteps();

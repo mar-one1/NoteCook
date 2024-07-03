@@ -446,7 +446,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 pDialog.show();
 
                 if (Constants.NetworkIsConnected(Login.this)) {
-                    String username = binding.etUsername.getText().toString().toUpperCase();
+                    String username = binding.etUsername.getText().toString();
                     String password = binding.etPassword.getText().toString();
                     accessVM.connectApi(username, password).observe(this, new Observer<String>() {
                         @Override
