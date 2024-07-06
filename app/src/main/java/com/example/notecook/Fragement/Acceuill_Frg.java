@@ -2,8 +2,10 @@ package com.example.notecook.Fragement;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static com.example.notecook.Utils.Constants.Remotelist_recipe;
+import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
 import static com.example.notecook.Utils.Constants.TAG_ONLINE;
+import static com.example.notecook.Utils.Constants.TAG_REMOTE;
 import static com.example.notecook.Utils.Constants.list_recipe;
 
 import android.graphics.Bitmap;
@@ -173,13 +175,13 @@ public class Acceuill_Frg extends Fragment {
     public void bindingRcV_recipes(List<Recipe> list, RecyclerView mRecyclerView, boolean isgarde) {
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
         if (list != null && list.size() != 0) {
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), Remotelist_recipe.getValue(), TAG_ONLINE);
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), Remotelist_recipe.getValue(), TAG_REMOTE);
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(adapter_rc_recipeDt);
-        } else if (list_recipe != null && list_recipe.getValue().size() != 0) {
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), list_recipe.getValue(), TAG_OFFLINE);
+        } else if (list_recipe.getValue() != null && list_recipe.getValue().size() != 0) {
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), list_recipe.getValue(), TAG_LOCAL);
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);

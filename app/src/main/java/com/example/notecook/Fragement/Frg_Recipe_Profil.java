@@ -7,6 +7,7 @@ import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.getUserInput;
+import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.annotation.SuppressLint;
@@ -72,6 +73,7 @@ public class Frg_Recipe_Profil extends Fragment {
                             recipeVM.getRecipesLocal(user.getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
                                 @Override
                                 public void onChanged(List<Recipe> recipes) {
+                                    list_recipe.setValue(recipes);
                                     bindingRcV_recipes(binding.RcRecipeProfil, recipes);
                                     if (MODE_ONLINE)
                                         recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
