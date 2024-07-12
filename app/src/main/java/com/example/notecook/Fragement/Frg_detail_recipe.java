@@ -57,7 +57,7 @@ public class Frg_detail_recipe extends Fragment {
     public void onResume() {
         super.onResume();
         Log.e("tag resume detaile recipe", "true");
-        //binding.vp2Detairecipe.setCurrentItem(0,true);
+        binding.vp2Detairecipe.setCurrentItem(0,true);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
             if (Detail_CurrentRecipe != null) {
                 if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {

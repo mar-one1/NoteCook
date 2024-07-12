@@ -1,7 +1,6 @@
 package com.example.notecook.Adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.R;
 
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingredents.ViewHolder> {
 
-    private List<Ingredients> listidIngredient;
-    private List<Ingredients> list_idIngredient =new ArrayList<>();
+    private List<Ingredients> listidIngredient = new ArrayList<>();
+    private List<Ingredients> list_idIngredient = new ArrayList<>();
     private LayoutInflater mInflater;
 
     public Adapter_Rc_Ingredents(List<Ingredients> list_ingredients) {
@@ -34,7 +31,7 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
 
     // Method to update the dataset with new data
     @SuppressLint("NotifyDataSetChanged")
-    public  void updateData(List<Ingredients> newData) {
+    public void updateData(List<Ingredients> newData) {
         listidIngredient.clear();
         listidIngredient.addAll(newData);
         notifyDataSetChanged(); // Notify the adapter that the dataset has changed
@@ -52,20 +49,18 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
         Ingredients Ingredients = listidIngredient.get(position);
         holder.getDetail().setText(String.valueOf(Ingredients.getNome()));
         holder.getPoid().setText(String.valueOf(Ingredients.getPoid_unite()));
-        String unitText = (Ingredients.getUnit() == null) ? "/unite" : "/"+Ingredients.getUnit();
+        String unitText = (Ingredients.getUnit() == null) ? "/unite" : "/" + Ingredients.getUnit();
         holder.getUnite().setText(unitText);
 
         CheckBox ckb = holder.itemView.findViewById(R.id.checkBox);
         ckb.setOnClickListener(view -> {
-             if(ckb.isChecked())
-             {
-                 list_idIngredient.add(Ingredients);
-                 Toast.makeText(holder.itemView.getContext(), "count : "+list_idIngredient.size(), Toast.LENGTH_SHORT).show();
-             }
-             else {
-                 list_idIngredient.remove(Ingredients);
-                 Toast.makeText(holder.itemView.getContext(), "count : "+list_idIngredient.size(), Toast.LENGTH_SHORT).show();
-             }
+            if (ckb.isChecked()) {
+                list_idIngredient.add(Ingredients);
+                Toast.makeText(holder.itemView.getContext(), "count : " + list_idIngredient.size(), Toast.LENGTH_SHORT).show();
+            } else {
+                list_idIngredient.remove(Ingredients);
+                Toast.makeText(holder.itemView.getContext(), "count : " + list_idIngredient.size(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -88,7 +83,6 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
             poid = itemView.findViewById(R.id.Poid_ing);
             unite = itemView.findViewById(R.id.unite);
         }
-
         public TextView getPoid() {
             return poid;
         }
