@@ -17,9 +17,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
@@ -46,6 +48,7 @@ public class Frg_detail_recipe extends Fragment {
     private Drawable defaultImagelike;
     private Drawable defaultImageRate;
     private Recipe recipe;
+    private ImageView chat_view;
     private Adapter_Vp2_recipeProfil viewPager2Adapter;
 
 
@@ -119,6 +122,16 @@ public class Frg_detail_recipe extends Fragment {
 
         viewPager = binding.vp2Detairecipe;
         tabLayout = binding.tl;
+        chat_view = binding.chat;
+
+        chat_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.ly_vp_con, new Frg_chat());
+                fragmentTransaction.commitNow();
+            }
+        });
 
         tabLayout.addTab(tabLayout.newTab().setText("INGREDIENTS"));
         tabLayout.addTab(tabLayout.newTab().setText("PROCESS"));
