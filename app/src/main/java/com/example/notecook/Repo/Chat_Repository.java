@@ -1,11 +1,19 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
+import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
+import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.user_login;
+
+import android.app.Activity;
+import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
+import com.example.notecook.Api.ApiService;
+import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.ChatMessage;
 
 import org.json.JSONException;
@@ -18,12 +26,22 @@ import java.util.List;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Chat_Repository {
     private Socket socket;
     private MutableLiveData<List<ChatMessage>> messages = new MutableLiveData<>();
+    private Context context;
+    private Activity appCompatActivity;
+    private ApiService apiService;
 
-    public Chat_Repository() {
+
+    public Chat_Repository(Context context, Activity appCompatActivity) {
+        this.apiService = ApiClient.getClient().create(ApiService.class);
+        this.context = context;
+        this.appCompatActivity = appCompatActivity;
         try {
             socket = IO.socket(ApiClient.BASE_URL); // Replace with your server URL
         } catch (URISyntaxException e) {
@@ -52,7 +70,36 @@ public class Chat_Repository {
         });
     }
 
+
     public LiveData<List<ChatMessage>> getMessages() {
+
+        apiService.getAllMessage(Token).enqueue(new Callback<List<ChatMessage>>() {
+            @Override
+            public void onResponse(Call<List<ChatMessage>> call, Response<List<ChatMessage>> response) {
+                if (response.isSuccessful()) {
+                    List<ChatMessage> chatMessage = response.body();
+                    if (chatMessage != null) {
+                        messages.setValue(chatMessage);
+                    }
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+//                    if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
+//                        userRepo.getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe());
+//                    else if (User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user()) {
+//                        User_CurrentRecipe = user_login.getUser();
+//                        //MainFragment.viewPager2.setCurrentItem(1, false);
+//                    }
+                } else {
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ChatMessage>> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
+            }
+        });
         return messages;
     }
 

@@ -5,6 +5,7 @@ import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Fragement.Favorite_User_Recipe;
 import com.example.notecook.Model.Category_Recipe;
+import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
@@ -248,4 +249,8 @@ public interface ApiService {
     @GET("category/{id}")
     Call<Category_Recipe> getCategory(@Path("id") int Id, @Header("Authorization") String token);
 
+    // Chat EndPoint
+    // Messages
+    @GET("/api/chat/messages")
+    Call<List<ChatMessage>> getAllMessage(@Header("Authorization") String token);
 }

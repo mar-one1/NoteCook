@@ -31,7 +31,6 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         this.context = context;
         this.appCompatActivity = appCompatActivity;
         repository = new RecipeRepository(context, appCompatActivity);
-
     }
 
     @Override

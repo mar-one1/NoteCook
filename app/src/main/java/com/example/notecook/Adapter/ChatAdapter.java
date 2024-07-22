@@ -11,11 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.R;
+import com.example.notecook.Utils.Constants;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
@@ -42,12 +40,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
         // Set message content
         holder.messageText.setText(message.getMessage());
-
         // Set message timestamp (you may format it as desired)
-        DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
-        String timestamp = dateFormat.format(message.getTimestamp());
+        String timestamp = Constants.DateTimeNow(message.getTimestamp());
         holder.timestampText.setText(timestamp);
-
         // Align message based on sender/receiver (example: right for current user, left for others)
         if (message.getSenderId() == currentUserID) {
             // Align right

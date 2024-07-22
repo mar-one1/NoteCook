@@ -55,8 +55,12 @@ import com.google.android.material.bottomappbar.BottomAppBar;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -186,6 +190,13 @@ public class Constants {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
         }
+    }
+
+    public static String DateTimeNow(Date date)
+    {
+        DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
+        String timestamp = dateFormat.format(date);
+     return timestamp;
     }
 
 

@@ -2,12 +2,14 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
+import static com.example.notecook.Utils.Constants.DateTimeNow;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static org.chromium.base.ThreadUtils.runOnUiThread;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.notecook.Adapter.ChatAdapter;
 import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.R;
+import com.example.notecook.Repo.Chat_Repository;
 import com.example.notecook.ViewModel.ChatViewModel;
 import com.example.notecook.databinding.FragmentChatBinding;
 
@@ -35,8 +38,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.security.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -58,7 +66,8 @@ public class Frg_chat extends Fragment {
         super.onCreate(savedInstanceState);
 
         // Initialize ViewModel
-        chatViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
+        ChatViewModel chatVM = new ChatViewModel(getContext(),getActivity());
+        chatViewModel = new ViewModelProvider(this,chatVM).get(ChatViewModel.class);
 
         // Initialize messages list and adapter
         messages = new ArrayList<>();

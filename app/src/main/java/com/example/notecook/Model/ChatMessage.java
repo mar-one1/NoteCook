@@ -1,12 +1,18 @@
 package com.example.notecook.Model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 public class ChatMessage {
     private int id;
+    @SerializedName("senderId")
     private int senderId;
+    @SerializedName("receiverId")
     private int receiverId;
+    @SerializedName("message")
     private String message;
+    @SerializedName("timestamp")
     private Date timestamp;
 
     public ChatMessage(int senderId, String message, Date timestamp) {
@@ -16,7 +22,7 @@ public class ChatMessage {
         this.timestamp = timestamp;
     }
 
-    public ChatMessage(int senderId,int receiverId, String message, Date timestamp) {
+    public ChatMessage(int senderId,int receiverId,String message, Date timestamp) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.message = message;

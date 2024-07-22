@@ -156,7 +156,7 @@ public class Acceuill_Frg extends Fragment {
         drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.chicken));
         drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.beef));
         drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.brunch));
-        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.dinner));
+        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.dinner)) ;
         drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.wine));
         drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.italian));
 
