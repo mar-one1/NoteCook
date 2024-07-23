@@ -135,14 +135,6 @@ public interface ApiService {
     @PUT("users/image/{username}")
     @Headers("Content-Type: application/json")
     Call<String> updateUserGoogleImageUrl(@Path("username") String username, @Body RequestBody path);
-//    @Multipart
-//    @PUT("users/filtre/{username}")
-//    Call<User> updateUserByUsername(
-//            @Path("username") String username,
-//            @Part("user") User user,
-//            @Part("newProfileImage") RequestBody imageRequestBody
-//    );
-
 
     @DELETE("users/{id}")
     Call<Void> deleteUser(@Path("id") int userId);

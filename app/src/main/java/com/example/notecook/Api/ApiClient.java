@@ -1,5 +1,10 @@
 package com.example.notecook.Api;
 
+import com.example.notecook.Utils.CustomDateDeserializer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -11,6 +16,7 @@ public class ApiClient {
 //    public static final String BASE_URL = "https://5514-102-100-7-141.ngrok-free.app/";
     private static Retrofit retrofit = null;
 
+
     public static Retrofit getClient() {
         if (retrofit == null) {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -18,11 +24,13 @@ public class ApiClient {
                     .readTimeout(15, TimeUnit.SECONDS)    // Read timeout
                     .writeTimeout(15, TimeUnit.SECONDS)   // Write timeout
                     .build();
-
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(Date.class, new CustomDateDeserializer())
+                    .create();
             retrofit = new Retrofit.Builder()
                     .client(okHttpClient)
                     .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }
         return retrofit;

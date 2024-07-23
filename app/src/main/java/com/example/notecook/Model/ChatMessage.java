@@ -5,7 +5,10 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Date;
 
 public class ChatMessage {
+    @SerializedName("id")
     private int id;
+    @SerializedName("recipeId")
+    private int recipeId;
     @SerializedName("senderId")
     private int senderId;
     @SerializedName("receiverId")
