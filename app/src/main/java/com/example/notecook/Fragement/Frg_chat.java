@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -76,35 +78,41 @@ public class Frg_chat extends Fragment {
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         messagesRecyclerView.setAdapter(chatAdapter);
         // Initialize SocketManager
-        socketManager = new SocketManager();
+        // Initialize SocketManager with a callback to update ViewModel
+        socketManager = new SocketManager(new SocketManager.SocketCallback() {
+            @Override
+            public void onNewMessage(ChatMessage chatMessage) {
+                chatViewModel.addMessage(chatMessage);
+            }
+        });
         socketManager.connect();
         messageInput = rootView.findViewById(R.id.message_input);
         sendButton = rootView.findViewById(R.id.send_button);
         String message = messageInput.getText().toString().trim();
-        sendButton.setOnClickListener(v -> socketManager.sendMessage(String.valueOf(CURRENT_RECIPE.getId_recipe()), String.valueOf(User_CurrentRecipe.getId_User()), message));
+        sendButton.setOnClickListener(v -> sendMessage());
 
         return rootView;
     }
 
-//    // Method to send message
-//    private void sendMessage() {
-//        String message = messageInput.getText().toString().trim();
-//        if (!message.isEmpty()) {
-//            // Replace with actual recipeId and receiverId
-//            chatViewModel.sendMessage(String.valueOf(CURRENT_RECIPE.getId_recipe()), String.valueOf(User_CurrentRecipe.getId_User()), message);
-//            messageInput.setText("");
-//            // Observe LiveData for messages
-//            chatViewModel.getMessages().observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
-//                @Override
-//                public void onChanged(List<ChatMessage> chatMessages) {
-//                    // Update UI with new messages
-//                    updateMessagesInView(chatMessages);
-//                }
-//            });
-//        } else {
-//            Toast.makeText(getContext(), "Message cannot be empty", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+    // Method to send message
+    private void sendMessage() {
+        String message = messageInput.getText().toString().trim();
+        if (!message.isEmpty()) {
+            // Replace with actual recipeId and receiverId
+            chatViewModel.sendMessage(String.valueOf(CURRENT_RECIPE.getId_recipe()), String.valueOf(User_CurrentRecipe.getId_User()), message);
+            messageInput.setText("");
+            // Observe LiveData for messages
+            chatViewModel.getMessages().observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
+                @Override
+                public void onChanged(List<ChatMessage> chatMessages) {
+                    // Update UI with new messages
+                    updateMessagesInView(chatMessages);
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), "Message cannot be empty", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     // Example method to update RecyclerView with new messages
     private void updateMessagesInView(List<ChatMessage> messages) {

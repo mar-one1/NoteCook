@@ -18,7 +18,7 @@ public class ChatMessage {
     @SerializedName("timestamp")
     private Date timestamp;
 
-    public ChatMessage(int senderId, String message, Date timestamp) {
+    public ChatMessage(int recipeId,int receiverId,int senderId, String message) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.message = message;

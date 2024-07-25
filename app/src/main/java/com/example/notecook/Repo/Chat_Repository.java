@@ -133,4 +133,12 @@ public class Chat_Repository {
             socket.off("chat message");
         }
     }
+    public void addMessage(ChatMessage chatMessage) {
+        List<ChatMessage> currentMessages = messages.getValue();
+        if (currentMessages == null) {
+            currentMessages = new ArrayList<>();
+        }
+        currentMessages.add(chatMessage);
+        messages.setValue(currentMessages);
+    }
 }
