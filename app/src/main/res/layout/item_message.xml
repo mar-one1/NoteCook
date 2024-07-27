@@ -1,26 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="8dp">
 
-    <TextView
-        android:id="@+id/messageText"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_message"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_tips_and_updates_fill0_wght400_grad0_opsz48"
-        android:padding="8dp"
-        android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:layout_gravity="start"
+        android:orientation="vertical"
+        android:padding="8dp">
+        <ImageView android:id="@+id/image_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_tips_and_updates_fill0_wght400_grad0_opsz48"/>
+        <TextView
+            android:id="@+id/messageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textColor="#000000"
+            android:text="message"
+            android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/timestampText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Timestamp"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="12sp" />
-
+        <TextView
+            android:id="@+id/timestampText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Timestamp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
+    </LinearLayout>
 </LinearLayout>

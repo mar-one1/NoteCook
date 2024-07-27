@@ -1,9 +1,12 @@
 package com.example.notecook.Adapter;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,15 +46,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         // Set message timestamp (you may format it as desired)
         String timestamp = Constants.DateTimeNow(message.getTimestamp());
         holder.timestampText.setText(timestamp);
-        // Align message based on sender/receiver (example: right for current user, left for others)
+
+        // Align message based on sender/receiver
         if (message.getSenderId() == currentUserID) {
             // Align right
-            holder.messageText.setBackgroundResource(R.drawable.ic_tips_and_updates_fill0_wght400_grad0_opsz48);
-            holder.messageText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            holder.ll_message.setGravity(Gravity.END);
+            holder.image_message.setBackgroundResource(R.drawable.ic_tips_and_updates_fill0_wght400_grad0_opsz48);
         } else {
             // Align left
-            holder.messageText.setBackgroundResource(R.drawable.ic_tips_and_updates_fill0_wght400_grad0_opsz48_red);
-            holder.messageText.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            holder.ll_message.setGravity(Gravity.START);
+            holder.image_message.setBackgroundResource(R.drawable.ic_tips_and_updates_fill0_wght400_grad0_opsz48_red);
         }
     }
 
@@ -67,11 +71,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView messageText, timestampText;
+        LinearLayout ll_message;
+        ImageView image_message;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             messageText = itemView.findViewById(R.id.messageText);
+            image_message = itemView.findViewById(R.id.image_message);
             timestampText = itemView.findViewById(R.id.timestampText);
+            ll_message = itemView.findViewById(R.id.ll_message);
         }
     }
 }
