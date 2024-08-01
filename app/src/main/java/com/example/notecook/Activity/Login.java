@@ -283,6 +283,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     //@TargetApi(api = Build.VERSION_CODES.P)
     @TargetApi(Build.VERSION_CODES.P)
     public void empreinte() {
+        try {
+
         authenticationCallback = new BiometricPrompt.AuthenticationCallback() {
             // here we need to implement two methods
             // onAuthenticationError and
@@ -335,6 +337,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     getMainExecutor(),
                     authenticationCallback);
         });
+
+        }catch (Exception e) {Log.e("tag","Empreint exception "+e);}
     }
 
     @TargetApi(Build.VERSION_CODES.P)

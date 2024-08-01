@@ -27,9 +27,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NoteCook"
         tools:targetApi="30">
-
-
-
         <activity
             android:name=".Activity.Loading_Srcreen"
             android:exported="true">
