@@ -110,6 +110,31 @@ public class Chat_Repository {
         return messages;
     }
 
+    public LiveData<List<ChatMessage>> getMessageByRecipeId(int id_recipe) {
+        apiService.getMessageByRecipe(Token,id_recipe).enqueue(new Callback<List<ChatMessage>>() {
+            @Override
+            public void onResponse(Call<List<ChatMessage>> call, Response<List<ChatMessage>> response) {
+                if (response.isSuccessful()) {
+                    List<ChatMessage> chatMessages = response.body();
+                    if (chatMessages != null) {
+                        messages.setValue(chatMessages);
+                    }
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+                } else {
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ChatMessage>> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
+            }
+        });
+        return messages;
+    }
+
     public void sendMessage(String recipeId, String receiverId, String message) {
         if (socket != null && socket.connected()) {
             JSONObject data = new JSONObject();

@@ -35,11 +35,15 @@ public class ChatViewModel extends ViewModel  implements ViewModelProvider.Facto
         this.context = context;
         this.appCompatActivity = appCompatActivity;
         chatRepository = new Chat_Repository(context,appCompatActivity);
-        messages = chatRepository.getMessages();
+       // messages = chatRepository.getMessages();
     }
 
     public LiveData<List<ChatMessage>> getMessages() {
         return chatRepository.getMessages();
+    }
+
+    public LiveData<List<ChatMessage>> getMessageByRecipeId(int id) {
+        return chatRepository.getMessageByRecipeId(id);
     }
 
     public void sendMessage(String recipeId, String receiverId, String message) {

@@ -51,7 +51,7 @@ public class Frg_chat extends Fragment {
         chatAdapter = new ChatAdapter(getContext(), messages, currentUserID);
 
         // Observe messages LiveData
-        chatViewModel.getMessages().observe(this, newMessages -> {
+        chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe()).observe(this, newMessages -> {
             // Update UI with new messages
             messages.clear();
             messages.addAll(newMessages);
