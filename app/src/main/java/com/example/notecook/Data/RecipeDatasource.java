@@ -18,12 +18,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class RecipeDatasource {
 
     private static SQLiteDatabase database;
     private static String[] allColumns = {MySQLiteHelper.COLUMN_ID_RECIPE,
-            MySQLiteHelper.COLUMN_ICON_RECIPE, MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, MySQLiteHelper.COLUMN_FAV_RECIPE, MySQLiteHelper.COLUMN_NOM_RECIPE,
+            MySQLiteHelper.COLUMN_ICON_RECIPE, MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, MySQLiteHelper.COLUMN_FAV_RECIPE, MySQLiteHelper.COLUMN_NOM_RECIPE
+            ,MySQLiteHelper.COLUMN_UNIQUE_KEY,
             MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE};
     private MySQLiteHelper dbHelper;
 
@@ -96,6 +98,7 @@ public class RecipeDatasource {
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, recipe.getPathimagerecipe());
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, recipe.getFav());
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());
+        values.put(MySQLiteHelper.COLUMN_UNIQUE_KEY,recipe.getUnique_key_recipe());
         values.put(MySQLiteHelper.COLUMN_ID_FRK_USER_RECIPE, id);
 
         // long insertId = database.insert(MySQLiteHelper.TABLE_RECIPE, null, values);
@@ -113,7 +116,9 @@ public class RecipeDatasource {
         recipe.setPathimagerecipe(cursor.getString(2));
         recipe.setFav(cursor.getInt(3));
         recipe.setNom_recipe(cursor.getString(4));
-        recipe.setFrk_user(cursor.getInt(5));
+        recipe.setUnique_key_recipe(cursor.getString(5));
+        recipe.setFrk_user(cursor.getInt(6));
+
         return recipe;
     }
 

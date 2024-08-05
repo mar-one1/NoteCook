@@ -17,6 +17,16 @@ public class Recipe {
     @SerializedName("icon")
     private String pathimagerecipe;
 
+    public String getUnique_key_recipe() {
+        return unique_key_recipe;
+    }
+
+    public void setUnique_key_recipe(String unique_key_recipe) {
+        this.unique_key_recipe = unique_key_recipe;
+    }
+
+    private String unique_key_recipe;
+
     public Recipe() {
     }
 
