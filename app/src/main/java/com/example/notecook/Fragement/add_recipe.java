@@ -54,6 +54,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -166,6 +167,7 @@ public class add_recipe extends Fragment {
 
     private void insertRecipe() {
         InputValidator inp = new InputValidator();
+        String randomKey = UUID.randomUUID().toString();
         if (recipeR.isAddedToRemote() && recipeR.isAddedToLocal()) {
 
             Constants.showToast(getContext(), "Recipe is success added before!!!");
@@ -180,12 +182,14 @@ public class add_recipe extends Fragment {
             recipeR.setDetail_recipe(detail_recipe);
             recipeR.setSteps(stepsList);
 
+
+
             if (isConnected() && !recipeR.isAddedToRemote())
                 if (user_login.getUser() != null) {
-                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User());
+                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User(),randomKey);
                     postRecipeToRemote(recipeR, recipe, bitmap);
                 }
-            Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0);
+            Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0,randomKey);
             recipe.setIcon_recipe(encod(bitmap));
             if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0)
                 recipe.setFrk_user(user_login_local.getUser().getId_User());

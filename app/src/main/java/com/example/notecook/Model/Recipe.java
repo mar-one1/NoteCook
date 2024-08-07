@@ -16,15 +16,7 @@ public class Recipe {
     private int Frk_user;
     @SerializedName("icon")
     private String pathimagerecipe;
-
-    public String getUnique_key_recipe() {
-        return unique_key_recipe;
-    }
-
-    public void setUnique_key_recipe(String unique_key_recipe) {
-        this.unique_key_recipe = unique_key_recipe;
-    }
-
+    @SerializedName("unique_key")
     private String unique_key_recipe;
 
     public Recipe() {
@@ -35,6 +27,22 @@ public class Recipe {
         Icon_recipe = icon_recipe;
         Fav = fav;
         Frk_user = frk_user;
+    }
+
+    public Recipe(String nom_recipe, byte[] icon_recipe, int fav, int frk_user ,String unique_key_recipe) {
+        Nom_recipe = nom_recipe;
+        Icon_recipe = icon_recipe;
+        Fav = fav;
+        Frk_user = frk_user;
+        this.unique_key_recipe = unique_key_recipe;
+    }
+
+    public String getUnique_key_recipe() {
+        return unique_key_recipe;
+    }
+
+    public void setUnique_key_recipe(String unique_key_recipe) {
+        this.unique_key_recipe = unique_key_recipe;
     }
 
     public String getPathimagerecipe() {
