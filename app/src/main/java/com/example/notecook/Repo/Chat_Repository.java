@@ -41,7 +41,8 @@ public class Chat_Repository {
     private Emitter.Listener onNewMessage = args -> {
         JSONObject data = (JSONObject) args[0];
         try {
-            String senderId = data.getString("senderId");
+            String senderId = data.getString("recipeId");
+            String recipeId = data.getString("senderId");
             String receiverId = data.getString("receiverId");
             String message = data.getString("message");
             String timestamp = data.getString("timestamp");
@@ -51,6 +52,7 @@ public class Chat_Repository {
             java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 
             ChatMessage chatMessage = new ChatMessage(
+                    Integer.parseInt(recipeId),
                     Integer.parseInt(senderId),
                     Integer.parseInt(receiverId),
                     message,

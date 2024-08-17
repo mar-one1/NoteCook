@@ -164,36 +164,8 @@ public class Frg_EditProfil extends Fragment {
             pDialog.show();
         });
 
+        Constants.navAction((AppCompatActivity) getActivity(),Frg_EditProfil.this,Vp2);
 
-        int bnvId = R.id.bottom_nav;
-        BottomNavigationView btnV = getActivity().findViewById(bnvId);
-
-        btnV.setOnNavigationItemSelectedListener(
-                item -> {
-                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.detach(Frg_EditProfil.this);
-                    fragmentTransaction.commitNow();
-                    int i = 0;
-                    switch (item.getItemId()) {
-                        case R.id.tips:
-                            i = 0;
-                            break;
-                        case R.id.fav:
-                            i = 1;
-                            break;
-                        case R.id.search:
-                            i = 2;
-                            break;
-                        case R.id.cart:
-                            i = 3;
-                            break;
-                        case R.id.parson:
-                            i = 4;
-                            break;
-                    }
-                    Vp2.setCurrentItem(i, false);
-                    return false;
-                });
         binding.backBtn.setOnClickListener(view -> {
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
             fragmentTransaction.detach(Frg_EditProfil.this);

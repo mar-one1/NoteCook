@@ -12,15 +12,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.ChatAdapter;
 import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.R;
+import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SocketManager;
 import com.example.notecook.ViewModel.ChatViewModel;
 
@@ -49,7 +52,8 @@ public class Frg_chat extends Fragment {
         // Initialize messages list and adapter
         messages = new ArrayList<>();
         chatAdapter = new ChatAdapter(getContext(), messages, currentUserID);
-
+        ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
+        Constants.navAction((AppCompatActivity) getActivity(),Frg_chat.this,Vp2);
         // Observe messages LiveData
         chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe()).observe(this, newMessages -> {
             // Update UI with new messages
@@ -102,7 +106,7 @@ public class Frg_chat extends Fragment {
             chatViewModel.sendMessage(String.valueOf(CURRENT_RECIPE.getId_recipe()), String.valueOf(User_CurrentRecipe.getId_User()), message);
             messageInput.setText("");
             // Observe LiveData for messages
-            chatViewModel.getMessages().observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
+            chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe()).observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
                 @Override
                 public void onChanged(List<ChatMessage> chatMessages) {
                     // Update UI with new messages

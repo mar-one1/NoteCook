@@ -11,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -19,6 +21,7 @@ import io.socket.emitter.Emitter;
 public class SocketManager {
 
     private static final String TAG = "SocketManager";
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private Socket mSocket;
     private SocketCallback socketCallback;
 
@@ -106,24 +109,29 @@ public class SocketManager {
 
             // Convert JSON data to ChatMessage
             try {
-                String recipeId = data.getString("recipeId");
-                String senderId = data.getString("senderId");
+                String senderId = data.getString("recipeId");
+                String recipeId = data.getString("senderId");
                 String receiverId = data.getString("receiverId");
                 String message = data.getString("message");
+                String timestamp = data.getString("timestamp");
 
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                java.util.Date date = sdf.parse(timestamp);
+                java.sql.Date sqlDate = new java.sql.Date(date.getTime());
                 // Create a ChatMessage object
                 ChatMessage chatMessage = new ChatMessage(
                         Integer.parseInt(recipeId),
                         Integer.parseInt(receiverId),
                         Integer.parseInt(senderId),
-                        message
+                        message,
+                        sqlDate
                 );
 
                 // Notify the callback about the new message
                 if (socketCallback != null) {
                     socketCallback.onNewMessage(chatMessage);
                 }
-            } catch (JSONException e) {
+            } catch (JSONException | ParseException e) {
                 e.printStackTrace();
             }
         }

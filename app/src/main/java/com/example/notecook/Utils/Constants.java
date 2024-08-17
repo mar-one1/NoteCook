@@ -27,11 +27,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.notecook.Activity.MainActivity;
+import com.example.notecook.Adapter.AdapterFragment;
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Adapter.Adapter_Rc_Steps;
 import com.example.notecook.Api.ApiClient;
@@ -40,7 +45,13 @@ import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.TokenResponse;
+import com.example.notecook.Fragement.Acceuill_Frg;
+import com.example.notecook.Fragement.Frg_Basket;
+import com.example.notecook.Fragement.Frg_EditProfil;
+import com.example.notecook.Fragement.Frg_Search;
+import com.example.notecook.Fragement.Frg_detail_recipe;
 import com.example.notecook.Fragement.MainFragment;
+import com.example.notecook.Fragement.frg_Profil;
 import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Favorite_Recipe;
@@ -51,6 +62,8 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -192,11 +205,10 @@ public class Constants {
         }
     }
 
-    public static String DateTimeNow(Date date)
-    {
+    public static String DateTimeNow(Date date) {
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
         String timestamp = dateFormat.format(date);
-     return timestamp;
+        return timestamp;
     }
 
 
@@ -205,8 +217,7 @@ public class Constants {
     }
 
 
-    public static void init()
-    {
+    public static void init() {
         //Token = "";
         TAG_CONNEXION = -1;
         TAG_CONNEXION_MESSAGE = "";
@@ -233,7 +244,7 @@ public class Constants {
         //pDialog.cancel();
     }
 
-    public static void AffichageMessage(String _tag,String title, final Activity _context) {
+    public static void AffichageMessage(String _tag, String title, final Activity _context) {
         SweetAlertDialog sd;
         switch (_tag) {
             case TAG_CHARGEMENT_VALIDE:
@@ -357,6 +368,7 @@ public class Constants {
 
         return connected.get();
     }
+
     private static boolean isOnline() {
         try {
             // Create a Socket and connect to a known reliable host (google.com)
@@ -386,7 +398,7 @@ public class Constants {
     }
 
 
-    public static  void bindingRcV_Ingredients(RecyclerView recyclerView,List<Ingredients> list,Context context) {
+    public static void bindingRcV_Ingredients(RecyclerView recyclerView, List<Ingredients> list, Context context) {
         // Fetch ingredient data from the database
         IngredientsDataSource ingredientsDataSource = new IngredientsDataSource(context);
         ingredientsDataSource.open();
@@ -400,15 +412,15 @@ public class Constants {
     }
 
 
-    public static  void bindingRcV_Steps(RecyclerView recyclerView,List<Step> list,Context context) {
-        Adapter_Rc_Steps adapter = new Adapter_Rc_Steps(list,context);
+    public static void bindingRcV_Steps(RecyclerView recyclerView, List<Step> list, Context context) {
+        Adapter_Rc_Steps adapter = new Adapter_Rc_Steps(list, context);
         LinearLayoutManager manager = new LinearLayoutManager(context);
         manager.setOrientation(HORIZONTAL);
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
     }
 
-    public static void level(Spinner sp,Context context) {
+    public static void level(Spinner sp, Context context) {
         levelRecipe[] values = levelRecipe.values();
         // Create an array of display names
         String[] displayNames = new String[values.length];
@@ -432,6 +444,40 @@ public class Constants {
         }
 
         return bitmap;
+    }
+
+    public static void navAction(AppCompatActivity activity ,Fragment fragment,ViewPager2 Vp2) {
+        int bnvId = R.id.bottom_nav;
+        BottomNavigationView btnV = activity.findViewById(bnvId);
+
+        btnV.setOnNavigationItemSelectedListener(
+                item ->
+
+                {
+                    FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.detach(fragment);
+                    fragmentTransaction.commitNow();
+                    int i = 0;
+                    switch (item.getItemId()) {
+                        case R.id.tips:
+                            i = 0;
+                            break;
+                        case R.id.fav:
+                            i = 1;
+                            break;
+                        case R.id.search:
+                            i = 2;
+                            break;
+                        case R.id.cart:
+                            i = 3;
+                            break;
+                        case R.id.parson:
+                            i = 4;
+                            break;
+                    }
+                    Vp2.setCurrentItem(i, false);
+                    return false;
+                });
     }
 
 }
