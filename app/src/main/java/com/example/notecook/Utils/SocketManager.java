@@ -104,10 +104,8 @@ public class SocketManager {
         @Override
         public void call(Object... args) {
             JSONObject data = (JSONObject) args[0];
-            // Handle the incoming message here
             Log.d(TAG, "New message received: " + data.toString());
 
-            // Convert JSON data to ChatMessage
             try {
                 String senderId = data.getString("recipeId");
                 String recipeId = data.getString("senderId");
@@ -118,7 +116,7 @@ public class SocketManager {
                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
                 java.util.Date date = sdf.parse(timestamp);
                 java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-                // Create a ChatMessage object
+
                 ChatMessage chatMessage = new ChatMessage(
                         Integer.parseInt(recipeId),
                         Integer.parseInt(receiverId),
@@ -127,7 +125,6 @@ public class SocketManager {
                         sqlDate
                 );
 
-                // Notify the callback about the new message
                 if (socketCallback != null) {
                     socketCallback.onNewMessage(chatMessage);
                 }

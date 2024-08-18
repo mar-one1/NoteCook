@@ -1,5 +1,4 @@
 package com.example.notecook.Fragement;
-
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
@@ -30,7 +29,6 @@ import com.example.notecook.ViewModel.ChatViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Frg_chat extends Fragment {
 
     private RecyclerView messagesRecyclerView;
@@ -46,20 +44,19 @@ public class Frg_chat extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize ViewModel
+        // Initialize ViewModel using ViewModelProvider
         ChatViewModel chatVM = new ChatViewModel(getContext(), getActivity());
         chatViewModel = new ViewModelProvider(this, chatVM).get(ChatViewModel.class);
+
         // Initialize messages list and adapter
         messages = new ArrayList<>();
         chatAdapter = new ChatAdapter(getContext(), messages, currentUserID);
-        ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
-        Constants.navAction((AppCompatActivity) getActivity(),Frg_chat.this,Vp2);
+
         // Observe messages LiveData
         chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe()).observe(this, newMessages -> {
-            // Update UI with new messages
             messages.clear();
             messages.addAll(newMessages);
-            chatAdapter.notifyDataSetChanged();
+            updateMessagesInView(messages);
             scrollToBottom();
         });
     }
@@ -81,28 +78,31 @@ public class Frg_chat extends Fragment {
         messagesRecyclerView = rootView.findViewById(R.id.messages_view);
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         messagesRecyclerView.setAdapter(chatAdapter);
+        ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
+        Constants.navAction((AppCompatActivity) getActivity(),Frg_chat.this,Vp2);
         // Initialize SocketManager
-        // Initialize SocketManager with a callback to update ViewModel
-        socketManager = new SocketManager(new SocketManager.SocketCallback() {
-            @Override
-            public void onNewMessage(ChatMessage chatMessage) {
-                chatViewModel.addMessage(chatMessage);
-            }
-        });
+        socketManager = new SocketManager(chatMessage -> chatViewModel.addMessage(chatMessage));
         socketManager.connect();
+
         messageInput = rootView.findViewById(R.id.message_input);
         sendButton = rootView.findViewById(R.id.send_button);
-        String message = messageInput.getText().toString().trim();
+
         sendButton.setOnClickListener(v -> sendMessage());
 
         return rootView;
     }
 
-    // Method to send message
+    // Example method to update RecyclerView with new messages
+    private void updateMessagesInView(List<ChatMessage> messages) {
+        chatAdapter.setMessages(messages);
+        chatAdapter.notifyDataSetChanged();
+        scrollToBottom();
+    }
+
+        // Method to send message
     private void sendMessage() {
         String message = messageInput.getText().toString().trim();
         if (!message.isEmpty()) {
-            // Replace with actual recipeId and receiverId
             chatViewModel.sendMessage(String.valueOf(CURRENT_RECIPE.getId_recipe()), String.valueOf(User_CurrentRecipe.getId_User()), message);
             messageInput.setText("");
             // Observe LiveData for messages
@@ -118,17 +118,8 @@ public class Frg_chat extends Fragment {
         }
     }
 
-    // Example method to update RecyclerView with new messages
-    private void updateMessagesInView(List<ChatMessage> messages) {
-        chatAdapter.setMessages(messages);
-        chatAdapter.notifyDataSetChanged();
-        scrollToBottom();
-    }
-
-
     // Scroll to the bottom of RecyclerView
     private void scrollToBottom() {
         messagesRecyclerView.scrollToPosition(chatAdapter.getItemCount() - 1);
     }
 }
-
