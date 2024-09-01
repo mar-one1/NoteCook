@@ -93,6 +93,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private UserDatasource userDatasource;
     private UserViewModel userVM;
     private AccessViewModel accessVM;
+    private Boolean isPosted=false;
 
     //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
@@ -140,17 +141,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         binding.RegistreBtn.setOnClickListener(v -> {
             try {
-                boolean b = Save_Preference_Data("registre");
-                if (b) {
-                    binding.layoutLoginCheck.setVisibility(View.VISIBLE);
-                    binding.layoutRegistre.setVisibility(View.GONE);
-                    String s = binding.txtUsername.getText().toString() + "_" + binding.txtFirstnameLast.getText().toString();
-                    binding.etUsername.setText(s);
-                    binding.etPassword.setText("");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                Save_Preference_Data("registre");
+            }catch (Exception e) {e.printStackTrace();}
         });
 
         //binding.btnLogin.setOnClickListener(view -> loginclk());
@@ -523,8 +515,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private boolean Save_Preference_Data(String check) throws IOException {
 
-        boolean vrai = false;
-
         UserDatasource dataSourceUser = new UserDatasource(this);
         dataSourceUser.open();
 //        User user = dataSourceUser.select_User_BYUsername(binding.txtUsername.getText().toString());
@@ -557,7 +547,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     User userInsered = dataSourceUser.createUserlogin(null, username, acct.getGivenName(),
                             acct.getFamilyName(), "00/00/0000", acct.getEmail(),
                             "0", password, "Chef ", "active");
-                    if (userInsered.equals(Newuser)) vrai = true;
+                    if (userInsered.equals(Newuser)) isPosted = true;
 
                     Constants.AffichageMessage("Vous avez Register avec succes Localy", "", Login.this);
                 }
@@ -580,27 +570,33 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
                     passwordHasher = new PasswordHasher();
                     String password = passwordHasher.hashPassword(binding.txtPassword.getText().toString());
-                    byte[] icon = MainActivity.iconUser;
-                    User newUser;
-                    newUser = dataSourceUser.createUserlogin(icon, username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), binding.txtTel.getText().toString(), password, "Chef", "active");
-                    vrai = true;
-                    if (Constants.NetworkIsConnected(this) && !Objects.equals(newUser.getUsername(), "")) {
-                        newUser.setIcon(null);
+                    User newUser = new User(username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(),null, binding.txtTel.getText().toString(), password, "active", "Chef");
+                    if (Constants.NetworkIsConnected(this)) {
                         userVM.postUser(newUser, "", bitmap, "registre").observe(this, new Observer<User>() {
                             @Override
                             public void onChanged(User user) {
-                                Constants.AffichageMessage("Registre Success", "", Login.this);
+                                if(user!=null) {
+                                    isPosted=true;
+                                    newUser.setIcon(MainActivity.encod(bitmap));
+                                    User userPost = dataSourceUser.insertUser(newUser);
+                                    if (!Objects.equals(userPost.getUsername(), ""))
+                                        Constants.AffichageMessage("Vous avez Register avec succes in local", "", Login.this);
+                                    binding.layoutLoginCheck.setVisibility(View.VISIBLE);
+                                    binding.layoutRegistre.setVisibility(View.GONE);
+                                    String s = binding.txtUsername.getText().toString() + "_" + binding.txtFirstnameLast.getText().toString();
+                                    binding.etUsername.setText(s);
+                                    binding.etPassword.setText("");
+                                }
                             }
                         });
                     }
-                    if (!Objects.equals(newUser.getUsername(), ""))
-                        Constants.AffichageMessage("Vous avez Register avec succes in local", "", Login.this);
+
                 } else
                     Constants.AffichageMessage("Votre Email est existe dans la base Changer Email or Sign_in", "", Login.this);
             }
             dataSourceUser.close();
         }
-        return vrai;
+        return isPosted;
     }
 
 

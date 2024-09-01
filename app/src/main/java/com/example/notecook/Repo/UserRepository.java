@@ -227,8 +227,8 @@ public class UserRepository {
                         path = response.body().string();
                         //String str = new String(bytes, StandardCharsets.UTF_8);
                         path = path.replaceAll("\"", "");// For UTF-8 encoding
-                        if (!type.equals("register"))
-                            user_login.getUser().setPathimageuser(path);
+                        if (!type.equals("register")){}
+                        //user_login.getUser().setPathimageuser(path);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
