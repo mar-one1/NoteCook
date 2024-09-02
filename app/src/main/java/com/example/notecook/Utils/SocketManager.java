@@ -77,6 +77,42 @@ public class SocketManager {
         }
     }
 
+    private Emitter.Listener onNewMessage = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            JSONObject data = (JSONObject) args[0];
+            Log.d(TAG, "New message received: " + data.toString());
+
+            try {
+                String senderId = data.getString("senderId");
+                String recipeId = data.getString("recipeId");
+                String receiverId = data.getString("receiverId");
+                String message = data.getString("message");
+                String timestamp = data.getString("timestamp");
+
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                java.util.Date date = sdf.parse(timestamp);
+                java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+                ChatMessage chatMessage = new ChatMessage(
+                        Integer.parseInt(recipeId),
+                        Integer.parseInt(receiverId),
+                        Integer.parseInt(senderId),
+                        message,
+                        sqlDate
+                );
+
+                if (socketCallback != null) {
+                    Log.d(TAG, "Triggering onNewMessage callback");
+                    socketCallback.onNewMessage(chatMessage);
+                }
+            } catch (JSONException | ParseException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
     private Emitter.Listener onConnect = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
@@ -100,37 +136,4 @@ public class SocketManager {
         }
     };
 
-    private Emitter.Listener onNewMessage = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            JSONObject data = (JSONObject) args[0];
-            Log.d(TAG, "New message received: " + data.toString());
-
-            try {
-                String senderId = data.getString("recipeId");
-                String recipeId = data.getString("senderId");
-                String receiverId = data.getString("receiverId");
-                String message = data.getString("message");
-                String timestamp = data.getString("timestamp");
-
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-                java.util.Date date = sdf.parse(timestamp);
-                java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-
-                ChatMessage chatMessage = new ChatMessage(
-                        Integer.parseInt(recipeId),
-                        Integer.parseInt(receiverId),
-                        Integer.parseInt(senderId),
-                        message,
-                        sqlDate
-                );
-
-                if (socketCallback != null) {
-                    socketCallback.onNewMessage(chatMessage);
-                }
-            } catch (JSONException | ParseException e) {
-                e.printStackTrace();
-            }
-        }
-    };
 }

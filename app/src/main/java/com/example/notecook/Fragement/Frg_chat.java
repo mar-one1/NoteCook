@@ -40,58 +40,6 @@ public class Frg_chat extends Fragment {
     private Button sendButton;
     private SocketManager socketManager;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Initialize ViewModel using ViewModelProvider
-        ChatViewModel chatVM = new ChatViewModel(getContext(), getActivity());
-        chatViewModel = new ViewModelProvider(this, chatVM).get(ChatViewModel.class);
-
-        // Initialize messages list and adapter
-        messages = new ArrayList<>();
-        chatAdapter = new ChatAdapter(getContext(), messages, currentUserID);
-
-        // Observe messages LiveData
-        chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe()).observe(this, newMessages -> {
-            messages.clear();
-            messages.addAll(newMessages);
-            updateMessagesInView(messages);
-            scrollToBottom();
-        });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // Disconnect the socket when the fragment's view is destroyed
-        if (socketManager != null) {
-            socketManager.disconnect();
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
-
-        messagesRecyclerView = rootView.findViewById(R.id.messages_view);
-        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        messagesRecyclerView.setAdapter(chatAdapter);
-        ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
-        Constants.navAction((AppCompatActivity) getActivity(),Frg_chat.this,Vp2);
-        // Initialize SocketManager
-        socketManager = new SocketManager(chatMessage -> chatViewModel.addMessage(chatMessage));
-        socketManager.connect();
-
-        messageInput = rootView.findViewById(R.id.message_input);
-        sendButton = rootView.findViewById(R.id.send_button);
-
-        sendButton.setOnClickListener(v -> sendMessage());
-
-        return rootView;
-    }
-
     // Example method to update RecyclerView with new messages
     private void updateMessagesInView(List<ChatMessage> messages) {
         chatAdapter.setMessages(messages);
@@ -122,4 +70,61 @@ public class Frg_chat extends Fragment {
     private void scrollToBottom() {
         messagesRecyclerView.scrollToPosition(chatAdapter.getItemCount() - 1);
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        chatViewModel = new ViewModelProvider(this, new ChatViewModel(getContext(), getActivity())).get(ChatViewModel.class);
+
+        // Initialize messages list and adapter
+        messages = new ArrayList<>();
+        chatAdapter = new ChatAdapter(getContext(), messages, currentUserID);
+
+        // Observe messages LiveData
+        chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe()).observe(this, newMessages -> {
+            messages.clear();
+            messages.addAll(newMessages);
+            updateMessagesInView(messages);
+            scrollToBottom();
+        });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
+
+        messagesRecyclerView = rootView.findViewById(R.id.messages_view);
+        messagesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        messagesRecyclerView.setAdapter(chatAdapter);
+        ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
+        Constants.navAction((AppCompatActivity) getActivity(),Frg_chat.this,Vp2);
+        // Initialize SocketManager
+        socketManager = new SocketManager(chatMessage -> {
+            getActivity().runOnUiThread(() -> {
+                chatViewModel.addMessage(chatMessage);
+                updateMessagesInView(chatViewModel.getMessages().getValue());
+                scrollToBottom();
+            });
+        });
+        socketManager.connect();
+
+        messageInput = rootView.findViewById(R.id.message_input);
+        sendButton = rootView.findViewById(R.id.send_button);
+
+        sendButton.setOnClickListener(v -> sendMessage());
+
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Disconnect the socket when the fragment's view is destroyed
+        if (socketManager != null) {
+            socketManager.disconnect();
+        }
+    }
+
 }

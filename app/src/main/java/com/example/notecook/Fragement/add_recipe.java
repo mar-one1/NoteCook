@@ -182,8 +182,6 @@ public class add_recipe extends Fragment {
             recipeR.setDetail_recipe(detail_recipe);
             recipeR.setSteps(stepsList);
 
-
-
             if (isConnected() && !recipeR.isAddedToRemote())
                 if (user_login.getUser() != null) {
                     Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User(),randomKey);
