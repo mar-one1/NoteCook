@@ -22,25 +22,22 @@ import java.net.SocketTimeoutException;
 import java.util.HashSet;
 import java.util.Set;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Response;
 
 public class ErrorHandler {
-    private static Set<String> errorMessages = new HashSet<>();
+    private static Set<String> errorMessagesSet = new HashSet<>();
+    private static StringBuilder errorMessages = new StringBuilder();
+
     public static void handleErrorResponse(Response<?> response, Activity appCompatActivity) {
         int statusCode = response.code();
         String message = response.message();
+
         if (response.errorBody() != null) {
-            if (errorMessages.contains(message)) {
-                // If the error message is already in the set, return
+            if (errorMessagesSet.contains(message)) {
                 return;
             } else {
-                // Add the error message to the set
-                errorMessages.add(message);
-            }
-
-            if (Constants.alertDialog != null && Constants.alertDialog.isShowing() && alertDialog.getTitleText().equals(String.valueOf(statusCode))) {
-                Constants.alertDialog.dismiss();
-                return;
+                errorMessagesSet.add(message);
             }
 
             if (statusCode == 400) {
@@ -48,39 +45,65 @@ public class ErrorHandler {
                     String errorBody = response.errorBody().string();
                     Gson gson = new Gson();
                     ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
-                    StringBuilder errorMessages = new StringBuilder();
                     for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
                         errorMessages.append(", ").append(error.getMessage());
                     }
-                    Constants.AffichageMessage(errorMessages.toString(), "400", appCompatActivity);
                 } catch (IOException e) {
                     // Handle error parsing error body
                 }
             } else if (statusCode == 409) {
-                Constants.AffichageMessage("Record already exists", "409", appCompatActivity);
+                errorMessages.append(", Record already exists");
             } else if (statusCode == 404) {
-                Constants.AffichageMessage(TAG_NOT_FOUND, "404", appCompatActivity);
+                errorMessages.append(", ").append(TAG_NOT_FOUND);
             } else if (statusCode == 401) {
-                Constants.AffichageMessage(TAG_INFO_ERONEE, "401", appCompatActivity);
+                errorMessages.append(", ").append(TAG_INFO_ERONEE);
             } else if (statusCode == 500) {
-                Constants.AffichageMessage(TAG_ERREUR_SYSTEM, "500", appCompatActivity);
+                errorMessages.append(", ").append(TAG_ERREUR_SYSTEM);
             } else if (statusCode == 406) {
-                Constants.AffichageMessage(TAG_PAS_RESULTAT, "406", appCompatActivity);
+                errorMessages.append(", ").append(TAG_PAS_RESULTAT);
             } else if (statusCode == 502) {
-                Constants.AffichageMessage(TAG_SERVEUR_HORS_SERVICE, "502", appCompatActivity);
-            } else
-                Constants.AffichageMessage(TAG_CONNEXION_MESSAGE, "message", appCompatActivity);
-        }
+                errorMessages.append(", ").append(TAG_SERVEUR_HORS_SERVICE);
+            } else {
+                errorMessages.append(", ").append(TAG_CONNEXION_MESSAGE);
+            }
 
+            // Show the popup if any error messages were added
+            if (errorMessages.length() > 0) {
+                showSweetAlertWithDismissListener(appCompatActivity);
+            }
+        }
     }
 
     public static void handleNetworkFailure(Throwable t, Context context) {
-        TAG_CONNEXION_MESSAGE = t.toString();
+        String errorMessage;
         if (t instanceof SocketTimeoutException) {
-            System.out.println("Timeout occurred");
+            errorMessage = "Timeout occurred";
         } else {
-            t.printStackTrace();
+            errorMessage = t.toString();
         }
-        Toast.makeText(context, TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+
+        errorMessages.append(", ").append(errorMessage);
+
+        // Show the popup with all accumulated network error messages
+        if (errorMessages.length() > 0) {
+            Toast.makeText(context, errorMessages.toString().substring(2), Toast.LENGTH_SHORT).show();
+            resetErrorMessages(); // Reset after showing the toast
+        }
+    }
+
+    private static void showSweetAlertWithDismissListener(Activity appCompatActivity) {
+        String messagesToShow = errorMessages.toString().substring(2);
+
+        SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(appCompatActivity, SweetAlertDialog.ERROR_TYPE);
+        sweetAlertDialog.setTitleText("Error")
+                .setContentText(messagesToShow)
+                .setConfirmText("OK")
+                .setOnDismissListener(dialog -> resetErrorMessages()); // Reset when the dialog is dismissed
+        sweetAlertDialog.show();
+    }
+
+    private static void resetErrorMessages() {
+        errorMessages.setLength(0); // Clear the StringBuilder
+        errorMessagesSet.clear(); // Clear the set of shown messages
     }
 }

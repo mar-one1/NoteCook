@@ -2,6 +2,7 @@ package com.example.notecook.Activity;
 
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 
+import static com.example.notecook.Utils.Constants.NetworkIsConnected;
 import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.getToken;
 
@@ -51,7 +52,7 @@ public class Loading_Srcreen extends AppCompatActivity {
         if (!MODE_ONLINE && Objects.equals(Token, "")) {
             Constants.AffichageMessage("Welcome to Notebook APP!!!","ok", Loading_Srcreen.this);
             startActivity(i);
-        } else if (!Objects.equals(Token, "") && MODE_ONLINE) {
+        } else if (!Objects.equals(Token, "") && NetworkIsConnected(getBaseContext())) {
             accessVM.verifyToken().observe(this, new Observer<String>() {
                 @Override
                 public void onChanged(String s) {
@@ -60,7 +61,7 @@ public class Loading_Srcreen extends AppCompatActivity {
                 }
             });
             //TokenApi();
-        }else if (!Objects.equals(Token, "") && !MODE_ONLINE) {
+        }else if (!Objects.equals(Token, "") && !NetworkIsConnected(getBaseContext())) {
             startActivity(iM);
         } else
             startActivity(i);

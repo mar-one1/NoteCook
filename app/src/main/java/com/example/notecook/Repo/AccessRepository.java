@@ -16,25 +16,24 @@ import static com.example.notecook.Utils.Constants.user_login;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.notecook.Activity.Login;
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.LoginResponse;
 import com.example.notecook.Dto.TokenResponse;
-import com.example.notecook.Activity.Login;
-import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.PasswordHasher;
 
-import java.util.Objects;
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -119,7 +118,7 @@ public class AccessRepository {
         TAG_CONNEXION_LOCAL = "";
         User user = userDatasource.select_User_BYUsername(username);
         passwordHasher = new PasswordHasher();
-        if(user!=null)
+        if (user != null)
             //Toast.makeText(getBaseContext(), "user : " + item.getUser_name() + " pass : " + item.getPassWord(), Toast.LENGTH_SHORT).show();
             if (passwordHasher.verifyPassword(password, user.getPassWord())) {
                 saveUserInput(username, password, context);
@@ -141,87 +140,100 @@ public class AccessRepository {
         return TAG_CONNEXION_LOCAL;
     }
 
-    private LiveData<String> simulateTimeout(final Call<TokenResponse> call, long timeoutMillis) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Cancel the Retrofit call to simulate a timeout
-                call.cancel();
-                Log.e("MainActivity", "Request timed out");
-            }
-        }, timeoutMillis);
 
+    public LiveData<String> TokenApi() {
         MutableLiveData<String> mutableLiveDataToken = new MutableLiveData<>();
         Intent iM = new Intent(context, MainActivity.class);
         Intent iLg = new Intent(context, Login.class);
+
+        Call<TokenResponse> call = apiService.getVerifyToken(getToken(context));
+
         call.enqueue(new Callback<TokenResponse>() {
             @Override
             public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
-                Log.d("JSON Response", response.toString());
-                //Gson gson = new GsonBuilder().create();
-                //TokenResponse tokenResponse = gson.fromJson(response.toString(), TokenResponse.class);
-                TokenResponse tokenResponse = response.body();
-                int statusCode = response.code();
                 if (response.isSuccessful()) {
-
-                    //TokenResponse tokenResponse = response.body();
-                    if (tokenResponse != null) {
-                        user_login = tokenResponse;
-                        Constants.TAG_CONNEXION = response.code();
-                        // Store the token securely (e.g., in SharedPreferences) for later use
-                        if (statusCode == 201) {
-                            saveToken(tokenResponse.getToken(), context);
-                            mutableLiveDataToken.setValue(tokenResponse.getToken());
-                        }
-                        Constants.Token = tokenResponse.getToken();
-                        //Log.d("TAG", "" + user_login.getUser().getUsername() + " " + user_login.getMessage());
-                        Toast.makeText(context, "Validation : " + statusCode, Toast.LENGTH_SHORT).show();
-
-//                        i.putExtra("TAG","online");
-                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "", activity);
-                        activity.startActivity(iM);
-                        activity.finish();
-                    }
+                    handleSuccessfulResponse(response, mutableLiveDataToken, iM);
                 } else {
-                    // TODO check this start activity logic
-                    // The HTTP request was not successful (status code is not 2xx).
-                    // You can handle errors here based on the response status code.
-                    ErrorHandler.handleErrorResponse(response, activity);
-
-                    // Handle different status codes as per your API's conventions.
-                    if (statusCode == 401) {
-                        // Unauthorized, handle accordingly (e.g., reauthentication).
-                        saveToken("", context);
-                        context.startActivity(iLg);
-                    } else {
-                        //(statusCode == 404) {
-//                        i.putExtra("TAG","online");
-                        activity.startActivity(iM);
-                        activity.finish();
-                    }
+                    handleErrorResponse(response, iM, iLg);
                 }
             }
 
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
-                ErrorHandler.handleNetworkFailure(t, activity);
-                String s1 = getUserInput(context);
-                if (s1.equals("")) {
-                    context.startActivity(iLg);
-                } else {
-                    activity.startActivity(iM);
-                }
-                activity.finish();
+                handleFailure(t, iM, iLg);
             }
         });
+
         return mutableLiveDataToken;
     }
 
-    // TODO make response error and failure handle
-    public LiveData<String> TokenApi() {
-        Call<TokenResponse> call = apiService.getVerifyToken(getToken(context));
-        return (MutableLiveData<String>) simulateTimeout(call, 10000);
+    private void handleSuccessfulResponse(Response<TokenResponse> response, MutableLiveData<String> mutableLiveDataToken, Intent iM) {
+        TokenResponse tokenResponse = response.body();
+        int statusCode = response.code();
+
+        if (tokenResponse != null) {
+            user_login = tokenResponse;
+            Constants.TAG_CONNEXION = statusCode;
+
+            if (statusCode == 201) {
+                saveToken(tokenResponse.getToken(), context);
+                mutableLiveDataToken.setValue(tokenResponse.getToken());
+            }
+
+            Constants.Token = tokenResponse.getToken();
+            Toast.makeText(context, "Validation : " + statusCode, Toast.LENGTH_SHORT).show();
+            Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "", activity);
+
+            // Ensure `activity` is not null before running UI code
+            if (activity != null) {
+                activity.runOnUiThread(() -> {
+                    activity.startActivity(iM);
+                    activity.finish();
+                });
+            }
+        }
     }
 
+    private void handleErrorResponse(Response<TokenResponse> response, Intent iM, Intent iLg) {
+        ErrorHandler.handleErrorResponse(response, activity);
+        int statusCode = response.code();
 
+        if (statusCode == 401) {
+            // Unauthorized, handle reauthentication
+            saveToken("", context);
+            if (activity != null) {
+                activity.runOnUiThread(() -> context.startActivity(iLg));
+            }
+        } else {
+            // For other status codes, navigate to MainActivity
+            if (activity != null) {
+                activity.runOnUiThread(() -> {
+                    activity.startActivity(iM);
+                    activity.finish();
+                });
+            }
+        }
+    }
+
+    private void handleFailure(Throwable t, Intent iM, Intent iLg) {
+        ErrorHandler.handleNetworkFailure(t, activity);
+
+        if (t instanceof IOException) {
+            {
+                String s1 = getUserInput(context);
+                if (activity != null) {
+                    activity.runOnUiThread(() -> {
+                        if (s1.equals("")) {
+                            context.startActivity(iLg);
+                        } else {
+                            activity.startActivity(iM);
+                        }
+                        activity.finish();
+                    });
+                }
+            }
+
+
+        }
+    }
 }
