@@ -2,6 +2,8 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.Activity.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
+import static com.example.notecook.Utils.Constants.clickMoins;
+import static com.example.notecook.Utils.Constants.clickPlus;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
@@ -29,6 +31,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -46,6 +49,7 @@ import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
@@ -142,25 +146,25 @@ public class add_recipe extends Fragment {
         });
 
         binding.btnPlusTime.setOnClickListener(view -> {
-            clickPlus(binding.txtTotTime, binding.btnPlusTime, binding.btnMoinsTime);
+            clickPlus(binding.txtTotTime, binding.btnMoinsTime);
         });
         binding.btnMoinsTime.setOnClickListener(view -> {
-            clickMoins(binding.txtTotTime, binding.btnMoinsTime, binding.btnMoinsTime);
+            clickMoins(binding.txtTotTime, binding.btnMoinsTime);
         });
         binding.btnPlusTimesp.setOnClickListener(view -> {
-            clickPlus(binding.txtTotTiemsp, binding.btnPlusTimesp, binding.btnMoinsTimesp);
+            clickPlus(binding.txtTotTiemsp, binding.btnMoinsTimesp);
         });
         binding.btnMoinsTimesp.setOnClickListener(view -> {
-            clickMoins(binding.txtTotTiemsp, binding.btnMoinsTimesp, binding.btnMoinsTimesp);
+            clickMoins(binding.txtTotTiemsp, binding.btnMoinsTimesp);
         });
         binding.btnPlusCal.setOnClickListener(view -> {
-            clickPlus(binding.txtTotCal, binding.btnPlusCal, binding.btnMoinsCal);
+            clickPlus(binding.txtTotCal, binding.btnMoinsCal);
         });
         binding.btnMoinsCal.setOnClickListener(view -> {
-            clickMoins(binding.txtTotCal, binding.btnMoinsCal, binding.btnMoinsCal);
+            clickMoins(binding.txtTotCal, binding.btnMoinsCal);
         });
         IngredientToSp(binding.spIngredients);
-        navigation(btnV);
+        Constants.navAction((AppCompatActivity) getActivity(),add_recipe.this,MainFragment.viewPager2);
         // Inflate the layout for this fragment
         return binding.getRoot();
     }
@@ -188,7 +192,8 @@ public class add_recipe extends Fragment {
                     postRecipeToRemote(recipeR, recipe, bitmap);
                 }
             Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0,randomKey);
-            recipe.setIcon_recipe(encod(bitmap));
+            String pathImage=ImageHelper.saveImageToInternalStorage(getContext(),bitmap,"RecipeImages");
+            recipe.setPathimagerecipe(pathImage);
             if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0)
                 recipe.setFrk_user(user_login_local.getUser().getId_User());
             else {
@@ -214,35 +219,6 @@ public class add_recipe extends Fragment {
 
         // Set the adapter to your ListView or RecyclerView
         sp.setAdapter(adapterIngredients);
-    }
-
-    public void navigation(BottomNavigationView btnV) {
-        btnV.setOnNavigationItemSelectedListener(
-                item -> {
-                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.detach(add_recipe.this);
-                    fragmentTransaction.commitNow();
-                    int i = 0;
-                    switch (item.getItemId()) {
-                        case R.id.tips:
-                            i = 0;
-                            break;
-                        case R.id.fav:
-                            i = 1;
-                            break;
-                        case R.id.search:
-                            i = 2;
-                            break;
-                        case R.id.cart:
-                            i = 3;
-                            break;
-                        case R.id.parson:
-                            i = 4;
-                            break;
-                    }
-                    MainFragment.viewPager2.setCurrentItem(i, false);
-                    return false;
-                });
     }
 
     private void postRecipeToRemote(RecipeResponse recipeR, Recipe recipe, Bitmap bitmap) {
@@ -399,21 +375,7 @@ public class add_recipe extends Fragment {
         }
     }
 
-    private void clickMoins(TextView textView, Button buttonPlus, Button buttonMoins) {
-        int t = Integer.parseInt(textView.getText().toString());
-        if (t <= 0) {
-            buttonMoins.setEnabled(false);
-        } else
-            t--;
-        textView.setText("" + t);
-    }
 
-    private void clickPlus(TextView textView, Button button, Button buttonMoins) {
-        int t = Integer.parseInt(textView.getText().toString());
-        buttonMoins.setEnabled(true);
-        t++;
-        textView.setText("" + t);
-    }
 
     private User getLocalUser(String username) {
         UserDatasource userDatasource = new UserDatasource(getContext());

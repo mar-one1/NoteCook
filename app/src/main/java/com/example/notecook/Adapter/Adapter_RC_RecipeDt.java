@@ -28,17 +28,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
+import com.example.notecook.Fragement.add_recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
@@ -56,6 +59,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private UserViewModel userVM;
     private Context context;
     private Activity activity;
+    private FloatingActionButton Flbtn;
 
 
     public Adapter_RC_RecipeDt(Context context, Activity activity, List<Recipe> recipes, String bb) {
@@ -89,9 +93,9 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         if (recipe.getIcon_recipe() != null) {
             holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
         } else if (recipe.getPathimagerecipe() != null) {
-            if(recipe.getPathimagerecipe().startsWith("/d")){
+            if (recipe.getPathimagerecipe().startsWith("/d")) {
                 holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
-            }else {
+            } else {
                 String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
                 Picasso.get()
                         .load(url)
@@ -114,10 +118,20 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         } else
             holder.Image.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
 
-        if (Objects.equals(b, TAG_LOCAL))
+        if (Objects.equals(b, TAG_LOCAL)) {
             holder.txt_time.setText("Local");
-        else holder.txt_time.setText("Remote");
+            holder.pin.setVisibility(View.VISIBLE);
+        } else {
+            holder.txt_time.setText("Remote");
+            holder.pin.setVisibility(View.GONE);
+        }
 
+        holder.pin.setOnClickListener(view -> {
+            FragmentActivity fragmentActivity = (FragmentActivity) view.getContext();
+            Flbtn = fragmentActivity.findViewById(R.id.floating_action_button);
+            Flbtn.callOnClick();
+            CURRENT_RECIPE = recipe;
+        });
 
         holder.heat.setOnClickListener(view -> {
             Drawable pic = holder.heat.getDrawable().getCurrent();
@@ -191,7 +205,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
 
         ImageView Image;
         TextView detail, txt_time, txt_rate;
-        ImageView heat;
+        ImageView heat, pin;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -200,7 +214,16 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             txt_rate = itemView.findViewById(R.id.rate_recipe);
             Image = itemView.findViewById(R.id.ImgV_IconCatFood);
             heat = itemView.findViewById(R.id.heart_recipe);
+            pin = itemView.findViewById(R.id.edit_recipe);
 
+        }
+
+        public ImageView getPin() {
+            return pin;
+        }
+
+        public void setPin(ImageView pin) {
+            this.pin = pin;
         }
 
         public TextView getTxt_time() {

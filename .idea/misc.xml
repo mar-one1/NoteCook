@@ -6,9 +6,13 @@
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/activity_main.xml" value="0.12685185185185185" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_acceuill__frg.xml" value="0.2125" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_add_edit_recipe.xml" value="0.19270833333333334" />
-        <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_add_recipe.xml" value="0.15" />
+        <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_add_recipe.xml" value="0.18" />
+        <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_frg__edit_profil.xml" value="0.35833333333333334" />
+        <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_frg__profil.xml" value="0.35833333333333334" />
+        <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_frg__recipe__profil.xml" value="0.35833333333333334" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_frg__search.xml" value="0.24947916666666667" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_frg_detail_recipe.xml" value="0.24114583333333334" />
+        <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_frg_recipe_ingredients.xml" value="0.35833333333333334" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_frg_step_recipe.xml" value="0.18888888888888888" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_main.xml" value="0.11666666666666667" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/recipe_row.xml" value="0.19270833333333334" />

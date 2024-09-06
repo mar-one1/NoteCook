@@ -3,6 +3,8 @@ package com.example.notecook.Fragement;
 import static com.example.notecook.Utils.Constants.Basket_list;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.clickMoins;
+import static com.example.notecook.Utils.Constants.clickPlus;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -85,21 +87,17 @@ public class Frg_recipe_ingredients extends Fragment {
         mRecyclerView = binding.RcIngred;
         Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe, getContext());
         Toast.makeText(getContext(), "onCreateView", Toast.LENGTH_SHORT).show();
-
-        binding.btnMoins.setOnClickListener(view -> {
-            int t = Integer.parseInt(txt_cal.getText().toString());
-            if (t <= 0) {
-                btn_moins.setEnabled(false);
-            } else
-                t--;
-            txt_cal.setText("" + t);
+        btn_plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickPlus(txt_cal, btn_moins);
+            }
         });
-
-        binding.btnPlus.setOnClickListener(view -> {
-            int t = Integer.parseInt(txt_cal.getText().toString());
-            btn_moins.setEnabled(true);
-            t++;
-            txt_cal.setText("" + t);
+        btn_moins.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clickMoins(txt_cal, btn_moins);
+            }
         });
 
         binding.btnAddBasket.setOnClickListener(new View.OnClickListener() {

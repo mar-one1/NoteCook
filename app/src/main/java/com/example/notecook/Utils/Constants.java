@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -478,6 +479,22 @@ public class Constants {
                     Vp2.setCurrentItem(i, false);
                     return false;
                 });
+    }
+
+    public static void clickMoins(TextView textView ,Button buttonMoins) {
+        int t = Integer.parseInt(textView.getText().toString());
+        if (t <= 0) {
+            buttonMoins.setEnabled(false);
+        } else
+            t--;
+        textView.setText("" + t);
+    }
+
+    public static void clickPlus(TextView textView, Button buttonMoins) {
+        int t = Integer.parseInt(textView.getText().toString());
+        buttonMoins.setEnabled(true);
+        t++;
+        textView.setText("" + t);
     }
 
 }

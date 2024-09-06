@@ -40,13 +40,27 @@
                 android:layout_height="34dp"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:layout_marginRight="@dimen/_5sdp"
-                android:src="@drawable/ic_favorite_border_black_24dp"
+                android:src="@drawable/ic_favorite_border_black_24dp_red"
                 app:layout_constraintBottom_toBottomOf="@+id/ImgV_IconCatFood"
                 app:layout_constraintEnd_toEndOf="@+id/ImgV_IconCatFood"
                 app:layout_constraintHorizontal_bias="0.936"
                 app:layout_constraintStart_toStartOf="@+id/ImgV_IconCatFood"
                 app:layout_constraintTop_toTopOf="@+id/ImgV_IconCatFood"
                 app:layout_constraintVertical_bias="0.038" />
+
+            <ImageView
+                android:id="@+id/edit_recipe"
+                android:layout_width="33dp"
+                android:layout_height="34dp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:src="@drawable/pin_create_24"
+                app:layout_constraintBottom_toBottomOf="@+id/ImgV_IconCatFood"
+                app:layout_constraintEnd_toEndOf="@+id/ImgV_IconCatFood"
+                app:layout_constraintHorizontal_bias="0.145"
+                app:layout_constraintStart_toStartOf="@+id/ImgV_IconCatFood"
+                app:layout_constraintTop_toTopOf="@+id/ImgV_IconCatFood"
+                app:layout_constraintVertical_bias="0.03" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
