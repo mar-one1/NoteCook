@@ -121,7 +121,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 String s2 = sharedPreferences.getString("password", "");
                 userVM.getUserLocal(s1,"success");
                 binding.etUsername.setText(s1);
-                binding.etPassword.setText(s2);
+                binding.etPassword.setText("");
+                binding.etUsername.setEnabled(false);
                 secoundLogin();
             }
         } catch (Exception e) {
@@ -356,7 +357,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private CancellationSignal getCancellationSignal() {
         CancellationSignal cancellationSignal = new CancellationSignal();
         cancellationSignal.setOnCancelListener(
-                () -> notifyUser("Authentication was Cancelled by the user"));
+                () -> {
+                    notifyUser("Authentication was Cancelled by the user");
+                });
         return cancellationSignal;
     }
 
@@ -457,38 +460,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         } catch (Exception e) {
             Log.e("tag", "" + e);
         }
-    }
-
-    private String ConnectLocal() {
-        TAG_CONNEXION_LOCAL = "";
-        UserDatasource dataSourceUser = new UserDatasource(this);
-        Constants.listUser = dataSourceUser.getAllUser();
-        String username = binding.etUsername.getText().toString();
-        String Pass = binding.etPassword.getText().toString();
-        passwordHasher = new PasswordHasher();
-        for (User item : Constants.listUser) {
-            //Toast.makeText(getBaseContext(), "user : " + item.getUser_name() + " pass : " + item.getPassWord(), Toast.LENGTH_SHORT).show();
-            if (Objects.equals(item.getFirstname(), username) && passwordHasher.verifyPassword(Pass, item.getPassWord())) {
-                if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
-                    saveUserInput(username, Pass, this);
-                }
-                TAG_CONNEXION_LOCAL = "success";
-                user_login.setUser(item);
-                /*if (!Objects.equals(user_login.getUser(), null)) {
-                    user_login.getUser().setUser_name(username);
-                    user_login.getUser().setUser_name(item.getPassWord());
-                    user_login.setMessage("Local");
-                    Log.d("message",user_login.getMessage());
-                }*/
-                Intent i = new Intent(getBaseContext(), MainActivity.class);
-                startActivity(i);
-                this.finish();
-
-
-                //break;
-            }
-        }
-        return TAG_CONNEXION_LOCAL;
     }
 
     private void updateUI(Object account) {

@@ -26,5 +26,9 @@ public class AccessViewModel extends ViewModel {
         return repository.TokenApi();
     }
 
+    public LiveData<User> connectLocal(String username,String password) {
+        return repository.ConnectLocal(username,password);
+    }
+
 
 }

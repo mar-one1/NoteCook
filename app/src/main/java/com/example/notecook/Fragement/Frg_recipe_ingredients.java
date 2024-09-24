@@ -108,6 +108,7 @@ public class Frg_recipe_ingredients extends Fragment {
         });
 
         return binding.getRoot();
+
     }
 
     public void bindingRcV_Nutrition(RecyclerView recyclerView) {

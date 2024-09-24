@@ -114,8 +114,8 @@ public class AccessRepository {
         return TokenMutableLiveData;
     }
 
-    private String ConnectLocal(String username, String password) {
-        TAG_CONNEXION_LOCAL = "";
+    public LiveData<User> ConnectLocal(String username, String password) {
+        MutableLiveData<User> s = new MutableLiveData<>();
         User user = userDatasource.select_User_BYUsername(username);
         passwordHasher = new PasswordHasher();
         if (user != null)
@@ -123,6 +123,7 @@ public class AccessRepository {
             if (passwordHasher.verifyPassword(password, user.getPassWord())) {
                 saveUserInput(username, password, context);
                 TAG_CONNEXION_LOCAL = "success";
+                s.postValue(user);
                 user_login.setUser(user);
                 /*if (!Objects.equals(user_login.getUser(), null)) {
                     user_login.getUser().setUser_name(username);
@@ -137,7 +138,7 @@ public class AccessRepository {
 
                 //break;
             }
-        return TAG_CONNEXION_LOCAL;
+        return s;
     }
 
 

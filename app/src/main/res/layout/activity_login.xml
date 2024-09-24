@@ -50,7 +50,13 @@
                         android:background="@drawable/aec4b1a59b7165562698470ce91494be"
                         android:src="@drawable/error_circle" />
 
+
+
                 </androidx.cardview.widget.CardView>
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="User"
+                    />
 
                 <EditText
                     android:id="@+id/et_username"
