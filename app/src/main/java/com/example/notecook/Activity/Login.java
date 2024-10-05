@@ -122,7 +122,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 userVM.getUserLocal(s1,"success");
                 binding.etUsername.setText(s1);
                 binding.etPassword.setText("");
-                binding.etUsername.setEnabled(false);
+                //binding.etUsername.setEnabled(false);
                 secoundLogin();
             }
         } catch (Exception e) {
