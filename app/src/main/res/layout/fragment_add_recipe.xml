@@ -9,17 +9,21 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_weight="1"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_weight="1">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="148dp"
@@ -133,7 +137,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:id="@+id/detail_recipe_ly"
@@ -271,7 +276,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="visible">
+                    android:visibility="visible"
+                    android:layout_weight="1">
 
 
                     <LinearLayout
@@ -324,15 +330,16 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:layout_weight="1">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="15dp"
-                            android:layout_weight="1"
                             android:text="Detail : "
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:layout_weight="1"/>
 
                         <EditText
                             android:id="@+id/edt_detail"
@@ -340,7 +347,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="15dp"
                             android:editable="true"
-                            android:lines="5" />
+                            android:lines="5"
+                            android:layout_weight="1"/>
                         <Button
                             android:id="@+id/add_Step"
                             android:layout_width="wrap_content"
@@ -348,6 +356,7 @@
                             android:layout_margin="15dp"
                             android:text="ADD step"
                             android:layout_gravity="center"
+                            android:layout_weight="1"
                             />
                         <!-- RecyclerView for Steps -->
                         <androidx.recyclerview.widget.RecyclerView
@@ -356,7 +365,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="8dp"
-                            android:layout_marginEnd="16dp" />
+                            android:layout_marginEnd="16dp"
+                            android:layout_weight="1" />
                     </LinearLayout>
 
 

@@ -1,9 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/activity_login.xml" value="0.22" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/activity_main.xml" value="0.12685185185185185" />
+        <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/bottom_bar_menu.xml" value="0.15" />
+        <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/categorie_row.xml" value="0.15" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_acceuill__frg.xml" value="0.2125" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_add_edit_recipe.xml" value="0.19270833333333334" />
         <entry key="..\:/backUp Notebook/2024/app/src/main/res/layout/fragment_add_recipe.xml" value="0.18" />
@@ -55,5 +58,5 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
 </project>
