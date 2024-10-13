@@ -79,9 +79,9 @@ public interface ApiService {
         //@Headers("Content-Type: application/json")
     Call<Recipe> createRecipe(@Header("Authorization") String token, @Body Recipe recipe);
 
-    @PUT("recipes/{id}")
+    @PUT("recipes")
     @Headers("Content-Type: application/json")
-    Call<Recipe> updateRecipe(@Path("id") int recipeId, @Body Recipe recipe);
+    Call<Integer> updateRecipe(@Header("Authorization") String token, @Body RecipeResponse recipe);
 
     @DELETE("recipes/{id}")
     Call<Void> deleteRecipe(@Path("id") int recipeId);

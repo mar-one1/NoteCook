@@ -12,6 +12,7 @@ import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
 import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
@@ -131,6 +132,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             Flbtn = fragmentActivity.findViewById(R.id.floating_action_button);
             Flbtn.callOnClick();
             CURRENT_RECIPE = recipe;
+            TAG_EDIT_RECIPE=true;
         });
 
         holder.heat.setOnClickListener(view -> {

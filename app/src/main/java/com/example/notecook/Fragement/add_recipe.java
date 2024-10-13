@@ -1,7 +1,10 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Activity.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
+import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
+import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 import static com.example.notecook.Utils.Constants.isConnected;
@@ -141,7 +144,9 @@ public class add_recipe extends Fragment {
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertRecipe();
+                if(TAG_EDIT_RECIPE)
+                updateRecipe(CURRENT_RECIPE.getUnique_key_recipe(),CURRENT_RECIPE,decod(CURRENT_RECIPE.getIcon_recipe()));
+                else insertRecipe();
             }
         });
 
@@ -167,6 +172,14 @@ public class add_recipe extends Fragment {
         Constants.navAction((AppCompatActivity) getActivity(),add_recipe.this,MainFragment.viewPager2);
         // Inflate the layout for this fragment
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(TAG_EDIT_RECIPE){
+            binding.btnAddRecipe.setText("update");
+        }
     }
 
     private void insertRecipe() {
@@ -229,6 +242,16 @@ public class add_recipe extends Fragment {
                 if (recipe != -1)
                     add_recipe.recipeR.setAddedToRemote(true);
                 Toast.makeText(getContext(), "recipe add success in Remote", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private void updateRecipe(String uniqueKey,Recipe recipe, Bitmap bitmap) {
+        recipeR.setRecipe(recipe);
+        recipeVM.updateRecipe(uniqueKey,recipe).observe(requireActivity(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer idRecipe) {
+                if(idRecipe!=null)
+                    recipeVM.uploadRecipeImage(idRecipe,bitmap);
             }
         });
     }

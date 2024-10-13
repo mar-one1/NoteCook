@@ -108,5 +108,9 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.getRecipesByConditionApi(conditions);
     }
 
+    public LiveData<Integer> updateRecipe(RecipeResponse recipe) {
+        return repository.updateFullRecipeApi(recipe);
+    }
+
 
 }

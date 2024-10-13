@@ -283,6 +283,37 @@ public class RecipeRepository {
         });
         return recipeResponseMutableLiveData;
     }
+    public LiveData<Integer> updateFullRecipeApi(RecipeResponse recipe) {
+        MutableLiveData<Integer> recipeResponseMutableLiveData = new MutableLiveData<>();
+        apiService.updateRecipe(Token,recipe).enqueue(new Callback<Integer>() {
+            @Override
+            public void onResponse(Call<Integer> call, Response<Integer> response) {
+                if (response.isSuccessful()) {
+                    Integer recipeResponse = response.body();
+                    if (recipeResponse != null) {
+                        recipeResponseMutableLiveData.setValue(recipeResponse);
+                    }
+                    TAG_CONNEXION_MESSAGE = response.message();
+                    TAG_CONNEXION = response.code();
+//                    if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
+//                        userRepo.getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe());
+//                    else if (User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user()) {
+//                        User_CurrentRecipe = user_login.getUser();
+//                        //MainFragment.viewPager2.setCurrentItem(1, false);
+//                    }
+                } else {
+                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Integer> call, Throwable t) {
+                TAG_CONNEXION = call.hashCode();
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
+            }
+        });
+        return recipeResponseMutableLiveData;
+    }
 
 
     public LiveData<List<Recipe>> getRecipesByConditionApi(Map<String, String> conditions) {

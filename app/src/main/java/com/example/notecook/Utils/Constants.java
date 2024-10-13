@@ -99,6 +99,7 @@ public class Constants {
     public static final String TAG_INFO_ERONEE = "Username or password Invalide!!  ";
     public static final String TAG_REMOTE = "Remote";
     public static final String TAG_LOCAL = "Local";
+    public static Boolean TAG_EDIT_RECIPE= false;
     public static final String lOGIN_KEY = "Connection_complete";
     public static final String SYNCH_KEY = "Synch_complete";
     public static final String TAG_MODE_INVITE = "Mode Invite";
