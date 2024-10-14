@@ -5,6 +5,7 @@ import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
+import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Favorite_CurrentRecipe;
@@ -132,6 +133,18 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             Flbtn = fragmentActivity.findViewById(R.id.floating_action_button);
             Flbtn.callOnClick();
             CURRENT_RECIPE = recipe;
+            recipeVM.getFullRecipeLocal(recipe).observe(fragmentActivity, new Observer<RecipeResponse>() {
+                @Override
+                public void onChanged(RecipeResponse recipeResponse) {
+                    if (recipeResponse != null) {
+                        //viewPager2.setCurrentItem(1);
+                        fetchRecipe(recipeResponse);
+                        CURRENT_FULL_RECIPE = recipeResponse;
+                        MainFragment.viewPager2.setCurrentItem(1, false);
+                    }
+                    Constants.dismissLoadingDialog();
+                }
+            });
             TAG_EDIT_RECIPE=true;
         });
 
@@ -148,6 +161,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         });
 
         holder.Image.setOnClickListener(v -> {
+            TAG_EDIT_RECIPE=false;
 
             // Get the FragmentActivity associated with the context of the clicked view
             FragmentActivity fragmentActivity = (FragmentActivity) v.getContext();
@@ -161,6 +175,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                             if (recipe != null) {
                                 //viewPager2.setCurrentItem(1);
                                 fetchRecipe(recipe);
+                                CURRENT_FULL_RECIPE = recipe;
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();
@@ -174,6 +189,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                             if (recipeResponse != null) {
                                 //viewPager2.setCurrentItem(1);
                                 fetchRecipe(recipeResponse);
+                                CURRENT_FULL_RECIPE = recipeResponse;
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();

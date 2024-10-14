@@ -144,6 +144,7 @@ public class Constants {
     public static SweetAlertDialog alertDialog;
     public static List<User> listUser = new ArrayList<>();
     public static Recipe CURRENT_RECIPE = null;
+    public static RecipeResponse CURRENT_FULL_RECIPE = null;
     public static SweetAlertDialog loadingDialog;
 
     public static boolean fingerprint_id = false;

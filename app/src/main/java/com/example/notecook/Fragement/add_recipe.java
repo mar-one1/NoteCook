@@ -3,6 +3,7 @@ package com.example.notecook.Fragement;
 import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Activity.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
+import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.clickMoins;
@@ -145,7 +146,7 @@ public class add_recipe extends Fragment {
             @Override
             public void onClick(View view) {
                 if(TAG_EDIT_RECIPE)
-                updateRecipe(CURRENT_RECIPE.getUnique_key_recipe(),CURRENT_RECIPE,decod(CURRENT_RECIPE.getIcon_recipe()));
+                updateRecipe(CURRENT_FULL_RECIPE,decod(CURRENT_RECIPE.getIcon_recipe()));
                 else insertRecipe();
             }
         });
@@ -245,9 +246,8 @@ public class add_recipe extends Fragment {
             }
         });
     }
-    private void updateRecipe(String uniqueKey,Recipe recipe, Bitmap bitmap) {
-        recipeR.setRecipe(recipe);
-        recipeVM.updateRecipe(uniqueKey,recipe).observe(requireActivity(), new Observer<Integer>() {
+    private void updateRecipe(RecipeResponse recipe, Bitmap bitmap) {
+        recipeVM.updateRecipe(recipe).observe(requireActivity(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer idRecipe) {
                 if(idRecipe!=null)
