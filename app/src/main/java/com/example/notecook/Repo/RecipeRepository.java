@@ -1,6 +1,5 @@
 package com.example.notecook.Repo;
 
-import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_NOM_RECIPE;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
 import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;
@@ -13,6 +12,7 @@ import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.showToast;
 import static com.example.notecook.Utils.Constants.user_login_local;
+import static com.example.notecook.Utils.env.BASE_URL;
 
 import android.app.Activity;
 import android.content.Context;

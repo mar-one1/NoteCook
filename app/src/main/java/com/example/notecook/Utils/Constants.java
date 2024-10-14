@@ -3,7 +3,6 @@ package com.example.notecook.Utils;
 import static android.content.Context.MODE_PRIVATE;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
-import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static org.chromium.base.ThreadUtils.runOnUiThread;
 
 import android.app.Activity;

@@ -1,6 +1,5 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Activity.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
@@ -8,6 +7,7 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.saveToken;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.env.BASE_URL;
 
 import android.Manifest;
 import android.app.Activity;

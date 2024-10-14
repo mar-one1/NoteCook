@@ -1,6 +1,5 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Activity.MainActivity.Type_User;
 import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
@@ -8,6 +7,7 @@ import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
+import static com.example.notecook.Utils.env.BASE_URL;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;

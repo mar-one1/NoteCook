@@ -1,7 +1,7 @@
 package com.example.notecook.Utils;
 
-import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.env.BASE_URL;
 
 import android.util.Log;
 

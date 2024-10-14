@@ -1,6 +1,7 @@
 package com.example.notecook.Api;
 
 import com.example.notecook.Utils.CustomDateDeserializer;
+import com.example.notecook.Utils.env;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -14,7 +15,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
-    public static final String BASE_URL = "http://192.168.56.1:3000/";
+//    public static final String BASE_URL = "http://192.168.60.34:3000/";
 //     public static final String BASE_URL = "https://9254-196-64-117-33.ngrok-free.app/";
     private static Retrofit retrofit = null;
 
@@ -36,7 +37,7 @@ public class ApiClient {
                     .create();
             retrofit = new Retrofit.Builder()
                     .client(okHttpClient)
-                    .baseUrl(BASE_URL)
+                    .baseUrl(env.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .build();
         }

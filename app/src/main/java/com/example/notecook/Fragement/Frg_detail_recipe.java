@@ -1,13 +1,13 @@
 package com.example.notecook.Fragement;
 
 
-import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Activity.MainActivity.Type_User;
 import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
+import static com.example.notecook.Utils.env.BASE_URL;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;

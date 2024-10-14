@@ -2,7 +2,6 @@ package com.example.notecook.Adapter;
 
 
 import static com.example.notecook.Activity.MainActivity.decod;
-import static com.example.notecook.Api.ApiClient.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
@@ -17,6 +16,7 @@ import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.env.BASE_URL;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
