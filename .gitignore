@@ -13,4 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
-/.env.java
+/app/src/main/java/com/Utils/env.java
