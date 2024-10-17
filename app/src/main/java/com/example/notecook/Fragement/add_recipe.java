@@ -172,16 +172,55 @@ public class add_recipe extends Fragment {
         IngredientToSp(binding.spIngredients);
         Constants.navAction((AppCompatActivity) getActivity(),add_recipe.this,MainFragment.viewPager2);
         // Inflate the layout for this fragment
+        onResume();
         return binding.getRoot();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(TAG_EDIT_RECIPE){
-            binding.btnAddRecipe.setText("update");
-        }
+        if(TAG_EDIT_RECIPE)
+            fillRecipeDetails(CURRENT_FULL_RECIPE);
     }
+
+    private void fillRecipeDetails(RecipeResponse recipeR) {
+        // Set the recipe name in the EditText field
+        binding.editTextRecipeName.setText(recipeR.getRecipe().getNom_recipe());
+
+        // Set the recipe instructions
+        binding.editTextInstructions.setText(recipeR.getDetail_recipe().getDt_recipe());
+
+        // Set the total time and calories
+        binding.txtTotTime.setText(String.valueOf(recipeR.getDetail_recipe().getTime()));
+        binding.txtTotCal.setText(String.valueOf(recipeR.getDetail_recipe().getCal()));
+
+        // Set the recipe level (Spinner or other UI component)
+        String level = recipeR.getDetail_recipe().getLevel();
+        if (level != null) {
+            // Assuming your spinner has an adapter and can select items based on text
+            ArrayAdapter<String> adapter = (ArrayAdapter<String>) binding.levelRecipe.getAdapter();
+            int spinnerPosition = adapter.getPosition(level);
+            binding.levelRecipe.setSelection(spinnerPosition);
+        }
+
+        // Load the recipe icon if available
+//        if (recipeR.getIcon() != null) {
+//            Bitmap bitmap = BitmapFactory.decodeFile(recipeR.getIcon());
+//            binding.addIconRecipe.setImageBitmap(bitmap);
+//        }
+
+        // Set the ingredients (assuming you're using a RecyclerView or ListView for ingredients)
+        ingredientsList.clear();
+        ingredientsList.addAll(recipeR.getIngredients());
+        Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext());
+        // Update the adapter to show ingredients
+
+        // Set the steps (assuming you're using a RecyclerView or ListView for steps)
+        stepsList.clear();
+        stepsList.addAll(recipeR.getSteps());
+        Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());  // Update the adapter to show steps
+    }
+
 
     private void insertRecipe() {
         InputValidator inp = new InputValidator();
@@ -252,6 +291,7 @@ public class add_recipe extends Fragment {
             public void onChanged(Integer idRecipe) {
                 if(idRecipe!=null)
                     recipeVM.uploadRecipeImage(idRecipe,bitmap);
+                Constants.AffichageMessage("success","",requireActivity());
             }
         });
     }

@@ -131,7 +131,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         holder.pin.setOnClickListener(view -> {
             FragmentActivity fragmentActivity = (FragmentActivity) view.getContext();
             Flbtn = fragmentActivity.findViewById(R.id.floating_action_button);
-            Flbtn.callOnClick();
             CURRENT_RECIPE = recipe;
             recipeVM.getFullRecipeLocal(recipe).observe(fragmentActivity, new Observer<RecipeResponse>() {
                 @Override
@@ -141,6 +140,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                         fetchRecipe(recipeResponse);
                         CURRENT_FULL_RECIPE = recipeResponse;
                         MainFragment.viewPager2.setCurrentItem(1, false);
+                        Flbtn.callOnClick();
                     }
                     Constants.dismissLoadingDialog();
                 }
