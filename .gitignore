@@ -13,4 +13,4 @@
 .externalNativeBuild
 .cxx
 local.properties
-/app/src/main/java/com/Utils/env.java
+/main/app/src/main/java/com/example/notecook/Utils/env.java
