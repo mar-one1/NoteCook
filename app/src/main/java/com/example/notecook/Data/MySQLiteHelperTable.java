@@ -30,7 +30,7 @@ public interface MySQLiteHelperTable extends AutoCloseable {
     String COLUMN_CODE_RECIPE = "Code_recipe";
     String COLUMN_ID_FRK_USER_RECIPE = "Frk_user";
     String COLUMN_ID_FRK_CATEGORIE_RECIPE = "Frk_categorie";
-    String COLUMN_UNIQUE_KEY = "unique_key_recipe";
+        String COLUMN_UNIQUE_KEY = "unique_key_recipe";
     /*
      * Table Detail_Recipe
      */

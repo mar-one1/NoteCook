@@ -250,18 +250,19 @@ public class RecipeDatasource {
         return recipe;
     }
 
-    public void UpdateRecipe(Recipe recipe, int id) {
+    public int UpdateRecipe(Recipe recipe, int id) {
         open();
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE, recipe.getIcon_recipe());
         values.put(MySQLiteHelper.COLUMN_ICON_RECIPE_PATH, recipe.getPathimagerecipe());
         values.put(MySQLiteHelper.COLUMN_FAV_RECIPE, recipe.getFav());
         values.put(MySQLiteHelper.COLUMN_NOM_RECIPE, recipe.getNom_recipe());
-        database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
+        int updateid = database.update(MySQLiteHelper.TABLE_RECIPE, values, MySQLiteHelper.COLUMN_ID_RECIPE + " = " + id, null);
         close();
+        return updateid;
     }
 
-    public int UpdateRecipe(Context context,Bitmap bitmap, int id) {
+    public int UpdateRecipeImage(Context context,Bitmap bitmap, int id) {
         open();
         String imagePath = ImageHelper.saveImageToInternalStorage(context,bitmap,"RecipeImages");
         ContentValues values = new ContentValues();

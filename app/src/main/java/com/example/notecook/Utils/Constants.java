@@ -11,7 +11,9 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -22,6 +24,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -497,6 +500,30 @@ public class Constants {
         t++;
         textView.setText("" + t);
     }
+
+    public static Bitmap getBitmapFromImageView(ImageView imageView) {
+        Drawable drawable = imageView.getDrawable();
+
+        if (drawable instanceof BitmapDrawable) {
+            // If the drawable is a BitmapDrawable, directly return the bitmap
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        // For other types of drawables, create a bitmap from the drawable
+        Bitmap bitmap = Bitmap.createBitmap(
+                drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(),
+                Bitmap.Config.ARGB_8888
+        );
+
+        // Create a canvas to draw the drawable onto the bitmap
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
 
 }
 

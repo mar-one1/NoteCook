@@ -75,8 +75,8 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.getLocalRecipes(id_user);
     }
 
-    public void uploadRecipeImage(int idRecipe, Bitmap bitmap) {
-        repository.uploadImageRecipe(idRecipe, bitmap);
+    public void uploadRemoteRecipeImage(String unique_key, Bitmap bitmap) {
+        repository.uploadRemoteImageRecipe(unique_key, bitmap);
     }
 
 
@@ -96,7 +96,7 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.insertFullRecipeInLocal(recipe);
     }
 
-    public int putImageRecipeLocal(Bitmap image,int id) {
+    public int postImageRecipeLocal(Bitmap image,int id) {
         return repository.updateRecipeImageLocally(image,id);
     }
 
@@ -108,9 +108,19 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.getRecipesByConditionApi(conditions);
     }
 
-    public LiveData<Integer> updateRecipe(RecipeResponse recipe) {
+    public LiveData<String> updateFullRemoteRecipe(RecipeResponse recipe) {
         return repository.updateFullRecipeApi(recipe);
     }
+
+    public LiveData<RecipeResponse> updateFullRecipeLocal(RecipeResponse recipe) {
+        return repository.updateFullRecipeInLocal(recipe);
+    }
+
+    public int updateImageRecipeLocal(Bitmap image,int id) {
+        return repository.updateRecipeImageLocally(image,id);
+    }
+
+
 
 
 }

@@ -179,4 +179,19 @@ public class IngredientsDataSource {
         database.update(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, data, MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE + " = " + id, null);
         close();
     }
+
+    public List<Ingredients> Update_Ingerdeients(List<Ingredients> ingerdeients,int id) {
+        List<Ingredients> updatedIngredients = new ArrayList<>();
+        open();
+        for (Ingredients ingredient : ingerdeients) {
+            ContentValues data = new ContentValues();
+            data.put(MySQLiteHelper.COLUMN_INGREDIENT_RECIPE, ingredient.getNome());
+            data.put(MySQLiteHelper.COLUMN_POIDINGREDIENT_RECIPE, ingredient.getPoid_unite());
+            data.put(MySQLiteHelper.COLUMN_UNITEINGREDIENT_RECIPE, ingredient.getUnit());
+            database.update(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, data, MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE + " = " + id, null);
+            updatedIngredients.add(ingredient);
+        }
+        close();
+        return updatedIngredients;
+    }
 }

@@ -107,7 +107,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                             @Override
                             public void onSuccess() {
                                 if (Objects.equals(b, TAG_LOCAL))
-                                    recipeVM.putImageRecipeLocal(ImageHelper.drawableToBitmap(holder.Image.getDrawable()), recipe.getId_recipe());
+                                    recipeVM.postImageRecipeLocal(ImageHelper.drawableToBitmap(holder.Image.getDrawable()), recipe.getId_recipe());
                             }
 
                             @Override
@@ -132,6 +132,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             FragmentActivity fragmentActivity = (FragmentActivity) view.getContext();
             Flbtn = fragmentActivity.findViewById(R.id.floating_action_button);
             CURRENT_RECIPE = recipe;
+            TAG_EDIT_RECIPE=true;
             recipeVM.getFullRecipeLocal(recipe).observe(fragmentActivity, new Observer<RecipeResponse>() {
                 @Override
                 public void onChanged(RecipeResponse recipeResponse) {
@@ -145,7 +146,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                     Constants.dismissLoadingDialog();
                 }
             });
-            TAG_EDIT_RECIPE=true;
         });
 
         holder.heat.setOnClickListener(view -> {

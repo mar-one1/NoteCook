@@ -181,7 +181,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         signInButton.setSize(SignInButton.SIZE_STANDARD);
 
         signInButton.setOnClickListener(this);
-        String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET","android.permission.WRITE_EXTERNAL_STORAGE"};
+        String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
 
         setContentView(view);

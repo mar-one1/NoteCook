@@ -198,4 +198,20 @@ public class StepsDataSource {
         database.update(MySQLiteHelper.TABLE_STEP_RECIPE, data, MySQLiteHelper.COLUMN_ID_STEP_RECIPE + " = " + id, null);
         close();
     }
+    public List<Step> Update_Step(List<Step> steps, int id) {
+        List<Step> updatedSteps = new ArrayList<>();
+        open();
+        for (Step step : steps) {
+            ContentValues data = new ContentValues();
+            data.put(MySQLiteHelper.COLUMN_DETAIL_STEP_RECIPE, step.getDetail_step());
+            data.put(MySQLiteHelper.COLUMN_IMAGE_STEP, step.getImage_step());
+            data.put(MySQLiteHelper.COLUMN_TIME_STEP, step.getTime_step());
+            data.put(MySQLiteHelper.COLUMN_FRK_STEP_RECIPE, step.getFRK_recipe_step());
+            database.update(MySQLiteHelper.TABLE_STEP_RECIPE, data, MySQLiteHelper.COLUMN_ID_STEP_RECIPE + " = " + id, null);
+            updatedSteps.add(step);
+        }
+        close();
+
+        return updatedSteps;
+    }
 }

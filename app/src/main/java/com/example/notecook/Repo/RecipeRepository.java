@@ -1,6 +1,7 @@
 package com.example.notecook.Repo;
 
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_NOM_RECIPE;
+import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_UNIQUE_KEY;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
 import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;
 import static com.example.notecook.Utils.Constants.Search_list;
@@ -38,6 +39,7 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
+import com.google.firebase.installations.Utils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -153,7 +155,7 @@ public class RecipeRepository {
                     Recipe recipe1 = response.body();
                     Log.d("TAG", recipe1.getId_recipe() + "et nom :  " + recipe1.getNom_recipe());
                     //ResponseBody responseBody = response.body();
-                    uploadImageRecipe(recipe1.getId_recipe(), bitmap);
+                    uploadRemoteImageRecipe(recipe1.getUnique_key_recipe(), bitmap);
                     //fetchImage(str,tag,0,context);
                     Toast.makeText(context, "succes  Created Api ", Toast.LENGTH_SHORT).show();
                 } else {
@@ -184,7 +186,7 @@ public class RecipeRepository {
                     fullRecipeLiveData.postValue(recipeId);
                     //Log.d("TAG", recipe1.getId_recipe() + "et nom :  " + recipe1.getNom_recipe());
                     //ResponseBody responseBody = response.body();
-                    uploadImageRecipe(recipeId, bitmap);
+                    uploadRemoteImageRecipe(recipe.getRecipe().getUnique_key_recipe(), bitmap);
                     //fetchImage(str,tag,0,context);
                     Toast.makeText(context, "succes Full Created Api ", Toast.LENGTH_SHORT).show();
                 } else {
@@ -251,6 +253,23 @@ public class RecipeRepository {
         return fullRecipeLiveData;
     }
 
+    public LiveData<RecipeResponse> updateFullRecipeInLocal(RecipeResponse RC) {
+        MutableLiveData<RecipeResponse> fullRecipeLiveData = new MutableLiveData<>();
+        if (recipeDatasource.isRecordExist(TABLE_RECIPE, COLUMN_UNIQUE_KEY, RC.getRecipe().getUnique_key_recipe())) {
+            int id_recipe = recipeDatasource.UpdateRecipe(RC.getRecipe(),RC.getRecipe().getId_recipe());
+            if (id_recipe == -1) {
+                // Failed to insert recipe
+                fullRecipeLiveData.setValue(null);
+            } else {
+                detailRecipeDataSource.Update_Detail_Recipe(RC.getDetail_recipe(), (int) id_recipe);
+                ingredientsDataSource.Update_Ingerdeients(RC.getIngredients(),(int) id_recipe);
+                stepsDataSource.Update_Step(RC.getSteps(), (int) id_recipe);
+                fullRecipeLiveData.setValue(RC);
+            }
+        }
+        return fullRecipeLiveData;
+    }
+
 
     public LiveData<RecipeResponse> getFullRecipeApi(int Recipeid) {
         MutableLiveData<RecipeResponse> recipeResponseMutableLiveData = new MutableLiveData<>();
@@ -283,13 +302,13 @@ public class RecipeRepository {
         });
         return recipeResponseMutableLiveData;
     }
-    public LiveData<Integer> updateFullRecipeApi(RecipeResponse recipe) {
-        MutableLiveData<Integer> recipeResponseMutableLiveData = new MutableLiveData<>();
-        apiService.updateRecipe(Token,recipe).enqueue(new Callback<Integer>() {
+    public LiveData<String> updateFullRecipeApi(RecipeResponse recipe) {
+        MutableLiveData<String> recipeResponseMutableLiveData = new MutableLiveData<>();
+        apiService.updateRecipe(Token,recipe).enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<Integer> call, Response<Integer> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    Integer recipeResponse = response.body();
+                    String recipeResponse = response.body();
                     if (recipeResponse != null) {
                         recipeResponseMutableLiveData.setValue(recipeResponse);
                     }
@@ -307,7 +326,7 @@ public class RecipeRepository {
             }
 
             @Override
-            public void onFailure(Call<Integer> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 TAG_CONNEXION = call.hashCode();
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
@@ -427,7 +446,7 @@ public class RecipeRepository {
         return remoteRecipeListByUser;
     }
 
-    public void uploadImageRecipe(int idRecipe, Bitmap bitmp) {
+    public void uploadRemoteImageRecipe(String unique_key, Bitmap bitmp) {
 
         File filesDir = context.getFilesDir();
         File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
@@ -447,7 +466,7 @@ public class RecipeRepository {
         // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         // Call the method to upload the file
-        apiService.uploadRecipeFile(Token, idRecipe, filePart).enqueue(new Callback<ResponseBody>() {
+        apiService.UpdateRecipeImage(Token, unique_key, filePart).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
@@ -545,14 +564,14 @@ public class RecipeRepository {
         }
     }
 
-    private void updateRecipeLocally(Recipe remoteRecipe, int id) {
+    public void updateRecipeLocally(Recipe remoteRecipe, int id) {
         // Implement logic to update the local recipe with data from the remote recipe
         recipeDatasource.UpdateRecipe(remoteRecipe, id);
     }
 
     public int updateRecipeImageLocally(Bitmap image,  int id) {
         // Implement logic to update the local recipe with data from the remote recipe
-        return recipeDatasource.UpdateRecipe(context,image, id);
+        return recipeDatasource.UpdateRecipeImage(context,image, id);
     }
 
     private void updateRecipeRemotely(Recipe recipe) {

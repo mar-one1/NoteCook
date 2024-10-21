@@ -81,7 +81,7 @@ public interface ApiService {
 
     @PUT("recipes")
     @Headers("Content-Type: application/json")
-    Call<Integer> updateRecipe(@Header("Authorization") String token, @Body RecipeResponse recipe);
+    Call<String> updateRecipe(@Header("Authorization") String token, @Body RecipeResponse recipe);
 
     @DELETE("recipes/{id}")
     Call<Void> deleteRecipe(@Path("id") int recipeId);
@@ -108,9 +108,9 @@ public interface ApiService {
 
     @Multipart
     @POST("recipes/upload/{id}")
-    Call<ResponseBody> uploadRecipeFile(
+    Call<ResponseBody> UpdateRecipeImage(
             @Header("Authorization") String token,
-            @Path("id") int username,
+            @Path("id") String unique_key,
             @Part MultipartBody.Part image
     );
 

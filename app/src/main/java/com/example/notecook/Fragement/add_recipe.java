@@ -2,6 +2,7 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Activity.MainActivity.encod;
+import static com.example.notecook.Utils.Constants.AffichageMessage;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
@@ -22,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -145,8 +147,8 @@ public class add_recipe extends Fragment {
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(TAG_EDIT_RECIPE)
-                updateRecipe(CURRENT_FULL_RECIPE,decod(CURRENT_RECIPE.getIcon_recipe()));
+                if (TAG_EDIT_RECIPE)
+                updateRecipe(CURRENT_FULL_RECIPE, Constants.getBitmapFromImageView(binding.addIconRecipe));
                 else insertRecipe();
             }
         });
@@ -170,20 +172,29 @@ public class add_recipe extends Fragment {
             clickMoins(binding.txtTotCal, binding.btnMoinsCal);
         });
         IngredientToSp(binding.spIngredients);
-        Constants.navAction((AppCompatActivity) getActivity(),add_recipe.this,MainFragment.viewPager2);
+        Constants.navAction((AppCompatActivity) getActivity(), add_recipe.this, MainFragment.viewPager2);
         // Inflate the layout for this fragment
-        onResume();
         return binding.getRoot();
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if(TAG_EDIT_RECIPE)
-            fillRecipeDetails(CURRENT_FULL_RECIPE);
+    public void onStart() {
+        super.onStart();
+        if (TAG_EDIT_RECIPE) {
+            fullRecipeDetails(CURRENT_FULL_RECIPE);
+            binding.btnAddRecipe.setText("Update");
+        }
     }
 
-    private void fillRecipeDetails(RecipeResponse recipeR) {
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        CURRENT_FULL_RECIPE = new RecipeResponse();
+        TAG_EDIT_RECIPE = false;
+    }
+
+    private void fullRecipeDetails(RecipeResponse recipeR) {
         // Set the recipe name in the EditText field
         binding.editTextRecipeName.setText(recipeR.getRecipe().getNom_recipe());
 
@@ -241,11 +252,11 @@ public class add_recipe extends Fragment {
 
             if (isConnected() && !recipeR.isAddedToRemote())
                 if (user_login.getUser() != null) {
-                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User(),randomKey);
+                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User(), randomKey);
                     postRecipeToRemote(recipeR, recipe, bitmap);
                 }
-            Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0,randomKey);
-            String pathImage=ImageHelper.saveImageToInternalStorage(getContext(),bitmap,"RecipeImages");
+            Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0, randomKey);
+            String pathImage = ImageHelper.saveImageToInternalStorage(getContext(), bitmap, "RecipeImages");
             recipe.setPathimagerecipe(pathImage);
             if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0)
                 recipe.setFrk_user(user_login_local.getUser().getId_User());
@@ -285,13 +296,25 @@ public class add_recipe extends Fragment {
             }
         });
     }
+
     private void updateRecipe(RecipeResponse recipe, Bitmap bitmap) {
-        recipeVM.updateRecipe(recipe).observe(requireActivity(), new Observer<Integer>() {
+        recipe.getRecipe().setNom_recipe(binding.editTextRecipeName.getText().toString());
+
+        recipeVM.updateFullRecipeLocal(recipe).observe(requireActivity(), new Observer<RecipeResponse>() {
             @Override
-            public void onChanged(Integer idRecipe) {
-                if(idRecipe!=null)
-                    recipeVM.uploadRecipeImage(idRecipe,bitmap);
-                Constants.AffichageMessage("success","",requireActivity());
+            public void onChanged(RecipeResponse Recipe) {
+                if (Recipe != null) {
+                    recipeVM.updateImageRecipeLocal(bitmap,recipe.getRecipe().getId_recipe());
+                    recipeVM.updateFullRemoteRecipe(recipe).observe(requireActivity(), new Observer<String>() {
+                        @Override
+                        public void onChanged(String Result) {
+                            if (Result != "") {
+                                recipeVM.uploadRemoteRecipeImage(Recipe.getRecipe().getUnique_key_recipe(), bitmap);
+                                Constants.AffichageMessage("success", "", requireActivity());
+                            }
+                        }
+                    });
+                }else AffichageMessage("eror","Error fro update !!!",getActivity());
             }
         });
     }
@@ -437,7 +460,6 @@ public class add_recipe extends Fragment {
             collapse(linearLayout);
         }
     }
-
 
 
     private User getLocalUser(String username) {
