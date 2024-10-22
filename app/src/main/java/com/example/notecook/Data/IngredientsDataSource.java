@@ -107,17 +107,6 @@ public class IngredientsDataSource {
         dbHelper.close();
     }
 
-    /*
-     * delete item from the table of images
-     */
-    public void deleteIngredient(Ingredients ingerdeients) {
-        open();
-        long id = ingerdeients.getId();
-        Log.d("gps", "Image  deleted with id: " + id);
-        database.delete(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE
-                + " = " + id, null);
-        close();
-    }
 
     public ArrayList<Ingredients> getAllIngredeients() {
         open();
@@ -192,6 +181,37 @@ public class IngredientsDataSource {
             updatedIngredients.add(ingredient);
         }
         close();
+        return updatedIngredients;
+    }
+
+    /*
+     * delete item from the table of images
+     */
+    public void deleteIngredient(Ingredients ingerdeients) {
+        open();
+        long id = ingerdeients.getId();
+        Log.d("gps", "Image  deleted with id: " + id);
+        database.delete(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, MySQLiteHelper.COLUMN_ID_INGREDIENT_RECIPE
+                + " = " + id, null);
+        close();
+    }
+
+
+    public void deleteByIdRecipeIngredient(int id_recipe) {
+        open();
+        Log.d("gps", "Ingredient  deleted with id: " + (long) id_recipe);
+        // Define the WHERE clause and the argument (ID to delete)
+        String whereClause = MySQLiteHelper.COLUMN_FRK_DETAIL_INGREDIENT_RECIPE + " = ?";
+        String[] whereArgs = {String.valueOf(id_recipe)};
+        // Delete the row(s) where the ID matches the given value
+        database.delete(MySQLiteHelper.TABLE_INGREDIENT_RECIPE, whereClause, whereArgs);
+        close();
+    }
+
+    public List<Ingredients> Update_Ingerdeients2(List<Ingredients> Ingredients, int id) {
+        List<Ingredients> updatedIngredients = new ArrayList<>();
+        deleteByIdRecipeIngredient(id);
+        insertIngredients(Ingredients, id);
         return updatedIngredients;
     }
 }

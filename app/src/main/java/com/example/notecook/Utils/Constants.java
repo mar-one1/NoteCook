@@ -501,28 +501,6 @@ public class Constants {
         textView.setText("" + t);
     }
 
-    public static Bitmap getBitmapFromImageView(ImageView imageView) {
-        Drawable drawable = imageView.getDrawable();
-
-        if (drawable instanceof BitmapDrawable) {
-            // If the drawable is a BitmapDrawable, directly return the bitmap
-            return ((BitmapDrawable) drawable).getBitmap();
-        }
-
-        // For other types of drawables, create a bitmap from the drawable
-        Bitmap bitmap = Bitmap.createBitmap(
-                drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(),
-                Bitmap.Config.ARGB_8888
-        );
-
-        // Create a canvas to draw the drawable onto the bitmap
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
-    }
 
 
 }

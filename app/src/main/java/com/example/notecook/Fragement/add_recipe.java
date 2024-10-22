@@ -148,7 +148,7 @@ public class add_recipe extends Fragment {
             @Override
             public void onClick(View view) {
                 if (TAG_EDIT_RECIPE)
-                updateRecipe(CURRENT_FULL_RECIPE, Constants.getBitmapFromImageView(binding.addIconRecipe));
+                updateRecipe();
                 else insertRecipe();
             }
         });
@@ -297,15 +297,22 @@ public class add_recipe extends Fragment {
         });
     }
 
-    private void updateRecipe(RecipeResponse recipe, Bitmap bitmap) {
-        recipe.getRecipe().setNom_recipe(binding.editTextRecipeName.getText().toString());
+    private void updateRecipe() {
+        CURRENT_FULL_RECIPE.getRecipe().setNom_recipe(binding.editTextRecipeName.getText().toString());
+        Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
 
-        recipeVM.updateFullRecipeLocal(recipe).observe(requireActivity(), new Observer<RecipeResponse>() {
+        CURRENT_FULL_RECIPE.getDetail_recipe().setDt_recipe(binding.editTextInstructions.getText().toString());
+        CURRENT_FULL_RECIPE.getDetail_recipe().setTime(Integer.parseInt(binding.txtTotTime.getText().toString()));
+        CURRENT_FULL_RECIPE.getDetail_recipe().setCal(Integer.parseInt(binding.txtTotCal.getText().toString()));
+        CURRENT_FULL_RECIPE.getDetail_recipe().setLevel(binding.levelRecipe.getSelectedItem().toString());
+        CURRENT_FULL_RECIPE.setIngredients(ingredientsList);
+        CURRENT_FULL_RECIPE.setSteps(stepsList);
+        recipeVM.updateFullRecipeLocal(CURRENT_FULL_RECIPE).observe(requireActivity(), new Observer<RecipeResponse>() {
             @Override
             public void onChanged(RecipeResponse Recipe) {
                 if (Recipe != null) {
-                    recipeVM.updateImageRecipeLocal(bitmap,recipe.getRecipe().getId_recipe());
-                    recipeVM.updateFullRemoteRecipe(recipe).observe(requireActivity(), new Observer<String>() {
+                    recipeVM.updateImageRecipeLocal(bitmap,CURRENT_FULL_RECIPE.getRecipe().getId_recipe());
+                    recipeVM.updateFullRemoteRecipe(Recipe).observe(requireActivity(), new Observer<String>() {
                         @Override
                         public void onChanged(String Result) {
                             if (Result != "") {

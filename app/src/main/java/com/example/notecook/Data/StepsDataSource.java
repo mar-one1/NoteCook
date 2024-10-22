@@ -138,6 +138,17 @@ public class StepsDataSource {
         close();
     }
 
+    public void deleteByIdRecipeStep(int id_recipe) {
+        open();
+        Log.d("gps", "Image  deleted with id: " + (long) id_recipe);
+        // Define the WHERE clause and the argument (ID to delete)
+        String whereClause = MySQLiteHelper.COLUMN_FRK_STEP_RECIPE + " = ?";
+        String[] whereArgs = {String.valueOf(id_recipe)};
+        // Delete the row(s) where the ID matches the given value
+        database.delete(MySQLiteHelper.TABLE_STEP_RECIPE, whereClause, whereArgs);
+        close();
+    }
+
     public List<Step> getAllSTEP() {
         open();
         List<Step> ListDR = new ArrayList<>();
@@ -198,6 +209,7 @@ public class StepsDataSource {
         database.update(MySQLiteHelper.TABLE_STEP_RECIPE, data, MySQLiteHelper.COLUMN_ID_STEP_RECIPE + " = " + id, null);
         close();
     }
+
     public List<Step> Update_Step(List<Step> steps, int id) {
         List<Step> updatedSteps = new ArrayList<>();
         open();
@@ -212,6 +224,13 @@ public class StepsDataSource {
         }
         close();
 
+        return updatedSteps;
+    }
+
+    public List<Step> Update_Step2(List<Step> steps, int id) {
+        List<Step> updatedSteps = new ArrayList<>();
+        deleteByIdRecipeStep(id);
+        insert_Steps(steps, id);
         return updatedSteps;
     }
 }

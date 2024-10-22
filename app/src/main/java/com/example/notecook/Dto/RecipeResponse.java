@@ -1,5 +1,7 @@
 package com.example.notecook.Dto;
 
+import android.graphics.Bitmap;
+
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Favorite_Recipe;
 import com.example.notecook.Model.Ingredients;
@@ -26,12 +28,19 @@ public class RecipeResponse {
     private List<Step> steps;
     @SerializedName("favs")
     private List<Favorite_Recipe> favs;
-
+    private Bitmap ImageRecipe;
     // Parameter to track if the data has been added locally
     private boolean addedToLocal;
-
     // Parameter to track if the data has been added remotely
     private boolean addedToRemote;
+
+    public Bitmap getImageRecipe() {
+        return ImageRecipe;
+    }
+
+    public void setImageRecipe(Bitmap imageRecipe) {
+        ImageRecipe = imageRecipe;
+    }
 
     public boolean isAddedToLocal() {
         return addedToLocal;

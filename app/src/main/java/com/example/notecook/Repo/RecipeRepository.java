@@ -25,7 +25,6 @@ import android.widget.Toast;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Data.DetailRecipeDataSource;
@@ -39,7 +38,6 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
-import com.google.firebase.installations.Utils;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -123,14 +121,14 @@ public class RecipeRepository {
                         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                             // Image loaded successfully
 //                            recipe.setIcon_recipe(ImageHelper.bitmapToDrawable(context,bitmap));
-                            recipe.setPathimagerecipe(ImageHelper.saveImageToInternalStorage(context,bitmap,"RecipeImages"));
-                            Log.d("tag","image loaded success");
+                            recipe.setPathimagerecipe(ImageHelper.saveImageToInternalStorage(context, bitmap, "RecipeImages"));
+                            Log.d("tag", "image loaded success");
                         }
 
                         @Override
                         public void onBitmapFailed(Exception e, Drawable errorDrawable) {
                             // Error occurred while loading the image
-                            Log.d("tag","image loaded onBitmapFailed");
+                            Log.d("tag", "image loaded onBitmapFailed");
                         }
 
                         @Override
@@ -206,13 +204,14 @@ public class RecipeRepository {
         return fullRecipeLiveData;
     }
 
-    public LiveData<List<Recipe>> getLocalRecipes(int i,int pages,int itemperpage) {
-        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i,3,3));
+    public LiveData<List<Recipe>> getLocalRecipes(int i, int pages, int itemperpage) {
+        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i, 3, 3));
         return list_recipe;
     }
+
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
         list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
-        ImageHelper.deleteUnusedImages(context,recipeDatasource.getAllRecipesImagePath(),"RecipeImages");
+        ImageHelper.deleteUnusedImages(context, recipeDatasource.getAllRecipesImagePath(), "RecipeImages");
         return list_recipe;
     }
 
@@ -245,7 +244,7 @@ public class RecipeRepository {
                 isInsertionSuccessful = false;
             } else {
                 detailRecipeDataSource.insertDetail_recipe(RC.getDetail_recipe(), (int) id_recipe);
-                ingredientsDataSource.insertIngredients(RC.getIngredients(),(int) id_recipe);
+                ingredientsDataSource.insertIngredients(RC.getIngredients(), (int) id_recipe);
                 stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
                 fullRecipeLiveData.setValue(RC);
             }
@@ -256,14 +255,15 @@ public class RecipeRepository {
     public LiveData<RecipeResponse> updateFullRecipeInLocal(RecipeResponse RC) {
         MutableLiveData<RecipeResponse> fullRecipeLiveData = new MutableLiveData<>();
         if (recipeDatasource.isRecordExist(TABLE_RECIPE, COLUMN_UNIQUE_KEY, RC.getRecipe().getUnique_key_recipe())) {
-            int id_recipe = recipeDatasource.UpdateRecipe(RC.getRecipe(),RC.getRecipe().getId_recipe());
+            int id_recipe = recipeDatasource.UpdateRecipe(RC.getRecipe(), RC.getRecipe().getId_recipe());
             if (id_recipe == -1) {
                 // Failed to insert recipe
                 fullRecipeLiveData.setValue(null);
             } else {
-                detailRecipeDataSource.Update_Detail_Recipe(RC.getDetail_recipe(), (int) id_recipe);
-                ingredientsDataSource.Update_Ingerdeients(RC.getIngredients(),(int) id_recipe);
-                stepsDataSource.Update_Step(RC.getSteps(), (int) id_recipe);
+                id_recipe = RC.getRecipe().getId_recipe();
+                detailRecipeDataSource.Update_Detail_Recipe(RC.getDetail_recipe(), id_recipe);
+                ingredientsDataSource.Update_Ingerdeients2(RC.getIngredients(), id_recipe);
+                stepsDataSource.Update_Step2(RC.getSteps(), id_recipe);
                 fullRecipeLiveData.setValue(RC);
             }
         }
@@ -302,9 +302,10 @@ public class RecipeRepository {
         });
         return recipeResponseMutableLiveData;
     }
+
     public LiveData<String> updateFullRecipeApi(RecipeResponse recipe) {
         MutableLiveData<String> recipeResponseMutableLiveData = new MutableLiveData<>();
-        apiService.updateRecipe(Token,recipe).enqueue(new Callback<String>() {
+        apiService.updateRecipe(Token, recipe).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
@@ -523,23 +524,23 @@ public class RecipeRepository {
         for (RecipeResponse remoteRecipe : remoteRecipes) {
             // Check if the remote recipe belongs to the specified user
             //if (remoteRecipe.getRecipe().getFrk_user() == user_login.getUser().getId_User()) {
-                boolean foundLocally = false;
-                for (Recipe localRecipe : localRecipes) {
-                    // Match recipes using a unique identifier, e.g., recipe ID
-                    if (remoteRecipe.getRecipe().getNom_recipe().equals(localRecipe.getNom_recipe())) {
-                        // Recipe exists locally; update it with remote data
-                        //updateRecipeLocally(remoteRecipe.getRecipe(), localRecipe.getId_recipe());
-                        foundLocally = true;
-                        break;
-                    }
+            boolean foundLocally = false;
+            for (Recipe localRecipe : localRecipes) {
+                // Match recipes using a unique identifier, e.g., recipe ID
+                if (remoteRecipe.getRecipe().getNom_recipe().equals(localRecipe.getNom_recipe())) {
+                    // Recipe exists locally; update it with remote data
+                    //updateRecipeLocally(remoteRecipe.getRecipe(), localRecipe.getId_recipe());
+                    foundLocally = true;
+                    break;
                 }
-                if (!foundLocally) {
-                    // Recipe doesn't exist locally; add it to the local list
+            }
+            if (!foundLocally) {
+                // Recipe doesn't exist locally; add it to the local list
 //                    fetchImage(remoteRecipe.getPathimagerecipe(), context).observe(appCompatActivity,);
 //                    remoteRecipe.setIcon_recipe(fetchImage(remoteRecipe.getPathimagerecipe(), context).getValue());
-                    remoteRecipe.getRecipe().setFrk_user(id);
-                    insertFullRecipeInLocal(remoteRecipe);
-                }
+                remoteRecipe.getRecipe().setFrk_user(id);
+                insertFullRecipeInLocal(remoteRecipe);
+            }
             //}
         }
 
@@ -569,9 +570,9 @@ public class RecipeRepository {
         recipeDatasource.UpdateRecipe(remoteRecipe, id);
     }
 
-    public int updateRecipeImageLocally(Bitmap image,  int id) {
+    public int updateRecipeImageLocally(Bitmap image, int id) {
         // Implement logic to update the local recipe with data from the remote recipe
-        return recipeDatasource.UpdateRecipeImage(context,image, id);
+        return recipeDatasource.UpdateRecipeImage(context, image, id);
     }
 
     private void updateRecipeRemotely(Recipe recipe) {
