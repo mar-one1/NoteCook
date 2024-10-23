@@ -86,6 +86,9 @@ public interface ApiService {
     @DELETE("recipes/{id}")
     Call<Void> deleteRecipe(@Path("id") int recipeId);
 
+    @DELETE("recipes/delete/{path}")
+    Call<ResponseBody> deleteImageRecipe(@Path("path") String fileUrl);
+
     // Users API Endpoints
     @GET("users")
     Call<List<User>> getAllUsers(@Header("Authorization") String token);
