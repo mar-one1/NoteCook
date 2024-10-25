@@ -10,18 +10,18 @@ public class Category_Recipe {
     @SerializedName("id")
     private int id_category;
     @SerializedName("icon")
-    private byte[] icon_category;
+    private Drawable icon_category;
     private String icon_path_category;
     @SerializedName("detail_ct")
     private String detail_category;
 
-    public Category_Recipe(byte[] icon_category, String icon_path_category, String detail_category) {
+    public Category_Recipe(Drawable icon_category, String icon_path_category, String detail_category) {
         this.icon_category = icon_category;
         this.icon_path_category = icon_path_category;
         this.detail_category = detail_category;
     }
 
-    public Category_Recipe(String detail_category,byte[] icon_category) {
+    public Category_Recipe(String detail_category,Drawable icon_category) {
         this.icon_category = icon_category;
         this.detail_category = detail_category;
     }
@@ -37,11 +37,11 @@ public class Category_Recipe {
         this.id_category = id_category;
     }
 
-    public byte[] getIcon_category() {
+    public Drawable getIcon_category() {
         return icon_category;
     }
 
-    public void setIcon_category(byte[] icon_category) {
+    public void setIcon_category(Drawable icon_category) {
         this.icon_category = icon_category;
     }
 

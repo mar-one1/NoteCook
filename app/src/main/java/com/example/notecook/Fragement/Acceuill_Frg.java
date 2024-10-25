@@ -109,8 +109,7 @@ public class Acceuill_Frg extends Fragment {
     public void onResume() {
         super.onResume();
         //Toast.makeText(getContext(), "changed " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-        if(Remotelist_recipe.getValue()!=null)
-        bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
+        if(Remotelist_recipe.getValue()!=null) bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
     }
 
     private void fetchRecipe()
@@ -150,18 +149,18 @@ public class Acceuill_Frg extends Fragment {
     public void bindingRcV_categories(RecyclerView recyclerView, boolean isgarde) {
         List<Category_Recipe> list_categoryRecipes = new ArrayList<>();
         Adapter_RC_MenuCat adapter_rc_menuCat;
-        List<Bitmap> drs = new ArrayList<>();
-        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.barbecue));
-        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.breakfast));
-        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.chicken));
-        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.beef));
-        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.brunch));
-        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.dinner)) ;
-        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.wine));
-        drs.add(Constants.drawableToBitmap(requireContext(),R.drawable.italian));
+        List<Drawable> drs = new ArrayList<>();
+        drs.add(getResources().getDrawable(R.drawable.barbecue));
+        drs.add(getResources().getDrawable(R.drawable.breakfast));
+        drs.add(getResources().getDrawable(R.drawable.chicken));
+        drs.add(getResources().getDrawable(R.drawable.beef));
+        drs.add(getResources().getDrawable(R.drawable.brunch));
+        drs.add(getResources().getDrawable(R.drawable.dinner)) ;
+        drs.add(getResources().getDrawable(R.drawable.wine));
+        drs.add(getResources().getDrawable(R.drawable.italian));
 
         for (int i = 0; i < 8; i++) {
-            mCategoryRecipe = new Category_Recipe( Constants.DEFAULT_SEARCH_CATEGORIES[i],MainActivity.encod(drs.get(i)));
+            mCategoryRecipe = new Category_Recipe( Constants.DEFAULT_SEARCH_CATEGORIES[i],drs.get(i));
             list_categoryRecipes.add(mCategoryRecipe);
         }
         adapter_rc_menuCat = new Adapter_RC_MenuCat(list_categoryRecipes, true);

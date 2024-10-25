@@ -46,7 +46,7 @@ public class Adapter_RC_MenuCat extends RecyclerView.Adapter<Adapter_RC_MenuCat.
 
         Category_Recipe categories = mCategoryRecipes.get(position);
         holder.detail.setText(categories.getDetail_category());
-        holder.Image.setImageBitmap(ImageHelper.byteArrayToBitmap(categories.getIcon_category()));
+        holder.Image.setImageDrawable(categories.getIcon_category());
 
         holder.Image.setOnClickListener(v -> {
             MainFragment mainFragment = new MainFragment();
