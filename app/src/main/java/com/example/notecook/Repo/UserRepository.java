@@ -152,8 +152,6 @@ public class UserRepository {
                         try {
                             UserResponse.setId_User(user_login.getUser().getId_User());
                             userUpdated.setValue(UserResponse);
-                            deleteimage(user.getPathimageuser());
-                            uploadImage(user_login.getUser().getUsername(), bitmap, "update");
                         } catch (Exception e) {
                             Log.e("tag", "" + e);
                         }
@@ -195,8 +193,8 @@ public class UserRepository {
         });
     }
 
-    public void uploadImage(String username, Bitmap bitmp, String type) {
-        //Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.add_photo_profil); // Replace 'your_image' with the image resource name
+    public MutableLiveData<String>  uploadImage(String username, Bitmap bitmp,String oldPath, String type) {
+        MutableLiveData<String> pathImage = new MutableLiveData<>();
         // Create a file to save the bitmap
         File filesDir = context.getFilesDir();
         File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
@@ -227,6 +225,8 @@ public class UserRepository {
                         path = response.body().string();
                         //String str = new String(bytes, StandardCharsets.UTF_8);
                         path = path.replaceAll("\"", "");// For UTF-8 encoding
+                        pathImage.setValue(path);
+                        deleteimage(oldPath);
                         if (!type.equals("register")){}
                         //user_login.getUser().setPathimageuser(path);
                     } catch (IOException e) {
@@ -252,6 +252,7 @@ public class UserRepository {
                 ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
+        return  pathImage;
     }
 
     public LiveData<User> getUserByIdRecipeApi(int Recipeid) {
@@ -322,7 +323,7 @@ public class UserRepository {
                         TAG_CONNEXION_MESSAGE = response.message();
                         userInsered.setValue(UserResponse);
                         if (type != null && type.equals("registre"))
-                            uploadImage(user.getUsername(), bitmap, type);
+                            uploadImage(user.getUsername(), bitmap,"", type);
                         else if (!url.isEmpty()) {
                             updateGoogleUserImage(user.getUsername(), url).getValue();
                         }

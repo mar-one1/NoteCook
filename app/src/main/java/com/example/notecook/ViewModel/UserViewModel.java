@@ -50,6 +50,10 @@ public class UserViewModel extends ViewModel implements ViewModelProvider.Factor
     public LiveData<User> UpdateUser(User user, Bitmap bitmap) {
         return repository.UpdateUserApi(user, bitmap);
     }
+
+    public LiveData<String> updateuserImageRemote(String username,Bitmap bitmap,String oldPath,String type) {
+        return repository.uploadImage(username,bitmap,oldPath,type);
+    }
     public LiveData<User> UpdateUserLocal(User user, Bitmap bitmap) {
         return repository.UpdateUserApi(user, bitmap);
     }

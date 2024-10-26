@@ -12,6 +12,7 @@ import static com.example.notecook.Utils.env.BASE_URL;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 
 public class frg_Profil extends Fragment implements FragmentLifecycle {
 
+    private String TAG = "Profil";
     private FragmentFrgProfilBinding binding;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
@@ -58,8 +60,20 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         super.onResume();
         onResumeFragment();
         extracted();
+        Log.d(TAG,"onResume");
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"onDestroy");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG,"onStop");
+    }
 
     private void extracted() {
 

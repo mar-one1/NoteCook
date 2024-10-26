@@ -323,6 +323,7 @@ public class Frg_EditProfil extends Fragment {
     private void updateUser() {
         try {
             User currentuser = user_login.getUser();
+            String oldPathImage = user_login.getUser().getPathimageuser();
             mUserDatasource = new UserDatasource(getContext());
             String nom = binding.Nome.getText().toString();
             String prenom = binding.myEditText.getText().toString();
@@ -331,7 +332,6 @@ public class Frg_EditProfil extends Fragment {
             String tel = binding.txtPhone.getText().toString();
             Drawable d = binding.iconEditprofil.getDrawable();
             Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
-            byte[] icon = encod(bitmap);
             byte[] icon1 = null;
             String pass = user_login.getUser().getPassWord();
             String username = user_login.getUser().getUsername();
@@ -360,8 +360,15 @@ public class Frg_EditProfil extends Fragment {
                     @Override
                     public void onChanged(User user) {
                         if (user != null) {
-                            user_login.setUser(user);
-                            detach();
+                            userVM.updateuserImageRemote(user.getUsername(),bitmap,oldPathImage,"").observe(getViewLifecycleOwner(), new Observer<String>() {
+                                @Override
+                                public void onChanged(String s) {
+                                    user_login.setUser(user);
+                                    user_login.getUser().setPathimageuser(s);
+                                    detach();
+                                }
+                            });
+
                         }
                     }
                 });
