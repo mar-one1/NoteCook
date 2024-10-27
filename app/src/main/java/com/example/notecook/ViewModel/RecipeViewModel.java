@@ -75,10 +75,9 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.getLocalRecipes(id_user);
     }
 
-    public void uploadRemoteRecipeImage(String unique_key, Bitmap bitmap) {
-        repository.uploadRemoteImageRecipe(unique_key, bitmap);
+    public LiveData<String> uploadRemoteRecipeImage(String unique_key, Bitmap bitmap) {
+        return repository.uploadRemoteImageRecipe(unique_key, bitmap);
     }
-
 
     public LiveData<Recipe> postRecipe(Recipe recipe, Bitmap bitmap) {
         return repository.InsertRecipeApi(recipe, bitmap);

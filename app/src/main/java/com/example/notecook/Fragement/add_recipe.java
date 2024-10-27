@@ -10,6 +10,8 @@ import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 import static com.example.notecook.Utils.Constants.isConnected;
+import static com.example.notecook.Utils.Constants.list_recipe;
+import static com.example.notecook.Utils.Constants.navAction;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -82,6 +84,7 @@ public class add_recipe extends Fragment {
     private List<Step> stepsList = new ArrayList<>();
     private List<Review> reviewsList = new ArrayList<>();
     private List<Ingredients> ingredientsList = new ArrayList<>();
+    private BottomNavigationView btnV;
 
 
     public add_recipe() {
@@ -143,6 +146,8 @@ public class add_recipe extends Fragment {
                 Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());
             }
         });
+        fullRecipeDetails(CURRENT_FULL_RECIPE);
+
         recipeR = new RecipeResponse();
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,7 +186,6 @@ public class add_recipe extends Fragment {
     public void onStart() {
         super.onStart();
         if (TAG_EDIT_RECIPE) {
-            fullRecipeDetails(CURRENT_FULL_RECIPE);
             binding.btnAddRecipe.setText("Update");
         }
     }
@@ -214,11 +218,10 @@ public class add_recipe extends Fragment {
             binding.levelRecipe.setSelection(spinnerPosition);
         }
 
-        // Load the recipe icon if available
-//        if (recipeR.getIcon() != null) {
-//            Bitmap bitmap = BitmapFactory.decodeFile(recipeR.getIcon());
-//            binding.addIconRecipe.setImageBitmap(bitmap);
-//        }
+        //Load the recipe icon if available
+        if (!recipeR.getRecipe().getPathimagerecipe().isEmpty()) {
+            binding.addIconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(recipeR.getRecipe().getPathimagerecipe()));
+        }
 
         // Set the ingredients (assuming you're using a RecyclerView or ListView for ingredients)
         ingredientsList.clear();
@@ -293,6 +296,7 @@ public class add_recipe extends Fragment {
                 if (recipe != -1)
                     add_recipe.recipeR.setAddedToRemote(true);
                 Toast.makeText(getContext(), "recipe add success in Remote", Toast.LENGTH_SHORT).show();
+                MainFragment.viewPager2.setCurrentItem(4);
             }
         });
     }
@@ -316,14 +320,25 @@ public class add_recipe extends Fragment {
                         @Override
                         public void onChanged(String Result) {
                             if (Result != "") {
-                                recipeVM.uploadRemoteRecipeImage(Recipe.getRecipe().getUnique_key_recipe(), bitmap);
-                                Constants.AffichageMessage("success", "", requireActivity());
+                                recipeVM.uploadRemoteRecipeImage(Recipe.getRecipe().getUnique_key_recipe(), bitmap).observe(requireActivity(), new Observer<String>() {
+                                    @Override
+                                    public void onChanged(String s) {
+                                        CURRENT_FULL_RECIPE.getRecipe().setPathimagerecipe(s);
+                                        Constants.AffichageMessage("success", "", requireActivity());
+                                        detach();
+                                    }
+                                });
                             }
                         }
                     });
                 }else AffichageMessage("eror","Error fro update !!!",getActivity());
             }
         });
+    }
+    private void detach() {
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.detach(add_recipe.this);
+        fragmentTransaction.commitNow();
     }
 
     private void postRecipeToLocal(RecipeResponse recipeR, Recipe recipe) {

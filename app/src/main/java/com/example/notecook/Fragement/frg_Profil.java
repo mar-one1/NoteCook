@@ -9,7 +9,6 @@ import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 import static com.example.notecook.Utils.env.BASE_URL;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,7 +41,7 @@ import java.util.ArrayList;
 public class frg_Profil extends Fragment implements FragmentLifecycle {
 
     private String TAG = "Profil";
-    private FragmentFrgProfilBinding binding;
+    public static FragmentFrgProfilBinding bindingProfil;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private User user;
@@ -58,7 +57,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     @Override
     public void onResume() {
         super.onResume();
-        onResumeFragment();
         extracted();
         Log.d(TAG,"onResume");
     }
@@ -81,24 +79,24 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
             user = new User();
             if (user_login.getUser() != null) {
                 user = user_login.getUser();
-                binding.txtUsername.setText(user.getUsername());
-                binding.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
+                bindingProfil.txtUsername.setText(user.getUsername());
+                bindingProfil.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
                 if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
                     String imageUrl = "";
                     if(user.getPathimageuser().startsWith("/data")) {
-                        binding.iconProfil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
+                        bindingProfil.iconProfil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
                     }
                     else if (user.getPathimageuser().startsWith("http")) {
-                        Picasso.get().load(user.getPathimageuser()).into(binding.iconProfil);
+                        Picasso.get().load(user.getPathimageuser()).into(bindingProfil.iconProfil);
                     } else {
                         imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
-                        Picasso.get().load(imageUrl).into(binding.iconProfil);
+                        Picasso.get().load(imageUrl).into(bindingProfil.iconProfil);
                     }
                     //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
                 } else if (user.getIcon() != null) {
-                    binding.iconProfil.setImageBitmap(decod(user.getIcon()));
+                    bindingProfil.iconProfil.setImageBitmap(decod(user.getIcon()));
                 } else if (user_login_local.getUser() != null && user_login_local.getUser().getIcon() != null) {
-                    binding.iconProfil.setImageBitmap(decod(user.getIcon()));
+                    bindingProfil.iconProfil.setImageBitmap(decod(user.getIcon()));
                 }
             }
         }
@@ -115,9 +113,9 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentFrgProfilBinding.inflate(inflater, container, false);
-        viewPager2 = binding.vp2Profil;
-        tabLayout = binding.tl;
+        bindingProfil = FragmentFrgProfilBinding.inflate(inflater, container, false);
+        viewPager2 = bindingProfil.vp2Profil;
+        tabLayout = bindingProfil.tl;
         b = getActivity().findViewById(R.id.floating_action_button);
         b.show();
         tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
@@ -168,7 +166,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
 //                b.hide();
             }
         });
-        binding.ImgVSetting.setOnClickListener(view -> {
+        bindingProfil.ImgVSetting.setOnClickListener(view -> {
             if (Type_User.equals(Constants.TAG_MODE_INVITE)) {
                 Toast.makeText(getContext(), "" + Constants.TAG_MODE_INVITE, Toast.LENGTH_LONG).show();
             } else {
@@ -179,7 +177,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         });
 
         setViewPagerAdapter();
-        return binding.getRoot();
+        return bindingProfil.getRoot();
     }
 
     public void setViewPagerAdapter() {
@@ -191,7 +189,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         fragmentList.add(new Frg_recipe_fav());
         viewPager2Adapter.setData(fragmentList);
         //set the data for the adapter
-        binding.vp2Profil.setAdapter(viewPager2Adapter);
+        bindingProfil.vp2Profil.setAdapter(viewPager2Adapter);
     }
 
 

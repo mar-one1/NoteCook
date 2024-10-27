@@ -140,7 +140,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                         //viewPager2.setCurrentItem(1);
                         fetchRecipe(recipeResponse);
                         CURRENT_FULL_RECIPE = recipeResponse;
-                        MainFragment.viewPager2.setCurrentItem(1, false);
+                        //MainFragment.viewPager2.setCurrentItem(1, false);
                         Flbtn.callOnClick();
                     }
                     Constants.dismissLoadingDialog();
@@ -162,7 +162,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
 
         holder.Image.setOnClickListener(v -> {
             TAG_EDIT_RECIPE=false;
-
             // Get the FragmentActivity associated with the context of the clicked view
             FragmentActivity fragmentActivity = (FragmentActivity) v.getContext();
             if (CURRENT_RECIPE != recipe) {
@@ -190,6 +189,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                                 //viewPager2.setCurrentItem(1);
                                 fetchRecipe(recipeResponse);
                                 CURRENT_FULL_RECIPE = recipeResponse;
+                                User_CurrentRecipe = user_login.getUser();
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();

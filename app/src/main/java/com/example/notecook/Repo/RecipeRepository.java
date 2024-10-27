@@ -447,8 +447,8 @@ public class RecipeRepository {
         return remoteRecipeListByUser;
     }
 
-    public void uploadRemoteImageRecipe(String unique_key, Bitmap bitmp) {
-
+    public LiveData<String> uploadRemoteImageRecipe(String unique_key, Bitmap bitmp) {
+        MutableLiveData<String> pathImage = new MutableLiveData<>();
         File filesDir = context.getFilesDir();
         File imageFile = new File(filesDir, "image.jpg"); // Change 'image.jpg' to the desired file name and format
         // Convert bitmap to file
@@ -476,6 +476,7 @@ public class RecipeRepository {
                         path = response.body().string();
                         //String str = new String(bytes, StandardCharsets.UTF_8);
                         path = path.replaceAll("\"", "");// For UTF-8 encoding
+                        pathImage.setValue(path);
 //                            user_login.getUser().setPathimageuser(path);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -496,6 +497,7 @@ public class RecipeRepository {
                 Toast.makeText(context, "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
+        return  pathImage;
     }
 
 

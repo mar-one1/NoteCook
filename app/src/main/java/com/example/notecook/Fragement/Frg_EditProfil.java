@@ -366,6 +366,7 @@ public class Frg_EditProfil extends Fragment {
                                     user_login.setUser(user);
                                     user_login.getUser().setPathimageuser(s);
                                     detach();
+                                    frg_Profil.bindingProfil.iconProfil.setImageBitmap(bitmap);
                                 }
                             });
 
