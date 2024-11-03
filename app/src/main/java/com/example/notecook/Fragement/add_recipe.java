@@ -137,23 +137,26 @@ public class add_recipe extends Fragment {
                 clickhid(binding.stepLy);
             }
         });
-
+        // TODO MAKE CONTROL OF ADD THE DETAIL
         binding.addStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Step step = new Step(binding.edtDetail.getText().toString(), null, Integer.parseInt(binding.txtTotTiemsp.getText().toString()), 0);
-                stepsList.add(step);
-                Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());
+                if(binding.txtTotTiemsp.getText().toString() !="0" && binding.edtDetail.getText().toString()!="") {
+                    Step step = new Step(binding.edtDetail.getText().toString(), null, Integer.parseInt(binding.txtTotTiemsp.getText().toString()), 0);
+                    stepsList.add(step);
+                    Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());
+                    binding.txtTotTiemsp.setText("0");
+                    binding.edtDetail.setText("");
+                }else Constants.showToast(getContext(),"step vide!!");
             }
         });
-        fullRecipeDetails(CURRENT_FULL_RECIPE);
 
         recipeR = new RecipeResponse();
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (TAG_EDIT_RECIPE)
-                updateRecipe();
+                    updateRecipe();
                 else insertRecipe();
             }
         });
@@ -186,6 +189,7 @@ public class add_recipe extends Fragment {
     public void onStart() {
         super.onStart();
         if (TAG_EDIT_RECIPE) {
+            fullRecipeDetails(CURRENT_FULL_RECIPE);
             binding.btnAddRecipe.setText("Update");
         }
     }
@@ -315,7 +319,7 @@ public class add_recipe extends Fragment {
             @Override
             public void onChanged(RecipeResponse Recipe) {
                 if (Recipe != null) {
-                    recipeVM.updateImageRecipeLocal(bitmap,CURRENT_FULL_RECIPE.getRecipe().getId_recipe());
+                    recipeVM.updateImageRecipeLocal(bitmap, CURRENT_FULL_RECIPE.getRecipe().getId_recipe());
                     recipeVM.updateFullRemoteRecipe(Recipe).observe(requireActivity(), new Observer<String>() {
                         @Override
                         public void onChanged(String Result) {
@@ -331,10 +335,11 @@ public class add_recipe extends Fragment {
                             }
                         }
                     });
-                }else AffichageMessage("eror","Error fro update !!!",getActivity());
+                } else AffichageMessage("eror", "Error fro update !!!", getActivity());
             }
         });
     }
+
     private void detach() {
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.detach(add_recipe.this);

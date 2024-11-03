@@ -70,11 +70,12 @@ public class ErrorHandler {
             // Show the popup if any error messages were added
             if (errorMessages.length() > 0) {
                 showSweetAlertWithDismissListener(appCompatActivity);
+                resetErrorMessages();
             }
         }
     }
 
-    public static void handleNetworkFailure(Throwable t, Context context) {
+    public static void handleNetworkFailure(Throwable t, Activity appCompatActivity) {
         String errorMessage;
         if (t instanceof SocketTimeoutException) {
             errorMessage = "Timeout occurred";
@@ -86,7 +87,8 @@ public class ErrorHandler {
 
         // Show the popup with all accumulated network error messages
         if (errorMessages.length() > 0) {
-            Toast.makeText(context, errorMessages.toString().substring(2), Toast.LENGTH_SHORT).show();
+            showSweetAlertWithDismissListener(appCompatActivity);
+            //Toast.makeText(appCompatActivity, errorMessages.toString().substring(2), Toast.LENGTH_SHORT).show();
             resetErrorMessages(); // Reset after showing the toast
         }
     }

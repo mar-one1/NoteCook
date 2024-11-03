@@ -93,7 +93,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private UserDatasource userDatasource;
     private UserViewModel userVM;
     private AccessViewModel accessVM;
-    private Boolean isPosted=false;
+    private Boolean isPosted = false;
 
     //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
@@ -119,7 +119,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
                 String s1 = sharedPreferences.getString("username", "");
                 String s2 = sharedPreferences.getString("password", "");
-                userVM.getUserLocal(s1,"success");
+                userVM.getUserLocal(s1, "success");
                 binding.etUsername.setText(s1);
                 binding.etPassword.setText("");
                 //binding.etUsername.setEnabled(false);
@@ -143,7 +143,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         binding.RegistreBtn.setOnClickListener(v -> {
             try {
                 Save_Preference_Data("registre");
-            }catch (Exception e) {e.printStackTrace();}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         //binding.btnLogin.setOnClickListener(view -> loginclk());
@@ -278,60 +280,62 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     public void empreinte() {
         try {
 
-        authenticationCallback = new BiometricPrompt.AuthenticationCallback() {
-            // here we need to implement two methods
-            // onAuthenticationError and
-            // onAuthenticationSucceeded If the
-            // fingerprint is not recognized by the
-            // app it will call onAuthenticationError
-            // and show a toast
-            @Override
-            public void onAuthenticationError(
-                    int errorCode, CharSequence errString) {
-                super.onAuthenticationError(errorCode, errString);
-                notifyUser("Authentication Error : " + errString);
-            }
+            authenticationCallback = new BiometricPrompt.AuthenticationCallback() {
+                // here we need to implement two methods
+                // onAuthenticationError and
+                // onAuthenticationSucceeded If the
+                // fingerprint is not recognized by the
+                // app it will call onAuthenticationError
+                // and show a toast
+                @Override
+                public void onAuthenticationError(
+                        int errorCode, CharSequence errString) {
+                    super.onAuthenticationError(errorCode, errString);
+                    notifyUser("Authentication Error : " + errString);
+                }
 
-            // If the fingerprint is recognized by the
-            // app then it will call
-            // onAuthenticationSucceeded and show a
-            // toast that Authentication has Succeed
-            // Here you can also start a new activity
-            // after that
-            @Override
-            public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-                notifyUser("Authentication Succeeded");
-                loginclk();
-                // or start a new Activity
-            }
-        };
+                // If the fingerprint is recognized by the
+                // app then it will call
+                // onAuthenticationSucceeded and show a
+                // toast that Authentication has Succeed
+                // Here you can also start a new activity
+                // after that
+                @Override
+                public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
+                    super.onAuthenticationSucceeded(result);
+                    notifyUser("Authentication Succeeded");
+                    loginclk();
+                    // or start a new Activity
+                }
+            };
 
-        checkBiometricSupport();
-        // create a biometric dialog on Click of button
-        binding.IMVFinger.setOnClickListener(view -> {
-            // This creates a dialog of biometric
-            // auth and it requires title , subtitle
-            // , and description In our case there
-            // is a cancel button by clicking it, it
-            // will cancel the process of
-            // fingerprint authentication
-            BiometricPrompt biometricPrompt = new BiometricPrompt
-                    .Builder(getApplicationContext())
-                    .setTitle("Authentication")
-                    .setSubtitle("Fingerprint")
-                    .setDescription("please apply your fingerprint to access the application")
-                    .setNegativeButton("Cancel", getMainExecutor(), (dialogInterface, i) -> notifyUser("Authentication Cancelled")).build();
+            checkBiometricSupport();
+            // create a biometric dialog on Click of button
+            binding.IMVFinger.setOnClickListener(view -> {
+                // This creates a dialog of biometric
+                // auth and it requires title , subtitle
+                // , and description In our case there
+                // is a cancel button by clicking it, it
+                // will cancel the process of
+                // fingerprint authentication
+                BiometricPrompt biometricPrompt = new BiometricPrompt
+                        .Builder(getApplicationContext())
+                        .setTitle("Authentication")
+                        .setSubtitle("Fingerprint")
+                        .setDescription("please apply your fingerprint to access the application")
+                        .setNegativeButton("Cancel", getMainExecutor(), (dialogInterface, i) -> notifyUser("Authentication Cancelled")).build();
 
-            // start the authenticationCallback in
-            // mainExecutor
-            biometricPrompt.authenticate(
-                    getCancellationSignal(),
-                    getMainExecutor(),
-                    authenticationCallback);
-        });
+                // start the authenticationCallback in
+                // mainExecutor
+                biometricPrompt.authenticate(
+                        getCancellationSignal(),
+                        getMainExecutor(),
+                        authenticationCallback);
+            });
 
-        }catch (Exception e) {Log.e("tag","Empreint exception "+e);}
+        } catch (Exception e) {
+            Log.e("tag", "Empreint exception " + e);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.P)
@@ -431,7 +435,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         stackBuilder.addNextIntent(resultIntent);
         // PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         //builder.setContentIntent(resultPendingIntent);
-        notificationManager.notify(NOTIFICATION_ID, builder.build()) ;
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
 
 
@@ -541,13 +545,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
                     passwordHasher = new PasswordHasher();
                     String password = passwordHasher.hashPassword(binding.txtPassword.getText().toString());
-                    User newUser = new User(username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(),null, binding.txtTel.getText().toString(), password, "active", "Chef");
+                    User newUser = new User(username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), null, binding.txtTel.getText().toString(), password, "active", "Chef");
                     if (Constants.NetworkIsConnected(this)) {
                         userVM.postUser(newUser, "", bitmap, "registre").observe(this, new Observer<User>() {
                             @Override
                             public void onChanged(User user) {
-                                if(user!=null) {
-                                    isPosted=true;
+                                if (user != null) {
+                                    isPosted = true;
                                     newUser.setIcon(MainActivity.encod(bitmap));
                                     User userPost = dataSourceUser.insertUser(newUser);
                                     if (!Objects.equals(userPost.getUsername(), ""))
