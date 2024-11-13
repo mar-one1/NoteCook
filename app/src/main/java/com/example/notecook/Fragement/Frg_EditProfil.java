@@ -360,7 +360,7 @@ public class Frg_EditProfil extends Fragment {
                     @Override
                     public void onChanged(User user) {
                         if (user != null) {
-                            userVM.updateuserImageRemote(user.getUsername(),bitmap,oldPathImage,"").observe(getViewLifecycleOwner(), new Observer<String>() {
+                            userVM.updateUserImageRemote(user.getUsername(),bitmap,oldPathImage,"").observe(getViewLifecycleOwner(), new Observer<String>() {
                                 @Override
                                 public void onChanged(String s) {
                                     user_login.setUser(user);

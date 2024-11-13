@@ -7,10 +7,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
+import com.example.notecook.Utils.ImageHelper;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -48,10 +50,37 @@ public class UserDatasource {
     public User insertUser(User user) {
         open();
         ContentValues values = new ContentValues();
-
         values.put(MySQLiteHelper.COLUMN_USERNAME, user.getUsername());
         values.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
         values.put(MySQLiteHelper.COLUMN_ICON_PATH, user.getPathimageuser());
+        values.put(MySQLiteHelper.COLUMN_FIRSTNAME_USER, user.getFirstname());
+        values.put(MySQLiteHelper.COLUMN_LASTNAME_USER, user.getLastname());
+        values.put(MySQLiteHelper.COLUMN_BIRTHDAY_USER, user.getBirthday());
+        values.put(MySQLiteHelper.COLUMN_EMAIL_USER, user.getEmail());
+        values.put(MySQLiteHelper.COLUMN_PHONENUMBER_USER, user.getPhonenumber());
+        values.put(MySQLiteHelper.COLUMN_PASSWORD, user.getPassWord());
+        values.put(MySQLiteHelper.COLUMN_GRADE, user.getGrade());
+        values.put(MySQLiteHelper.COLUMN_STATUS, user.getStatus());
+
+        long insertId = database.insert(TABLE_USER, null,
+                values);
+        Cursor cursor = database.query(TABLE_USER,
+                allColumns, MySQLiteHelper.COLUMN_ID_USER + " = " + insertId, null,
+                null, null, null);
+        cursor.moveToFirst();
+        User newUser = cursorToComment(cursor);
+        cursor.close();
+        close();
+        return newUser;
+    }
+
+    public User insertUser(User user, Bitmap bitmap, Context context) {
+        open();
+        ContentValues values = new ContentValues();
+        String imagePath = ImageHelper.saveImageToInternalStorage(context,bitmap,"UserImages");
+        values.put(MySQLiteHelper.COLUMN_USERNAME, user.getUsername());
+        values.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
+        values.put(MySQLiteHelper.COLUMN_ICON_PATH, imagePath);
         values.put(MySQLiteHelper.COLUMN_FIRSTNAME_USER, user.getFirstname());
         values.put(MySQLiteHelper.COLUMN_LASTNAME_USER, user.getLastname());
         values.put(MySQLiteHelper.COLUMN_BIRTHDAY_USER, user.getBirthday());

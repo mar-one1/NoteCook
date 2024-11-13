@@ -29,6 +29,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -151,6 +152,11 @@ public class add_recipe extends Fragment {
             }
         });
 
+        if (TAG_EDIT_RECIPE) {
+            fullRecipeDetails(CURRENT_FULL_RECIPE);
+            binding.btnAddRecipe.setText("Update");
+        }
+
         recipeR = new RecipeResponse();
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,10 +194,11 @@ public class add_recipe extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if (TAG_EDIT_RECIPE) {
-            fullRecipeDetails(CURRENT_FULL_RECIPE);
-            binding.btnAddRecipe.setText("Update");
-        }
+        Log.d("TAG","onstart");
+        //if (TAG_EDIT_RECIPE) {
+          //  fullRecipeDetails(CURRENT_FULL_RECIPE);
+            //binding.btnAddRecipe.setText("Update");
+        //}
     }
 
 

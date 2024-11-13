@@ -145,7 +145,6 @@ public class Acceuill_Frg extends Fragment {
                 IV.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
         });
     }
-    // TODO Make category recipe git from server
     public void bindingRcV_categories(RecyclerView recyclerView, boolean isgarde) {
         List<Category_Recipe> list_categoryRecipes = new ArrayList<>();
         Adapter_RC_MenuCat adapter_rc_menuCat;

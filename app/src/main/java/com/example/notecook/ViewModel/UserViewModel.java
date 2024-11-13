@@ -51,7 +51,7 @@ public class UserViewModel extends ViewModel implements ViewModelProvider.Factor
         return repository.UpdateUserApi(user, bitmap);
     }
 
-    public LiveData<String> updateuserImageRemote(String username,Bitmap bitmap,String oldPath,String type) {
+    public LiveData<String> updateUserImageRemote(String username,Bitmap bitmap,String oldPath,String type) {
         return repository.uploadImage(username,bitmap,oldPath,type);
     }
     public LiveData<User> UpdateUserLocal(User user, Bitmap bitmap) {
@@ -60,5 +60,9 @@ public class UserViewModel extends ViewModel implements ViewModelProvider.Factor
 
     public LiveData<User> getUserLocal(String username, String tag) {
         return repository.getLocalUserLogin(username, tag);
+    }
+
+    public LiveData<User> postUserLocal(User user,Bitmap bitmap) {
+        return repository.InsertUserLocal(user,bitmap);
     }
 }

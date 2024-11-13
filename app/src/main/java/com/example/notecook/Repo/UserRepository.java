@@ -1,5 +1,7 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
+import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
@@ -28,6 +30,7 @@ import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.Utils.PasswordHasher;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -381,6 +384,20 @@ public class UserRepository {
             }
         });
         return pathImageUser;
+    }
+
+    public LiveData<User> InsertUserLocal(User user, Bitmap bitmap) {
+        MutableLiveData<User> userInsered = new MutableLiveData<>();
+        // Example: Fetch users from the API
+        PasswordHasher passwordHasher = new PasswordHasher();
+        String passwordHacher = passwordHasher.hashPassword(user.getPassWord());
+        user.setPassWord(passwordHacher);
+        user_login.setUser(user);
+        if (!userDatasource.isRecordExist(TABLE_USER, COLUMN_USERNAME, user.getUsername())) {
+            userInsered.setValue(userDatasource.insertUser(user));
+            Log.e("tag", user.getUsername());
+        }
+        return userInsered;
     }
 
 }
