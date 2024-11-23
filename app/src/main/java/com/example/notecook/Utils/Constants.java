@@ -404,11 +404,6 @@ public class Constants {
 
 
     public static void bindingRcV_Ingredients(RecyclerView recyclerView, List<Ingredients> list, Context context) {
-        // Fetch ingredient data from the database
-        IngredientsDataSource ingredientsDataSource = new IngredientsDataSource(context);
-        ingredientsDataSource.open();
-        List<Ingredients> list_ingredient = ingredientsDataSource.getAllIngredeients();
-        ingredientsDataSource.close();
         // Create and set adapter for RecyclerView
         Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
@@ -419,9 +414,10 @@ public class Constants {
 
     public static void bindingRcV_Steps(RecyclerView recyclerView, List<Step> list, Context context) {
         Adapter_Rc_Steps adapter = new Adapter_Rc_Steps(list, context);
-        LinearLayoutManager manager = new LinearLayoutManager(context);
-        manager.setOrientation(HORIZONTAL);
+        GridLayoutManager manager = new GridLayoutManager(context, 1);
         recyclerView.setLayoutManager(manager);
+        manager.setOrientation(HORIZONTAL);
+        recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setAdapter(adapter);
     }
 

@@ -94,8 +94,8 @@ public class Frg_Step_Recipe extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!s.toString().equals("")) {
-                    long millis = (Integer.parseInt(String.valueOf(s)) * 60 * 1000);
+                if(!s.toString().isEmpty()) {
+                    long millis = ((long) Integer.parseInt(String.valueOf(s)) * 60 * 1000);
                     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis), TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                             TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
                     textViewTime.setText(hms);
