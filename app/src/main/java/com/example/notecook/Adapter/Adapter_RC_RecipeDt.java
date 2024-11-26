@@ -35,6 +35,8 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Fragement.Frg_Fav;
+import com.example.notecook.Fragement.Frg_recipe_ingredients;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Fragement.add_recipe;
 import com.example.notecook.Model.Recipe;
@@ -42,6 +44,7 @@ import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.SharedViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Callback;
@@ -50,6 +53,7 @@ import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -62,6 +66,8 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private Context context;
     private Activity activity;
     private FloatingActionButton Flbtn;
+    private SharedViewModel sharedViewModel = new SharedViewModel();
+
 
 
     public Adapter_RC_RecipeDt(Context context, Activity activity, List<Recipe> recipes, String bb) {
@@ -74,6 +80,13 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         notifyDataSetChanged();
     }
 
+    // Method to update the dataset with new data
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateData(List<Recipe> newData) {
+        recipes = new ArrayList<>();
+        recipes.addAll(newData);
+        notifyDataSetChanged(); // Notify the adapter that the dataset has changed
+    }
 
     @Override
     public Adapter_RC_RecipeDt.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -175,6 +188,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                                 //viewPager2.setCurrentItem(1);
                                 fetchRecipe(recipe);
                                 CURRENT_FULL_RECIPE = recipe;
+                                sharedViewModel.setData(CURRENT_FULL_RECIPE.getIngredients());
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();

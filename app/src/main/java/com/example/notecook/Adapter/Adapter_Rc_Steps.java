@@ -1,21 +1,27 @@
 package com.example.notecook.Adapter;
 
+import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
 import com.google.android.material.textview.MaterialTextView;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.ViewHolder> {
@@ -25,6 +31,14 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
     public Adapter_Rc_Steps(List<Step> steps,Context context) {
         this.steps = steps;
         this.context = context;
+    }
+
+    // Method to update the dataset with new data
+    @SuppressLint("NotifyDataSetChanged")
+    public void updateData(List<Step> newData) {
+        steps = new ArrayList<>();
+        steps.addAll(newData);
+        notifyDataSetChanged(); // Notify the adapter that the dataset has changed
     }
 
     @NonNull
@@ -43,6 +57,17 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         holder.textViewTxtTimeStep.setText(String.valueOf(step.getTime_step()));
         holder.linearlayout.setVisibility(View.GONE);
         holder.linearlayoutPlay.setVisibility(View.GONE);
+
+        if (TAG_EDIT_RECIPE) {
+            holder.btn_del.setVisibility(View.VISIBLE);
+        }else holder.btn_del.setVisibility(View.GONE);
+        holder.btn_del.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                steps.remove(step);
+                updateData(steps);
+            }
+        });
     }
 
     @Override
@@ -54,6 +79,7 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         TextView textViewDetailStep;
         TextView textViewOrderStep;
         EditText textViewTimeStep;
+        Button btn_del;
         MaterialTextView textViewTxtTimeStep;
         LinearLayout linearlayout;
         LinearLayout linearlayoutPlay;
@@ -63,9 +89,18 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
             textViewOrderStep = itemView.findViewById(R.id.order_step);
             textViewDetailStep = itemView.findViewById(R.id.detail_step);
             textViewTimeStep = itemView.findViewById(R.id.edit_time);
+            btn_del = itemView.findViewById(R.id.btn_del_step);
             textViewTxtTimeStep = itemView.findViewById(R.id.txt_aff);
             linearlayout = itemView.findViewById(R.id.ly_scrole);
             linearlayoutPlay = itemView.findViewById(R.id.ly_play);
+        }
+
+        public Button getBtn_del() {
+            return btn_del;
+        }
+
+        public void setBtn_del(Button btn_del) {
+            this.btn_del = btn_del;
         }
 
         public TextView getTextViewDetailStep() {

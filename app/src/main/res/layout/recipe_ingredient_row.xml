@@ -49,6 +49,7 @@
                 android:layout_weight="1"
                 android:text="/unite" />
             <ImageView
+                android:id="@+id/ImgV_delete"
                 android:background="@drawable/baseline_delete_24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

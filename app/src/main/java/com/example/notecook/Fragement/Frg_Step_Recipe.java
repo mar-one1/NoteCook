@@ -1,5 +1,7 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -36,7 +38,7 @@ public class Frg_Step_Recipe extends Fragment {
     FragmentFrgStepRecipeBinding binding;
     CounterClass timer = new CounterClass(0,0);
     TextView textViewTime;
-    Button btn_star, btn_cancel;
+    Button btn_star, btn_cancel,btn_del;
     private TimePicker picker_hours, picker_minute;
     private List<Step> steps = new ArrayList<>();
     private int current_id_step;
@@ -64,6 +66,7 @@ public class Frg_Step_Recipe extends Fragment {
         textViewTime = binding.txtAff;
         btn_star = binding.btnStar;
         btn_cancel = binding.btnCancel;
+        btn_del = binding.btnDelStep;
         /*picker_minute.setMinValue(0);
         picker_minute.setMaxValue(60);*/
 

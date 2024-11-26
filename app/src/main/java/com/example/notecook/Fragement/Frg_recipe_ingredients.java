@@ -1,6 +1,7 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Utils.Constants.Basket_list;
+import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.clickMoins;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +24,7 @@ import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.ViewModel.SharedViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeIngredientsBinding;
 
 import java.util.ArrayList;
@@ -29,11 +32,12 @@ import java.util.List;
 
 public class Frg_recipe_ingredients extends Fragment {
 
-    private FragmentFrgRecipeIngredientsBinding binding;
+    public static FragmentFrgRecipeIngredientsBinding binding;
     private List<Ingredients> List_ingredient;
     private RecyclerView mRecyclerView;
     private Button btn_plus, btn_moins;
     private TextView txt_cal;
+    private SharedViewModel sharedViewModel;
 
 
     public Frg_recipe_ingredients() {
@@ -107,6 +111,12 @@ public class Frg_recipe_ingredients extends Fragment {
             }
         });
 
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        sharedViewModel.getData().observe(getViewLifecycleOwner(), newData -> {
+             // Update the adapter with new data
+            Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe, getContext());
+        });
+
         return binding.getRoot();
 
     }
@@ -119,7 +129,7 @@ public class Frg_recipe_ingredients extends Fragment {
         List_ingredient = ingredientsDataSource1.getAllIngredeients();
         ingredientsDataSource1.close();
 
-        Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(List_ingredient);
+        Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(List_ingredient,getContext());
         GridLayoutManager manager = new GridLayoutManager(getContext(), 1);
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setLayoutManager(manager);

@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static org.chromium.base.ThreadUtils.runOnUiThread;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -402,12 +403,13 @@ public class Constants {
         });
     }
 
-
+    @SuppressLint("NotifyDataSetChanged")
     public static void bindingRcV_Ingredients(RecyclerView recyclerView, List<Ingredients> list, Context context) {
         // Create and set adapter for RecyclerView
-        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list);
+        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list,context);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
         recyclerView.setHorizontalScrollBarEnabled(true);
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
     }
 
