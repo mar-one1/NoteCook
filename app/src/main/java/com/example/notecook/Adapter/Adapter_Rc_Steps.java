@@ -70,6 +70,10 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         });
     }
 
+    // Method to get the data list
+    public List<Step> getDataList() {
+        return steps;
+    }
     @Override
     public int getItemCount() {
         return steps.size();

@@ -125,6 +125,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
 
                             @Override
                             public void onError(Exception e) {
+                                if(recipe.getPathimagerecipe().startsWith("/data"))
                                 holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
                             }
                         });

@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.notecook.Model.Review;
+import com.example.notecook.Model.Step;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,8 @@ public class ReviewDataSource {
         close();
         return newDR;
     }
+
+
 
     private Review cursorToComment(Cursor cursor) {
 
@@ -138,6 +141,49 @@ public class ReviewDataSource {
         }
         close();
         return ListDRByidRecipe;
+    }
+
+    public void deleteByIdRecipeReview(int id_recipe) {
+        open();
+        Log.d("gps", "Image  deleted with id: " + (long) id_recipe);
+        // Define the WHERE clause and the argument (ID to delete)
+        String whereClause = MySQLiteHelper.COLUMN_FRK_DETAIL_REVIEW_RECIPE + " = ?";
+        String[] whereArgs = {String.valueOf(id_recipe)};
+        // Delete the row(s) where the ID matches the given value
+        database.delete(MySQLiteHelper.TABLE_REVIEW_RECIPE, whereClause, whereArgs);
+        close();
+    }
+
+    public List<Step> Update_Review(List<Review> steps, int id) {
+        List<Step> updatedSteps = new ArrayList<>();
+        deleteByIdRecipeReview(id);
+        insert_Reviews(steps);
+        return updatedSteps;
+    }
+
+    public List<Review> insert_Reviews(List<Review> reviews) {
+        List<Review> insertedReviews = new ArrayList<>();
+
+        open();
+        for (Review review : reviews) {
+            ContentValues values = new ContentValues();
+            values.put(MySQLiteHelper.COLUMN_DETAIL_REVIEW_RECIPE, review.getDetail_Review_recipe());
+            values.put(MySQLiteHelper.COLUMN_RATE_REVIEW_RECIPE, review.getRate_Review_recipe());
+            values.put(MySQLiteHelper.COLUMN_FRK_DETAIL_REVIEW_RECIPE, review.getFRK_recipe());
+
+            long insertId = database.insert(MySQLiteHelper.TABLE_REVIEW_RECIPE, null,
+                    values);
+            Cursor cursor = database.query(MySQLiteHelper.TABLE_REVIEW_RECIPE,
+                    allColumns, MySQLiteHelper.COLUMN_ID_REVIEW_RECIPE + " = " + insertId, null,
+                    null, null, null);
+            cursor.moveToFirst();
+            Review insertedStep = cursorToComment(cursor);
+            cursor.close();
+
+            insertedReviews.add(insertedStep);
+        }
+        close();
+        return insertedReviews;
     }
 
 

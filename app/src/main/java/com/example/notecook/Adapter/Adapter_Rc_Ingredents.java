@@ -77,7 +77,7 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
         holder.btn_del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listidIngredient.remove(position);
+                listidIngredient.remove(Ingredients);
                 updateData(listidIngredient);
             }
         });
@@ -86,6 +86,10 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
     @Override
     public int getItemCount() {
         return listidIngredient.size();
+    }
+    // Method to get the data list
+    public List<Ingredients> getDataList() {
+        return listidIngredient;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -1,17 +1,12 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Activity.MainActivity.decod;
-import static com.example.notecook.Activity.MainActivity.encod;
 import static com.example.notecook.Utils.Constants.AffichageMessage;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
-import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 import static com.example.notecook.Utils.Constants.isConnected;
-import static com.example.notecook.Utils.Constants.list_recipe;
-import static com.example.notecook.Utils.Constants.navAction;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -25,7 +20,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -34,10 +28,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,8 +39,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 
+import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
+import com.example.notecook.Adapter.Adapter_Rc_Steps;
 import com.example.notecook.Data.UserDatasource;
-import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
@@ -119,7 +112,11 @@ public class add_recipe extends Fragment {
             @Override
             public void onClick(View v) {
                 if (All_Ingredients_Recipe != null && All_Ingredients_Recipe.size() != 0) {
-                    ingredientsList.add(All_Ingredients_Recipe.get(binding.spIngredients.getSelectedItemPosition()));
+                    Ingredients ingredient = All_Ingredients_Recipe.get(binding.spIngredients.getSelectedItemPosition());
+                    Adapter_Rc_Ingredents adapter = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
+                    if (adapter != null)
+                        ingredientsList = adapter.getDataList();
+                    ingredientsList.add(ingredient);
                     Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext());
                 }
             }
@@ -142,13 +139,16 @@ public class add_recipe extends Fragment {
         binding.addStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!binding.txtTotTiemsp.getText().toString().equals("0") && !binding.edtDetail.getText().toString().isEmpty()) {
+                if (!binding.txtTotTiemsp.getText().toString().equals("0") && !binding.edtDetail.getText().toString().isEmpty()) {
                     Step step = new Step(binding.edtDetail.getText().toString(), null, Integer.parseInt(binding.txtTotTiemsp.getText().toString()), 0);
+                    Adapter_Rc_Steps adapter = (Adapter_Rc_Steps) binding.recyclerViewSteps.getAdapter();
+                    if (adapter != null)
+                        stepsList = adapter.getDataList();
                     stepsList.add(step);
                     Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());
                     binding.txtTotTiemsp.setText("0");
                     binding.edtDetail.setText("");
-                }else Constants.showToast(getContext(),"step vide!!");
+                } else Constants.showToast(getContext(), "step vide!!");
             }
         });
 
@@ -194,10 +194,10 @@ public class add_recipe extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("TAG","onstart");
+        Log.d("TAG", "onstart");
         //if (TAG_EDIT_RECIPE) {
-          //  fullRecipeDetails(CURRENT_FULL_RECIPE);
-            //binding.btnAddRecipe.setText("Update");
+        //  fullRecipeDetails(CURRENT_FULL_RECIPE);
+        //binding.btnAddRecipe.setText("Update");
         //}
     }
 
