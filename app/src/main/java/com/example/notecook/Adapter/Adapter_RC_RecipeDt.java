@@ -16,7 +16,7 @@ import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Utils.env.BASE_URL;
+import static com.example.notecook.Api.env.BASE_URL;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -30,21 +30,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Dto.RecipeResponse;
-import com.example.notecook.Fragement.Frg_Fav;
-import com.example.notecook.Fragement.Frg_recipe_ingredients;
 import com.example.notecook.Fragement.MainFragment;
-import com.example.notecook.Fragement.add_recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.ViewModel.RecipeViewModel;
-import com.example.notecook.ViewModel.SharedViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Callback;
@@ -66,7 +61,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private Context context;
     private Activity activity;
     private FloatingActionButton Flbtn;
-    private SharedViewModel sharedViewModel = new SharedViewModel();
 
 
 
@@ -189,7 +183,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                                 //viewPager2.setCurrentItem(1);
                                 fetchRecipe(recipe);
                                 CURRENT_FULL_RECIPE = recipe;
-                                sharedViewModel.setData(CURRENT_FULL_RECIPE.getIngredients());
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();
@@ -224,7 +217,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         Detail_CurrentRecipe = recipeResponse.getDetail_recipe();
         Steps_CurrentRecipe = recipeResponse.getSteps();
         Review_CurrentRecipe = recipeResponse.getReviews();
-        Ingredients_CurrentRecipe = recipeResponse.getIngredients();
+        Ingredients_CurrentRecipe.setValue(recipeResponse.getIngredients());
         Review_CurrentRecipe = recipeResponse.getReviews();
         Favorite_CurrentRecipe = recipeResponse.getFavs();
     }

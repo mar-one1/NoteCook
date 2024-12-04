@@ -22,6 +22,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
     boolean checkInternet(Context context) {
         // return service.isNetworkAvailable(context);
-        return isConnected();
+        return isConnected(context);
     }
 }

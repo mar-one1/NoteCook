@@ -14,9 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1"
-            >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -271,7 +269,6 @@
                     android:textSize="15sp" />
 
                 <LinearLayout
-                    android:id="@+id/step_ly"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -279,58 +276,59 @@
                     android:layout_weight="1">
 
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="15dp"
-                            android:text="Time Step : "
-                            android:textSize="18sp" />
-
-                        <Button
-                            android:id="@+id/btn_moins_timesp"
-                            android:layout_width="56dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginRight="15dp"
-                            android:backgroundTint="@color/white"
-                            android:text="-"
-                            android:textColor="@color/red"
-                            android:textSize="15sp" />
-
-                        <EditText
-                            android:id="@+id/txt_tot_tiemsp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="15dp"
-                            android:enabled="true"
-                            android:inputType="number"
-                            android:maxLength="3"
-                            android:padding="5sp"
-                            android:text="1"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <Button
-                            android:id="@+id/btn_plus_timesp"
-                            android:layout_width="56dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="15dp"
-                            android:backgroundTint="@color/white"
-                            android:text="+"
-                            android:textColor="@color/red"
-                            android:textSize="15sp" />
-
-                    </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/step_ly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_weight="1">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="15dp"
+                                android:text="Time Step : "
+                                android:textSize="18sp" />
+
+                            <Button
+                                android:id="@+id/btn_moins_timesp"
+                                android:layout_width="56dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginRight="15dp"
+                                android:backgroundTint="@color/white"
+                                android:text="-"
+                                android:textColor="@color/red"
+                                android:textSize="15sp" />
+
+                            <EditText
+                                android:id="@+id/txt_tot_tiemsp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="15dp"
+                                android:enabled="true"
+                                android:inputType="number"
+                                android:maxLength="3"
+                                android:padding="5sp"
+                                android:text="1"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <Button
+                                android:id="@+id/btn_plus_timesp"
+                                android:layout_width="56dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="15dp"
+                                android:backgroundTint="@color/white"
+                                android:text="+"
+                                android:textColor="@color/red"
+                                android:textSize="15sp" />
+
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -354,18 +352,18 @@
                             android:text="ADD step"
                             android:layout_gravity="center"
                             />
-                        <!-- RecyclerView for Steps -->
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerViewSteps"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="16dp"
-                            android:orientation="horizontal"/>
+
+
                     </LinearLayout>
 
-
+                    <!-- RecyclerView for Steps -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewSteps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp" />
                 </LinearLayout>
 
                 <Button

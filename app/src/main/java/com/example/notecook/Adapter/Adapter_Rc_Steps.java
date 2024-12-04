@@ -1,6 +1,7 @@
 package com.example.notecook.Adapter;
 
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
+import static com.example.notecook.Utils.Constants.TAG_MY;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -57,10 +58,12 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         holder.textViewTxtTimeStep.setText(String.valueOf(step.getTime_step()));
         holder.linearlayout.setVisibility(View.GONE);
         holder.linearlayoutPlay.setVisibility(View.GONE);
+        holder.btn_del.setVisibility(View.GONE);
 
-        if (TAG_EDIT_RECIPE) {
+        if (TAG_MY) {
             holder.btn_del.setVisibility(View.VISIBLE);
         }else holder.btn_del.setVisibility(View.GONE);
+
         holder.btn_del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

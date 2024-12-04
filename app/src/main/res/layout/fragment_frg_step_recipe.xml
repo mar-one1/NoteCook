@@ -147,7 +147,8 @@ The worst kind of blah-blah has no function; it's pure filler — platitudes,
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="delete" />
+                android:text="delete"
+                android:visibility="gone"/>
         </LinearLayout>
         <!--<LinearLayout
             android:layout_width="wrap_content"

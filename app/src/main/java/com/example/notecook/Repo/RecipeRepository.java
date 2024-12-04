@@ -13,7 +13,7 @@ import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.showToast;
 import static com.example.notecook.Utils.Constants.user_login_local;
-import static com.example.notecook.Utils.env.BASE_URL;
+import static com.example.notecook.Api.env.BASE_URL;
 
 import android.app.Activity;
 import android.content.Context;

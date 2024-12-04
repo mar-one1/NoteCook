@@ -1,6 +1,7 @@
 package com.example.notecook.Adapter;
 
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
+import static com.example.notecook.Utils.Constants.TAG_MY;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -70,7 +71,7 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
             }
         });
 
-        if (TAG_EDIT_RECIPE) {
+        if (TAG_MY) {
             holder.btn_del.setVisibility(View.VISIBLE);
         }else holder.btn_del.setVisibility(View.GONE);
 

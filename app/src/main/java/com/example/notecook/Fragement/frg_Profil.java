@@ -7,7 +7,7 @@ import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
-import static com.example.notecook.Utils.env.BASE_URL;
+import static com.example.notecook.Api.env.BASE_URL;
 
 import android.graphics.Color;
 import android.os.Bundle;

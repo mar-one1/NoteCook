@@ -16,7 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +26,7 @@ import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.ViewModel.SharedViewModel;
+import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeIngredientsBinding;
 
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ public class Frg_recipe_ingredients extends Fragment {
     private RecyclerView mRecyclerView;
     private Button btn_plus, btn_moins;
     private TextView txt_cal;
-    private SharedViewModel sharedViewModel;
+    private IngredientsViewModel VMIngredient;
 
 
     public Frg_recipe_ingredients() {
@@ -47,7 +49,7 @@ public class Frg_recipe_ingredients extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe, getContext());
+        Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe.getValue(), getContext());
         Toast.makeText(getContext(), "onDestroyView", Toast.LENGTH_SHORT).show();
     }
 
@@ -61,7 +63,6 @@ public class Frg_recipe_ingredients extends Fragment {
     public void onPause() {
         super.onPause();
         Toast.makeText(getContext(), "onPause Frg_ingredient", Toast.LENGTH_SHORT).show();
-        //bindingRcV_Ingredients(mRecyclerView);
     }
 
     @Override
@@ -74,8 +75,6 @@ public class Frg_recipe_ingredients extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe, getContext());
         Toast.makeText(getContext(), "onResume Frg_ingredient", Toast.LENGTH_SHORT).show();
     }
 
@@ -89,7 +88,8 @@ public class Frg_recipe_ingredients extends Fragment {
         txt_cal = binding.txtTot;
         // Inflate the layout for this fragment
         mRecyclerView = binding.RcIngred;
-        Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe, getContext());
+        VMIngredient = new IngredientsViewModel(getContext(), getActivity());
+        Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe.getValue(), getContext());
         Toast.makeText(getContext(), "onCreateView", Toast.LENGTH_SHORT).show();
         btn_plus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,11 +111,14 @@ public class Frg_recipe_ingredients extends Fragment {
             }
         });
 
-        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        sharedViewModel.getData().observe(getViewLifecycleOwner(), newData -> {
-             // Update the adapter with new data
-            Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe, getContext());
+        Ingredients_CurrentRecipe.observe(getViewLifecycleOwner(), new Observer<List<Ingredients>>() {
+            @Override
+            public void onChanged(List<Ingredients> ingredients) {
+                // Update the adapter with new data
+                Constants.bindingRcV_Ingredients(mRecyclerView, ingredients, getContext());
+            }
         });
+
 
         return binding.getRoot();
 
@@ -129,7 +132,7 @@ public class Frg_recipe_ingredients extends Fragment {
         List_ingredient = ingredientsDataSource1.getAllIngredeients();
         ingredientsDataSource1.close();
 
-        Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(List_ingredient,getContext());
+        Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(List_ingredient, getContext());
         GridLayoutManager manager = new GridLayoutManager(getContext(), 1);
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setLayoutManager(manager);

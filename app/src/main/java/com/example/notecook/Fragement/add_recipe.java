@@ -4,6 +4,7 @@ import static com.example.notecook.Utils.Constants.AffichageMessage;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
+import static com.example.notecook.Utils.Constants.TAG_MY;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 import static com.example.notecook.Utils.Constants.isConnected;
@@ -97,6 +98,7 @@ public class add_recipe extends Fragment {
         int bnvId = R.id.bottom_nav;
         BottomNavigationView btnV = getActivity().findViewById(bnvId);
         recipes = new ArrayList<>();
+        TAG_MY = true;
         recipeVM = new RecipeViewModel(getContext(), getActivity());
         userVM = new UserViewModel(getContext(), getActivity());
         inputValidator = new InputValidator();
@@ -201,12 +203,12 @@ public class add_recipe extends Fragment {
         //}
     }
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         CURRENT_FULL_RECIPE = new RecipeResponse();
         TAG_EDIT_RECIPE = false;
+        TAG_MY = false;
     }
 
     private void fullRecipeDetails(RecipeResponse recipeR) {
@@ -253,18 +255,25 @@ public class add_recipe extends Fragment {
         if (recipeR.isAddedToRemote() && recipeR.isAddedToLocal()) {
 
             Constants.showToast(getContext(), "Recipe is success added before!!!");
-        } else if (inp.isValidAddRecipe(binding.editTextRecipeName, binding.editTextInstructions, binding.edtDetail)) {
+        } else if (inp.isValidAddRecipe(binding.editTextRecipeName, binding.editTextInstructions)) {
             Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
             Detail_Recipe detail_recipe = new Detail_Recipe();
             detail_recipe.setDt_recipe(binding.editTextInstructions.getText().toString());
             detail_recipe.setTime(Integer.parseInt(binding.txtTotTime.getText().toString()));
             detail_recipe.setCal(Integer.parseInt(binding.txtTotCal.getText().toString()));
             detail_recipe.setLevel(binding.levelRecipe.getSelectedItem().toString());
-            recipeR.setIngredients(ingredientsList);
             recipeR.setDetail_recipe(detail_recipe);
+            Adapter_Rc_Ingredents adapter = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
+            if (adapter != null) {
+                ingredientsList = adapter.getDataList();
+            }
+            Adapter_Rc_Steps adapterSteps = (Adapter_Rc_Steps) binding.recyclerViewSteps.getAdapter();
+            if (adapterSteps != null)
+                stepsList = adapterSteps.getDataList();
+            recipeR.setIngredients(ingredientsList);
             recipeR.setSteps(stepsList);
 
-            if (isConnected() && !recipeR.isAddedToRemote())
+            if (isConnected(getContext()) && !recipeR.isAddedToRemote())
                 if (user_login.getUser() != null) {
                     Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User(), randomKey);
                     postRecipeToRemote(recipeR, recipe, bitmap);
@@ -276,6 +285,7 @@ public class add_recipe extends Fragment {
                 recipe.setFrk_user(user_login_local.getUser().getId_User());
             else {
                 userVM.getUserLocal(Constants.getUserInput(requireContext()), "success");
+                detach();
                 recipe.setFrk_user(user_login_local.getUser().getId_User());
             }
             if (!recipeR.isAddedToLocal())
@@ -320,7 +330,14 @@ public class add_recipe extends Fragment {
         CURRENT_FULL_RECIPE.getDetail_recipe().setTime(Integer.parseInt(binding.txtTotTime.getText().toString()));
         CURRENT_FULL_RECIPE.getDetail_recipe().setCal(Integer.parseInt(binding.txtTotCal.getText().toString()));
         CURRENT_FULL_RECIPE.getDetail_recipe().setLevel(binding.levelRecipe.getSelectedItem().toString());
+        Adapter_Rc_Ingredents adapter = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
+        if (adapter != null) {
+            ingredientsList = adapter.getDataList();
+        }
         CURRENT_FULL_RECIPE.setIngredients(ingredientsList);
+        Adapter_Rc_Steps adapterSteps = (Adapter_Rc_Steps) binding.recyclerViewSteps.getAdapter();
+        if (adapterSteps != null)
+            stepsList = adapterSteps.getDataList();
         CURRENT_FULL_RECIPE.setSteps(stepsList);
         recipeVM.updateFullRecipeLocal(CURRENT_FULL_RECIPE).observe(requireActivity(), new Observer<RecipeResponse>() {
             @Override
@@ -495,7 +512,7 @@ public class add_recipe extends Fragment {
         }
     }
 
-
+//TODO VERIFY THE RECYCLE OF RECIPE NO SHOWING IN ADD MODE WHERE THE LIST IS EMPTY
     private User getLocalUser(String username) {
         UserDatasource userDatasource = new UserDatasource(getContext());
         userDatasource.open();

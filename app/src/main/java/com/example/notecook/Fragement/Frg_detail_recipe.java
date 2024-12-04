@@ -7,7 +7,7 @@ import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
-import static com.example.notecook.Utils.env.BASE_URL;
+import static com.example.notecook.Api.env.BASE_URL;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;

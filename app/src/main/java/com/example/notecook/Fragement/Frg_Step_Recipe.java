@@ -66,7 +66,6 @@ public class Frg_Step_Recipe extends Fragment {
         textViewTime = binding.txtAff;
         btn_star = binding.btnStar;
         btn_cancel = binding.btnCancel;
-        btn_del = binding.btnDelStep;
         /*picker_minute.setMinValue(0);
         picker_minute.setMaxValue(60);*/
 

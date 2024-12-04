@@ -33,6 +33,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -102,7 +103,8 @@ public class Constants {
     public static final String TAG_INFO_ERONEE = "Username or password Invalide!!  ";
     public static final String TAG_REMOTE = "Remote";
     public static final String TAG_LOCAL = "Local";
-    public static Boolean TAG_EDIT_RECIPE= false;
+    public static Boolean TAG_EDIT_RECIPE = false;
+    public static Boolean TAG_MY = false;
     public static final String lOGIN_KEY = "Connection_complete";
     public static final String SYNCH_KEY = "Synch_complete";
     public static final String TAG_MODE_INVITE = "Mode Invite";
@@ -128,7 +130,7 @@ public class Constants {
     public static Detail_Recipe Detail_CurrentRecipe;
     public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
     public static List<Review> Review_CurrentRecipe = new ArrayList<>();
-    public static List<Ingredients> Ingredients_CurrentRecipe = new ArrayList<>();
+    public static MutableLiveData<List<Ingredients>> Ingredients_CurrentRecipe = null;
     public static List<Favorite_Recipe> Favorite_CurrentRecipe = new ArrayList<>();
     public static List<Ingredients> All_Ingredients_Recipe = new ArrayList<>();
     public static List<Category_Recipe> All_Categories_Recipe = new ArrayList<>();
@@ -230,7 +232,7 @@ public class Constants {
         list_recipe = new MutableLiveData<>();
         Steps_CurrentRecipe = new ArrayList<>();
         Review_CurrentRecipe = new ArrayList<>();
-        Ingredients_CurrentRecipe = new ArrayList<>();
+        Ingredients_CurrentRecipe = new MutableLiveData<>();
         All_Ingredients_Recipe = new ArrayList<>();
         Search_list = new ArrayList<>();
         Basket_list = new ArrayList<>();
@@ -317,9 +319,9 @@ public class Constants {
     public static boolean NetworkIsConnected(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
 
-        return (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED);
+        return false; // Not connected to a network or no internet access
     }
+
 
     public static void saveToken(String token, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("MyPrefs", MODE_PRIVATE);
@@ -354,12 +356,12 @@ public class Constants {
         return sharedPreferences.getString("username", "");
     }
 
-    public static boolean isConnected() {
+    public static boolean isConnected(Context context) {
         final AtomicBoolean connected = new AtomicBoolean(false);
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                connected.set(isOnline());
+                connected.set(NetworkIsConnected(context));
                 Log.d("tag internet", String.valueOf(connected));
             }
         });
@@ -406,7 +408,7 @@ public class Constants {
     @SuppressLint("NotifyDataSetChanged")
     public static void bindingRcV_Ingredients(RecyclerView recyclerView, List<Ingredients> list, Context context) {
         // Create and set adapter for RecyclerView
-        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list,context);
+        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list, context);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
         recyclerView.setHorizontalScrollBarEnabled(true);
         adapter.notifyDataSetChanged();
@@ -483,7 +485,7 @@ public class Constants {
                 });
     }
 
-    public static void clickMoins(TextView textView ,Button buttonMoins) {
+    public static void clickMoins(TextView textView, Button buttonMoins) {
         int t = Integer.parseInt(textView.getText().toString());
         if (t <= 0) {
             buttonMoins.setEnabled(false);
