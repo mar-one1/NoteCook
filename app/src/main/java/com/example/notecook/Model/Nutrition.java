@@ -2,30 +2,58 @@ package com.example.notecook.Model;
 
 public class Nutrition {
 
-    private int NutritionID;
-    private String NutritionDescription;
+    private String description;
+    private double calories;
+    private double protein;
+    private double fat;
+    private double carbs;
+    private double servingSize;
+    private String servingUnit;
+
+    // Constructor with serving size and unit
+    public Nutrition(String description, double calories, double protein, double fat, double carbs, double servingSize, String servingUnit) {
+        this.description = description;
+        this.calories = calories;
+        this.protein = protein;
+        this.fat = fat;
+        this.carbs = carbs;
+        this.servingSize = servingSize;
+        this.servingUnit = servingUnit;
+    }
 
     public Nutrition() {
     }
 
-    public Nutrition(int nutritionID, String nutritionDescription) {
-        NutritionID = nutritionID;
-        NutritionDescription = nutritionDescription;
+    // Getters and Setters
+    public String getDescription() {
+        return description;
     }
 
-    public int getNutritionID() {
-        return NutritionID;
+    public double getCalories() {
+        return calories;
     }
 
-    public void setNutritionID(int nutritionID) {
-        NutritionID = nutritionID;
+    public double getProtein() {
+        return protein;
     }
 
-    public String getNutritionDescription() {
-        return NutritionDescription;
+    public double getFat() {
+        return fat;
     }
 
-    public void setNutritionDescription(String nutritionDescription) {
-        NutritionDescription = nutritionDescription;
+    public double getCarbs() {
+        return carbs;
+    }
+
+    public double getServingSize() {
+        return servingSize;
+    }
+
+    public void setServingSize(double servingSize) {
+        this.servingSize = servingSize;
+    }
+
+    public String getServingUnit() {
+        return servingUnit;
     }
 }

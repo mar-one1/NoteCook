@@ -22,6 +22,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +34,14 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
+import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.FetchNutritionTask;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
@@ -52,7 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeDt.ViewHolder> {
+public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_RecipeDt.ViewHolder> implements FetchNutritionTask.OnNutritionFetchedListener {
 
     private String b;
     private List<Recipe> recipes;
@@ -63,7 +67,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private FloatingActionButton Flbtn;
 
 
-
     public Adapter_RC_RecipeDt(Context context, Activity activity, List<Recipe> recipes, String bb) {
         this.recipes = recipes;
         b = bb;
@@ -72,14 +75,6 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         recipeVM = new RecipeViewModel(context, activity);
         userVM = new UserViewModel(context, activity);
         notifyDataSetChanged();
-    }
-
-    // Method to update the dataset with new data
-    @SuppressLint("NotifyDataSetChanged")
-    public void updateData(List<Recipe> newData) {
-        recipes = new ArrayList<>();
-        recipes.addAll(newData);
-        notifyDataSetChanged(); // Notify the adapter that the dataset has changed
     }
 
     @Override
@@ -119,8 +114,8 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
 
                             @Override
                             public void onError(Exception e) {
-                                if(recipe.getPathimagerecipe().startsWith("/data"))
-                                holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
+                                if (recipe.getPathimagerecipe().startsWith("/data"))
+                                    holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
                             }
                         });
             }
@@ -140,7 +135,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             FragmentActivity fragmentActivity = (FragmentActivity) view.getContext();
             Flbtn = fragmentActivity.findViewById(R.id.floating_action_button);
             CURRENT_RECIPE = recipe;
-            TAG_EDIT_RECIPE=true;
+            TAG_EDIT_RECIPE = true;
             recipeVM.getFullRecipeLocal(recipe).observe(fragmentActivity, new Observer<RecipeResponse>() {
                 @Override
                 public void onChanged(RecipeResponse recipeResponse) {
@@ -169,7 +164,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         });
 
         holder.Image.setOnClickListener(v -> {
-            TAG_EDIT_RECIPE=false;
+            TAG_EDIT_RECIPE = false;
             // Get the FragmentActivity associated with the context of the clicked view
             FragmentActivity fragmentActivity = (FragmentActivity) v.getContext();
             if (CURRENT_RECIPE != recipe) {
@@ -184,6 +179,8 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                                 fetchRecipe(recipe);
                                 CURRENT_FULL_RECIPE = recipe;
                                 MainFragment.viewPager2.setCurrentItem(1, false);
+                                // Fetch nutrition for "apple"
+                                fetchNutritionData(CURRENT_FULL_RECIPE.getRecipe().getNom_recipe(),100);
                             }
                             Constants.dismissLoadingDialog();
                         }
@@ -209,6 +206,36 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                 Constants.dismissLoadingDialog();
             }
         });
+    }
+    // Method to fetch nutrition data with custom serving size
+    public void fetchNutritionData(String query, double servingSize) {
+        new FetchNutritionTask(this, servingSize).execute(query);
+    }
+
+    @Override
+    public void onNutritionFetched(Nutrition nutrition) {
+        if (nutrition != null) {
+            // Calculate the nutrition based on the custom serving size entered by the user
+            double customCalories = nutrition.getCalories() * nutrition.getServingSize() / 100;
+            double customProtein = nutrition.getProtein() * nutrition.getServingSize() / 100;
+            double customFat = nutrition.getFat() * nutrition.getServingSize() / 100;
+            double customCarbs = nutrition.getCarbs() * nutrition.getServingSize() / 100;
+
+            // Display updated nutrition info
+            String nutritionInfo = "Name: " + nutrition.getDescription() + "\n" +
+                    "Calories: " + customCalories + " kcal\n" +
+                    "Protein: " + customProtein + " g\n" +
+                    "Fat: " + customFat + " g\n" +
+                    "Carbs: " + customCarbs + " g\n" +
+                    "Serving Size: " + nutrition.getServingSize() + " " + nutrition.getServingUnit();
+
+            CURRENT_FULL_RECIPE.setNutrition(nutrition);
+            Log.e("nutrition",nutritionInfo);
+            Log.e("nutrition", String.valueOf(nutrition.getCarbs()));
+
+        } else {
+            Log.e("nutrition","Failed to fetch nutrition data.");
+        }
     }
 
     private void fetchRecipe(RecipeResponse recipeResponse) {

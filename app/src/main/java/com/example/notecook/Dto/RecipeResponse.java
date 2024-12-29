@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Favorite_Recipe;
 import com.example.notecook.Model.Ingredients;
+import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
@@ -29,6 +30,8 @@ public class RecipeResponse {
     @SerializedName("favs")
     private List<Favorite_Recipe> favs;
     private Bitmap ImageRecipe;
+
+    private Nutrition nutrition;
     // Parameter to track if the data has been added locally
     private boolean addedToLocal;
     // Parameter to track if the data has been added remotely
@@ -112,5 +115,13 @@ public class RecipeResponse {
 
     public void setSteps(List<Step> steps) {
         this.steps = steps;
+    }
+
+    public Nutrition getNutrition() {
+        return nutrition;
+    }
+
+    public void setNutrition(Nutrition nutrition) {
+        this.nutrition = nutrition;
     }
 }

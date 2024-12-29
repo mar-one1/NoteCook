@@ -29,10 +29,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.notecook.Activity.OnBoarding.OnBoarding_screen;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Category_Recipe;
+import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.FetchNutritionTask;
 import com.example.notecook.Utils.NetworkChangeReceiver;
+import com.example.notecook.Utils.NutritionParser;
 import com.example.notecook.ViewModel.CategoriesViewModel;
 import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
@@ -47,7 +50,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
 
     private static final int REQUEST_CODE = 1000;
@@ -229,6 +232,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         unregisterReceiver(networkChangeReceiver);
     }
+
+
 
 
 }

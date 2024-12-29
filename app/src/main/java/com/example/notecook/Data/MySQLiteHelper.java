@@ -89,7 +89,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     private static final String DATABASE_CREATE_STEP_RECIPE = "create table "
             + TABLE_STEP_RECIPE + "(" + COLUMN_ID_STEP_RECIPE
             + " integer primary key autoincrement, " + COLUMN_DETAIL_STEP_RECIPE
-            + " text, " + COLUMN_IMAGE_STEP + " integer , " + COLUMN_TIME_STEP + " text, "
+            + " text, " + COLUMN_IMAGE_STEP + " text , " + COLUMN_TIME_STEP + " text, "
             + COLUMN_FRK_STEP_RECIPE + " integer, " + " FOREIGN KEY (" + COLUMN_FRK_STEP_RECIPE + ") REFERENCES " + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE + ") ON DELETE CASCADE );";
 
     /*

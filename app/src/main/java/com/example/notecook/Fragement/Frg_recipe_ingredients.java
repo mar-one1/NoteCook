@@ -22,9 +22,11 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notecook.Adapter.Adapter_RC_Nutrition;
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Model.Ingredients;
+import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeIngredientsBinding;
@@ -90,6 +92,7 @@ public class Frg_recipe_ingredients extends Fragment {
         mRecyclerView = binding.RcIngred;
         VMIngredient = new IngredientsViewModel(getContext(), getActivity());
         Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe.getValue(), getContext());
+        bindingRcV_Nutrition(binding.RcvNutrition);
         Toast.makeText(getContext(), "onCreateView", Toast.LENGTH_SHORT).show();
         btn_plus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,18 +128,20 @@ public class Frg_recipe_ingredients extends Fragment {
     }
 
     public void bindingRcV_Nutrition(RecyclerView recyclerView) {
-        List_ingredient = new ArrayList<>();
+        //List_ingredient = new ArrayList<>();
 
-        IngredientsDataSource ingredientsDataSource1 = new IngredientsDataSource(getContext());
-        ingredientsDataSource1.open();
-        List_ingredient = ingredientsDataSource1.getAllIngredeients();
-        ingredientsDataSource1.close();
+//        IngredientsDataSource ingredientsDataSource1 = new IngredientsDataSource(getContext());
+//        ingredientsDataSource1.open();
+//        List_ingredient = ingredientsDataSource1.getAllIngredeients();
+//        ingredientsDataSource1.close();
 
-        Adapter_Rc_Ingredents adapter_rc_ingredents = new Adapter_Rc_Ingredents(List_ingredient, getContext());
+        List<Nutrition> nutritions = new ArrayList<>();
+        nutritions.add(CURRENT_FULL_RECIPE.getNutrition());
+        Adapter_RC_Nutrition adapter_rc_nutrition = new Adapter_RC_Nutrition(nutritions, getContext());
         GridLayoutManager manager = new GridLayoutManager(getContext(), 1);
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setLayoutManager(manager);
-        recyclerView.setAdapter(adapter_rc_ingredents);
+        recyclerView.setAdapter(adapter_rc_nutrition);
 
 
     }
