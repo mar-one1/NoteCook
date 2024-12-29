@@ -10,6 +10,7 @@ import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Favorite_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
+import static com.example.notecook.Utils.Constants.Remote_nutritions;
 import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
@@ -178,9 +179,10 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
                                 //viewPager2.setCurrentItem(1);
                                 fetchRecipe(recipe);
                                 CURRENT_FULL_RECIPE = recipe;
-                                MainFragment.viewPager2.setCurrentItem(1, false);
                                 // Fetch nutrition for "apple"
                                 fetchNutritionData(CURRENT_FULL_RECIPE.getRecipe().getNom_recipe(),100);
+                                MainFragment.viewPager2.setCurrentItem(1, false);
+
                             }
                             Constants.dismissLoadingDialog();
                         }
@@ -230,6 +232,7 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
                     "Serving Size: " + nutrition.getServingSize() + " " + nutrition.getServingUnit();
 
             CURRENT_FULL_RECIPE.setNutrition(nutrition);
+            Remote_nutritions.setValue(nutrition);
             Log.e("nutrition",nutritionInfo);
             Log.e("nutrition", String.valueOf(nutrition.getCarbs()));
 

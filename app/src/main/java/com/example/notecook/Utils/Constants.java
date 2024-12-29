@@ -61,6 +61,7 @@ import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Favorite_Recipe;
 import com.example.notecook.Model.Ingredients;
+import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
@@ -141,6 +142,7 @@ public class Constants {
     public static MutableLiveData<List<Recipe>> Remotelist_recipe = new MutableLiveData<>();
     public static MutableLiveData<List<Recipe>> RemotelistByIdUser_recipe = new MutableLiveData<>();
     public static MutableLiveData<List<RecipeResponse>> RemotelistFullRecipe = new MutableLiveData<>();
+    public static MutableLiveData<Nutrition> Remote_nutritions = new MutableLiveData<>();
     public static String TAG_CONNEXION_LOCAL = "";
     public static TokenResponse user_login = new TokenResponse();
     public static TokenResponse user_login_local = new TokenResponse();

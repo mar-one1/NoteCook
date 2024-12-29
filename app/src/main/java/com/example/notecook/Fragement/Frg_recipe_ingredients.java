@@ -4,6 +4,7 @@ import static com.example.notecook.Utils.Constants.Basket_list;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.Remote_nutritions;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 
@@ -92,7 +93,12 @@ public class Frg_recipe_ingredients extends Fragment {
         mRecyclerView = binding.RcIngred;
         VMIngredient = new IngredientsViewModel(getContext(), getActivity());
         Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe.getValue(), getContext());
-        bindingRcV_Nutrition(binding.RcvNutrition);
+        Remote_nutritions.observe(getViewLifecycleOwner(), new Observer<Nutrition>() {
+            @Override
+            public void onChanged(Nutrition nutrition) {
+                bindingRcV_Nutrition(binding.RcvNutrition);
+            }
+        });
         Toast.makeText(getContext(), "onCreateView", Toast.LENGTH_SHORT).show();
         btn_plus.setOnClickListener(new View.OnClickListener() {
             @Override

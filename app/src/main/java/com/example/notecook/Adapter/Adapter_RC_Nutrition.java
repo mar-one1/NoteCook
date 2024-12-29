@@ -39,12 +39,24 @@ public class Adapter_RC_Nutrition extends RecyclerView.Adapter<Adapter_RC_Nutrit
 
     @Override
     public void onBindViewHolder(@androidx.annotation.NonNull ViewHolder holder, int position) {
-      Nutrition nutrition1 = nutrition.get(position);
-      holder.nut_cal.setText(String.valueOf(nutrition1.getCalories()));
-      holder.nut_Pro.setText(String.valueOf(nutrition1.getProtein()));
-      holder.nut_Fat.setText(String.valueOf(nutrition1.getFat()));
-      holder.nut_carb.setText(String.valueOf(nutrition1.getCarbs()));
+        Nutrition nutrition1 = nutrition.get(position);
+
+        if (nutrition1 == null) {
+            // Handle the null case, e.g., set default values or skip binding
+            holder.nut_cal.setText("N/A");
+            holder.nut_Pro.setText("N/A");
+            holder.nut_Fat.setText("N/A");
+            holder.nut_carb.setText("N/A");
+            return;
+        }
+
+        // Populate the views with the actual data
+        holder.nut_cal.setText(String.format("%.2f", nutrition1.getCalories()));
+        holder.nut_Pro.setText(String.format("%.2f", nutrition1.getProtein()));
+        holder.nut_Fat.setText(String.format("%.2f", nutrition1.getFat()));
+        holder.nut_carb.setText(String.format("%.2f", nutrition1.getCarbs()));
     }
+
 
     @Override
     public int getItemCount() {
