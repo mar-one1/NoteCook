@@ -51,10 +51,10 @@ public class Adapter_RC_Nutrition extends RecyclerView.Adapter<Adapter_RC_Nutrit
         }
 
         // Populate the views with the actual data
-        holder.nut_cal.setText(String.format("%.2f", nutrition1.getCalories()));
-        holder.nut_Pro.setText(String.format("%.2f", nutrition1.getProtein()));
-        holder.nut_Fat.setText(String.format("%.2f", nutrition1.getFat()));
-        holder.nut_carb.setText(String.format("%.2f", nutrition1.getCarbs()));
+        holder.nut_cal.setText(String.format("%.2f", nutrition1.getCalories())+" "+nutrition1.getServingUnit());
+        holder.nut_Pro.setText(String.format("%.2f", nutrition1.getProtein())+" "+nutrition1.getServingUnit());
+        holder.nut_Fat.setText(String.format("%.2f", nutrition1.getFat())+" "+nutrition1.getServingUnit());
+        holder.nut_carb.setText(String.format("%.2f", nutrition1.getCarbs())+" "+nutrition1.getServingUnit());
     }
 
 

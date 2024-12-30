@@ -2,6 +2,7 @@ package com.example.notecook.Adapter;
 
 
 import static com.example.notecook.Activity.MainActivity.decod;
+import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
@@ -17,7 +18,6 @@ import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Api.env.BASE_URL;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -35,7 +35,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Nutrition;
@@ -53,7 +52,6 @@ import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -210,6 +208,10 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
         });
     }
     // Method to fetch nutrition data with custom serving size
+    public void fetchNutritionData(String query, double servingSize,String ServingUnit) {
+        new FetchNutritionTask(this, servingSize,ServingUnit).execute(query);
+    }// Method to fetch nutrition data with custom serving size
+
     public void fetchNutritionData(String query, double servingSize) {
         new FetchNutritionTask(this, servingSize).execute(query);
     }

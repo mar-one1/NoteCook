@@ -21,6 +21,20 @@ public class Nutrition {
         this.servingUnit = servingUnit;
     }
 
+    // Scale nutrition to a different serving size
+    public Nutrition scaleToServing(double newServingSize, String newUnit) {
+        double scalingFactor = newServingSize / this.servingSize;
+
+        return new Nutrition(
+                this.description,
+                this.calories * scalingFactor,
+                this.protein * scalingFactor,
+                this.fat * scalingFactor,
+                this.carbs * scalingFactor,
+                newServingSize,
+                newUnit // New unit can be set here if needed
+        );
+    }
     public Nutrition() {
     }
 
@@ -55,5 +69,9 @@ public class Nutrition {
 
     public String getServingUnit() {
         return servingUnit;
+    }
+
+    public void setServingUnit(String servingUnit) {
+        this.servingUnit = servingUnit;
     }
 }

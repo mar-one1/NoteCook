@@ -1,16 +1,9 @@
 package com.example.notecook.Utils;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.notecook.Model.Nutrition;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Scanner;
-
-import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -23,10 +16,17 @@ public class FetchNutritionTask extends AsyncTask<String, Void, Nutrition> {
 
     private OnNutritionFetchedListener listener;
     private double customServingSize;
+    private String customgetServingUnit;
 
     public FetchNutritionTask(OnNutritionFetchedListener listener, double customServingSize) {
         this.listener = listener;
         this.customServingSize = customServingSize;
+    }
+
+    public FetchNutritionTask(OnNutritionFetchedListener listener, double customServingSize, String customgetServingUnit) {
+        this.listener = listener;
+        this.customServingSize = customServingSize;
+        this.customgetServingUnit = customgetServingUnit;
     }
 
     @Override

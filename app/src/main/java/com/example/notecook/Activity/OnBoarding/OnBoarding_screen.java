@@ -11,6 +11,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.R;
+import com.example.notecook.Utils.SecurePreferences;
 
 public class OnBoarding_screen extends AppCompatActivity {
 
@@ -55,11 +56,11 @@ public class OnBoarding_screen extends AppCompatActivity {
     }
 
     private void completeOnboarding() {
-        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("isFirstRun", false);
-        editor.apply();
-
+        SecurePreferences.savePrefData("isFirstRun",false);
+//        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putBoolean("isFirstRun", false);
+//        editor.apply();
         Intent intent = new Intent(OnBoarding_screen.this, MainActivity.class);
         startActivity(intent);
         finish();
