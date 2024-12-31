@@ -2,12 +2,15 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.Activity.MainActivity.Type_User;
 import static com.example.notecook.Activity.MainActivity.decod;
+import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
+import static com.example.notecook.Utils.Constants.RemotelistByIdUser_recipe;
+import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.getUserInput;
+import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
-import static com.example.notecook.Api.env.BASE_URL;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,6 +27,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
+import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -37,11 +42,12 @@ import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class frg_Profil extends Fragment implements FragmentLifecycle {
 
-    private String TAG = "Profil";
     public static FragmentFrgProfilBinding bindingProfil;
+    private String TAG = "Profil";
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     private User user;
@@ -58,19 +64,19 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     public void onResume() {
         super.onResume();
         extracted();
-        Log.d(TAG,"onResume");
+        Log.d(TAG, "onResume");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"onDestroy");
+        Log.d(TAG, "onDestroy");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG,"onStop");
+        Log.d(TAG, "onStop");
     }
 
     private void extracted() {
@@ -83,10 +89,9 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                 bindingProfil.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
                 if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
                     String imageUrl = "";
-                    if(user.getPathimageuser().startsWith("/data")) {
+                    if (user.getPathimageuser().startsWith("/data")) {
                         bindingProfil.iconProfil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
-                    }
-                    else if (user.getPathimageuser().startsWith("http")) {
+                    } else if (user.getPathimageuser().startsWith("http")) {
                         Picasso.get().load(user.getPathimageuser()).into(bindingProfil.iconProfil);
                     } else {
                         imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
@@ -101,7 +106,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
             }
         }
     }
-
 
 
     @Override
@@ -123,8 +127,8 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         viewPager2.setUserInputEnabled(true);
         recipeVM = new RecipeViewModel(requireContext(), requireActivity());
         userVM = new UserViewModel(requireContext(), requireActivity());
-        recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
-        userVM = new ViewModelProvider(this,userVM).get(UserViewModel.class);
+        recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
+        userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
         getUserInfo();
 
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
@@ -210,33 +214,84 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         onPauseFragment();
     }
 
-
-    private void getUserInfo()
-    {
+    private void getUserInfo() {
         if (!Type_User.equals(TAG_MODE_INVITE)) {
-            Constants.loading_ui(getContext(),getActivity(),"Loading...");
+            Constants.loading_ui(getContext(), getActivity(), "Loading...");
             String s1 = getUserInput(getContext());
-            if(MODE_ONLINE)
-            userVM.getUser(s1).observe(getViewLifecycleOwner(), new Observer<User>() {
+            if (MODE_ONLINE)
+                userVM.getUser(s1).observe(getViewLifecycleOwner(), new Observer<User>() {
+                    @Override
+                    public void onChanged(User user) {
+                        if (user != null) {
+                            Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
+                            extracted();
+                            fetchRecipeUser();
+                        }
+                        Constants.dismissLoadingDialog();
+                    }
+                });
+            else userVM.getUserLocal(s1, "").observe(getViewLifecycleOwner(), new Observer<User>() {
                 @Override
                 public void onChanged(User user) {
-                    if(user!=null) {
+                    if (user != null) {
                         Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
                         extracted();
+                        fetchRecipeUser();
                     }
                     Constants.dismissLoadingDialog();
                 }
             });
-            else userVM.getUserLocal(s1,"").observe(getViewLifecycleOwner(), new Observer<User>() {
-                @Override
-                public void onChanged(User user) {
-                    if(user!=null) {
-                        Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
-                        extracted();
+        }
+    }
+
+    private void fetchRecipeUser() {
+        if (!Type_User.equals(TAG_MODE_INVITE)) {
+            if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
+                recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
+                    @Override
+                    public void onChanged(List<Recipe> recipes) {
+                        if (recipes != null) {
+//                            bindingRcV_recipes(binding.RcRecipeProfil, recipes);
+                            recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
+                                @Override
+                                public void onChanged(List<RecipeResponse> recipes) {
+                                    if (recipes != null)
+                                        RemotelistFullRecipe.setValue(recipes);
+                                    Toast.makeText(getContext(), "changed main " + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
                     }
-                    Constants.dismissLoadingDialog();
-                }
-            });
+                });
+            } else {
+                userVM.getUserLocal(getUserInput(getContext()), "success").observe(requireActivity(), new Observer<User>() {
+                    @Override
+                    public void onChanged(User user) {
+                        if (user != null)
+                            recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
+                                @Override
+                                public void onChanged(List<Recipe> recipes) {
+                                    list_recipe.setValue(recipes);
+//                        bindingRcV_recipes(binding.RcRecipeProfil, recipes);
+                                    if (MODE_ONLINE)
+                                        recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
+                                            RemotelistByIdUser_recipe.setValue(recipeList);
+                                            Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                                        });
+                                }
+                            });
+                        if (MODE_ONLINE)
+                            recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
+                                @Override
+                                public void onChanged(List<RecipeResponse> recipes) {
+                                    if (recipes != null)
+                                        RemotelistFullRecipe.setValue(recipes);
+                                    Toast.makeText(getContext(), "full recipe list :" + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                    }
+                });
+            }
         }
     }
 

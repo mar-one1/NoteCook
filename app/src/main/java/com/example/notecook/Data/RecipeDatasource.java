@@ -125,15 +125,16 @@ public class RecipeDatasource {
     /*
      * Open DataBase
      */
-    public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
+    public void open() {
+        if (database == null || !database.isOpen()) {
+            database = dbHelper.getWritableDatabase(); // Or getReadableDatabase() if you are only reading
+        }
     }
 
-    /*
-     * close DataBase
-     */
     public void close() {
-        dbHelper.close();
+        if (database != null && database.isOpen()) {
+            database.close();
+        }
     }
 
     /*
