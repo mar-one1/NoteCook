@@ -56,11 +56,11 @@ public class OnBoarding_screen extends AppCompatActivity {
     }
 
     private void completeOnboarding() {
-        SecurePreferences.savePrefData("isFirstRun",false);
-//        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = prefs.edit();
-//        editor.putBoolean("isFirstRun", false);
-//        editor.apply();
+
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isFirstRun", false);
+        editor.apply();
         Intent intent = new Intent(OnBoarding_screen.this, MainActivity.class);
         startActivity(intent);
         finish();

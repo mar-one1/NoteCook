@@ -176,7 +176,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
             }
         });
 
-        setViewPagerAdapter();
         return bindingProfil.getRoot();
     }
 
@@ -223,6 +222,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                     if(user!=null) {
                         Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
                         extracted();
+                        setViewPagerAdapter();
                     }
                     Constants.dismissLoadingDialog();
                 }
@@ -233,6 +233,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                     if(user!=null) {
                         Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
                         extracted();
+                        setViewPagerAdapter();
                     }
                     Constants.dismissLoadingDialog();
                 }

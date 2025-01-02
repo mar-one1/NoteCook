@@ -390,7 +390,7 @@ public class RecipeRepository {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
-                    remoteRecipeListByUser.setValue(response.body());
+                    remoteRecipeListByUser.postValue(response.body());
                     if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
                         if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
                             //synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
@@ -422,8 +422,8 @@ public class RecipeRepository {
             @Override
             public void onResponse(Call<List<RecipeResponse>> call, Response<List<RecipeResponse>> response) {
                 if (response.isSuccessful()) {
-                    RemotelistFullRecipe.setValue(response.body());
-                    remoteRecipeListByUser.setValue(response.body());
+                    RemotelistFullRecipe.postValue(response.body());
+                    remoteRecipeListByUser.postValue(response.body());
                     if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
                         if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
                             synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
