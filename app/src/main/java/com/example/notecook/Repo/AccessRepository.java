@@ -108,7 +108,7 @@ public class AccessRepository {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
 
                 TAG_CONNEXION_MESSAGE = call.toString();
-                ErrorHandler.handleNetworkFailure(t, activity);
+                ErrorHandler.handleNetworkFailure(t, activity,call);
             }
         });
         return TokenMutableLiveData;

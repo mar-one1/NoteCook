@@ -46,57 +46,6 @@ public class Frg_Recipe_Profil extends Fragment {
         // Required empty public constructor
     }
 
-    private void fetchRecipeUser() {
-        if (!Type_User.equals(TAG_MODE_INVITE)) {
-            if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
-                recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
-                    @Override
-                    public void onChanged(List<Recipe> recipes) {
-                        if (recipes != null) {
-                            bindingRcV_recipes(binding.RcRecipeProfil, recipes);
-                            recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
-                                @Override
-                                public void onChanged(List<RecipeResponse> recipes) {
-                                    if (recipes != null)
-                                        RemotelistFullRecipe.setValue(recipes);
-                                    Toast.makeText(getContext(), "changed main " + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    }
-                });
-            } else {
-                userVM.getUserLocal(getUserInput(getContext()), "success").observe(requireActivity(), new Observer<User>() {
-                    @Override
-                    public void onChanged(User user) {
-                        if (user != null)
-                            recipeVM.getRecipesLocal(user.getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
-                                @Override
-                                public void onChanged(List<Recipe> recipes) {
-                                    list_recipe.setValue(recipes);
-                                    bindingRcV_recipes(binding.RcRecipeProfil, recipes);
-                                    if (MODE_ONLINE)
-                                        recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
-                                            RemotelistByIdUser_recipe.setValue(recipeList);
-                                            Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                                        });
-                                }
-                            });
-                        if (MODE_ONLINE)
-                            recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
-                                @Override
-                                public void onChanged(List<RecipeResponse> recipes) {
-                                    if (recipes != null)
-                                        RemotelistFullRecipe.setValue(recipes);
-                                    Toast.makeText(getContext(), "full recipe list :" + RemotelistFullRecipe.getValue().size(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                    }
-                });
-            }
-        }
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +61,12 @@ public class Frg_Recipe_Profil extends Fragment {
         recipeVM = new RecipeViewModel(requireContext(), requireActivity());
         userVM = new UserViewModel(requireContext(), requireActivity());
         //recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
+        list_recipe.observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(List<Recipe> recipes) {
+                bindingRcV_recipes(binding.RcRecipeProfil,list_recipe.getValue());
+            }
+        });
         return binding.getRoot();
     }
 
@@ -128,7 +83,6 @@ public class Frg_Recipe_Profil extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //model.getRecipesLocal(user_login_local.getUser().getId_User());
-        fetchRecipeUser();
+
     }
 }

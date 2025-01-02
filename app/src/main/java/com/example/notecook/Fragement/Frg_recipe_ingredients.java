@@ -103,7 +103,11 @@ public class Frg_recipe_ingredients extends Fragment {
         btn_plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                clickPlus(txt_cal, btn_moins);
+                int v =clickPlus(txt_cal, btn_moins);
+                Nutrition nutrition = Remote_nutritions.getValue();
+                if(nutrition!=null)
+                nutrition.scaleToServing(v,"g");
+                Remote_nutritions.setValue(nutrition);
             }
         });
         btn_moins.setOnClickListener(new View.OnClickListener() {

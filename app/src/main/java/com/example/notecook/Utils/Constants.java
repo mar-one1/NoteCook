@@ -497,11 +497,12 @@ public class Constants {
         textView.setText("" + t);
     }
 
-    public static void clickPlus(TextView textView, Button buttonMoins) {
+    public static int clickPlus(TextView textView, Button buttonMoins) {
         int t = Integer.parseInt(textView.getText().toString());
         buttonMoins.setEnabled(true);
         t++;
         textView.setText("" + t);
+        return t;
     }
 
 

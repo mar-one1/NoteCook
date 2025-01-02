@@ -1,21 +1,6 @@
 package com.example.notecook.Repo;
 
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.TAG_ERREUR_SYSTEM;
-import static com.example.notecook.Utils.Constants.TAG_INFO_ERONEE;
-import static com.example.notecook.Utils.Constants.TAG_NOT_FOUND;
-import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
-import static com.example.notecook.Utils.Constants.TAG_PAS_RESULTAT;
-import static com.example.notecook.Utils.Constants.TAG_SERVEUR_HORS_SERVICE;
-import static com.example.notecook.Utils.Constants.alertDialog;
-
 import android.app.Activity;
-import android.content.Context;
-import android.widget.Toast;
-
-import com.example.notecook.Api.ValidationError;
-import com.example.notecook.Utils.Constants;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -23,89 +8,91 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import retrofit2.Call;
 import retrofit2.Response;
 
 public class ErrorHandler {
     private static Set<String> errorMessagesSet = new HashSet<>();
     private static StringBuilder errorMessages = new StringBuilder();
 
+    // Handle error responses from the server (HTTP error codes)
     public static void handleErrorResponse(Response<?> response, Activity appCompatActivity) {
         int statusCode = response.code();
         String message = response.message();
 
         if (response.errorBody() != null) {
-            if (errorMessagesSet.contains(message)) {
-                return;
-            } else {
-                errorMessagesSet.add(message);
-            }
+            String errorMessage = null;
 
             if (statusCode == 400) {
-                try {
-                    String errorBody = response.errorBody().string();
-                    Gson gson = new Gson();
-                    ValidationError validationError = gson.fromJson(errorBody, ValidationError.class);
-                    for (ValidationError.ValidationErrorItem error : validationError.getErrors()) {
-                        errorMessages.append(", ").append(error.getMessage());
-                    }
-                } catch (IOException e) {
-                    // Handle error parsing error body
-                }
-            } else if (statusCode == 409) {
-                errorMessages.append(", Record already exists");
-            } else if (statusCode == 404) {
-                errorMessages.append(", ").append(TAG_NOT_FOUND);
+                errorMessage = "Bad request. Please check the data.";
             } else if (statusCode == 401) {
-                errorMessages.append(", ").append(TAG_INFO_ERONEE);
+                errorMessage = "Unauthorized access. Please login again.";
+            } else if (statusCode == 404) {
+                errorMessage = "Resource not found.";
             } else if (statusCode == 500) {
-                errorMessages.append(", ").append(TAG_ERREUR_SYSTEM);
-            } else if (statusCode == 406) {
-                errorMessages.append(", ").append(TAG_PAS_RESULTAT);
+                errorMessage = "Server error. Please try again later.";
             } else if (statusCode == 502) {
-                errorMessages.append(", ").append(TAG_SERVEUR_HORS_SERVICE);
+                errorMessage = "Bad gateway. The server is down.";
+            } else if (statusCode == 503) {
+                errorMessage = "Service unavailable. The server is temporarily down.";
             } else {
-                errorMessages.append(", ").append(TAG_CONNEXION_MESSAGE);
+                errorMessage = "An error occurred. Please try again.";
             }
 
-            // Show the popup if any error messages were added
-            if (errorMessages.length() > 0) {
-                showSweetAlertWithDismissListener(appCompatActivity);
-                resetErrorMessages();
+            // Show the error message if any
+            if (errorMessage != null) {
+                showErrorDialog(appCompatActivity, errorMessage);
             }
         }
+    }
+
+    // Handle network failures like no connection, server unreachable, or timeout
+    public static void handleNetworkFailure(Throwable t, Activity appCompatActivity, Call<?> call) {
+        String errorMessage;
+
+        if (t instanceof SocketTimeoutException) {
+            errorMessage = "Request timed out. The server may be taking too long to respond.";
+        } else if (t instanceof IOException) {
+            errorMessage = "Network error occurred. The server might be down or unreachable.";
+        } else {
+            errorMessage = "Unknown error occurred: " + t.getMessage();
+        }
+
+        // Cancel the request if needed (e.g., on timeout)
+        if (call != null && !call.isCanceled()) {
+            call.cancel();
+        }
+
+        // Show error dialog
+        showErrorDialog(appCompatActivity, errorMessage);
     }
 
     public static void handleNetworkFailure(Throwable t, Activity appCompatActivity) {
         String errorMessage;
+
         if (t instanceof SocketTimeoutException) {
-            errorMessage = "Timeout occurred";
+            errorMessage = "Request timed out. The server may be taking too long to respond.";
+        } else if (t instanceof IOException) {
+            errorMessage = "Network error occurred. The server might be down or unreachable.";
         } else {
-            errorMessage = t.toString();
+            errorMessage = "Unknown error occurred: " + t.getMessage();
         }
 
-        errorMessages.append(", ").append(errorMessage);
-
-        // Show the popup with all accumulated network error messages
-        if (errorMessages.length() > 0) {
-            showSweetAlertWithDismissListener(appCompatActivity);
-            //Toast.makeText(appCompatActivity, errorMessages.toString().substring(2), Toast.LENGTH_SHORT).show();
-            resetErrorMessages(); // Reset after showing the toast
-        }
+        // Show error dialog
+        showErrorDialog(appCompatActivity, errorMessage);
     }
 
-    private static void showSweetAlertWithDismissListener(Activity appCompatActivity) {
-        String messagesToShow = errorMessages.toString().substring(2);
-
+    // Display the error message in a dialog
+    private static void showErrorDialog(Activity appCompatActivity, String errorMessage) {
         SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(appCompatActivity, SweetAlertDialog.ERROR_TYPE);
         sweetAlertDialog.setTitleText("Error")
-                .setContentText(messagesToShow)
+                .setContentText(errorMessage)
                 .setConfirmText("OK")
-                .setOnDismissListener(dialog -> resetErrorMessages()); // Reset when the dialog is dismissed
+                .setOnDismissListener(dialog -> {
+                    // Reset any error states after the dialog is dismissed
+                });
         sweetAlertDialog.show();
     }
-
-    private static void resetErrorMessages() {
-        errorMessages.setLength(0); // Clear the StringBuilder
-        errorMessagesSet.clear(); // Clear the set of shown messages
-    }
 }
+
+
