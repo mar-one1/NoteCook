@@ -4,25 +4,24 @@ import android.app.Activity;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.util.HashSet;
-import java.util.Set;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class ErrorHandler {
-    private static Set<String> errorMessagesSet = new HashSet<>();
-    private static StringBuilder errorMessages = new StringBuilder();
+    private static final Queue<String> errorMessageQueue = new LinkedList<>();
+    private static boolean isPopupVisible = false;
 
     // Handle error responses from the server (HTTP error codes)
     public static void handleErrorResponse(Response<?> response, Activity appCompatActivity) {
         int statusCode = response.code();
-        String message = response.message();
+        String errorMessage = null;
 
         if (response.errorBody() != null) {
-            String errorMessage = null;
-
             if (statusCode == 400) {
                 errorMessage = "Bad request. Please check the data.";
             } else if (statusCode == 401) {
@@ -39,9 +38,8 @@ public class ErrorHandler {
                 errorMessage = "An error occurred. Please try again.";
             }
 
-            // Show the error message if any
             if (errorMessage != null) {
-                showErrorDialog(appCompatActivity, errorMessage);
+                addErrorMessageToQueue(errorMessage, appCompatActivity);
             }
         }
     }
@@ -58,13 +56,11 @@ public class ErrorHandler {
             errorMessage = "Unknown error occurred: " + t.getMessage();
         }
 
-        // Cancel the request if needed (e.g., on timeout)
         if (call != null && !call.isCanceled()) {
             call.cancel();
         }
 
-        // Show error dialog
-        showErrorDialog(appCompatActivity, errorMessage);
+        addErrorMessageToQueue(errorMessage, appCompatActivity);
     }
 
     public static void handleNetworkFailure(Throwable t, Activity appCompatActivity) {
@@ -78,21 +74,37 @@ public class ErrorHandler {
             errorMessage = "Unknown error occurred: " + t.getMessage();
         }
 
-        // Show error dialog
-        showErrorDialog(appCompatActivity, errorMessage);
+        addErrorMessageToQueue(errorMessage, appCompatActivity);
+    }
+
+    // Add the error message to the queue and show it if no popup is visible
+    private static void addErrorMessageToQueue(String errorMessage, Activity appCompatActivity) {
+        errorMessageQueue.offer(errorMessage);
+        showNextErrorMessage(appCompatActivity);
+    }
+
+    // Show the next error message in the queue
+    private static void showNextErrorMessage(Activity appCompatActivity) {
+        if (!isPopupVisible && !errorMessageQueue.isEmpty()) {
+            String nextMessage = errorMessageQueue.poll();
+            if (nextMessage != null) {
+                showErrorDialog(appCompatActivity, nextMessage);
+            }
+        }
     }
 
     // Display the error message in a dialog
     private static void showErrorDialog(Activity appCompatActivity, String errorMessage) {
+        isPopupVisible = true;
+
         SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(appCompatActivity, SweetAlertDialog.ERROR_TYPE);
         sweetAlertDialog.setTitleText("Error")
                 .setContentText(errorMessage)
                 .setConfirmText("OK")
                 .setOnDismissListener(dialog -> {
-                    // Reset any error states after the dialog is dismissed
+                    isPopupVisible = false;
+                    showNextErrorMessage(appCompatActivity);
                 });
         sweetAlertDialog.show();
     }
 }
-
-
