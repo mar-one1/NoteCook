@@ -46,6 +46,7 @@ import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;
 import com.example.notecook.ViewModel.AccessViewModel;
@@ -129,8 +130,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             Log.e("tag", e.getMessage());
         }
 
-        if (user_login_local.getUser() != null && user_login_local.getUser().getIcon() != null) {
-            binding.ivUserlogo1.setImageBitmap(MainActivity.decod(user_login_local.getUser().getIcon()));
+        if (user_login_local.getUser() != null && user_login_local.getUser().getPathimageuser() != null) {
+            binding.ivUserlogo1.setImageBitmap(ImageHelper.loadImageFromPath(user_login_local.getUser().getPathimageuser()));
         }
 
 
@@ -552,7 +553,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             public void onChanged(User user) {
                                 if (user != null) {
                                     isPosted = true;
-                                    newUser.setIcon(MainActivity.encod(bitmap));
+                                    String Path = ImageHelper.saveImageToInternalStorage(Login.this,bitmap,"UserImages");
+                                    newUser.setPathimageuser(Path);
                                     User userPost = dataSourceUser.insertUser(newUser);
                                     if (!Objects.equals(userPost.getUsername(), ""))
                                         Constants.AffichageMessage("Vous avez Register avec succes in local", "", Login.this);

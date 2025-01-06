@@ -37,6 +37,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class frg_Profil extends Fragment implements FragmentLifecycle {
 
@@ -92,12 +93,14 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                         imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
                         Picasso.get().load(imageUrl).into(bindingProfil.iconProfil);
                     }
-                    //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
-                } else if (user.getIcon() != null) {
-                    bindingProfil.iconProfil.setImageBitmap(decod(user.getIcon()));
-                } else if (user_login_local.getUser() != null && user_login_local.getUser().getIcon() != null) {
-                    bindingProfil.iconProfil.setImageBitmap(decod(user.getIcon()));
                 }
+                else
+                    bindingProfil.iconProfil.setImageDrawable(getResources().getDrawable(R.drawable.aec4b1a59b7165562698470ce91494be));
+//                if (user.getIcon() != null) {
+//                    bindingProfil.iconProfil.setImageBitmap(decod(user.getIcon()));
+//                } else if (user_login_local.getUser() != null && user_login_local.getUser().getIcon() != null) {
+//                    bindingProfil.iconProfil.setImageBitmap(decod(user.getIcon()));
+//                }
             }
         }
     }

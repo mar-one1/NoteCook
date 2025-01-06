@@ -4,6 +4,7 @@ import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 
 import static com.example.notecook.Utils.Constants.NetworkIsConnected;
 import static com.example.notecook.Utils.Constants.Token;
+import static com.example.notecook.Utils.Constants.dismissLoadingDialog;
 import static com.example.notecook.Utils.Constants.getToken;
 
 

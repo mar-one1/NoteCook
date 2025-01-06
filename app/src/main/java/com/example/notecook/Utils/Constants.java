@@ -46,7 +46,6 @@ import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Adapter.Adapter_Rc_Steps;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.TokenResponse;
@@ -89,12 +88,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Constants {
+public class    Constants {
 
     public static final int NETWORK_TIMEOUT = 3000;
     public static final String TAG_ERREUR_SYSTEM = "erreur_Systeme";
     public static final String TAG_CHARGEMENT_VALIDE = "chargement_Valide";
-    public static final String TAG_PAS_RESULTAT = "pasDeResultat";
+    public static final String TAG_PAS_RESULTAT = "palertDialogeResultat";
     public static final String TAG_SERVEUR_HORS_SERVICE = "502 Serveur en maintenance ,hors service ,Mode Offline On";
     public static final String TAG_TOKEN_EXPIRE = "tokenExpire";
     public static final String TAG_ONLINE = "online";
@@ -157,19 +156,15 @@ public class Constants {
     public static boolean fingerprint_id = false;
 
     public static void DisplayErrorMessage(final AppCompatActivity _context, String message) {
-        SweetAlertDialog sd;
-        sd = new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);
-        sd.setTitleText("")
-                .setContentText(message);
-        sd.setOnShowListener(dialog -> {
+        alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);alertDialog.setTitleText("")
+                .setContentText(message);alertDialog.setOnShowListener(dialog -> {
             SweetAlertDialog alertDialog = (SweetAlertDialog) dialog;
             TextView text = (TextView) alertDialog.findViewById(cn.pedant.SweetAlert.R.id.content_text);
             text.setTextAppearance(_context, android.R.style.TextAppearance_Large);
             text.setGravity(Gravity.CENTER);
             text.setSingleLine(false);
             text.setLines(5);
-        });
-        sd.show();
+        });alertDialog.show();
     }
 
     public static void loading_ui(final Context _context, final Activity activity, String message) {
@@ -255,46 +250,37 @@ public class Constants {
     }
 
     public static void AffichageMessage(String _tag, String title, final Activity _context) {
-        SweetAlertDialog sd;
         switch (_tag) {
             case TAG_CHARGEMENT_VALIDE:
-                sd = new SweetAlertDialog(_context, SweetAlertDialog.SUCCESS_TYPE);
-                sd.setTitleText(title)
+                alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.SUCCESS_TYPE);alertDialog.setTitleText(title)
                         .setContentText(_context.getResources().getString(R.string.message_chargement_valide));
                 break;
             case TAG_ERREUR_SYSTEM:
-                sd = new SweetAlertDialog(_context, SweetAlertDialog.ERROR_TYPE);
-                sd.setTitleText("Alerte")
+                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.ERROR_TYPE);alertDialog.setTitleText("Alerte")
                         .setContentText(_context.getResources().getString(R.string.message_erreur_system));
                 break;
             case TAG_PAS_RESULTAT:
-                sd = new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);
-                sd.setTitleText(title)
+                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);alertDialog.setTitleText(title)
                         .setContentText(_context.getResources().getString(R.string.message_erreur_pas_resultat));
                 break;
             case TAG_TOKEN_EXPIRE:
-                sd = new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);
-                sd.setTitleText("Alerte")
+                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);alertDialog.setTitleText("Alerte")
                         .setContentText(_context.getResources().getString(R.string.message_erreur_token_expire));
                 _context.finish();
                 break;
             case TAG_AUTHENTIFICATION_ECHOUE:
-                sd = new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);
-                sd.setTitleText("Alerte")
+                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);alertDialog.setTitleText("Alerte")
                         .setContentText(_context.getResources().getString(R.string.message_erreur_auth_echoue));
                 break;
             case TAG_OFFLINE:
-                sd = new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);
-                sd.setTitleText(title)
+                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);alertDialog.setTitleText(title)
                         .setContentText(_context.getResources().getString(R.string.message_erreur_offline));
                 break;
             default:
-                sd = new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);
-                sd.setTitleText(title)
+                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);alertDialog.setTitleText(title)
                         .setContentText(_tag);
                 break;
-        }
-        sd.setOnShowListener(dialog -> {
+        }alertDialog.setOnShowListener(dialog -> {
             alertDialog = (SweetAlertDialog) dialog;
             alertDialog.setCanceledOnTouchOutside(false);
             TextView text = (TextView) alertDialog.findViewById(cn.pedant.SweetAlert.R.id.content_text);
@@ -302,8 +288,7 @@ public class Constants {
             text.setGravity(Gravity.CENTER);
             text.setSingleLine(false);
             text.setLines(7);
-        });
-        sd.show();
+        });alertDialog.show();
     }
 
     public static void DesableTimeOut(final View view)

@@ -603,7 +603,7 @@ public class RecipeRepository {
             }
 
             @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle failure to make the API call
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }

@@ -281,6 +281,16 @@ public class UserDatasource {
         return value;
     }
 
+    public int UpdateUserImage(Context context,Bitmap bitmap, int id) {
+        open();
+        String imagePath = ImageHelper.saveImageToInternalStorage(context,bitmap,"UserImages");
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_ICON_PATH, imagePath);
+        int updateid = database.update(MySQLiteHelper.TABLE_USER, values, MySQLiteHelper.COLUMN_ID_USER + " = " + id, null);
+        close();
+        return updateid;
+    }
+
 }
 
 
