@@ -60,13 +60,13 @@ public class Frg_Recipe_Profil extends Fragment {
         // Inflate the layout for this fragment
         recipeVM = new RecipeViewModel(requireContext(), requireActivity());
         userVM = new UserViewModel(requireContext(), requireActivity());
-        recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
-        list_recipe.observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(List<Recipe> recipes) {
-                bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
-            }
-        });
+        //recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
+//        list_recipe.observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
+//            @Override
+//            public void onChanged(List<Recipe> recipes) {
+//                bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
+//            }
+//        });
         return binding.getRoot();
     }
 

@@ -258,6 +258,7 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                     @Override
                     public void onChanged(List<Recipe> recipes) {
                         if (recipes != null) {
+                            //list_recipe.setValue(recipes);
                             recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), new Observer<List<RecipeResponse>>() {
                                 @Override
                                 public void onChanged(List<RecipeResponse> recipes) {
