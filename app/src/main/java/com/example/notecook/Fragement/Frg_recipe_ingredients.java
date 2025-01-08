@@ -132,7 +132,6 @@ public class Frg_recipe_ingredients extends Fragment {
             }
         });
 
-
         return binding.getRoot();
 
     }

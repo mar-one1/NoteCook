@@ -246,6 +246,7 @@ public class RecipeRepository {
                 detailRecipeDataSource.insertDetail_recipe(RC.getDetail_recipe(), (int) id_recipe);
                 ingredientsDataSource.insertIngredients(RC.getIngredients(), (int) id_recipe);
                 stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
+                fullRecipeLiveData.setValue(RC);
                 fullRecipeLiveData.postValue(RC);
             }
         }
@@ -264,6 +265,7 @@ public class RecipeRepository {
                 detailRecipeDataSource.Update_Detail_Recipe(RC.getDetail_recipe(), id_recipe);
                 ingredientsDataSource.Update_Ingerdeients2(RC.getIngredients(), id_recipe);
                 stepsDataSource.Update_Step2(RC.getSteps(), id_recipe);
+                fullRecipeLiveData.setValue(RC);
                 fullRecipeLiveData.postValue(RC);
             }
         }
@@ -370,6 +372,7 @@ public class RecipeRepository {
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     List<Recipe> recipes = response.body();
+                    remoteRecipeList.setValue(recipes);
                     remoteRecipeList.postValue(recipes);
                 } else {
                     ErrorHandler.handleErrorResponse(response, appCompatActivity);
@@ -391,6 +394,7 @@ public class RecipeRepository {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
+                    remoteRecipeListByUser.setValue(response.body());
                     remoteRecipeListByUser.postValue(response.body());
                     if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
                         if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
@@ -411,6 +415,7 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle network failure
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity, call);
             }
         });
@@ -424,6 +429,8 @@ public class RecipeRepository {
             @Override
             public void onResponse(Call<List<RecipeResponse>> call, Response<List<RecipeResponse>> response) {
                 if (response.isSuccessful()) {
+                    RemotelistFullRecipe.setValue(response.body());
+                    remoteRecipeListByUser.setValue(response.body());
                     RemotelistFullRecipe.postValue(response.body());
                     remoteRecipeListByUser.postValue(response.body());
                     if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
@@ -443,6 +450,7 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<List<RecipeResponse>> call, Throwable t) {
                 // Handle network failure
+                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity, call);
             }
         });
@@ -603,7 +611,7 @@ public class RecipeRepository {
             }
 
             @Override
-             public void onFailure(Call<List<Recipe>> call, Throwable t) {
+            public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 // Handle failure to make the API call
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }

@@ -19,11 +19,11 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
-import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
@@ -60,11 +60,11 @@ public class Frg_Recipe_Profil extends Fragment {
         // Inflate the layout for this fragment
         recipeVM = new RecipeViewModel(requireContext(), requireActivity());
         userVM = new UserViewModel(requireContext(), requireActivity());
-        //recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
+        recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
         list_recipe.observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
             @Override
             public void onChanged(List<Recipe> recipes) {
-                bindingRcV_recipes(binding.RcRecipeProfil,list_recipe.getValue());
+                bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
             }
         });
         return binding.getRoot();
@@ -83,6 +83,8 @@ public class Frg_Recipe_Profil extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
     }
+
+
 }

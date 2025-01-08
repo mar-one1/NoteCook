@@ -79,25 +79,6 @@ public class MainActivity extends AppCompatActivity  {
         return bitmap;
     }
 
-    public static byte[] encod(Bitmap b) {
-        //Bitmap bb = Bitmap.createBitmap(b);
-        byte[] imageBytes = new byte[0];
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            b.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            imageBytes = baos.toByteArray();
-            String imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-            array_image.add(imageString);
-            Log.i("test encode", imageString);
-            //decode base64 string to image
-            //imageBytes = Base64.decode(array_image.get(0), Base64.DEFAULT);
-            //Bitmap decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-        } catch (Exception e) {
-            Log.e("tag", "" + e);
-        }
-        return imageBytes;
-    }
-
 
     @Override
     public void onBackPressed() {

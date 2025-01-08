@@ -8,6 +8,7 @@ import static com.example.notecook.Utils.Constants.TAG_MY;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 import static com.example.notecook.Utils.Constants.isConnected;
+import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -378,6 +379,7 @@ public class add_recipe extends Fragment {
                 if (recipeResponse != null) {
                     add_recipe.recipeR.setAddedToLocal(true);
                     Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
+                    list_recipe.getValue().add(recipeResponse.getRecipe());
                 }
             }
         });
