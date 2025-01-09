@@ -8,7 +8,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.notecook.Dto.RecipeRequest;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Repo.RecipeRepository;
@@ -52,6 +51,10 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
 
     public LiveData<List<RecipeResponse>> getFullRecipesByUsername(String username) {
         return repository.getFullRecipesByUsername(username);
+    }
+
+    public LiveData<Boolean> synchronisationRecipes(List<Recipe> recipeLocal,List<RecipeResponse> recipeRemote,String username) {
+        return repository.synchronizeDataRecipe(recipeLocal,recipeRemote,username);
     }
 
     public LiveData<Recipe> getRecipe(int id_recipe) {

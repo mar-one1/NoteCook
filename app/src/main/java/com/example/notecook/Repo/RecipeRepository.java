@@ -1,5 +1,6 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_NOM_RECIPE;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_UNIQUE_KEY;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
@@ -13,7 +14,6 @@ import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.showToast;
 import static com.example.notecook.Utils.Constants.user_login_local;
-import static com.example.notecook.Api.env.BASE_URL;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,6 +22,7 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -46,8 +47,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -205,14 +208,18 @@ public class RecipeRepository {
     }
 
     public LiveData<List<Recipe>> getLocalRecipes(int i, int pages, int itemperpage) {
-        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i, 3, 3));
-        return list_recipe;
+        MutableLiveData<List<Recipe>> recipe = new MutableLiveData<>();
+        list_recipe = recipeDatasource.getRecipeByIdUser(i, 3, 3);
+        recipe.setValue(list_recipe);
+        return recipe;
     }
 
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
-        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
+        MutableLiveData<List<Recipe>>  recipe = new MutableLiveData<>();
+        list_recipe = recipeDatasource.getRecipeByIdUser(i);
+        recipe.setValue(list_recipe);
         ImageHelper.deleteUnusedImages(context, recipeDatasource.getAllRecipesImagePath(), "RecipeImages");
-        return list_recipe;
+        return recipe;
     }
 
     public LiveData<Recipe> getLocalRecipe(int i) {
@@ -394,9 +401,8 @@ public class RecipeRepository {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
-                    remoteRecipeListByUser.setValue(response.body());
                     remoteRecipeListByUser.postValue(response.body());
-                    if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
+                    if (!getUserSynch(username, context) && list_recipe.size() < remoteRecipeListByUser.getValue().size()) {
                         if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
                             // Synchronize data from local to remote
                             //synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
@@ -413,9 +419,9 @@ public class RecipeRepository {
             }
 
             @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Recipe>> call, Throwable t) {
                 // Handle network failure
-                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
+//                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity, call);
             }
         });
@@ -429,17 +435,8 @@ public class RecipeRepository {
             @Override
             public void onResponse(Call<List<RecipeResponse>> call, Response<List<RecipeResponse>> response) {
                 if (response.isSuccessful()) {
-                    RemotelistFullRecipe.setValue(response.body());
-                    remoteRecipeListByUser.setValue(response.body());
                     RemotelistFullRecipe.postValue(response.body());
-                    remoteRecipeListByUser.postValue(response.body());
-                    if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
-                        if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
-                            synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
-                        }
-                    } else {
-                        saveUserSynch(username, true, context);
-                    }
+                    remoteRecipeListByUser.setValue(response.body());
                 } else {
                     // Handle error response here
                     if (response != null)
@@ -450,13 +447,12 @@ public class RecipeRepository {
             @Override
             public void onFailure(Call<List<RecipeResponse>> call, Throwable t) {
                 // Handle network failure
-                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
+//                ErrorHandler.handleNetworkFailure(t, appCompatActivity);
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity, call);
             }
         });
         return remoteRecipeListByUser;
     }
-
 
     public LiveData<String> uploadRemoteImageRecipe(String unique_key, Bitmap bitmp) {
         MutableLiveData<String> pathImage = new MutableLiveData<>();
@@ -508,11 +504,15 @@ public class RecipeRepository {
                 Toast.makeText(context, "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
-        return  pathImage;
+        return pathImage;
     }
 
 
-    public void synchronizeDataFromLocalToRemote(List<Recipe> localRecipes, List<RecipeResponse> remoteRecipes, String username) {
+
+    public LiveData<Boolean> synchronizeDataRecipe(List<Recipe> localRecipes, List<RecipeResponse> remoteRecipes, String username) {
+        MutableLiveData<Boolean> synchToRemote = new MutableLiveData<>();
+        MutableLiveData<Boolean> synchToLocal = new MutableLiveData<>();
+        MutableLiveData<Boolean> synch = new MutableLiveData<>();
         // Step 1: Get the user ID from the local database using the username
         userDatasource.open();
         int userId;
@@ -524,15 +524,22 @@ public class RecipeRepository {
         }
         if (userId == -1) {
             // Handle the case where the user ID is not found
-            return;
+            return null;
         }
         userDatasource.close();
 
         // Step 2: Perform the synchronization using the user ID
-        synchronizeDataFromLocalToRemote(localRecipes, remoteRecipes, userId);
+        synchToRemote.postValue(synchronizeDataBetweenLocalToRemote(localRecipes, remoteRecipes, userId));
+        synchToLocal.postValue(synchronizeDataBetweenRemoteToLocal(localRecipes, remoteRecipes, userId));
+        if(Objects.equals(synchToRemote.getValue(), true) && Objects.equals(synchToLocal.getValue(), true))
+            synch.setValue(true);
+        else synch.setValue(false);
+
+        return synch;
     }
 
-    public void synchronizeDataFromLocalToRemote(List<Recipe> localRecipes, List<RecipeResponse> remoteRecipes, int id) {
+    public Boolean synchronizeDataBetweenRemoteToLocal(List<Recipe> localRecipes, List<RecipeResponse> remoteRecipes, int id) {
+        List<RecipeResponse> recipeAddad = new ArrayList<>();
         // Step 1: Update local recipes with data from remote recipes
         for (RecipeResponse remoteRecipe : remoteRecipes) {
             // Check if the remote recipe belongs to the specified user
@@ -542,7 +549,7 @@ public class RecipeRepository {
                 // Match recipes using a unique identifier, e.g., recipe ID
                 if (remoteRecipe.getRecipe().getNom_recipe().equals(localRecipe.getNom_recipe())) {
                     // Recipe exists locally; update it with remote data
-                    //updateRecipeLocally(remoteRecipe.getRecipe(), localRecipe.getId_recipe());
+                    updateRecipeLocally(remoteRecipe.getRecipe(), localRecipe.getId_recipe());
                     foundLocally = true;
                     break;
                 }
@@ -553,10 +560,15 @@ public class RecipeRepository {
 //                    remoteRecipe.setIcon_recipe(fetchImage(remoteRecipe.getPathimagerecipe(), context).getValue());
                 remoteRecipe.getRecipe().setFrk_user(id);
                 insertFullRecipeInLocal(remoteRecipe);
+                recipeAddad.add(remoteRecipe);
             }
             //}
         }
+        return recipeAddad.size()+localRecipes.size() == remoteRecipes.size();
+    }
 
+    public Boolean synchronizeDataBetweenLocalToRemote(List<Recipe> localRecipes, List<RecipeResponse> remoteRecipes, int id) {
+        List<RecipeResponse> recipeAddad = new ArrayList<>();
         // Step 2: Update remote recipes with data from local recipes (if needed)
         for (Recipe localRecipe : localRecipes) {
             // Check if the local recipe belongs to the specified user
@@ -576,6 +588,8 @@ public class RecipeRepository {
                 }
             }
         }
+//        return recipeAddad.size() == remoteRecipes.size();
+        return true;
     }
 
     public void updateRecipeLocally(Recipe remoteRecipe, int id) {

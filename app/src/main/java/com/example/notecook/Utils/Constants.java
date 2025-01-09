@@ -90,17 +90,14 @@ import retrofit2.Response;
 
 public class    Constants {
 
-    public static final int NETWORK_TIMEOUT = 3000;
     public static final String TAG_ERREUR_SYSTEM = "erreur_Systeme";
     public static final String TAG_CHARGEMENT_VALIDE = "chargement_Valide";
     public static final String TAG_PAS_RESULTAT = "palertDialogeResultat";
-    public static final String TAG_SERVEUR_HORS_SERVICE = "502 Serveur en maintenance ,hors service ,Mode Offline On";
     public static final String TAG_TOKEN_EXPIRE = "tokenExpire";
     public static final String TAG_ONLINE = "online";
     public static final String TAG_AUTHENTIFICATION_ECHOUE = "authentification_Echoue";
     public static final String TAG_OFFLINE = "Offline";
     public static final String TAG_NOT_FOUND = "404 Not Found";
-    public static final String TAG_INFO_ERONEE = "Username or password Invalide!!  ";
     public static final String TAG_REMOTE = "Remote";
     public static final String TAG_LOCAL = "Local";
     public static Boolean TAG_EDIT_RECIPE = false;
@@ -108,7 +105,6 @@ public class    Constants {
     public static final String lOGIN_KEY = "Connection_complete";
     public static final String SYNCH_KEY = "Synch_complete";
     public static final String TAG_MODE_INVITE = "Mode Invite";
-    public static final String TAG_MODE_UTILISATEUR = "Mode Utilisateur";
     public static final String[] DEFAULT_SEARCH_CATEGORIES =
             {"Barbecue", "Breakfast", "Chicken", "Beef", "Brunch", "Dinner", "Wine", "Italian"};
     public static final String[] DEFAULT_SEARCH_CATEGORY_IMAGES =
@@ -125,7 +121,7 @@ public class    Constants {
     public static String Token = "";
     public static int TAG_CONNEXION = -1;
     public static String TAG_CONNEXION_MESSAGE = "";
-    public static MutableLiveData<List<Recipe>> list_recipe = new MutableLiveData<>();
+    public static List<Recipe> list_recipe = new ArrayList<>();
     public static List<Detail_Recipe> list_Detailrecipe;
     public static Detail_Recipe Detail_CurrentRecipe;
     public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
@@ -145,10 +141,8 @@ public class    Constants {
     public static String TAG_CONNEXION_LOCAL = "";
     public static TokenResponse user_login = new TokenResponse();
     public static TokenResponse user_login_local = new TokenResponse();
-    public static String pathimageuser = "";
     public static boolean MODE_ONLINE = false;
     public static SweetAlertDialog alertDialog;
-    public static List<User> listUser = new ArrayList<>();
     public static Recipe CURRENT_RECIPE = null;
     public static RecipeResponse CURRENT_FULL_RECIPE = null;
     public static SweetAlertDialog loadingDialog;
@@ -226,7 +220,7 @@ public class    Constants {
         //Token = "";
         TAG_CONNEXION = -1;
         TAG_CONNEXION_MESSAGE = "";
-        list_recipe = new MutableLiveData<>();
+        list_recipe = new ArrayList<>();
         Steps_CurrentRecipe = new ArrayList<>();
         Review_CurrentRecipe = new ArrayList<>();
         Ingredients_CurrentRecipe = new MutableLiveData<>();
