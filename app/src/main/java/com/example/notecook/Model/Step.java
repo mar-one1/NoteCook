@@ -8,7 +8,7 @@ public class Step {
     @SerializedName("detailStep")
     private String detail_step;
     @SerializedName("imageStep")
-    private byte[] image_step;
+    private String image_step;
     @SerializedName("timeStep")
     private int Time_step;
     @SerializedName("recipeId")
@@ -17,7 +17,7 @@ public class Step {
     public Step() {
     }
 
-    public Step(String detail_step, byte[] image_step, int time_step, int FRK_recipe_step) {
+    public Step(String detail_step, String image_step, int time_step, int FRK_recipe_step) {
         this.detail_step = detail_step;
         this.image_step = image_step;
         Time_step = time_step;
@@ -40,11 +40,11 @@ public class Step {
         this.detail_step = detail_step;
     }
 
-    public byte[] getImage_step() {
+    public String getImage_step() {
         return image_step;
     }
 
-    public void setImage_step(byte[] image_step) {
+    public void setImage_step(String image_step) {
         this.image_step = image_step;
     }
 

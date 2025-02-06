@@ -33,7 +33,7 @@ public class StepsDataSource {
      */
 
 
-    public Step Create_Step(String detail, int time, byte[] image, int rate, int frk_recipe) {
+    public Step Create_Step(String detail, int time, String image, int rate, int frk_recipe) {
         open();
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_DETAIL_STEP_RECIPE, detail);
@@ -105,7 +105,7 @@ public class StepsDataSource {
         Step Step = new Step();
         Step.setId_step(cursor.getInt(0));
         Step.setDetail_step(cursor.getString(1));
-        Step.setImage_step(cursor.getBlob(2));
+        Step.setImage_step(cursor.getString(2));
         Step.setTime_step(cursor.getInt(3));
         Step.setFRK_recipe_step(cursor.getInt(4));
         return Step;

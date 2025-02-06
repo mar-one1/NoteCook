@@ -35,4 +35,14 @@
         Connect with chefs and experts for personalized cooking advice and explore expert-approved tips.
         Whether you’re a home cook or a food enthusiast,
         Notecook helps you elevate your kitchen skills and create delicious meals effortlessly.</string>
+
+    <!-- Checkout activity -->
+    <string name="title_activity_checkout">CheckoutActivity</string>
+    <string name="checkout_item_description">Description</string>
+    <string name="googlepay_status_unavailable" translatable="false">Unfortunately, Google Pay is
+        not available on this phone.
+    </string>
+    <string name="payments_show_name" translatable="false">Successfully received payment data for
+        %s!
+    </string>
 </resources>
