@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
@@ -28,7 +32,7 @@
         android:theme="@style/Theme.NoteCook"
         tools:targetApi="30">
         <activity
-            android:name=".CheckoutActivity"
+            android:name=".Pay.CheckoutActivity"
             android:exported="false"
             android:label="@string/title_activity_checkout"
             android:theme="@style/Theme.NoteCook" />
@@ -53,12 +57,12 @@
         <activity
             android:name=".Activity.Login"
             android:configChanges="orientation|screenSize"
-            android:exported="false"></activity>
+            android:exported="false"/>
         <activity
             android:name=".Activity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan"></activity>
+            android:windowSoftInputMode="adjustPan"/>
 
         <receiver
             android:name=".Utils.NetworkChangeReceiver"
