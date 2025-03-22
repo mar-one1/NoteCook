@@ -205,9 +205,12 @@ public class    Constants {
     }
 
     public static String DateTimeNow(Date date) {
+        if (date == null) {
+            return "Invalid Date"; // or return an empty string or a default value
+        }
+
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
-        String timestamp = dateFormat.format(date);
-        return timestamp;
+        return dateFormat.format(date);
     }
 
 
