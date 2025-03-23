@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.databinding.FragmentFrgStepRecipeBinding;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,7 @@ public class Frg_Step_Recipe extends Fragment {
     CounterClass timer = new CounterClass(0,0);
     TextView textViewTime;
     Button btn_star, btn_cancel,btn_del;
+    ImageView imgStep;
     private TimePicker picker_hours, picker_minute;
     private List<Step> steps = new ArrayList<>();
     private int current_id_step;
@@ -66,6 +69,7 @@ public class Frg_Step_Recipe extends Fragment {
         textViewTime = binding.txtAff;
         btn_star = binding.btnStar;
         btn_cancel = binding.btnCancel;
+        imgStep = binding.imgStep;
         /*picker_minute.setMinValue(0);
         picker_minute.setMaxValue(60);*/
 
@@ -170,11 +174,12 @@ public class Frg_Step_Recipe extends Fragment {
         int time = steps.get(position).getTime_step();
         /*int hours = time / 100;
         int minutes = (time - hours * 100) % 60;*/
-        if(timer==null)
-        timer = new CounterClass((long) time * 60 * 1000, 1000);
+        if(timer==null) timer = new CounterClass((long) time * 60 * 1000, 1000);
         binding.editTime.setText(String.valueOf(time));
         binding.detailStep.setText(steps.get(position).getDetail_step());
         binding.orderStep.setText(steps.size() + "/" + (position+1));
+        if(steps.get(position).getImage_step() != null)
+            Picasso.get().load(steps.get(position).getImage_step()).into(binding.imgStep);
     }
 
     public class CounterClass extends CountDownTimer {
@@ -187,8 +192,10 @@ public class Frg_Step_Recipe extends Fragment {
         @Override
         public void onTick(long millisUntilFinished) {
             long millis = millisUntilFinished;
-            hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis), TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-                    TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+            long hours = TimeUnit.MILLISECONDS.toHours(millis);
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(millis) % 60;
+            long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) % 60;
+            String hms = String.format("%02d:%02d:%02d", hours, minutes, seconds);
             System.out.println(hms);
             textViewTime.setText(hms);
         }
