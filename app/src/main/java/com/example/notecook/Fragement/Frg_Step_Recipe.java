@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -178,6 +179,7 @@ public class Frg_Step_Recipe extends Fragment {
         binding.editTime.setText(String.valueOf(time));
         binding.detailStep.setText(steps.get(position).getDetail_step());
         binding.orderStep.setText(steps.size() + "/" + (position+1));
+        Log.d("steps",steps.toString());
         if(steps.get(position).getImage_step() != null)
             Picasso.get().load(steps.get(position).getImage_step()).into(binding.imgStep);
     }

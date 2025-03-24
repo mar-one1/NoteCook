@@ -344,11 +344,13 @@ public class add_recipe extends Fragment {
             @Override
             public void onChanged(RecipeResponse Recipe) {
                 if (Recipe != null) {
+                    if(bitmap!=null)
                     recipeVM.updateImageRecipeLocal(bitmap, CURRENT_FULL_RECIPE.getRecipe().getId_recipe());
                     recipeVM.updateFullRemoteRecipe(Recipe).observe(requireActivity(), new Observer<String>() {
                         @Override
                         public void onChanged(String Result) {
                             if (Result != "") {
+                                if(bitmap!=null)
                                 recipeVM.uploadRemoteRecipeImage(Recipe.getRecipe().getUnique_key_recipe(), bitmap).observe(requireActivity(), new Observer<String>() {
                                     @Override
                                     public void onChanged(String s) {

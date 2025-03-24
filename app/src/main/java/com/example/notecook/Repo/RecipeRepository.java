@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -264,6 +265,10 @@ public class RecipeRepository {
 
     public LiveData<RecipeResponse> updateFullRecipeInLocal(RecipeResponse RC) {
         MutableLiveData<RecipeResponse> fullRecipeLiveData = new MutableLiveData<>();
+        if(RC.getRecipe().getUnique_key_recipe()==null) {
+            RC.getRecipe().setUnique_key_recipe(UUID.randomUUID().toString());
+            updateRecipeLocally(RC.getRecipe(),RC.getRecipe().getId_recipe());
+        }
         if (recipeDatasource.isRecordExist(TABLE_RECIPE, COLUMN_UNIQUE_KEY, RC.getRecipe().getUnique_key_recipe())) {
             int id_recipe = recipeDatasource.UpdateRecipe(RC.getRecipe(), RC.getRecipe().getId_recipe());
             if (id_recipe == -1) {
