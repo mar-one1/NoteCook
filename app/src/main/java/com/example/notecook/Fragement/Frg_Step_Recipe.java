@@ -1,5 +1,6 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 
 import android.app.NotificationChannel;
@@ -28,8 +29,11 @@ import com.example.notecook.Activity.Login;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.databinding.FragmentFrgStepRecipeBinding;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -39,9 +43,9 @@ import java.util.concurrent.TimeUnit;
 public class Frg_Step_Recipe extends Fragment {
 
     FragmentFrgStepRecipeBinding binding;
-    CounterClass timer = new CounterClass(0,0);
+    CounterClass timer = new CounterClass(0, 0);
     TextView textViewTime;
-    Button btn_star, btn_cancel,btn_del;
+    Button btn_star, btn_cancel, btn_del;
     ImageView imgStep;
     private TimePicker picker_hours, picker_minute;
     private List<Step> steps = new ArrayList<>();
@@ -101,7 +105,7 @@ public class Frg_Step_Recipe extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!s.toString().isEmpty()) {
+                if (!s.toString().isEmpty()) {
                     long millis = ((long) Integer.parseInt(String.valueOf(s)) * 60 * 1000);
                     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis), TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                             TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
@@ -175,13 +179,24 @@ public class Frg_Step_Recipe extends Fragment {
         int time = steps.get(position).getTime_step();
         /*int hours = time / 100;
         int minutes = (time - hours * 100) % 60;*/
-        if(timer==null) timer = new CounterClass((long) time * 60 * 1000, 1000);
+        if (timer == null) timer = new CounterClass((long) time * 60 * 1000, 1000);
         binding.editTime.setText(String.valueOf(time));
         binding.detailStep.setText(steps.get(position).getDetail_step());
-        binding.orderStep.setText(steps.size() + "/" + (position+1));
-        Log.d("steps",steps.toString());
-        if(steps.get(position).getImage_step() != null)
-            Picasso.get().load(steps.get(position).getImage_step()).into(binding.imgStep);
+        binding.orderStep.setText(steps.size() + "/" + (position + 1));
+
+        if (steps.get(position).getImage_step() != null) {
+            Log.d("steps", steps.get(position).getImage_step().toString());
+            if (steps.get(position).getImage_step().startsWith("/d")) {
+                binding.imgStep.setImageBitmap(ImageHelper.loadImageFromPath(steps.get(position).getImage_step()));
+            } else {
+                String url = BASE_URL + "uploads/" + steps.get(position).getImage_step();
+                Picasso.get()
+                        .load(url)
+                        .error(R.drawable.eror_image_download)
+                        .memoryPolicy(MemoryPolicy.NO_STORE)
+                        .into(binding.imgStep);
+            }
+        }
     }
 
     public class CounterClass extends CountDownTimer {
@@ -191,6 +206,7 @@ public class Frg_Step_Recipe extends Fragment {
         }
 
         String hms;
+
         @Override
         public void onTick(long millisUntilFinished) {
             long millis = millisUntilFinished;

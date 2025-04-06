@@ -1,24 +1,26 @@
 package com.example.notecook.Adapter;
 
-import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
+import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_MY;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
 import com.google.android.material.textview.MaterialTextView;
+import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -55,7 +57,7 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         holder.textViewDetailStep.setText(step.getDetail_step());
         holder.textViewOrderStep.setText(steps.size() + "/" + (position + 1));
         holder.textViewTimeStep.setVisibility(View.GONE);
-        holder.textViewTxtTimeStep.setText(String.valueOf(step.getTime_step()));
+        holder.txtViewTimeStep.setText(String.valueOf(step.getTime_step()));
         holder.linearlayout.setVisibility(View.GONE);
         holder.linearlayoutPlay.setVisibility(View.GONE);
         holder.btn_del.setVisibility(View.GONE);
@@ -87,7 +89,8 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         TextView textViewOrderStep;
         EditText textViewTimeStep;
         Button btn_del;
-        MaterialTextView textViewTxtTimeStep;
+        ImageView imgStep;
+        MaterialTextView txtViewTimeStep;
         LinearLayout linearlayout;
         LinearLayout linearlayoutPlay;
 
@@ -97,7 +100,8 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
             textViewDetailStep = itemView.findViewById(R.id.detail_step);
             textViewTimeStep = itemView.findViewById(R.id.edit_time);
             btn_del = itemView.findViewById(R.id.btn_del_step);
-            textViewTxtTimeStep = itemView.findViewById(R.id.txt_aff);
+            txtViewTimeStep = itemView.findViewById(R.id.txt_aff);
+            imgStep = itemView.findViewById(R.id.img_step);
             linearlayout = itemView.findViewById(R.id.ly_scrole);
             linearlayoutPlay = itemView.findViewById(R.id.ly_play);
         }
