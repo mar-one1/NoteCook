@@ -367,7 +367,7 @@ public class RecipeRepository {
                     data.postValue(response.body());
                 } else {
                     // Handle error
-                    ErrorHandler.handleErrorResponse(response, appCompatActivity);
+                    //ErrorHandler.handleErrorResponse(response, appCompatActivity);
                 }
             }
 

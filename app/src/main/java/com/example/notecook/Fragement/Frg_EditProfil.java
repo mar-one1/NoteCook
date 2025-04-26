@@ -382,8 +382,6 @@ public class Frg_EditProfil extends Fragment {
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.detach(Frg_EditProfil.this);
         fragmentTransaction.commitNow();
-
-
     }
 
 }

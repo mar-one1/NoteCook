@@ -62,19 +62,20 @@
 
     <LinearLayout
         android:id="@+id/ly_Image"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="@dimen/_20sdp"
+        android:layout_marginRight="@dimen/_20sdp"
         android:layout_weight="0.5"
         android:gravity="center"
+        android:layout_gravity="center"
         android:orientation="horizontal"
         android:visibility="visible">
 
         <ImageView
             android:id="@+id/img_step"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_100sdp"
             android:textSize="35dp"
            />
 

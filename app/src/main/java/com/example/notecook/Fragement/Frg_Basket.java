@@ -3,6 +3,7 @@
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static com.example.notecook.Utils.Constants.Basket_list;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
+import com.example.notecook.Pay.CheckoutActivity;
 import com.example.notecook.R;
 import com.example.notecook.databinding.FragmentFrgBasketBinding;
 
@@ -48,6 +50,13 @@ import com.example.notecook.databinding.FragmentFrgBasketBinding;
         // Inflate the layout for this fragment
         binding = FragmentFrgBasketBinding.inflate(inflater, container, false);
         bindingRcV_Baskets(binding.RcIngredBasket);
+        binding.btnCheckout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(),CheckoutActivity.class);
+                startActivity(intent);
+            }
+        });
         return binding.getRoot();
     }
 
