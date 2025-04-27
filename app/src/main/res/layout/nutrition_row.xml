@@ -10,11 +10,12 @@
         android:orientation="vertical"
         tools:ignore="MissingConstraints">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             tools:ignore="MissingConstraints"
-            android:layout_margin="20dp"
+            android:layout_margin="@dimen/_10sdp"
+            android:gravity="center"
             android:layout_gravity="center">
 
             <TextView
@@ -27,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="@dimen/_5sdp"
                 android:backgroundTint="@color/gray"
                 android:gravity="center"
                 android:text="..g"
@@ -37,14 +38,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Protein : "
-                android:layout_marginLeft="10dp"/>
+                android:layout_marginLeft="@dimen/_5sdp"/>
 
             <Button
                 android:id="@+id/Nutrition_Pro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="@dimen/_5sdp"
                 android:backgroundTint="@color/gray"
                 android:gravity="center"
                 android:text="..g"
@@ -52,11 +53,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             tools:ignore="MissingConstraints"
-            android:layout_margin="20dp"
+            android:layout_margin="@dimen/_10sdp"
             android:layout_gravity="center"
             >
 
@@ -70,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="@dimen/_5sdp"
                 android:backgroundTint="@color/gray"
                 android:gravity="center"
                 android:text="..g"
@@ -80,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Carbs : "
-                android:layout_marginLeft="10dp"/>
+                android:layout_marginLeft="@dimen/_5sdp"/>
 
             <Button
                 android:id="@+id/Nutrition_carb"
@@ -89,7 +90,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/gray"
                 android:gravity="center"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="@dimen/_5sdp"
                 android:text="..g"
                 android:textColor="@color/black" />
         </LinearLayout>

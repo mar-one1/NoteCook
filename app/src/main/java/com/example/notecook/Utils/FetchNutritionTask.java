@@ -33,6 +33,7 @@ public class FetchNutritionTask extends AsyncTask<String, Void, Nutrition> {
     protected Nutrition doInBackground(String... params) {
         String foodQuery = params[0];
         JSONObject foodJson = fetchFoodData(foodQuery);
+        Log.d("food",""+foodJson);
 
         // Parse the nutrition data from the JSON response
         Nutrition nutrition = NutritionParser.parseNutrition(foodJson);
@@ -40,6 +41,7 @@ public class FetchNutritionTask extends AsyncTask<String, Void, Nutrition> {
         if (nutrition != null) {
             // Set the custom serving size
             nutrition.setServingSize(customServingSize);
+            nutrition.setServingSizeUnit(customgetServingUnit);
         }
 
         return nutrition;

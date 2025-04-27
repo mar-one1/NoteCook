@@ -109,7 +109,7 @@ public class Acceuill_Frg extends Fragment {
     public void onResume() {
         super.onResume();
         //Toast.makeText(getContext(), "changed " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-        if(Remotelist_recipe.getValue()!=null) bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
+        //if(Remotelist_recipe.getValue()!=null) bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
     }
 
     private void fetchRecipe()

@@ -231,7 +231,7 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
                     "Protein: " + customProtein + " g\n" +
                     "Fat: " + customFat + " g\n" +
                     "Carbs: " + customCarbs + " g\n" +
-                    "Serving Size: " + nutrition.getServingSize() + " " + nutrition.getServingUnit();
+                    "Serving Size: " + nutrition.getServingSize() + " " + nutrition.getServingSizeUnit();
 
             CURRENT_FULL_RECIPE.setNutrition(nutrition);
             Remote_nutritions.setValue(nutrition);

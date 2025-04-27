@@ -105,9 +105,9 @@ public class Frg_recipe_ingredients extends Fragment {
             public void onClick(View view) {
                 int v =clickPlus(txt_cal, btn_moins);
                 Nutrition nutrition = Remote_nutritions.getValue();
-                if(nutrition!=null)
-                nutrition.scaleToServing(v,"g");
+                if(nutrition!=null) nutrition.scaleToServing(v,"g");
                 Remote_nutritions.setValue(nutrition);
+                bindingRcV_Nutrition(binding.RcvNutrition);
             }
         });
         btn_moins.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +146,7 @@ public class Frg_recipe_ingredients extends Fragment {
 
         List<Nutrition> nutritions = new ArrayList<>();
         nutritions.add(CURRENT_FULL_RECIPE.getNutrition());
-        Adapter_RC_Nutrition adapter_rc_nutrition = new Adapter_RC_Nutrition(nutritions, getContext());
+        Adapter_RC_Nutrition adapter_rc_nutrition = new Adapter_RC_Nutrition(nutritions);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 1);
         recyclerView.setHorizontalScrollBarEnabled(true);
         recyclerView.setLayoutManager(manager);

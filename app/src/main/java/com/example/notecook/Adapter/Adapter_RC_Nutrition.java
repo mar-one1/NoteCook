@@ -1,13 +1,9 @@
 package com.example.notecook.Adapter;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,17 +12,14 @@ import com.example.notecook.R;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class Adapter_RC_Nutrition extends RecyclerView.Adapter<Adapter_RC_Nutrition.ViewHolder> {
 
-    private Context context;
-    private List<Nutrition> nutrition ;
+    private final List<Nutrition> nutrition ;
 
-    public Adapter_RC_Nutrition(List<Nutrition> nutrition,Context context) {
-        this.context = context;
+    public Adapter_RC_Nutrition(List<Nutrition> nutrition) {
         this.nutrition = nutrition;
     }
 
@@ -55,10 +48,10 @@ public class Adapter_RC_Nutrition extends RecyclerView.Adapter<Adapter_RC_Nutrit
         }
 
         // Populate the views with the actual data
-        holder.nut_cal.setText(String.format("%.2f", nutrition1.getCalories())+" "+nutrition1.getServingUnit());
-        holder.nut_Pro.setText(String.format("%.2f", nutrition1.getProtein())+" "+nutrition1.getServingUnit());
-        holder.nut_Fat.setText(String.format("%.2f", nutrition1.getFat())+" "+nutrition1.getServingUnit());
-        holder.nut_carb.setText(String.format("%.2f", nutrition1.getCarbs())+" "+nutrition1.getServingUnit());
+        holder.nut_cal.setText(String.format("%.0f", nutrition1.getCalories())+" "+nutrition1.getCaloriesUnit());
+        holder.nut_Pro.setText(String.format("%.0f", nutrition1.getProtein())+" "+nutrition1.getProteinUnit());
+        holder.nut_Fat.setText(String.format("%.0f", nutrition1.getFat())+" "+nutrition1.getFatUnit());
+        holder.nut_carb.setText(String.format("%.0f", nutrition1.getCarbs())+" "+nutrition1.getCarbsUnit());
     }
 
 
