@@ -110,6 +110,12 @@ public class add_recipe extends Fragment {
                 captureImage(getContext());
             }
         });
+        binding.addIconStep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                captureImage(getContext());
+            }
+        });
 
         binding.addIngredients.setOnClickListener(new View.OnClickListener() {
             @Override

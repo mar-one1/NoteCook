@@ -19,8 +19,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="148dp"
@@ -134,8 +134,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/detail_recipe_ly"
@@ -271,18 +271,18 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical"
-                    android:visibility="visible"
-                    android:layout_weight="1">
-
+                    android:visibility="visible">
 
 
                     <LinearLayout
                         android:id="@+id/step_ly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
@@ -330,30 +330,47 @@
 
                         </LinearLayout>
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="15dp"
-                            android:text="Detail : "
-                            android:textSize="18sp" />
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:layout_gravity="center"
+                                app:cardCornerRadius="100dp">
 
-                        <EditText
-                            android:id="@+id/edt_detail"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="15dp"
-                            android:editable="true"
-                            android:lines="5" />
-                        <Button
-                            android:id="@+id/add_Step"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="15dp"
-                            android:text="ADD step"
-                            android:layout_gravity="center"
-                            />
+                                <ImageView
+                                    android:id="@+id/add_icon_step"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    android:src="@drawable/add_photo_profil" />
+                            </androidx.cardview.widget.CardView>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:text="Detail : "
+                                android:textSize="18sp" />
 
+                            <EditText
+                                android:id="@+id/edt_detail"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="15dp"
+                                android:editable="true"
+                                android:lines="5" />
 
+                            <Button
+                                android:id="@+id/add_Step"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_margin="15dp"
+                                android:text="ADD step" />
+
+                        </LinearLayout>
                     </LinearLayout>
 
                     <!-- RecyclerView for Steps -->

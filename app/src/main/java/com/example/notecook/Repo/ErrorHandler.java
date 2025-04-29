@@ -2,18 +2,17 @@ package com.example.notecook.Repo;
 
 import android.app.Activity;
 
-import com.example.notecook.Activity.MainActivity;
+import com.example.notecook.Activity.Login;
 import com.example.notecook.Fragement.Frg_EditProfil;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
 import retrofit2.Response;
-
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class ErrorHandler {
     private static final Queue<String> errorMessageQueue = new LinkedList<>();
@@ -28,9 +27,13 @@ public class ErrorHandler {
             if (statusCode == 400) {
                 errorMessage = "Bad request. Please check the data.";
             } else if (statusCode == 401) {
-                errorMessage = "Unauthorized access. Please login again.";
-                Frg_EditProfil.logOut(appCompatActivity);
+                if(!appCompatActivity.getClass().equals(Login.class)) {
+                    errorMessage = "Unauthorized access. Please login again.";
+                    Frg_EditProfil.logOut(appCompatActivity);
+                }
             } else if (statusCode == 404) {
+                errorMessage = "Resource not found.";
+            } else if (statusCode == 406) {
                 errorMessage = "Resource not found.";
             } else if (statusCode == 500) {
                 errorMessage = "Server error. Please try again later.";

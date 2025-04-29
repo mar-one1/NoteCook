@@ -109,6 +109,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         // Check FingerPrint In Device
         try {
+            if(checkBiometricSupport())
             empreinte();
         } catch (Exception e) {
             Log.e("tag", e.getMessage());
@@ -124,6 +125,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 binding.etUsername.setText(s1);
                 binding.etPassword.setText("");
                 //binding.etUsername.setEnabled(false);
+                if(checkBiometricSupport())
                 secoundLogin();
             }
         } catch (Exception e) {
