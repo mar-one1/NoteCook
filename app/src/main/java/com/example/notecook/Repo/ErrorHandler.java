@@ -2,6 +2,9 @@ package com.example.notecook.Repo;
 
 import android.app.Activity;
 
+import com.example.notecook.Activity.MainActivity;
+import com.example.notecook.Fragement.Frg_EditProfil;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
@@ -26,6 +29,7 @@ public class ErrorHandler {
                 errorMessage = "Bad request. Please check the data.";
             } else if (statusCode == 401) {
                 errorMessage = "Unauthorized access. Please login again.";
+                Frg_EditProfil.logOut(appCompatActivity);
             } else if (statusCode == 404) {
                 errorMessage = "Resource not found.";
             } else if (statusCode == 500) {

@@ -1,12 +1,12 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Activity.MainActivity.decod;
+import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.saveToken;
 import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Api.env.BASE_URL;
 
 import android.Manifest;
 import android.app.Activity;
@@ -39,9 +39,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Activity.Login;
 import com.example.notecook.Activity.MainActivity;
+import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -67,6 +67,8 @@ public class Frg_EditProfil extends Fragment {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int CAMERA_REQUEST = 1888;
+    private static GoogleSignInClient mGoogleSignInClient;
+    private static GoogleSignInOptions gso;
     private final int STORAGE_PERMISSION_CODE = 23;
     private final int GALLERY_REQUEST_CODE = 24;
     private FragmentFrgEditProfilBinding binding;
@@ -74,8 +76,6 @@ public class Frg_EditProfil extends Fragment {
     private UserDatasource mUserDatasource;
     private User getUser;
     private MainActivity m;
-    private GoogleSignInClient mGoogleSignInClient;
-    private GoogleSignInOptions gso;
     private SharedPreferences sharedPreferences;
     private UserViewModel userVM;
     private FragmentActivity fragmentActivity;
@@ -83,6 +83,29 @@ public class Frg_EditProfil extends Fragment {
 
     public Frg_EditProfil() {
         // Required empty public constructor
+    }
+
+    public static void logOut(Activity activity) {
+        signOut(activity);
+        Intent lointent = new Intent(activity, Login.class);
+        activity.startActivity(lointent);
+        saveToken("", activity);
+        TAG_CONNEXION = 0;
+        TAG_CONNEXION_LOCAL = "";
+        //Constants.alertDialog.cancel();
+        activity.finish();
+    }
+
+
+    private static void signOut(Activity activity) {
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(activity, task -> {
+                    // ...
+                });
     }
 
     @Override
@@ -98,6 +121,7 @@ public class Frg_EditProfil extends Fragment {
             Constants.alertDialog.dismiss();
         }
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,13 +152,12 @@ public class Frg_EditProfil extends Fragment {
 
         if (user.getPathimageuser() != null && !user.getPathimageuser().equals("")) {
             String imageUrl = "";
-            if(user.getPathimageuser().startsWith("/data")) {
+            if (user.getPathimageuser().startsWith("/data")) {
                 binding.iconEditprofil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
-            }else
-            if (user.getPathimageuser().startsWith("http"))
+            } else if (user.getPathimageuser().startsWith("http"))
                 Picasso.get().load(imageUrl).into(binding.iconEditprofil);
             else {
-               imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
+                imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
                 Picasso.get().load(imageUrl).into(binding.iconEditprofil);
             }
             //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
@@ -162,7 +185,7 @@ public class Frg_EditProfil extends Fragment {
             pDialog.show();
         });
 
-        Constants.navAction((AppCompatActivity) getActivity(),Frg_EditProfil.this,Vp2);
+        Constants.navAction((AppCompatActivity) getActivity(), Frg_EditProfil.this, Vp2);
 
         binding.backBtn.setOnClickListener(view -> {
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -174,46 +197,24 @@ public class Frg_EditProfil extends Fragment {
         binding.editIconProfil.setOnClickListener(view -> captureImage(getContext()));
 
         binding.logOut.setOnClickListener(view -> {
-            SweetAlertDialog ppDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE);
+            SweetAlertDialog ppDialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.SUCCESS_TYPE);
             ppDialog.setTitleText("Déconnecter");
             ppDialog.setCancelable(true);
             ppDialog.setConfirmButton("non", sweetAlertDialog -> {
 
-                Toast.makeText(getContext(), "Non clicker", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Non clicker", Toast.LENGTH_SHORT).show();
                 ppDialog.dismissWithAnimation();
 
             });
             ppDialog.setCancelButton("oui", sweetAlertDialog -> {
-                signOut();
-                Intent lointent = new Intent(getContext(), Login.class);
-                startActivity(lointent);
-                saveToken("", getContext());
-                TAG_CONNEXION = 0;
-                TAG_CONNEXION_LOCAL = "";
-                //Constants.alertDialog.cancel();
-                getActivity().finish();
+                logOut(getActivity());
             });
-
-
             ppDialog.show();
         });
 
 
         return binding.getRoot();
     }
-
-
-    private void signOut() {
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
-        mGoogleSignInClient.signOut()
-                .addOnCompleteListener(getActivity(), task -> {
-                    // ...
-                });
-    }
-
 
     public void captureImage(Context context) {
         final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
@@ -335,7 +336,7 @@ public class Frg_EditProfil extends Fragment {
             String username = user_login.getUser().getUsername();
             String Status = "active";
             String grade = user_login.getUser().getGrade();
-            String Path = ImageHelper.saveImageToInternalStorage(requireContext(),bitmap,"UserImages");
+            String Path = ImageHelper.saveImageToInternalStorage(requireContext(), bitmap, "UserImages");
             getUser = new User(user_login.getUser().getId_User(), username, nom, prenom, naissance, mail, icon1, tel, pass, Status, grade, Path);
             int value = mUserDatasource.UpdateUserByUsername(getUser, user_login.getUser().getUsername());
             Toast.makeText(getContext(), String.valueOf(value), Toast.LENGTH_SHORT).show();
@@ -358,7 +359,7 @@ public class Frg_EditProfil extends Fragment {
                     @Override
                     public void onChanged(User user) {
                         if (user != null) {
-                            userVM.updateUserImageRemote(user.getUsername(),bitmap,oldPathImage,"").observe(getViewLifecycleOwner(), new Observer<String>() {
+                            userVM.updateUserImageRemote(user.getUsername(), bitmap, oldPathImage, "").observe(getViewLifecycleOwner(), new Observer<String>() {
                                 @Override
                                 public void onChanged(String s) {
                                     user_login.setUser(user);
