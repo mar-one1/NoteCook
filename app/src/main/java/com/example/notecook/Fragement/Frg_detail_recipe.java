@@ -2,7 +2,6 @@ package com.example.notecook.Fragement;
 
 
 import static com.example.notecook.Activity.MainActivity.Type_User;
-import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
@@ -66,9 +65,10 @@ public class Frg_detail_recipe extends Fragment {
                 if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {
                     binding.recipeNameTxt.setText(CURRENT_RECIPE.getNom_recipe());
                     binding.NomUserRecipe.setText(User_CurrentRecipe.getUsername());
-                    if (CURRENT_RECIPE.getIcon_recipe() != null)
-                        binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
-                    else if (CURRENT_RECIPE.getPathimagerecipe() != null) {
+//                    if (CURRENT_RECIPE.getIcon_recipe() != null)
+//                        binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
+//                    else
+                    if (CURRENT_RECIPE.getPathimagerecipe() != null) {
                         if (CURRENT_RECIPE.getPathimagerecipe().startsWith("/d"))
                             binding.iconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(CURRENT_RECIPE.getPathimagerecipe()));
                         else {

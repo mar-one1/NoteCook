@@ -410,7 +410,7 @@ public class RecipeRepository {
                 if (response.isSuccessful()) {
                     remoteRecipeListByUser.postValue(response.body());
                     if (!getUserSynch(username, context) && list_recipe.size() < remoteRecipeListByUser.getValue().size()) {
-                        if (remoteRecipeListByUser.getValue() != null && remoteRecipeListByUser.getValue().size() != 0) {
+                        if (remoteRecipeListByUser.getValue() != null && !remoteRecipeListByUser.getValue().isEmpty()) {
                             // Synchronize data from local to remote
                             //synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
                         }

@@ -1,7 +1,6 @@
 package com.example.notecook.Adapter;
 
 
-import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
@@ -93,9 +92,10 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
 
 
-        if (recipe.getIcon_recipe() != null) {
-            holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
-        } else if (recipe.getPathimagerecipe() != null) {
+//        if (recipe.getIcon_recipe() != null) {
+//            holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
+//        } else
+            if (recipe.getPathimagerecipe() != null) {
             if (recipe.getPathimagerecipe().startsWith("/d")) {
                 holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
             } else {
@@ -119,8 +119,7 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
                         });
             }
 
-        } else
-            holder.Image.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
+        } else holder.Image.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
 
         if (Objects.equals(b, TAG_LOCAL)) {
             holder.txt_time.setText("Local");

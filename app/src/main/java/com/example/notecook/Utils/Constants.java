@@ -287,7 +287,15 @@ public class    Constants {
             text.setLines(7);
         });alertDialog.show();
     }
-
+    public static Bitmap decod(byte[] image) {
+        Bitmap bitmap = null;
+        try {
+            bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+        } catch (Exception e) {
+            Log.e("tag", "" + e);
+        }
+        return bitmap;
+    }
     public static void DesableTimeOut(final View view)
     // Avoid double click
     {
@@ -421,19 +429,6 @@ public class    Constants {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, displayNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
-    }
-
-    public static Bitmap drawableToBitmap(Context context, int drawableId) {
-        // Get a reference to the drawable resource
-        Drawable drawable = context.getResources().getDrawable(drawableId);
-
-        // Convert the drawable to a Bitmap
-        Bitmap bitmap = null;
-        if (drawable != null) {
-            bitmap = BitmapFactory.decodeResource(context.getResources(), drawableId);
-        }
-
-        return bitmap;
     }
 
     public static void navAction(AppCompatActivity activity ,Fragment fragment,ViewPager2 Vp2) {

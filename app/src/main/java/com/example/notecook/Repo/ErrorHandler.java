@@ -1,9 +1,13 @@
 package com.example.notecook.Repo;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.example.notecook.Activity.Login;
 import com.example.notecook.Fragement.Frg_EditProfil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -21,33 +25,42 @@ public class ErrorHandler {
     // Handle error responses from the server (HTTP error codes)
     public static void handleErrorResponse(Response<?> response, Activity appCompatActivity) {
         int statusCode = response.code();
-        String errorMessage = null;
-
-        if (response.errorBody() != null) {
-            if (statusCode == 400) {
-                errorMessage = "Bad request. Please check the data.";
-            } else if (statusCode == 401) {
-                if(!appCompatActivity.getClass().equals(Login.class)) {
-                    errorMessage = "Unauthorized access. Please login again.";
-                    Frg_EditProfil.logOut(appCompatActivity);
+        try {
+            if (response.errorBody() != null) {
+            String errorMessage = response.errorBody().string();
+            Log.e("error",errorMessage);
+                if (errorMessage.isEmpty()) {
+                    if (statusCode == 400) {
+                        errorMessage = "Bad request. Please check the data.";
+                    } else if (statusCode == 401) {
+                        errorMessage = "Unauthorized access. Please login again.";
+                        if (!appCompatActivity.getClass().equals(Login.class)) {
+                            Frg_EditProfil.logOut(appCompatActivity);
+                        }
+                    } else if (statusCode == 404) {
+                        errorMessage = "Resource not found.";
+                    } else if (statusCode == 406) {
+                        errorMessage = "Resource not found.";
+                    } else if (statusCode == 500) {
+                        errorMessage = "Server error. Please try again later.";
+                    } else if (statusCode == 502) {
+                        errorMessage = "Bad gateway. The server is down.";
+                    } else if (statusCode == 503) {
+                        errorMessage = "Service unavailable. The server is temporarily down.";
+                    } else {
+                        errorMessage = "An error occurred. Please try again.";
+                    }
+                }else {
+                    String jsonResponse = errorMessage;
+                    JSONObject jsonObject = new JSONObject(jsonResponse);
+                    errorMessage = jsonObject.getString("error");
+                    Log.d("API_ERROR", errorMessage);  // Output: User not found
                 }
-            } else if (statusCode == 404) {
-                errorMessage = "Resource not found.";
-            } else if (statusCode == 406) {
-                errorMessage = "Resource not found.";
-            } else if (statusCode == 500) {
-                errorMessage = "Server error. Please try again later.";
-            } else if (statusCode == 502) {
-                errorMessage = "Bad gateway. The server is down.";
-            } else if (statusCode == 503) {
-                errorMessage = "Service unavailable. The server is temporarily down.";
-            } else {
-                errorMessage = "An error occurred. Please try again.";
-            }
 
-            if (errorMessage != null) {
                 addErrorMessageToQueue(errorMessage, appCompatActivity);
             }
+        } catch (IOException | JSONException e) {
+            throw new RuntimeException(e);
         }
     }
 

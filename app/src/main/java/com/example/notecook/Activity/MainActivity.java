@@ -69,15 +69,7 @@ public class MainActivity extends AppCompatActivity  {
     private boolean doubleBackToExitPressedOnce = false;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    public static Bitmap decod(byte[] image) {
-        Bitmap bitmap = null;
-        try {
-            bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-        } catch (Exception e) {
-            Log.e("tag", "" + e);
-        }
-        return bitmap;
-    }
+
 
 
     @Override

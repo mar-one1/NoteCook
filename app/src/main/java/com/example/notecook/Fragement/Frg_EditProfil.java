@@ -1,6 +1,5 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Activity.MainActivity.decod;
 import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
@@ -150,7 +149,7 @@ public class Frg_EditProfil extends Fragment {
             }
         });
 
-        if (user.getPathimageuser() != null && !user.getPathimageuser().equals("")) {
+        if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
             String imageUrl = "";
             if (user.getPathimageuser().startsWith("/data")) {
                 binding.iconEditprofil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
@@ -161,9 +160,10 @@ public class Frg_EditProfil extends Fragment {
                 Picasso.get().load(imageUrl).into(binding.iconEditprofil);
             }
             //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
-        } else if (user.getIcon() != null) {
-            binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
         }
+//        else if (user.getIcon() != null) {
+//            binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
+//        }
 
         ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
 
@@ -226,7 +226,7 @@ public class Frg_EditProfil extends Fragment {
                 if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
                 }
                 if (ContextCompat.checkSelfPermission(context,
                         Manifest.permission.CAMERA)
@@ -295,19 +295,21 @@ public class Frg_EditProfil extends Fragment {
         }
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(selectedDate);
+        if (selectedDate != null) {
+            calendar.setTime(selectedDate);
+        }
 
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
-                getContext(),
+                view.getContext(),
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                         // Set selected date to the TextView
-                        String selectedDate = String.format("%02d/%02d/%d", day, month + 1, year);
+                        String selectedDate =String.format(Locale.US, "%02d/%02d/%04d", day, month + 1, year);
                         binding.txtBirth.setText(selectedDate);
                     }
                 },

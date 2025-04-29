@@ -15,7 +15,7 @@ public class User {
     private String Birthday;
     @SerializedName("email")
     private String Email;
-    @SerializedName("icon")
+    //@SerializedName("icon")
     private byte[] icon;
     @SerializedName("phoneNumber")
     private String Phonenumber;

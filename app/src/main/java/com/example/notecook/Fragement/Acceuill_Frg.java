@@ -8,6 +8,7 @@ import static com.example.notecook.Utils.Constants.TAG_ONLINE;
 import static com.example.notecook.Utils.Constants.TAG_REMOTE;
 import static com.example.notecook.Utils.Constants.list_recipe;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
@@ -48,7 +50,7 @@ public class Acceuill_Frg extends Fragment {
     Category_Recipe mCategoryRecipe;
     private FragmentAcceuillFrgBinding binding;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private  RecipeViewModel recipeVM;
+    private RecipeViewModel recipeVM;
     private FragmentActivity fragmentActivity;
 
     public Acceuill_Frg() {
@@ -77,10 +79,10 @@ public class Acceuill_Frg extends Fragment {
             viewPager2.setCurrentItem(2, false);
         });
 
-        bindingRcV_categories(binding.RcCatMenu, true);
+        bindingRcV_categories(binding.RcCatMenu, true, getContext());
         fragmentActivity = (FragmentActivity) getContext();
-        recipeVM = new RecipeViewModel(getContext(),getActivity());
-        recipeVM = new ViewModelProvider(this,recipeVM).get(RecipeViewModel.class);
+        recipeVM = new RecipeViewModel(getContext(), getActivity());
+        recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         fetchRecipe();
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
@@ -101,7 +103,8 @@ public class Acceuill_Frg extends Fragment {
                 }, 2000); // 2 seconds simulated refresh time (adjust as needed)
             }
         });
-        binding.txtRecherche.setOnTouchListener((view, motionEvent) -> binding.seeMoreTxt.callOnClick());
+        binding.txtRecherche.setOnClickListener(view -> {binding.seeMoreTxt.callOnClick();});
+
         return binding.getRoot();
     }
 
@@ -112,16 +115,15 @@ public class Acceuill_Frg extends Fragment {
         //if(Remotelist_recipe.getValue()!=null) bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
     }
 
-    private void fetchRecipe()
-    {
-        recipeVM.getRecipes().observe(getViewLifecycleOwner(),new Observer<List<Recipe>>() {
+    private void fetchRecipe() {
+        recipeVM.getRecipes().observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
             @Override
             public void onChanged(@Nullable List<Recipe> recipeList) {
-                if(recipeList!=null) {
+                if (recipeList != null) {
                     Remotelist_recipe.setValue(recipeList);
                     bindingRcV_recipes(recipeList, binding.RcCatPopular, true);
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.size(), Toast.LENGTH_SHORT).show();
-                }else
+                } else
                     bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
             }
         });
@@ -136,30 +138,31 @@ public class Acceuill_Frg extends Fragment {
      * This function allows to adapt different fragments in main fragment.
      */
 
-    private void heart_click(ImageView IV) {
-        Drawable defaultImagelike = getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
+    private void heart_click(ImageView IV, Context context) {
+        Drawable defaultImagelike = ContextCompat.getDrawable(context, R.drawable.italian);
+
         IV.setOnClickListener(view -> {
-            if (!defaultImagelike.getConstantState().equals(IV.getDrawable().getConstantState())) {
+            if (defaultImagelike != null && !(defaultImagelike.getConstantState() == IV.getDrawable().getConstantState())) {
                 IV.setImageDrawable(defaultImagelike);
-            } else
-                IV.setImageDrawable(getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp));
+            }
         });
     }
-    public void bindingRcV_categories(RecyclerView recyclerView, boolean isgarde) {
+
+    public void bindingRcV_categories(RecyclerView recyclerView, boolean isgarde, Context context) {
         List<Category_Recipe> list_categoryRecipes = new ArrayList<>();
         Adapter_RC_MenuCat adapter_rc_menuCat;
         List<Drawable> drs = new ArrayList<>();
-        drs.add(getResources().getDrawable(R.drawable.barbecue));
-        drs.add(getResources().getDrawable(R.drawable.breakfast));
-        drs.add(getResources().getDrawable(R.drawable.chicken));
-        drs.add(getResources().getDrawable(R.drawable.beef));
-        drs.add(getResources().getDrawable(R.drawable.brunch));
-        drs.add(getResources().getDrawable(R.drawable.dinner)) ;
-        drs.add(getResources().getDrawable(R.drawable.wine));
-        drs.add(getResources().getDrawable(R.drawable.italian));
+        drs.add(ContextCompat.getDrawable(context, R.drawable.barbecue));
+        drs.add(ContextCompat.getDrawable(context, R.drawable.breakfast));
+        drs.add(ContextCompat.getDrawable(context, R.drawable.chicken));
+        drs.add(ContextCompat.getDrawable(context, R.drawable.beef));
+        drs.add(ContextCompat.getDrawable(context, R.drawable.brunch));
+        drs.add(ContextCompat.getDrawable(context, R.drawable.dinner));
+        drs.add(ContextCompat.getDrawable(context, R.drawable.wine));
+        drs.add(ContextCompat.getDrawable(context, R.drawable.italian));
 
         for (int i = 0; i < 8; i++) {
-            mCategoryRecipe = new Category_Recipe( Constants.DEFAULT_SEARCH_CATEGORIES[i],drs.get(i));
+            mCategoryRecipe = new Category_Recipe(Constants.DEFAULT_SEARCH_CATEGORIES[i], drs.get(i));
             list_categoryRecipes.add(mCategoryRecipe);
         }
         adapter_rc_menuCat = new Adapter_RC_MenuCat(list_categoryRecipes, true);
@@ -172,13 +175,13 @@ public class Acceuill_Frg extends Fragment {
 
     public void bindingRcV_recipes(List<Recipe> list, RecyclerView mRecyclerView, boolean isgarde) {
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-        if (list != null && list.size() != 0) {
+        if (list != null && !list.isEmpty()) {
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), Remotelist_recipe.getValue(), TAG_REMOTE);
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(adapter_rc_recipeDt);
-        } else if (list_recipe != null && list_recipe.size() != 0) {
+        } else if (list_recipe != null && !list_recipe.isEmpty()) {
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), list_recipe, TAG_LOCAL);
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);
