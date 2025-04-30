@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -80,7 +81,8 @@ public class add_recipe extends Fragment {
     private List<Step> stepsList = new ArrayList<>();
     private List<Review> reviewsList = new ArrayList<>();
     private List<Ingredients> ingredientsList = new ArrayList<>();
-    private BottomNavigationView btnV;
+    private ImageView currentTargetImageView;
+
 
 
     public add_recipe() {
@@ -107,12 +109,14 @@ public class add_recipe extends Fragment {
         binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                currentTargetImageView = binding.addIconRecipe;
                 captureImage(getContext());
             }
         });
         binding.addIconStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                currentTargetImageView = binding.addIconStep;
                 captureImage(getContext());
             }
         });
@@ -397,12 +401,12 @@ public class add_recipe extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CAMERA_REQUEST) {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
-                binding.addIconRecipe.setImageBitmap(photo);
+                currentTargetImageView.setImageBitmap(photo);
             } else if (requestCode == GALLERY_REQUEST_CODE) {
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
                     // update the preview image in the layout
-                    binding.addIconRecipe.setImageURI(selectedImageUri);
+                    currentTargetImageView.setImageURI(selectedImageUri);
                 }
             }
         }

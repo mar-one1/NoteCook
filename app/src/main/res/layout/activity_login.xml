@@ -24,6 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
+
                 android:orientation="vertical"
                 android:visibility="visible">
 
@@ -87,12 +88,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_marginRight="@dimen/_80sdp"
+                    android:layout_marginLeft="@dimen/_80sdp">
 
                     <Button
                         android:id="@+id/btn_login"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="@dimen/_20sdp"
                         android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:text="Log In" />
@@ -100,11 +103,10 @@
                     <Button
                         android:id="@+id/Sign_Up"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="@dimen/_20sdp"
                         android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:text="Sign Up" />
-
 
                 </LinearLayout>
 

@@ -9,7 +9,7 @@ public class Category_Recipe {
 
     @SerializedName("id")
     private int id_category;
-    @SerializedName("icon")
+    //@SerializedName("icon")
     private Drawable icon_category;
     private String icon_path_category;
     @SerializedName("detail_ct")

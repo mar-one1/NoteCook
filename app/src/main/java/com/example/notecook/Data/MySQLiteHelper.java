@@ -48,7 +48,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             + TABLE_DETAIL_RECIPE + "(" + COLUMN_ID_DETAIL_RECIPE
             + " integer primary key autoincrement, " + COLUMN_DETAIL
             + " text, " + COLUMN_LEVEL_DR + " integer , " + COLUMN_TIME_DR
-            + " integer , " + COLUMN_RATE_DR + " float, "
+            + " text , " + COLUMN_RATE_DR + " float, "
             + COLUMN_CALORIES + " integer , "
             + COLUMN_FRK_RECIPE_DETAIL + " integer, "
             + " FOREIGN KEY (" + COLUMN_FRK_RECIPE_DETAIL + ") REFERENCES " + TABLE_RECIPE + "(" + COLUMN_ID_RECIPE + ") ON DELETE CASCADE );";
