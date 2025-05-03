@@ -194,6 +194,7 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
                                 fetchRecipe(recipeResponse);
                                 CURRENT_FULL_RECIPE = recipeResponse;
                                 User_CurrentRecipe = user_login.getUser();
+                                fetchNutritionData(CURRENT_FULL_RECIPE.getRecipe().getNom_recipe(),100,"g");
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();
@@ -206,12 +207,13 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
             }
         });
     }
+
     // Method to fetch nutrition data with custom serving size
     public void fetchNutritionData(String query, double servingSize,String ServingUnit) {
         new FetchNutritionTask(this, servingSize,ServingUnit).execute(query);
     }// Method to fetch nutrition data with custom serving size
 
-    public void fetchNutritionData(String query, double servingSize) {
+    public  void fetchNutritionData(String query, double servingSize) {
         new FetchNutritionTask(this, servingSize).execute(query);
     }
 
