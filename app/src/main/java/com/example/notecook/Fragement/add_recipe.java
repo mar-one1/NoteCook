@@ -62,6 +62,7 @@ import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
@@ -328,7 +329,10 @@ public class add_recipe extends Fragment {
                 if (recipe != -1)
                     add_recipe.recipeR.setAddedToRemote(true);
                 Toast.makeText(getContext(), "recipe add success in Remote", Toast.LENGTH_SHORT).show();
-                MainFragment.viewPager2.setCurrentItem(4);
+                if(recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
+                    MainFragment.viewPager2.setCurrentItem(4);
+                    detach();
+                }
             }
         });
     }
@@ -362,7 +366,8 @@ public class add_recipe extends Fragment {
                                 if(bitmap!=null) recipeVM.uploadRemoteRecipeImage(Recipe.getRecipe().getUnique_key_recipe(), bitmap).observe(requireActivity(), new Observer<String>() {
                                     @Override
                                     public void onChanged(String s) {
-                                        CURRENT_FULL_RECIPE.getRecipe().setPathimagerecipe(s);
+                                        Recipe.getRecipe().setPathimagerecipe(s);
+                                        CURRENT_FULL_RECIPE.setRecipe(Recipe.getRecipe());
                                         Constants.AffichageMessage("success", "", requireActivity());
                                         detach();
                                     }
@@ -390,6 +395,10 @@ public class add_recipe extends Fragment {
                     add_recipe.recipeR.setAddedToLocal(true);
                     Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
                     list_recipe.add(recipeResponse.getRecipe());
+                    if(recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
+                        MainFragment.viewPager2.setCurrentItem(4);
+                        detach();
+                    }
                 }
             }
         });
