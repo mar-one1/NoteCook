@@ -394,7 +394,6 @@ public class add_recipe extends Fragment {
                 if (recipeResponse != null) {
                     add_recipe.recipeR.setAddedToLocal(true);
                     Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
-                    list_recipe.add(recipeResponse.getRecipe());
                     if(recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
                         MainFragment.viewPager2.setCurrentItem(4);
                         detach();

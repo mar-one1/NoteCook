@@ -114,7 +114,7 @@ public class RecipeRepository {
         return user;
     }
 
-    public int insertRecipeLocally(Recipe recipe, int id) {
+    public  int insertRecipeLocally(Recipe recipe, int id) {
         // Insert the recipe locally using your createRecipe method
         if (recipe.getPathimagerecipe() != null && !recipe.getPathimagerecipe().isEmpty()) {
             String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
@@ -258,6 +258,7 @@ public class RecipeRepository {
                 stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
                 fullRecipeLiveData.setValue(RC);
                 fullRecipeLiveData.postValue(RC);
+                list_recipe= recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User());
             }
         }
         return fullRecipeLiveData;
@@ -281,6 +282,7 @@ public class RecipeRepository {
                 stepsDataSource.Update_Step2(RC.getSteps(), id_recipe);
                 fullRecipeLiveData.setValue(RC);
                 fullRecipeLiveData.postValue(RC);
+                list_recipe= recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User());
             }
         }
         return fullRecipeLiveData;
