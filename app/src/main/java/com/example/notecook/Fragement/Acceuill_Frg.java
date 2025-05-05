@@ -181,8 +181,8 @@ public class Acceuill_Frg extends Fragment {
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(adapter_rc_recipeDt);
-        } else if (list_recipe != null && !list_recipe.isEmpty()) {
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), list_recipe, TAG_LOCAL);
+        } else if (list_recipe != null && !list_recipe.getValue().isEmpty()) {
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), list_recipe.getValue(), TAG_LOCAL);
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);

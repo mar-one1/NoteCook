@@ -57,9 +57,7 @@ public class Frg_recipe_fav extends Fragment {
     }
 
     public void bindingRcV_FavRecipes(List<Recipe> list, RecyclerView mRecyclerView, boolean isgarde) {
-        List<Recipe> list_recipes = new ArrayList<>();
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-
         //if(TAG_CONNEXION==200)
         adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(),getActivity(),list, TAG_ONLINE);
         // adapter_rc_recipeDt = new Adapter_RC_RecipeDt(list_recipe,true);

@@ -8,7 +8,6 @@ import static com.example.notecook.Utils.Constants.TAG_MY;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 import static com.example.notecook.Utils.Constants.isConnected;
-import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
@@ -62,7 +61,6 @@ import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
 
@@ -83,7 +81,6 @@ public class add_recipe extends Fragment {
     private List<Review> reviewsList = new ArrayList<>();
     private List<Ingredients> ingredientsList = new ArrayList<>();
     private ImageView currentTargetImageView;
-
 
 
     public add_recipe() {
@@ -128,8 +125,7 @@ public class add_recipe extends Fragment {
                 if (All_Ingredients_Recipe != null && All_Ingredients_Recipe.size() != 0) {
                     Ingredients ingredient = All_Ingredients_Recipe.get(binding.spIngredients.getSelectedItemPosition());
                     Adapter_Rc_Ingredents adapter = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
-                    if (adapter != null)
-                        ingredientsList = adapter.getDataList();
+                    if (adapter != null) ingredientsList = adapter.getDataList();
                     ingredientsList.add(ingredient);
                     Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext());
                 }
@@ -329,7 +325,7 @@ public class add_recipe extends Fragment {
                 if (recipe != -1)
                     add_recipe.recipeR.setAddedToRemote(true);
                 Toast.makeText(getContext(), "recipe add success in Remote", Toast.LENGTH_SHORT).show();
-                if(recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
+                if (recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
                     MainFragment.viewPager2.setCurrentItem(4);
                     detach();
                 }
@@ -358,20 +354,22 @@ public class add_recipe extends Fragment {
             @Override
             public void onChanged(RecipeResponse Recipe) {
                 if (Recipe != null) {
-                    if(bitmap!=null) recipeVM.updateImageRecipeLocal(bitmap, CURRENT_FULL_RECIPE.getRecipe().getId_recipe());
+                    if (bitmap != null)
+                        recipeVM.updateImageRecipeLocal(bitmap, CURRENT_FULL_RECIPE.getRecipe().getId_recipe());
                     recipeVM.updateFullRemoteRecipe(Recipe).observe(requireActivity(), new Observer<String>() {
                         @Override
                         public void onChanged(String Result) {
                             if (!Result.isEmpty()) {
-                                if(bitmap!=null) recipeVM.uploadRemoteRecipeImage(Recipe.getRecipe().getUnique_key_recipe(), bitmap).observe(requireActivity(), new Observer<String>() {
-                                    @Override
-                                    public void onChanged(String s) {
-                                        Recipe.getRecipe().setPathimagerecipe(s);
-                                        CURRENT_FULL_RECIPE.setRecipe(Recipe.getRecipe());
-                                        Constants.AffichageMessage("success", "", requireActivity());
-                                        detach();
-                                    }
-                                });
+                                if (bitmap != null)
+                                    recipeVM.uploadRemoteRecipeImage(Recipe.getRecipe().getUnique_key_recipe(), bitmap).observe(requireActivity(), new Observer<String>() {
+                                        @Override
+                                        public void onChanged(String s) {
+                                            Recipe.getRecipe().setPathimagerecipe(s);
+                                            CURRENT_FULL_RECIPE.setRecipe(Recipe.getRecipe());
+                                            Constants.AffichageMessage("success", "", requireActivity());
+                                            detach();
+                                        }
+                                    });
                             }
                         }
                     });
@@ -394,7 +392,33 @@ public class add_recipe extends Fragment {
                 if (recipeResponse != null) {
                     add_recipe.recipeR.setAddedToLocal(true);
                     Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
-                    if(recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
+                    if (recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
+                        MainFragment.viewPager2.setCurrentItem(4,false);
+                        detach();
+                    }
+                }
+            }
+        });
+    }
+
+    private void postRecipe(RecipeResponse recipeR, Recipe recipe, Bitmap bitmap) {
+        recipeR.setRecipe(recipe);
+        recipeVM.postFullRecipeLocal(recipeR).observe(requireActivity(), new Observer<RecipeResponse>() {
+            @Override
+            public void onChanged(RecipeResponse recipeResponse) {
+                if (recipeResponse != null) {
+                    add_recipe.recipeR.setAddedToLocal(true);
+                    Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
+                    recipeVM.postFullRecipe(recipeR, bitmap).observe(requireActivity(), new Observer<Integer>() {
+                        @Override
+                        public void onChanged(Integer recipe) {
+                            if (recipe != -1)
+                                add_recipe.recipeR.setAddedToRemote(true);
+                            Toast.makeText(getContext(), "recipe add success in Remote", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    if (recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
                         MainFragment.viewPager2.setCurrentItem(4);
                         detach();
                     }
@@ -532,7 +556,7 @@ public class add_recipe extends Fragment {
         }
     }
 
-//TODO VERIFY THE RECYCLE OF RECIPE NO SHOWING IN ADD MODE WHERE THE LIST IS EMPTY
+    //TODO VERIFY THE RECYCLE OF RECIPE NO SHOWING IN ADD MODE WHERE THE LIST IS EMPTY
     private User getLocalUser(String username) {
         UserDatasource userDatasource = new UserDatasource(getContext());
         userDatasource.open();

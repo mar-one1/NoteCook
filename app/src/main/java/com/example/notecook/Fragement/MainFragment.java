@@ -51,7 +51,7 @@ public class MainFragment extends Fragment  {
                 fragmentTransaction.commitNow();
 
                 //viewPager2.setCurrentItem(1,false);
-                Flbtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_playlist_add_check_black_24dp));
+                Flbtn.setImageDrawable(getActivity().getDrawable(R.drawable.ic_playlist_add_check_black_24dp));
                 Flbtn.hide();
         });
 

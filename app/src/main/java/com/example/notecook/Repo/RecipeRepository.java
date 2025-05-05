@@ -212,15 +212,15 @@ public class RecipeRepository {
 
     public LiveData<List<Recipe>> getLocalRecipes(int i, int pages, int itemperpage) {
         MutableLiveData<List<Recipe>> recipe = new MutableLiveData<>();
-        list_recipe = recipeDatasource.getRecipeByIdUser(i, 3, 3);
-        recipe.setValue(list_recipe);
+        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i, 3, 3));
+        recipe.setValue(list_recipe.getValue());
         return recipe;
     }
 
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
         MutableLiveData<List<Recipe>>  recipe = new MutableLiveData<>();
-        list_recipe = recipeDatasource.getRecipeByIdUser(i);
-        recipe.setValue(list_recipe);
+        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
+        recipe.setValue(list_recipe.getValue());
         ImageHelper.deleteUnusedImages(context, recipeDatasource.getAllRecipesImagePath(), "RecipeImages");
         return recipe;
     }
@@ -258,7 +258,7 @@ public class RecipeRepository {
                 stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
                 fullRecipeLiveData.setValue(RC);
                 fullRecipeLiveData.postValue(RC);
-                list_recipe= recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User());
+                list_recipe.setValue(recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User()));
             }
         }
         return fullRecipeLiveData;
@@ -282,7 +282,7 @@ public class RecipeRepository {
                 stepsDataSource.Update_Step2(RC.getSteps(), id_recipe);
                 fullRecipeLiveData.setValue(RC);
                 fullRecipeLiveData.postValue(RC);
-                list_recipe= recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User());
+                list_recipe.setValue(recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User()));
             }
         }
         return fullRecipeLiveData;
@@ -411,7 +411,7 @@ public class RecipeRepository {
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     remoteRecipeListByUser.postValue(response.body());
-                    if (!getUserSynch(username, context) && list_recipe.size() < remoteRecipeListByUser.getValue().size()) {
+                    if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
                         if (remoteRecipeListByUser.getValue() != null && !remoteRecipeListByUser.getValue().isEmpty()) {
                             // Synchronize data from local to remote
                             //synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);

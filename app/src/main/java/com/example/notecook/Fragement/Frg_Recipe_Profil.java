@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -60,7 +61,13 @@ public class Frg_Recipe_Profil extends Fragment {
         // Inflate the layout for this fragment
         recipeVM = new RecipeViewModel(requireContext(), requireActivity());
         userVM = new UserViewModel(requireContext(), requireActivity());
-        //recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
+        recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
+        list_recipe.observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
+            @Override
+            public void onChanged(List<Recipe> recipes) {
+                bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
+            }
+        });
         fetchRecipeUser();
         return binding.getRoot();
     }
@@ -79,7 +86,7 @@ public class Frg_Recipe_Profil extends Fragment {
     public void onResume() {
         super.onResume();
         //list_recipe.setValue(recipes);
-        bindingRcV_recipes(binding.RcRecipeProfil, list_recipe);
+        bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
     }
 
     private void fetchRecipeUser() {
@@ -89,25 +96,25 @@ public class Frg_Recipe_Profil extends Fragment {
                     @Override
                     public void onChanged(List<Recipe> recipes) {
                         if (recipes != null) {
-                            list_recipe = recipes;
+                            list_recipe.setValue(recipes);
                             recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(getViewLifecycleOwner(), new Observer<List<RecipeResponse>>() {
                                 @Override
                                 public void onChanged(List<RecipeResponse> recipes) {
                                     if (recipes != null)
                                         RemotelistFullRecipe.setValue(recipes);
                                     if (!getUserSynch(user_login.getUser().getUsername(), requireContext())) {
-                                        recipeVM.synchronisationRecipes(list_recipe, RemotelistFullRecipe.getValue(), user_login_local.getUser().getUsername()).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                                        recipeVM.synchronisationRecipes(list_recipe.getValue(), RemotelistFullRecipe.getValue(), user_login_local.getUser().getUsername()).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
                                             @Override
                                             public void onChanged(Boolean aBoolean) {
                                                 saveUserSynch(user_login.getUser().getUsername(), aBoolean, requireContext());
-                                                    recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-                                                        @Override
-                                                        public void onChanged(List<Recipe> recipes) {
-                                                            if (recipes != null)
-                                                                list_recipe = recipes;
-                                                            bindingRcV_recipes(binding.RcRecipeProfil, list_recipe);
-                                                        }
-                                                    });
+                                                recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
+                                                    @Override
+                                                    public void onChanged(List<Recipe> recipes) {
+                                                        if (recipes != null)
+                                                            list_recipe.setValue(recipes);
+                                                        bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
+                                                    }
+                                                });
                                             }
                                         });
                                     }
@@ -125,7 +132,7 @@ public class Frg_Recipe_Profil extends Fragment {
                                 @Override
                                 public void onChanged(List<Recipe> recipes) {
                                     if (recipes != null)
-                                        list_recipe.addAll(recipes);
+                                        list_recipe.getValue().addAll(recipes);
 //                                    if (MODE_ONLINE)
 //                                        recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
 //                                            RemotelistByIdUser_recipe.setValue(recipeList);
@@ -140,7 +147,7 @@ public class Frg_Recipe_Profil extends Fragment {
                                     if (recipes != null)
                                         RemotelistFullRecipe.setValue(recipes);
                                     if (!getUserSynch(user_login.getUser().getUsername(), requireContext())) {
-                                        recipeVM.synchronisationRecipes(list_recipe, RemotelistFullRecipe.getValue(), user_login_local.getUser().getUsername()).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+                                        recipeVM.synchronisationRecipes(list_recipe.getValue(), RemotelistFullRecipe.getValue(), user_login_local.getUser().getUsername()).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
                                             @Override
                                             public void onChanged(Boolean aBoolean) {
                                                 saveUserSynch(user_login.getUser().getUsername(), aBoolean, requireContext());
@@ -149,7 +156,7 @@ public class Frg_Recipe_Profil extends Fragment {
                                                         @Override
                                                         public void onChanged(List<Recipe> recipes) {
                                                             if (recipes != null)
-                                                                list_recipe = recipes;
+                                                                list_recipe.setValue(recipes);
                                                         }
                                                     });
                                             }

@@ -92,6 +92,7 @@ public class Frg_recipe_ingredients extends Fragment {
         // Inflate the layout for this fragment
         mRecyclerView = binding.RcIngred;
         VMIngredient = new IngredientsViewModel(getContext(), getActivity());
+        if(Ingredients_CurrentRecipe!=null)
         Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe.getValue(), getContext());
         Remote_nutritions.observe(getViewLifecycleOwner(), new Observer<Nutrition>() {
             @Override

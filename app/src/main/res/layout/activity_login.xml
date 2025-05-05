@@ -95,7 +95,7 @@
                     <Button
                         android:id="@+id/btn_login"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_40sdp"
+                        android:layout_height="50dp"
                         android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:text="Log In" />
@@ -103,7 +103,7 @@
                     <Button
                         android:id="@+id/Sign_Up"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/_40sdp"
+                        android:layout_height="50dp"
                         android:layout_margin="10dp"
                         android:layout_weight="1"
                         android:text="Sign Up" />

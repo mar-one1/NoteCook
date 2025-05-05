@@ -121,7 +121,7 @@ public class    Constants {
     public static String Token = "";
     public static int TAG_CONNEXION = -1;
     public static String TAG_CONNEXION_MESSAGE = "";
-    public static List<Recipe> list_recipe = new ArrayList<>();
+    public static MutableLiveData<List<Recipe>> list_recipe = new MutableLiveData<>();
     public static List<Detail_Recipe> list_Detailrecipe;
     public static Detail_Recipe Detail_CurrentRecipe;
     public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
@@ -223,7 +223,7 @@ public class    Constants {
         //Token = "";
         TAG_CONNEXION = -1;
         TAG_CONNEXION_MESSAGE = "";
-        list_recipe = new ArrayList<>();
+        list_recipe = new MutableLiveData<>();
         Steps_CurrentRecipe = new ArrayList<>();
         Review_CurrentRecipe = new ArrayList<>();
         Ingredients_CurrentRecipe = new MutableLiveData<>();
