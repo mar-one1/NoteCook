@@ -29,8 +29,17 @@
             android:id="@+id/filtre_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_margin="10dp"
             android:src="@drawable/filtre_search_24" />
+
+        <TextView
+            android:id="@+id/filtre_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="clear"
+            android:textColor="@color/red"
+            />
 
     </LinearLayout>
 
@@ -80,7 +89,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/level_recipe_search"
                 android:layout_marginTop="16dp"
-                android:text="Apply Filter" />
+                android:text="Apply Filter"
+                />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView

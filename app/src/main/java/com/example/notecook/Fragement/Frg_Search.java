@@ -99,7 +99,21 @@ public class Frg_Search extends Fragment {
                 //double minPrice = Double.parseDouble(binding.minPriceEditText.getText().toString().trim());
                 //double maxPrice = Double.parseDouble(binding.maxPriceEditText.getText().toString().trim());
                 binding.llFiltre.setVisibility(View.GONE);
+                binding.filtreSearch.setImageDrawable(getContext().getDrawable(R.drawable.active_filtre_24));
                 search(searchText,false);
+                binding.filtreClear.setVisibility(View.VISIBLE);
+            }
+        });
+
+        binding.filtreClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                binding.filtreClear.setVisibility(View.GONE);
+                binding.txtRecherche.setText("");
+                binding.llFiltre.setVisibility(View.GONE);
+                binding.levelRecipeSearch.setSelection(0);
+                binding.filterButton.callOnClick();
+                binding.filtreSearch.setImageDrawable(getContext().getDrawable(R.drawable.filtre_search_24));
             }
         });
 
@@ -124,6 +138,7 @@ public class Frg_Search extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                binding.filtreClear.setVisibility(View.VISIBLE);
                 List<String> listcurrent = new ArrayList<>();
                 for (String item : list) {
                     if (item.contains(s) && !listcurrent.contains(s)) listcurrent.add(s.toString());
