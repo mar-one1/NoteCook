@@ -36,6 +36,7 @@ import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentAcceuillFrgBinding;
 
@@ -52,6 +53,7 @@ public class Acceuill_Frg extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecipeViewModel recipeVM;
     private FragmentActivity fragmentActivity;
+    private IngredientsViewModel ingredientsVM;
 
     public Acceuill_Frg() {
         // Required empty public constructor
@@ -83,6 +85,9 @@ public class Acceuill_Frg extends Fragment {
         fragmentActivity = (FragmentActivity) getContext();
         recipeVM = new RecipeViewModel(getContext(), getActivity());
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
+        //Get All Ingredients Recipes
+        ingredientsVM = new IngredientsViewModel(getContext(), getActivity());
+        ingredientsVM.getAllIngredientsApi();
         fetchRecipe();
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
@@ -93,6 +98,7 @@ public class Acceuill_Frg extends Fragment {
                 // Simulate refresh delay (remove this in your actual code)
                 //onResume();
                 fetchRecipe();
+                ingredientsVM.getAllIngredientsApi();
 
                 new android.os.Handler().postDelayed(new Runnable() {
                     @Override
@@ -181,7 +187,7 @@ public class Acceuill_Frg extends Fragment {
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(adapter_rc_recipeDt);
-        } else if (list_recipe != null && !list_recipe.getValue().isEmpty()) {
+        } else if (list_recipe != null && list_recipe.getValue() != null && !list_recipe.getValue().isEmpty()) {
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), list_recipe.getValue(), TAG_LOCAL);
             LinearLayoutManager manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);

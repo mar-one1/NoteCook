@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity  {
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
     private CategoriesViewModel categoryVM;
-    private IngredientsViewModel ingredientsVM;
+
     private ActivityMainBinding binding;
     private View view;
     private boolean doubleBackToExitPressedOnce = false;
@@ -109,10 +109,6 @@ public class MainActivity extends AppCompatActivity  {
 
         Constants.init();
         Token = getToken(this);
-
-        //Get All Ingredients Recipes
-        ingredientsVM = new IngredientsViewModel(this, this);
-        ingredientsVM.getAllIngredientsApi();
 
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);

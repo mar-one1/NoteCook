@@ -11,6 +11,7 @@ public class Category_Recipe {
     private int id_category;
     //@SerializedName("icon")
     private Drawable icon_category;
+    @SerializedName("icon_path")
     private String icon_path_category;
     @SerializedName("detail_ct")
     private String detail_category;
