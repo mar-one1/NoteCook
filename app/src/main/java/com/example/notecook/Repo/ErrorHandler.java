@@ -50,16 +50,17 @@ public class ErrorHandler {
                     } else {
                         errorMessage = "An error occurred. Please try again.";
                     }
-                }else {
+                }
+                /*else {
                     String jsonResponse = errorMessage;
                     JSONObject jsonObject = new JSONObject(jsonResponse);
                     errorMessage = jsonObject.getString("error");
                     Log.d("API_ERROR", errorMessage);  // Output: User not found
-                }
+                }*/
 
                 addErrorMessageToQueue(errorMessage, appCompatActivity);
             }
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

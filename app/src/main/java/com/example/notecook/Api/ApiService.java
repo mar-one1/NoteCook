@@ -52,6 +52,7 @@ public interface ApiService {
 
     // Recipes API Endpoints
     @GET("recipes")
+    @Headers("Content-Type: application/json")
     Call<List<Recipe>> getAllRecipes(@Header("Authorization") String token);
 
     @GET("recipes/{id}")
