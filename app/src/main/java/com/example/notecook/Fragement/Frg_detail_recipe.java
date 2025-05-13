@@ -7,6 +7,7 @@ import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Api.env.BASE_URL;
+import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -59,17 +60,18 @@ public class Frg_detail_recipe extends Fragment {
     public void onResume() {
         super.onResume();
         Log.e("tag resume detaile recipe", "true");
-        binding.vp2Detairecipe.setCurrentItem(0,true);
+        binding.vp2Detairecipe.setCurrentItem(0, true);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
             if (Detail_CurrentRecipe != null) {
                 if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {
                     binding.recipeNameTxt.setText(CURRENT_RECIPE.getNom_recipe());
                     binding.NomUserRecipe.setText(User_CurrentRecipe.getUsername());
-//                    if (CURRENT_RECIPE.getIcon_recipe() != null)
-//                        binding.iconRecipe.setImageBitmap(decod(CURRENT_RECIPE.getIcon_recipe()));
-//                    else
                     if (CURRENT_RECIPE.getPathimagerecipe() != null) {
-                        if (CURRENT_RECIPE.getPathimagerecipe().startsWith("/d"))
+                        if (CURRENT_RECIPE.getPathimagerecipe().startsWith("data:")) {
+                            String imageUrl = CURRENT_RECIPE.getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
+                            binding.iconRecipe.setImageBitmap(decodeBase64ToBitmap(imageUrl));
+                        }else
+                        if (CURRENT_RECIPE.getPathimagerecipe().startsWith("/data"))
                             binding.iconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(CURRENT_RECIPE.getPathimagerecipe()));
                         else {
                             String url = BASE_URL + "data/uploads/" + CURRENT_RECIPE.getPathimagerecipe();
@@ -80,9 +82,14 @@ public class Frg_detail_recipe extends Fragment {
 
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
                     if (User_CurrentRecipe != null) {
-                        String url = BASE_URL + "uploads/" + User_CurrentRecipe.getPathimageuser();
-                        Picasso.get().load(url).into(binding.iconProfilDetailrecipe);
-                        //binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));
+                        if (User_CurrentRecipe.getPathimageuser().startsWith("data:")) {
+                            String imageUrl = User_CurrentRecipe.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
+                            binding.iconProfilDetailrecipe.setImageBitmap(decodeBase64ToBitmap(imageUrl));
+                        }else {
+                            String url = BASE_URL + "uploads/" + User_CurrentRecipe.getPathimageuser();
+                            Picasso.get().load(url).into(binding.iconProfilDetailrecipe);
+                            //binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));
+                        }
                     }
 
                     Log.d("TAG", String.valueOf(Detail_CurrentRecipe.getId_detail_recipe()));

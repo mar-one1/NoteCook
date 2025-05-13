@@ -20,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -293,6 +294,20 @@ public class    Constants {
             bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
         } catch (Exception e) {
             Log.e("tag", "" + e);
+        }
+        return bitmap;
+    }
+
+    public static Bitmap decodeBase64ToBitmap(String base64Image) {
+        Bitmap bitmap = null;
+        try {
+            // Decode Base64 string into byte[]
+            byte[] decodedBytes = Base64.decode(base64Image, Base64.DEFAULT);
+
+            // Convert byte[] to Bitmap
+            bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        } catch (Exception e) {
+            Log.e("DecodeError", "Failed to decode Base64 to Bitmap: " + e.getMessage());
         }
         return bitmap;
     }

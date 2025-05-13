@@ -16,6 +16,7 @@ import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
+import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.annotation.SuppressLint;
@@ -54,7 +55,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.List;
 import java.util.Objects;
 
-public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_RecipeDt.ViewHolder> implements FetchNutritionTask.OnNutritionFetchedListener {
+public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeDt.ViewHolder> implements FetchNutritionTask.OnNutritionFetchedListener {
 
     private String b;
     private List<Recipe> recipes;
@@ -92,11 +93,11 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
 
 
-//        if (recipe.getIcon_recipe() != null) {
-//            holder.Image.setImageBitmap(decod(recipe.getIcon_recipe()));
-//        } else
-            if (recipe.getPathimagerecipe() != null) {
-            if (recipe.getPathimagerecipe().startsWith("/d")) {
+        if (recipe.getPathimagerecipe() != null) {
+            if (recipe.getPathimagerecipe().startsWith("data:")) {
+                String imageUrl = recipe.getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
+                holder.Image.setImageBitmap(decodeBase64ToBitmap(imageUrl));
+            } else if (recipe.getPathimagerecipe().startsWith("/data")) {
                 holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
             } else {
                 String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
@@ -119,7 +120,8 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
                         });
             }
 
-        } else holder.Image.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
+        } else
+            holder.Image.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
 
         if (Objects.equals(b, TAG_LOCAL)) {
             holder.txt_time.setText("Local");
@@ -177,7 +179,7 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
                                 fetchRecipe(recipe);
                                 CURRENT_FULL_RECIPE = recipe;
                                 // Fetch nutrition for "apple"
-                                fetchNutritionData(CURRENT_FULL_RECIPE.getRecipe().getNom_recipe(),100);
+                                fetchNutritionData(CURRENT_FULL_RECIPE.getRecipe().getNom_recipe(), 100);
                                 MainFragment.viewPager2.setCurrentItem(1, false);
 
                             }
@@ -194,7 +196,7 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
                                 fetchRecipe(recipeResponse);
                                 CURRENT_FULL_RECIPE = recipeResponse;
                                 User_CurrentRecipe = user_login.getUser();
-                                fetchNutritionData(CURRENT_FULL_RECIPE.getRecipe().getNom_recipe(),100,"g");
+                                fetchNutritionData(CURRENT_FULL_RECIPE.getRecipe().getNom_recipe(), 100, "g");
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();
@@ -209,11 +211,11 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
     }
 
     // Method to fetch nutrition data with custom serving size
-    public void fetchNutritionData(String query, double servingSize,String ServingUnit) {
-        new FetchNutritionTask(this, servingSize,ServingUnit).execute(query);
+    public void fetchNutritionData(String query, double servingSize, String ServingUnit) {
+        new FetchNutritionTask(this, servingSize, ServingUnit).execute(query);
     }// Method to fetch nutrition data with custom serving size
 
-    public  void fetchNutritionData(String query, double servingSize) {
+    public void fetchNutritionData(String query, double servingSize) {
         new FetchNutritionTask(this, servingSize).execute(query);
     }
 
@@ -236,11 +238,11 @@ public class Adapter_RC_RecipeDt  extends RecyclerView.Adapter<Adapter_RC_Recipe
 
             CURRENT_FULL_RECIPE.setNutrition(nutrition);
             Remote_nutritions.setValue(nutrition);
-            Log.e("nutrition",nutritionInfo);
+            Log.e("nutrition", nutritionInfo);
             Log.e("nutrition", String.valueOf(nutrition.getCarbs()));
 
         } else {
-            Log.e("nutrition","Failed to fetch nutrition data.");
+            Log.e("nutrition", "Failed to fetch nutrition data.");
         }
     }
 

@@ -4,6 +4,8 @@ import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
+import static com.example.notecook.Utils.Constants.decod;
+import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.saveToken;
 import static com.example.notecook.Utils.Constants.user_login;
 
@@ -151,6 +153,11 @@ public class Frg_EditProfil extends Fragment {
 
         if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
             String imageUrl = "";
+            if(user.getPathimageuser().startsWith("data:")){
+                imageUrl = user.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
+                user.setPathimageuser(imageUrl);
+                binding.iconEditprofil.setImageBitmap(decodeBase64ToBitmap(user.getPathimageuser()));
+            }else
             if (user.getPathimageuser().startsWith("/data")) {
                 binding.iconEditprofil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
             } else if (user.getPathimageuser().startsWith("http"))

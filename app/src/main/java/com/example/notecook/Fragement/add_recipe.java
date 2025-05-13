@@ -240,9 +240,10 @@ public class add_recipe extends Fragment {
         }
 
         //Load the recipe icon if available
-        if (!recipeR.getRecipe().getPathimagerecipe().isEmpty()) {
+        //if (!recipeR.getRecipe().getPathimagerecipe().isEmpty()) {
+        Log.e("url_image_local",recipeR.getRecipe().getPathimagerecipe());
             binding.addIconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(recipeR.getRecipe().getPathimagerecipe()));
-        }
+        //}
 
         // Set the ingredients (assuming you're using a RecyclerView or ListView for ingredients)
         ingredientsList.clear();

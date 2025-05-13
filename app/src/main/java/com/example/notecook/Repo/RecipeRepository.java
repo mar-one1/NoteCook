@@ -282,7 +282,7 @@ public class RecipeRepository {
                 stepsDataSource.Update_Step2(RC.getSteps(), id_recipe);
                 fullRecipeLiveData.setValue(RC);
                 fullRecipeLiveData.postValue(RC);
-                list_recipe.setValue(recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User()));
+                list_recipe.postValue(recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User()));
             }
         }
         return fullRecipeLiveData;

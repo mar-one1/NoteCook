@@ -4,6 +4,8 @@ import static com.example.notecook.Activity.MainActivity.Type_User;
 import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
+import static com.example.notecook.Utils.Constants.decod;
+import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.user_login;
 
@@ -81,6 +83,11 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
                 bindingProfil.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
                 if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
                     String imageUrl = "";
+                    if(user.getPathimageuser().startsWith("data:")){
+                        imageUrl = user.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
+                        bindingProfil.iconProfil.setImageBitmap(decodeBase64ToBitmap(imageUrl));
+                    }
+                    else
                     if (user.getPathimageuser().startsWith("/data")) {
                         bindingProfil.iconProfil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
                     } else if (user.getPathimageuser().startsWith("http")) {
