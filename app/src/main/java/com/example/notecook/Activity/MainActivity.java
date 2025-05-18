@@ -41,6 +41,7 @@ import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityMainBinding;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -50,7 +51,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
 
     private static final int REQUEST_CODE = 1000;
@@ -201,6 +202,7 @@ public class MainActivity extends AppCompatActivity  {
         super.onStop();
         unregisterReceiver(networkChangeReceiver);
     }
+
 
 
 

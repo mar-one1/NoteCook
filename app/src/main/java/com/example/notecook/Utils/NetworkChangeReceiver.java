@@ -1,7 +1,9 @@
 package com.example.notecook.Utils;
 
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
+import static com.example.notecook.Utils.Constants.getRootViewFromContext;
 import static com.example.notecook.Utils.Constants.isConnected;
+import static com.example.notecook.Utils.Constants.showSnackPar;
 import static com.example.notecook.Utils.Constants.showToast;
 
 import android.content.BroadcastReceiver;
@@ -12,16 +14,13 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        if (checkInternet(context)) {
-            showToast(context, "Network Available Do operations");
-            MODE_ONLINE = true;
-        } else{
-            showToast(context, "No Network Available Do operations offline");
-        MODE_ONLINE = false; }
+        MODE_ONLINE = checkInternet(context);
     }
 
     boolean checkInternet(Context context) {
         // return service.isNetworkAvailable(context);
+        String message = isConnected(context) ? "✅ Network Available" : "❌ No Network Connection";
+        showSnackPar(getRootViewFromContext(context), message);
         return isConnected(context);
     }
 }

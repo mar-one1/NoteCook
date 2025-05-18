@@ -70,6 +70,7 @@ import com.example.notecook.R;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -202,6 +203,23 @@ public class    Constants {
     public static void dismissLoadingDialog() {
         if (loadingDialog != null && loadingDialog.isShowing()) {
             loadingDialog.dismiss();
+        }
+    }
+    public static void showSnackPar(View view,String message)
+    {
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Handle undo action
+                    }
+                }).show();
+    }
+    public static View getRootViewFromContext(Context context) {
+        if (context instanceof Activity) {
+            return ((Activity) context).findViewById(android.R.id.content);
+        } else {
+            return null; // Can't get view from non-activity context
         }
     }
 
