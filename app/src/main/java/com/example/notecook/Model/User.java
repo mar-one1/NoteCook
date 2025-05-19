@@ -15,8 +15,8 @@ public class User {
     private String Birthday;
     @SerializedName("email")
     private String Email;
-    //@SerializedName("icon")
-    private byte[] icon;
+    //@SerializedName("mIcon")
+    private byte[] mIcon;
     @SerializedName("phoneNumber")
     private String Phonenumber;
     @SerializedName("password")
@@ -40,7 +40,7 @@ public class User {
         lastname = user_lastname;
         Birthday = birthday;
         Email = email;
-        this.icon = icon;
+        this.mIcon = icon;
         Phonenumber = phonenumber;
         PassWord = passWord;
         Status = status;
@@ -53,7 +53,7 @@ public class User {
         this.lastname = lastname;
         Birthday = birthday;
         Email = email;
-        this.icon = icon;
+        this.mIcon = icon;
         Phonenumber = phonenumber;
         PassWord = passWord;
         Status = status;
@@ -67,7 +67,7 @@ public class User {
         this.lastname = lastname;
         Birthday = birthday;
         Email = email;
-        this.icon = icon;
+        this.mIcon = icon;
         Phonenumber = phonenumber;
         PassWord = passWord;
         Status = status;
@@ -123,11 +123,11 @@ public class User {
     }
 
     public byte[] getIcon() {
-        return icon;
+        return mIcon;
     }
 
     public void setIcon(byte[] icon) {
-        this.icon = icon;
+        this.mIcon = icon;
     }
 
     public String getPhonenumber() {

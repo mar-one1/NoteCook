@@ -17,8 +17,12 @@ public class ChatMessage {
     private String message;
     @SerializedName("timestamp")
     private Date timestamp;
+    @SerializedName("status")
+    private String status;
+    @SerializedName("readAt")
+    private Date readAt;
 
-    public ChatMessage(int recipeId,int receiverId,int senderId, String message, Date timestamp) {
+    public ChatMessage(int recipeId, int receiverId, int senderId, String message, Date timestamp) {
         this.recipeId = recipeId;
         this.senderId = senderId;
         this.receiverId = receiverId;
@@ -26,11 +30,27 @@ public class ChatMessage {
         this.timestamp = timestamp;
     }
 
-    public ChatMessage(int senderId,int receiverId,String message, Date timestamp) {
+    public ChatMessage(int senderId, int receiverId, String message, Date timestamp) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.message = message;
         this.timestamp = timestamp;
+    }
+
+    public Date getReadAt() {
+        return readAt;
+    }
+
+    public void setReadAt(Date readAt) {
+        this.readAt = readAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getId() {

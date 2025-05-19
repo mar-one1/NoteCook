@@ -252,5 +252,5 @@ public interface ApiService {
 
     // Messages by recipe
     @GET("/api/chat/messages/{id}")
-    Call<List<ChatMessage>> getMessageByRecipe(@Header("Authorization") String token, @Path("id") int RecipeId);
+    Call<List<ChatMessage>> getMessageByRecipe(@Header("Authorization") String token, @Path("id") int RecipeId, @Query("userId") int query);
 }

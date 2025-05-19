@@ -64,8 +64,8 @@ public class Chat_Repository {
         return messages;
     }
 
-    public LiveData<List<ChatMessage>> getMessageByRecipeId(int id_recipe) {
-        apiService.getMessageByRecipe(Token, id_recipe).enqueue(new Callback<List<ChatMessage>>() {
+    public LiveData<List<ChatMessage>> getMessageByRecipeId(int id_recipe,int userId) {
+        apiService.getMessageByRecipe(Token, id_recipe,userId).enqueue(new Callback<List<ChatMessage>>() {
             @Override
             public void onResponse(Call<List<ChatMessage>> call, Response<List<ChatMessage>> response) {
                 if (response.isSuccessful()) {

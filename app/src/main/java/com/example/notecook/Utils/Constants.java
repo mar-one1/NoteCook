@@ -225,13 +225,13 @@ public class    Constants {
 
     public static String DateTimeNow(Date date) {
         if (date == null) {
-            return "Invalid Date"; // or return an empty string or a default value
+            Log.e("DateTimeNow", "Received null date!");
+            return "Invalid Date";
         }
 
         DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault());
         return dateFormat.format(date);
     }
-
 
     public static void progression(String val) {
         loadingDialog.setTitleText(val);

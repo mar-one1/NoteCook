@@ -54,7 +54,7 @@ public class Frg_chat extends Fragment {
             chatViewModel.sendMessage(String.valueOf(CURRENT_RECIPE.getId_recipe()), String.valueOf(User_CurrentRecipe.getId_User()), message);
             messageInput.setText("");
             // Observe LiveData for messages
-            chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe()).observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
+            chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(),CURRENT_RECIPE.getFrk_user()).observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
                 @Override
                 public void onChanged(List<ChatMessage> chatMessages) {
                     // Update UI with new messages
@@ -82,7 +82,7 @@ public class Frg_chat extends Fragment {
         chatAdapter = new ChatAdapter(getContext(), messages, currentUserID);
 
         // Observe messages LiveData
-        chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe()).observe(this, newMessages -> {
+        chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(),CURRENT_RECIPE.getFrk_user()).observe(this, newMessages -> {
             messages.clear();
             messages.addAll(newMessages);
             updateMessagesInView(messages);

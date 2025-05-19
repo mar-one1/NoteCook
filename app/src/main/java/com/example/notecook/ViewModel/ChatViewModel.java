@@ -39,8 +39,8 @@ public class ChatViewModel extends ViewModel implements ViewModelProvider.Factor
         return chatRepository.getMessages();
     }
 
-    public LiveData<List<ChatMessage>> getMessageByRecipeId(int id) {
-        return chatRepository.getMessageByRecipeId(id);
+    public LiveData<List<ChatMessage>> getMessageByRecipeId(int id,int userId) {
+        return chatRepository.getMessageByRecipeId(id,userId);
     }
 
     public void sendMessage(String recipeId, String receiverId, String message) {
