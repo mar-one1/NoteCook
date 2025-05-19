@@ -51,6 +51,20 @@ public class SocketManager {
             mSocket.disconnect();
         }
     }
+    public void sendMessageRead(int messageId, int senderId) {
+        if (mSocket != null && mSocket.connected()) {
+            JSONObject data = new JSONObject();
+            try {
+                data.put("messageId", messageId);
+                data.put("senderId", senderId);
+                mSocket.emit("message read", data);
+                Log.d(TAG, "message read emitted for ID: " + messageId);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void registerUser(String userId) {
         if (mSocket != null && mSocket.connected()) {

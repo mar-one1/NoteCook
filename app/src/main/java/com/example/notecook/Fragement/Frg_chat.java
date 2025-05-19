@@ -1,4 +1,5 @@
 package com.example.notecook.Fragement;
+
 import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.user_login;
@@ -34,39 +35,47 @@ public class Frg_chat extends Fragment {
     private RecyclerView messagesRecyclerView;
     private ChatAdapter chatAdapter;
     private List<ChatMessage> messages;
-    private int currentUserID = user_login.getUser().getId_User(); // Replace with actual user ID
+    private int currentUserID = user_login.getUser().getId_User();
     private ChatViewModel chatViewModel;
     private EditText messageInput;
     private Button sendButton;
     private SocketManager socketManager;
 
-    // Example method to update RecyclerView with new messages
     private void updateMessagesInView(List<ChatMessage> messages) {
         chatAdapter.setMessages(messages);
         chatAdapter.notifyDataSetChanged();
         scrollToBottom();
+
+        // ✅ إرسال message read لكل رسالة موجهة للمستخدم الحالي
+        for (ChatMessage msg : messages) {
+            if (msg.getReceiverId() == currentUserID) {
+                socketManager.sendMessageRead(msg.getId(), msg.getSenderId());
+            }
+        }
     }
 
-        // Method to send message
     private void sendMessage() {
         String message = messageInput.getText().toString().trim();
         if (!message.isEmpty()) {
-            chatViewModel.sendMessage(String.valueOf(CURRENT_RECIPE.getId_recipe()), String.valueOf(User_CurrentRecipe.getId_User()), message);
+            chatViewModel.sendMessage(
+                    String.valueOf(CURRENT_RECIPE.getId_recipe()),
+                    String.valueOf(User_CurrentRecipe.getId_User()),
+                    message
+            );
             messageInput.setText("");
-            // Observe LiveData for messages
-            chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(),CURRENT_RECIPE.getFrk_user()).observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
-                @Override
-                public void onChanged(List<ChatMessage> chatMessages) {
-                    // Update UI with new messages
-                    updateMessagesInView(chatMessages);
-                }
-            });
+
+            chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(), CURRENT_RECIPE.getFrk_user())
+                    .observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
+                        @Override
+                        public void onChanged(List<ChatMessage> chatMessages) {
+                            updateMessagesInView(chatMessages);
+                        }
+                    });
         } else {
             Toast.makeText(getContext(), "Message cannot be empty", Toast.LENGTH_SHORT).show();
         }
     }
 
-    // Scroll to the bottom of RecyclerView
     private void scrollToBottom() {
         messagesRecyclerView.scrollToPosition(chatAdapter.getItemCount() - 1);
     }
@@ -77,42 +86,39 @@ public class Frg_chat extends Fragment {
 
         chatViewModel = new ViewModelProvider(this, new ChatViewModel(getContext(), getActivity())).get(ChatViewModel.class);
 
-        // Initialize messages list and adapter
         messages = new ArrayList<>();
         chatAdapter = new ChatAdapter(getContext(), messages, currentUserID);
 
-        // Observe messages LiveData
-        chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(),CURRENT_RECIPE.getFrk_user()).observe(this, newMessages -> {
-            messages.clear();
-            messages.addAll(newMessages);
-            updateMessagesInView(messages);
-            scrollToBottom();
-        });
+        chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(), CURRENT_RECIPE.getFrk_user())
+                .observe(this, newMessages -> {
+                    messages.clear();
+                    messages.addAll(newMessages);
+                    updateMessagesInView(messages);
+                    scrollToBottom();
+                });
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
 
         messagesRecyclerView = rootView.findViewById(R.id.messages_view);
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         messagesRecyclerView.setAdapter(chatAdapter);
+
         ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
-        Constants.navAction((AppCompatActivity) getActivity(),Frg_chat.this,Vp2);
-        // Initialize SocketManager
+        Constants.navAction((AppCompatActivity) getActivity(), Frg_chat.this, Vp2);
+
         socketManager = new SocketManager(chatMessage -> {
             getActivity().runOnUiThread(() -> {
                 chatViewModel.addMessage(chatMessage);
                 updateMessagesInView(chatViewModel.getMessages().getValue());
-                scrollToBottom();
             });
         });
         socketManager.connect();
 
         messageInput = rootView.findViewById(R.id.message_input);
         sendButton = rootView.findViewById(R.id.send_button);
-
         sendButton.setOnClickListener(v -> sendMessage());
 
         return rootView;
@@ -121,10 +127,8 @@ public class Frg_chat extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // Disconnect the socket when the fragment's view is destroyed
         if (socketManager != null) {
             socketManager.disconnect();
         }
     }
-
 }

@@ -57,6 +57,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             holder.ll_message.setGravity(Gravity.START);
             holder.image_message.setBackgroundResource(R.drawable.ic_tips_and_updates_fill0_wght400_grad0_opsz48_red);
         }
+
+        if (message.getStatus()!=null && message.getStatus().equals("read")) {
+            holder.messageStatus.setText("✔✔");
+        }
     }
 
     @Override
@@ -70,7 +74,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timestampText;
+        TextView messageText, timestampText,messageStatus;
         LinearLayout ll_message;
         ImageView image_message;
 
@@ -80,6 +84,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             image_message = itemView.findViewById(R.id.image_message);
             timestampText = itemView.findViewById(R.id.timestampText);
             ll_message = itemView.findViewById(R.id.ll_message);
+            messageStatus = itemView.findViewById(R.id.messageStatus);
         }
     }
 }
