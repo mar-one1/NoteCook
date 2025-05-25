@@ -41,7 +41,7 @@ public class MainFragment extends Fragment  {
         // Inflate the layout for this fragment
         binding = FragmentMainBinding.inflate(inflater, container, false);
         viewPager2 = binding.vp2;
-
+        //viewPager2.setOffscreenPageLimit(1);
         Flbtn = getActivity().findViewById(R.id.floating_action_button);
         Flbtn.show();
 
@@ -58,7 +58,7 @@ public class MainFragment extends Fragment  {
         setViewPagerAdapter();
         viewPager2.setUserInputEnabled(false);
         navigation(binding.bottomNav,viewPager2);
-
+        viewPager2.offsetLeftAndRight(1);
         return binding.getRoot();
     }
 
