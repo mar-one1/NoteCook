@@ -267,7 +267,8 @@ public class RecipeRepository {
     public LiveData<RecipeResponse> updateFullRecipeInLocal(RecipeResponse RC) {
         MutableLiveData<RecipeResponse> fullRecipeLiveData = new MutableLiveData<>();
         if(RC.getRecipe().getUnique_key_recipe()==null) {
-            RC.getRecipe().setUnique_key_recipe(UUID.randomUUID().toString());
+            String randomKey = UUID.randomUUID().toString();
+            RC.getRecipe().setUnique_key_recipe(randomKey);
             updateRecipeLocally(RC.getRecipe(),RC.getRecipe().getId_recipe());
         }
         if (recipeDatasource.isRecordExist(TABLE_RECIPE, COLUMN_UNIQUE_KEY, RC.getRecipe().getUnique_key_recipe())) {
