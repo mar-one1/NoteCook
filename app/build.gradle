@@ -37,75 +37,45 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.gms:play-services-base:18.0.1'
-    implementation 'com.google.android.gms:play-services-auth:20.1.0'
-    implementation 'androidx.work:work-runtime:2.5.0'
-    implementation 'org.chromium.net:cronet-embedded:76.3809.111'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.security:security-crypto:1.0.0'
+    implementation 'androidx.work:work-runtime:2.5.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'com.google.android.gms:play-services-base:18.0.1'
+    implementation 'com.google.android.gms:play-services-auth:20.1.0'
     implementation 'com.google.android.gms:play-services-wallet:19.4.0'
+    implementation 'com.github.f0ris.sweetalert:library:1.5.6'
+    implementation 'me.aflak.libraries:fingerprintdialog:2.4.2'
+    implementation 'org.chromium.net:cronet-embedded:76.3809.111'
+    implementation 'org.json:json:20210307'
+    implementation 'io.supercharge:shimmerlayout:2.1.0'
+    implementation 'at.favre.lib:bcrypt:0.9.0'
+    implementation 'net.zetetic:android-database-sqlcipher:4.5.0'
+    implementation 'com.intuit.sdp:sdp-android:1.1.0'
+    implementation 'com.intuit.ssp:ssp-android:1.1.0'
+// Retrofit + Gson
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+// OkHttp BOM
+    implementation platform("com.squareup.okhttp3:okhttp-bom:4.12.0")
+    implementation "com.squareup.okhttp3:okhttp"
+    implementation "com.squareup.okhttp3:logging-interceptor"
+// Firebase
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-auth'
+// Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+// Socket.IO
+    implementation('io.socket:socket.io-client:2.0.0') {
+        exclude group: 'org.json', module: 'json'
+    }
+// Testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    implementation 'com.github.f0ris.sweetalert:library:1.5.6'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.google.android.material:material:<version>'
-    implementation 'com.github.f0ris.sweetalert:library:1.5.6'
-    // define a BOM and its version
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
-    // define any required OkHttp artifacts without version
-    implementation("com.squareup.okhttp3:okhttp")
-    implementation("com.squareup.okhttp3:logging-interceptor")
-    // finger print dialog
-    implementation 'me.aflak.libraries:fingerprintdialog:2.4.2'
-
-    // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:32.2.2')
-
-
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
-    implementation 'com.google.firebase:firebase-analytics'
-    // Add the dependency for the Firebase Authentication library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation("com.google.firebase:firebase-auth")
-
-    // Retrofit for making API requests
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-
-    // Gson converter for JSON serialization/deserialization
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-
-    implementation 'at.favre.lib:bcrypt:0.9.0'
-
-    implementation 'io.supercharge:shimmerlayout:2.1.0'
-
-    implementation 'com.squareup.picasso:picasso:2.71828' // Or use the latest version available
-
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-
-    // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:32.7.0')
-
-    // Text size responsive
-    implementation 'com.intuit.sdp:sdp-android:1.1.0'
-    implementation 'com.intuit.ssp:ssp-android:1.1.0'
-
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'  // ViewModel
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'   // LiveData
-
-    implementation 'net.zetetic:android-database-sqlcipher:4.5.0'
-
-    implementation ('io.socket:socket.io-client:2.0.0') {
-        exclude group: 'org.json', module: 'json'
-    }
-    implementation 'com.google.android.material:material:1.11.0' // or latest version
-    // Nutrition data
-    implementation 'org.json:json:20210307'
-    implementation 'com.google.android.gms:play-services-wallet:19.2.1'
-
-
 }
