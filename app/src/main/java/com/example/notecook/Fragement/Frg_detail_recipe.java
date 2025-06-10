@@ -81,7 +81,7 @@ public class Frg_detail_recipe extends Fragment {
 
 
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
-                    if (User_CurrentRecipe != null) {
+                    if (User_CurrentRecipe != null && User_CurrentRecipe.getPathimageuser() != null) {
                         if (User_CurrentRecipe.getPathimageuser().startsWith("data:")) {
                             String imageUrl = User_CurrentRecipe.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
                             binding.iconProfilDetailrecipe.setImageBitmap(decodeBase64ToBitmap(imageUrl));
