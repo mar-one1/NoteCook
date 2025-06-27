@@ -1,12 +1,15 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.AffichageMessage;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
+import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_MY;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
+import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
@@ -59,9 +62,13 @@ import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -240,10 +247,35 @@ public class add_recipe extends Fragment {
         }
 
         //Load the recipe icon if available
-        //if (!recipeR.getRecipe().getPathimagerecipe().isEmpty()) {
-        Log.e("url_image_local",recipeR.getRecipe().getPathimagerecipe());
-            binding.addIconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(recipeR.getRecipe().getPathimagerecipe()));
-        //}
+        if (recipeR.getRecipe().getPathimagerecipe() != null) {
+            if (recipeR.getRecipe().getPathimagerecipe().startsWith("data:")) {
+                String imageUrl = recipeR.getRecipe().getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
+                binding.addIconRecipe.setImageBitmap(decodeBase64ToBitmap(imageUrl));
+            } else if (recipeR.getRecipe().getPathimagerecipe().startsWith("/data")) {
+                binding.addIconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(recipeR.getRecipe().getPathimagerecipe()));
+            } else {
+                String url = BASE_URL + "data/uploads/" + recipeR.getRecipe().getPathimagerecipe();
+                Picasso.get()
+                        .load(url)
+                        .error(R.drawable.eror_image_download)
+                        .memoryPolicy(MemoryPolicy.NO_STORE)
+                        .into(binding.addIconRecipe, new Callback() {
+                            @Override
+                            public void onSuccess() {
+                                    recipeVM.postImageRecipeLocal(ImageHelper.drawableToBitmap(binding.addIconRecipe.getDrawable()), recipeR.getRecipe().getId_recipe());
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                if (recipeR.getRecipe().getPathimagerecipe().startsWith("/data"))
+                                    binding.addIconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(recipeR.getRecipe().getPathimagerecipe()));
+                            }
+                        });
+            }
+
+        } else
+            binding.addIconRecipe.setImageDrawable(binding.addIconRecipe.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
+
 
         // Set the ingredients (assuming you're using a RecyclerView or ListView for ingredients)
         ingredientsList.clear();
