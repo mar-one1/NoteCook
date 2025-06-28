@@ -256,9 +256,9 @@ public class RecipeRepository {
                 detailRecipeDataSource.insertDetail_recipe(RC.getDetail_recipe(), (int) id_recipe);
                 ingredientsDataSource.insertIngredients(RC.getIngredients(), (int) id_recipe);
                 stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
-                fullRecipeLiveData.setValue(RC);
                 fullRecipeLiveData.postValue(RC);
-                list_recipe.setValue(recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User()));
+                fullRecipeLiveData.postValue(RC);
+                list_recipe.postValue(recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User()));
             }
         }
         return fullRecipeLiveData;
@@ -531,7 +531,7 @@ public class RecipeRepository {
         boolean toRemote = synchronizeDataBetweenLocalToRemote(localRecipes, remoteRecipes, userId);
         boolean toLocal = synchronizeDataBetweenRemoteToLocal(localRecipes, remoteRecipes, userId);
 
-        synch.setValue(toRemote && toLocal);
+        synch.postValue(toRemote && toLocal);
         return synch;
     }
 

@@ -36,138 +36,89 @@ import java.util.List;
 
 
 public class Frg_Recipe_Profil extends Fragment {
-    private Recipe mRecipe;
     private FragmentFrgRecipeProfilBinding binding;
-    private RecyclerView recyclerView;
+    private Adapter_RC_RecipeDt adapter_rc_recipeDt;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
-    private Adapter_RC_RecipeDt adapter_rc_recipeDt;
-
-    public Frg_Recipe_Profil() {
-        // Required empty public constructor
-    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentFrgRecipeProfilBinding.inflate(inflater, container, false);
-        // Inflate the layout for this fragment
-        recipeVM = new RecipeViewModel(requireContext(), requireActivity());
-        userVM = new UserViewModel(requireContext(), requireActivity());
-        recipeVM = new ViewModelProvider(requireActivity(), recipeVM).get(RecipeViewModel.class);
-        list_recipe.observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(List<Recipe> recipes) {
-                bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
-            }
-        });
-        fetchRecipeUser();
+
+        recipeVM = new ViewModelProvider(requireActivity(), new RecipeViewModel(requireContext(), requireActivity()))
+                .get(RecipeViewModel.class);
+        userVM = new ViewModelProvider(requireActivity(), new UserViewModel(requireContext(), requireActivity()))
+                .get(UserViewModel.class);
+
+        // Observe local recipes
+        list_recipe.observe(getViewLifecycleOwner(), recipes ->
+                bindRecipesToRecycler(binding.RcRecipeProfil, recipes));
+
+        fetchUserAndRecipes();
+
         return binding.getRoot();
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    public void bindingRcV_recipes(RecyclerView recyclerView, List<Recipe> recipes) {
-
-        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), recipes, TAG_LOCAL);
-        GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
-        recyclerView.setLayoutManager(manager);
-        adapter_rc_recipeDt.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter_rc_recipeDt);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //list_recipe.setValue(recipes);
-        bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
+        bindRecipesToRecycler(binding.RcRecipeProfil, list_recipe.getValue());
     }
 
-    private void fetchRecipeUser() {
-        if (!Type_User.equals(TAG_MODE_INVITE)) {
-            if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
-                recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(requireActivity(), new Observer<List<Recipe>>() {
-                    @Override
-                    public void onChanged(List<Recipe> recipes) {
-                        if (recipes != null) {
-                            list_recipe.setValue(recipes);
-                            recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(getViewLifecycleOwner(), new Observer<List<RecipeResponse>>() {
-                                @Override
-                                public void onChanged(List<RecipeResponse> recipes) {
-                                    if (recipes != null)
-                                        RemotelistFullRecipe.setValue(recipes);
-                                    if (!getUserSynch(user_login.getUser().getUsername(), requireContext())) {
-                                        recipeVM.synchronisationRecipes(list_recipe.getValue(), RemotelistFullRecipe.getValue(), user_login_local.getUser().getUsername()).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                                            @Override
-                                            public void onChanged(Boolean aBoolean) {
-                                                saveUserSynch(user_login.getUser().getUsername(), aBoolean, requireContext());
-                                                recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-                                                    @Override
-                                                    public void onChanged(List<Recipe> recipes) {
-                                                        if (recipes != null)
-                                                            list_recipe.setValue(recipes);
-                                                        bindingRcV_recipes(binding.RcRecipeProfil, list_recipe.getValue());
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-            } else {
-                userVM.getUserLocal(getUserInput(requireContext()), "success").observe(getViewLifecycleOwner(), new Observer<User>() {
-                    @Override
-                    public void onChanged(User user) {
-                        if (user != null)
-                            recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-                                @Override
-                                public void onChanged(List<Recipe> recipes) {
-                                    if (recipes != null)
-                                        list_recipe.getValue().addAll(recipes);
-//                                    if (MODE_ONLINE)
-//                                        recipeVM.getRecipesByUsername(user_login_local.getUser().getUsername()).observe(requireActivity(), recipeList -> {
-//                                            RemotelistByIdUser_recipe.setValue(recipeList);
-//                                            Toast.makeText(getContext(), "changed main " + RemotelistByIdUser_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-//                                        });
-                                }
-                            });
-                        if (MODE_ONLINE)
-                            recipeVM.getFullRecipesByUsername(user_login_local.getUser().getUsername()).observe(getViewLifecycleOwner(), new Observer<List<RecipeResponse>>() {
-                                @Override
-                                public void onChanged(List<RecipeResponse> recipes) {
-                                    if (recipes != null)
-                                        RemotelistFullRecipe.setValue(recipes);
-                                    if (!getUserSynch(user_login.getUser().getUsername(), requireContext())) {
-                                        recipeVM.synchronisationRecipes(list_recipe.getValue(), RemotelistFullRecipe.getValue(), user_login_local.getUser().getUsername()).observe(getViewLifecycleOwner(), new Observer<Boolean>() {
-                                            @Override
-                                            public void onChanged(Boolean aBoolean) {
-                                                saveUserSynch(user_login.getUser().getUsername(), aBoolean, requireContext());
-                                                if (aBoolean)
-                                                    recipeVM.getRecipesLocal(user_login_local.getUser().getId_User()).observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-                                                        @Override
-                                                        public void onChanged(List<Recipe> recipes) {
-                                                            if (recipes != null)
-                                                                list_recipe.setValue(recipes);
-                                                        }
-                                                    });
-                                            }
-                                        });
-                                    }
-                                }
-                            });
-                    }
-                });
-            }
+    @SuppressLint("NotifyDataSetChanged")
+    private void bindRecipesToRecycler(RecyclerView recyclerView, List<Recipe> recipes) {
+        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), recipes, TAG_LOCAL);
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        adapter_rc_recipeDt.notifyDataSetChanged();
+        recyclerView.setAdapter(adapter_rc_recipeDt);
+    }
+
+    private void fetchUserAndRecipes() {
+        if (Type_User.equals(TAG_MODE_INVITE)) return;
+
+        User localUser = user_login_local.getUser();
+        if (localUser != null && localUser.getId_User() != 0) {
+            loadRecipesForUser(localUser.getId_User(), localUser.getUsername());
+        } else {
+            userVM.getUserLocal(getUserInput(requireContext()), "success").observe(getViewLifecycleOwner(), user -> {
+                if (user != null) {
+                    loadRecipesForUser(user.getId_User(), user.getUsername());
+                }
+            });
         }
     }
 
+    private void loadRecipesForUser(int userId, String username) {
+        recipeVM.getRecipesLocal(userId).observe(getViewLifecycleOwner(), localRecipes -> {
+            if (localRecipes != null) {
+                list_recipe.postValue(localRecipes);
+                if (MODE_ONLINE) {
+                    recipeVM.getFullRecipesByUsername(username).observe(getViewLifecycleOwner(), remoteRecipes -> {
+                        if (remoteRecipes != null) {
+                            RemotelistFullRecipe.postValue(remoteRecipes);
+                            if (!getUserSynch(user_login.getUser().getUsername(), requireContext())) {
+                                synchronizeIfNeeded(localRecipes, remoteRecipes, username, userId);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void synchronizeIfNeeded(List<Recipe> localRecipes, List<RecipeResponse> remoteRecipes, String username, int userId) {
+        recipeVM.synchronisationRecipes(localRecipes, remoteRecipes, username).observe(getViewLifecycleOwner(), result -> {
+            saveUserSynch(username, result, requireContext());
+            if (result) {
+                recipeVM.getRecipesLocal(userId).observe(getViewLifecycleOwner(), updatedLocal -> {
+                    if (updatedLocal != null) {
+                        list_recipe.postValue(updatedLocal);
+                        bindRecipesToRecycler(binding.RcRecipeProfil, updatedLocal);
+                    }
+                });
+            }
+        });
+    }
 }
+
+

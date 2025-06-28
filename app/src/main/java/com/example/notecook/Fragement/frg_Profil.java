@@ -23,6 +23,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
@@ -74,30 +75,13 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
     }
 
     private void extracted() {
-
         if (!Type_User.equals(Constants.TAG_MODE_INVITE)) {
             user = new User();
             if (user_login.getUser() != null) {
                 user = user_login.getUser();
                 bindingProfil.txtUsername.setText(user.getUsername());
                 bindingProfil.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
-                if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
-                    String imageUrl = "";
-                    if(user.getPathimageuser().startsWith("data:")){
-                        imageUrl = user.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
-                        bindingProfil.iconProfil.setImageBitmap(decodeBase64ToBitmap(imageUrl));
-                    }
-                    else
-                    if (user.getPathimageuser().startsWith("/data")) {
-                        bindingProfil.iconProfil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
-                    } else if (user.getPathimageuser().startsWith("http")) {
-                        Picasso.get().load(user.getPathimageuser()).into(bindingProfil.iconProfil);
-                    } else {
-                        imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
-                        Picasso.get().load(imageUrl).into(bindingProfil.iconProfil);
-                    }
-                } else
-                    bindingProfil.iconProfil.setImageDrawable(getResources().getDrawable(R.drawable.aec4b1a59b7165562698470ce91494be));
+                MainActivity.showImageUsers(user_login.getUser(), bindingProfil.iconProfil);
             }
         }
     }

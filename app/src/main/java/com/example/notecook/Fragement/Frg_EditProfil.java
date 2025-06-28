@@ -150,23 +150,24 @@ public class Frg_EditProfil extends Fragment {
             }
         });
 
-        if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
-            String imageUrl = "";
-            if (user.getPathimageuser().startsWith("data:")) {
-                imageUrl = user.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
-                user.setPathimageuser(imageUrl);
-                binding.iconEditprofil.setImageBitmap(decodeBase64ToBitmap(user.getPathimageuser()));
-            } else if (user.getPathimageuser().startsWith("/data")) {
-                binding.iconEditprofil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
-            } else if (user.getPathimageuser().startsWith("http")) {
-                imageUrl = user.getPathimageuser();
-                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
-            } else {
-                imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
-                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
-            }
-            //binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
-        }
+//        if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
+//            String imageUrl = "";
+//            if (user.getPathimageuser().startsWith("data:")) {
+//                imageUrl = user.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
+//                user.setPathimageuser(imageUrl);
+//                binding.iconEditprofil.setImageBitmap(decodeBase64ToBitmap(user.getPathimageuser()));
+//            } else if (user.getPathimageuser().startsWith("/data")) {
+//                binding.iconEditprofil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
+//            } else if (user.getPathimageuser().startsWith("http")) {
+//                imageUrl = user.getPathimageuser();
+//                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
+//            } else {
+//                imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
+//                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
+//            }
+//            binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
+//        }
+        MainActivity.showImageUsers(user,binding.iconEditprofil);
 //        else if (user.getIcon() != null) {
 //            binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
 //        }

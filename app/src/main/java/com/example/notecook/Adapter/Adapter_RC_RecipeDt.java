@@ -1,7 +1,6 @@
 package com.example.notecook.Adapter;
 
 
-import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
@@ -16,7 +15,6 @@ import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.user_login;
 
 import android.annotation.SuppressLint;
@@ -35,6 +33,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Nutrition;
@@ -42,13 +41,9 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.FetchNutritionTask;
-import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -92,36 +87,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         holder.detail.setText(recipe.getNom_recipe());
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
 
-
-        if (recipe.getPathimagerecipe() != null) {
-            if (recipe.getPathimagerecipe().startsWith("data:")) {
-                String imageUrl = recipe.getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
-                holder.Image.setImageBitmap(decodeBase64ToBitmap(imageUrl));
-            } else if (recipe.getPathimagerecipe().startsWith("/data")) {
-                holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
-            } else {
-                String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
-                Picasso.get()
-                        .load(url)
-                        .error(R.drawable.eror_image_download)
-                        .memoryPolicy(MemoryPolicy.NO_STORE)
-                        .into(holder.Image, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                if (Objects.equals(b, TAG_LOCAL))
-                                    recipeVM.postImageRecipeLocal(ImageHelper.drawableToBitmap(holder.Image.getDrawable()), recipe.getId_recipe());
-                            }
-
-                            @Override
-                            public void onError(Exception e) {
-                                if (recipe.getPathimagerecipe().startsWith("/data"))
-                                    holder.Image.setImageBitmap(ImageHelper.loadImageFromPath(recipe.getPathimagerecipe()));
-                            }
-                        });
-            }
-
-        } else
-            holder.Image.setImageDrawable(holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24));
+        MainActivity.showImageRecipes(recipeVM,recipe,holder.Image);
 
         if (Objects.equals(b, TAG_LOCAL)) {
             holder.txt_time.setText("Local");

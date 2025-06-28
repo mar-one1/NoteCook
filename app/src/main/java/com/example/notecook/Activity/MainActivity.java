@@ -1,9 +1,12 @@
 package com.example.notecook.Activity;
 
+import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.Token;
+import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
+import static com.example.notecook.Utils.Constants.user_login;
 
 import android.Manifest;
 import android.content.Intent;
@@ -11,12 +14,13 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.util.Base64;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,26 +33,27 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.notecook.Activity.OnBoarding.OnBoarding_screen;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Category_Recipe;
-import com.example.notecook.Model.Nutrition;
+import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.FetchNutritionTask;
+import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.NetworkChangeReceiver;
-import com.example.notecook.Utils.NutritionParser;
 import com.example.notecook.ViewModel.CategoriesViewModel;
-import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityMainBinding;
-import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -69,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
     private View view;
     private boolean doubleBackToExitPressedOnce = false;
     private SwipeRefreshLayout swipeRefreshLayout;
-
-
 
 
     @Override
@@ -133,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             categoryVM.getCategories().observe(this, new Observer<List<Category_Recipe>>() {
                 @Override
                 public void onChanged(List<Category_Recipe> category_recipes) {
-                    if(category_recipes!=null) {
+                    if (category_recipes != null) {
                         Constants.All_Categories_Recipe = category_recipes;
                         Log.d("tag cat", String.valueOf(Constants.All_Categories_Recipe.size()));
                     }
@@ -203,8 +206,87 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(networkChangeReceiver);
     }
 
+    public static void showImageRecipes(RecipeViewModel recipeVM, Recipe recipe, ImageView imageView) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
 
+        executor.execute(() -> {
+            if (recipe.getPathimagerecipe() != null) {
+                if (recipe.getPathimagerecipe().startsWith("data:")) {
+                    // Base64 image - decode in background
+                    String imageUrl = recipe.getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
+                    Bitmap bitmap = decodeBase64ToBitmap(imageUrl);
+                    handler.post(() -> imageView.setImageBitmap(bitmap));
 
+                } else if (recipe.getPathimagerecipe().startsWith("/data")) {
+                    // Local file - load in background
+                    Bitmap bitmap = ImageHelper.loadImageFromPath(recipe.getPathimagerecipe());
+                    handler.post(() -> imageView.setImageBitmap(bitmap));
 
+                } else {
+                    // Remote image - Picasso handles threading itself
+                    String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
+                    handler.post(() -> {
+                        Picasso.get()
+                                .load(url)
+                                .error(R.drawable.eror_image_download)
+                                .memoryPolicy(MemoryPolicy.NO_STORE)
+                                .into(imageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        recipeVM.postImageRecipeLocal(ImageHelper.drawableToBitmap(imageView.getDrawable()), recipe.getId_recipe());
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        if (recipe.getPathimagerecipe().startsWith("/data")) {
+                                            Bitmap fallback = ImageHelper.loadImageFromPath(recipe.getPathimagerecipe());
+                                            imageView.setImageBitmap(fallback);
+                                        }
+                                    }
+                                });
+                    });
+                }
+            } else {
+                handler.post(() -> imageView.setImageDrawable(imageView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24)));
+            }
+        });
+    }
+
+    public static void showImageUsers(User user, ImageView imageView) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
+                String path = user.getPathimageuser();
+
+                if (path.startsWith("data:")) {
+                    // Decode base64 in background
+                    String base64 = path.replaceFirst("^data:image/[^;]+;base64,", "");
+                    Bitmap bitmap = decodeBase64ToBitmap(base64);
+                    handler.post(() -> imageView.setImageBitmap(bitmap));
+
+                } else if (path.startsWith("/data")) {
+                    // Load local file in background
+                    Bitmap bitmap = ImageHelper.loadImageFromPath(path);
+                    handler.post(() -> imageView.setImageBitmap(bitmap));
+
+                } else if (path.startsWith("http")) {
+                    // Remote URL: post to UI thread (Picasso handles background loading)
+                    handler.post(() -> Picasso.get().load(path).into(imageView));
+
+                } else {
+                    // Backend relative path: build full URL and load
+                    String fullUrl = BASE_URL + "uploads/" + path;
+                    handler.post(() -> Picasso.get().load(fullUrl).into(imageView));
+                }
+            } else {
+                // No image path: show default
+                handler.post(() -> imageView.setImageDrawable(
+                        imageView.getResources().getDrawable(R.drawable.aec4b1a59b7165562698470ce91494be)));
+            }
+        });
+    }
 
 }
