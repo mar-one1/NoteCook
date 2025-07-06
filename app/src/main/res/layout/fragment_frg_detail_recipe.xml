@@ -211,7 +211,6 @@
                                     android:gravity="center"
                                     android:text="First name and last"
                                     android:textStyle="bold" />
-
                                 <TextView
                                     android:id="@+id/Grade_user_Recipe"
                                     android:layout_width="wrap_content"

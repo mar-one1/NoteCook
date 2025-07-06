@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
+import com.example.notecook.Utils.ImageHelper;
 import com.google.android.material.textview.MaterialTextView;
 import com.squareup.picasso.Picasso;
 
@@ -56,6 +57,7 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         Step step = steps.get(position);
         holder.textViewDetailStep.setText(step.getDetail_step());
         holder.textViewOrderStep.setText(steps.size() + "/" + (position + 1));
+        holder.imgStep.setImageBitmap(ImageHelper.loadImageFromPath(step.getImage_step()));
         holder.textViewTimeStep.setVisibility(View.GONE);
         holder.txtViewTimeStep.setText(String.valueOf(step.getTime_step()));
         holder.linearlayout.setVisibility(View.GONE);

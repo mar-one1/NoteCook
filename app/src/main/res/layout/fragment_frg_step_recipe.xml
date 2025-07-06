@@ -110,7 +110,7 @@ The worst kind of blah-blah has no function; it's pure filler — platitudes,
         android:orientation="horizontal"
         android:visibility="visible">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/txt_aff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

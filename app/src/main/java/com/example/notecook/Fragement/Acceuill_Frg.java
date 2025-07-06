@@ -117,8 +117,6 @@ public class Acceuill_Frg extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //Toast.makeText(getContext(), "changed " + Remotelist_recipe.getValue().size(), Toast.LENGTH_SHORT).show();
-        //if(Remotelist_recipe.getValue()!=null) bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
     }
 
     private void fetchRecipe() {
@@ -139,10 +137,6 @@ public class Acceuill_Frg extends Fragment {
     public void onStart() {
         super.onStart();
     }
-
-    /*
-     * This function allows to adapt different fragments in main fragment.
-     */
 
     private void heart_click(ImageView IV, Context context) {
         Drawable defaultImagelike = ContextCompat.getDrawable(context, R.drawable.italian);

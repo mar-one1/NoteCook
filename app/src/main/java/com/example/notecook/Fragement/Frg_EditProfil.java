@@ -4,6 +4,7 @@ import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
+import static com.example.notecook.Utils.Constants.captureImage;
 import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.saveToken;
 import static com.example.notecook.Utils.Constants.user_login;
@@ -150,30 +151,9 @@ public class Frg_EditProfil extends Fragment {
             }
         });
 
-//        if (user.getPathimageuser() != null && !user.getPathimageuser().isEmpty()) {
-//            String imageUrl = "";
-//            if (user.getPathimageuser().startsWith("data:")) {
-//                imageUrl = user.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
-//                user.setPathimageuser(imageUrl);
-//                binding.iconEditprofil.setImageBitmap(decodeBase64ToBitmap(user.getPathimageuser()));
-//            } else if (user.getPathimageuser().startsWith("/data")) {
-//                binding.iconEditprofil.setImageBitmap(ImageHelper.loadImageFromPath(user.getPathimageuser()));
-//            } else if (user.getPathimageuser().startsWith("http")) {
-//                imageUrl = user.getPathimageuser();
-//                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
-//            } else {
-//                imageUrl = BASE_URL + "uploads/" + user.getPathimageuser();
-//                Picasso.get().load(imageUrl).into(binding.iconEditprofil);
-//            }
-//            binding.iconProfil.setImageDrawable(Constants.DEFAUL_IMAGE);
-//        }
-        MainActivity.showImageUsers(user,binding.iconEditprofil);
-//        else if (user.getIcon() != null) {
-//            binding.iconEditprofil.setImageBitmap(decod(user.getIcon()));
-//        }
+        MainActivity.showImageUsers(user, binding.iconEditprofil);
 
         ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
-
         binding.TxtBtnSave.setOnClickListener(view -> {
             SweetAlertDialog pDialog = new SweetAlertDialog(getContext(), SweetAlertDialog.SUCCESS_TYPE);
             pDialog.setTitleText("save");
@@ -201,7 +181,7 @@ public class Frg_EditProfil extends Fragment {
             Vp2.setCurrentItem(4, false);
         });
 
-        binding.editIconProfil.setOnClickListener(view -> captureImage(getContext()));
+        binding.editIconProfil.setOnClickListener(view -> captureImage(view, Frg_EditProfil.this));
 
         binding.logOut.setOnClickListener(view -> {
             SweetAlertDialog ppDialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.SUCCESS_TYPE);
@@ -223,50 +203,50 @@ public class Frg_EditProfil extends Fragment {
         return binding.getRoot();
     }
 
-    public void captureImage(Context context) {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Add Photo!");
-        builder.setItems(options, (dialog, item) -> {
-
-            if (options[item].equals("Take Photo")) {
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-                }
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.CAMERA)
-                        == PackageManager.PERMISSION_GRANTED) {
-
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    String picture = getString(R.string.Puctire);
-                    String pick = getString(R.string.pick);
-//                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
-                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                }
-
-
-            } else if (options[item].equals("Choose from Gallery")) {
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{
-                                    Manifest.permission.READ_EXTERNAL_STORAGE}
-                            , STORAGE_PERMISSION_CODE);
-                }
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
-                }
-            } else if (options[item].equals("Cancel")) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
-    }
+//    public void captureImage(Context context) {
+//        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder.setTitle("Add Photo!");
+//        builder.setItems(options, (dialog, item) -> {
+//
+//            if (options[item].equals("Take Photo")) {
+//                if (ContextCompat.checkSelfPermission(context,
+//                        Manifest.permission.CAMERA)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+//                }
+//                if (ContextCompat.checkSelfPermission(context,
+//                        Manifest.permission.CAMERA)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//
+//                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                    String picture = getString(R.string.Puctire);
+//                    String pick = getString(R.string.pick);
+////                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
+//                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+//                }
+//
+//
+//            } else if (options[item].equals("Choose from Gallery")) {
+//                if (ContextCompat.checkSelfPermission(context,
+//                        Manifest.permission.READ_EXTERNAL_STORAGE)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions((Activity) context, new String[]{
+//                                    Manifest.permission.READ_EXTERNAL_STORAGE}
+//                            , STORAGE_PERMISSION_CODE);
+//                }
+//                if (ContextCompat.checkSelfPermission(context,
+//                        Manifest.permission.READ_EXTERNAL_STORAGE)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
+//                }
+//            } else if (options[item].equals("Cancel")) {
+//                dialog.dismiss();
+//            }
+//        });
+//        builder.show();
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

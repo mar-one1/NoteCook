@@ -59,19 +59,18 @@ public class Frg_detail_recipe extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("tag resume detaile recipe", "true");
         binding.vp2Detairecipe.setCurrentItem(0, true);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
             if (Detail_CurrentRecipe != null) {
                 if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {
                     binding.recipeNameTxt.setText(CURRENT_RECIPE.getNom_recipe());
                     binding.NomUserRecipe.setText(User_CurrentRecipe.getUsername());
+                    binding.GradeUserRecipe.setText(User_CurrentRecipe.getGrade() + "-" + User_CurrentRecipe.getStatus());
                     if (CURRENT_RECIPE.getPathimagerecipe() != null) {
                         if (CURRENT_RECIPE.getPathimagerecipe().startsWith("data:")) {
                             String imageUrl = CURRENT_RECIPE.getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
                             binding.iconRecipe.setImageBitmap(decodeBase64ToBitmap(imageUrl));
-                        }else
-                        if (CURRENT_RECIPE.getPathimagerecipe().startsWith("/data"))
+                        } else if (CURRENT_RECIPE.getPathimagerecipe().startsWith("/data"))
                             binding.iconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(CURRENT_RECIPE.getPathimagerecipe()));
                         else {
                             String url = BASE_URL + "data/uploads/" + CURRENT_RECIPE.getPathimagerecipe();
@@ -85,7 +84,7 @@ public class Frg_detail_recipe extends Fragment {
                         if (User_CurrentRecipe.getPathimageuser().startsWith("data:")) {
                             String imageUrl = User_CurrentRecipe.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
                             binding.iconProfilDetailrecipe.setImageBitmap(decodeBase64ToBitmap(imageUrl));
-                        }else {
+                        } else {
                             String url = BASE_URL + "uploads/" + User_CurrentRecipe.getPathimageuser();
                             Picasso.get().load(url).into(binding.iconProfilDetailrecipe);
                             //binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));
@@ -100,9 +99,7 @@ public class Frg_detail_recipe extends Fragment {
                     //synchronizeDataDetailRecipe(Detail_CurrentRecipe, getContext());
                 }
             }
-
         }
-
     }
 
     // Method to update the data set of the adapter
@@ -112,7 +109,6 @@ public class Frg_detail_recipe extends Fragment {
             viewPager2Adapter.notifyDataSetChanged();
         }
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

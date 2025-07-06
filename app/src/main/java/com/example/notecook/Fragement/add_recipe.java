@@ -5,25 +5,23 @@ import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_MY;
+import static com.example.notecook.Utils.Constants.captureImage;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 import static com.example.notecook.Utils.Constants.isConnected;
 import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Utils.Constants.user_login_local;
 
-import android.Manifest;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +33,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
@@ -49,7 +45,6 @@ import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
@@ -71,17 +66,14 @@ public class add_recipe extends Fragment {
 
     private static final int CAMERA_REQUEST = 1888;
     private static RecipeResponse recipeR;
-    private final int STORAGE_PERMISSION_CODE = 23;
     private final int GALLERY_REQUEST_CODE = 24;
     FragmentAddRecipeBinding binding;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
-    private InputValidator inputValidator;
-    private List<Recipe> recipes;
     private List<Step> stepsList = new ArrayList<>();
-    private List<Review> reviewsList = new ArrayList<>();
     private List<Ingredients> ingredientsList = new ArrayList<>();
     private ImageView currentTargetImageView;
+
 
 
     public add_recipe() {
@@ -99,36 +91,36 @@ public class add_recipe extends Fragment {
         binding = FragmentAddRecipeBinding.inflate(inflater, container, false);
         int bnvId = R.id.bottom_nav;
         BottomNavigationView btnV = getActivity().findViewById(bnvId);
-        recipes = new ArrayList<>();
         TAG_MY = true;
         recipeVM = new RecipeViewModel(getContext(), getActivity());
         userVM = new UserViewModel(getContext(), getActivity());
-        inputValidator = new InputValidator();
         Constants.level(binding.levelRecipe, getContext());
         binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 currentTargetImageView = binding.addIconRecipe;
-                captureImage(getContext());
+                captureImage(v, add_recipe.this);
             }
         });
         binding.addIconStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 currentTargetImageView = binding.addIconStep;
-                captureImage(getContext());
+                captureImage(v, add_recipe.this);
             }
         });
 
         binding.addIngredients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (All_Ingredients_Recipe != null && All_Ingredients_Recipe.size() != 0) {
+                if (All_Ingredients_Recipe != null && !All_Ingredients_Recipe.isEmpty()) {
                     Ingredients ingredient = All_Ingredients_Recipe.get(binding.spIngredients.getSelectedItemPosition());
                     Adapter_Rc_Ingredents adapter = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
                     if (adapter != null) ingredientsList = adapter.getDataList();
-                    ingredientsList.add(ingredient);
-                    Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext());
+                    if(!ingredientsList.contains(ingredient)) {
+                        ingredientsList.add(ingredient);
+                        Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext());
+                    }else Constants.showSnackPar(v,"this ingredient in the list!!!");
                 }
             }
         });
@@ -151,7 +143,8 @@ public class add_recipe extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!binding.txtTotTiemsp.getText().toString().equals("0") && !binding.edtDetail.getText().toString().isEmpty()) {
-                    Step step = new Step(binding.edtDetail.getText().toString(), null, Integer.parseInt(binding.txtTotTiemsp.getText().toString()), 0);
+                    String imageUrl = ImageHelper.saveImageToInternalStorage(view.getContext(),ImageHelper.drawableToBitmap(binding.addIconStep.getDrawable()),"Steps");
+                    Step step = new Step(binding.edtDetail.getText().toString(), imageUrl, Integer.parseInt(binding.txtTotTiemsp.getText().toString()), 0);
                     Adapter_Rc_Steps adapter = (Adapter_Rc_Steps) binding.recyclerViewSteps.getAdapter();
                     if (adapter != null)
                         stepsList = adapter.getDataList();
@@ -159,6 +152,7 @@ public class add_recipe extends Fragment {
                     Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());
                     binding.txtTotTiemsp.setText("0");
                     binding.edtDetail.setText("");
+                    binding.addIconRecipe.setImageDrawable(view.getResources().getDrawable(R.drawable.add_photo_profil));
                 } else Constants.showToast(getContext(), "step vide!!");
             }
         });
@@ -305,7 +299,7 @@ public class add_recipe extends Fragment {
         // Iterate over All_Ingredients_Recipe to collect all ingredient names
         for (Ingredients ingredient : All_Ingredients_Recipe) {
             String name = ingredient.getNome();
-            if (name != null) {
+            if (name != null && !ingredientNames.contains(name)) {
                 ingredientNames.add(name);
             }
         }
@@ -443,50 +437,50 @@ public class add_recipe extends Fragment {
         }
     }
 
-    public void captureImage(Context context) {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Add Photo!");
-        builder.setItems(options, (dialog, item) -> {
-
-            if (options[item].equals("Take Photo")) {
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-                }
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.CAMERA)
-                        == PackageManager.PERMISSION_GRANTED) {
-
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    String picture = getString(R.string.Puctire);
-                    String pick = getString(R.string.pick);
-//                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
-                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                }
-
-
-            } else if (options[item].equals("Choose from Gallery")) {
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{
-                                    Manifest.permission.READ_EXTERNAL_STORAGE}
-                            , STORAGE_PERMISSION_CODE);
-                }
-                if (ContextCompat.checkSelfPermission(context,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
-                }
-            } else if (options[item].equals("Cancel")) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
-    }
+//    public void captureImage(Context context) {
+//        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+//        builder.setTitle("Add Photo!");
+//        builder.setItems(options, (dialog, item) -> {
+//
+//            if (options[item].equals("Take Photo")) {
+//                if (ContextCompat.checkSelfPermission(context,
+//                        Manifest.permission.CAMERA)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
+//                }
+//                if (ContextCompat.checkSelfPermission(context,
+//                        Manifest.permission.CAMERA)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//
+//                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                    String picture = getString(R.string.Puctire);
+//                    String pick = getString(R.string.pick);
+////                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
+//                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+//                }
+//
+//
+//            } else if (options[item].equals("Choose from Gallery")) {
+//                if (ContextCompat.checkSelfPermission(context,
+//                        Manifest.permission.READ_EXTERNAL_STORAGE)
+//                        != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions((Activity) context, new String[]{
+//                                    Manifest.permission.READ_EXTERNAL_STORAGE}
+//                            , STORAGE_PERMISSION_CODE);
+//                }
+//                if (ContextCompat.checkSelfPermission(context,
+//                        Manifest.permission.READ_EXTERNAL_STORAGE)
+//                        == PackageManager.PERMISSION_GRANTED) {
+//                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
+//                }
+//            } else if (options[item].equals("Cancel")) {
+//                dialog.dismiss();
+//            }
+//        });
+//        builder.show();
+//    }
 
     private void expand(LinearLayout linearLayout) {
         linearLayout.setVisibility(View.VISIBLE);
