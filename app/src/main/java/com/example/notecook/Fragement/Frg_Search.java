@@ -59,14 +59,6 @@ public class Frg_Search extends Fragment {
     public Frg_Search() {
         // Required empty public constructor
     }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //bindingRcV_recipes(binding.RcRecipeSearch, null, "default");
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,11 +1,8 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Activity.MainActivity.Type_User;
-import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
-import static com.example.notecook.Utils.Constants.decod;
-import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.user_login;
 
@@ -28,18 +25,15 @@ import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.FragmentLifecycle;
-import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgProfilBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class frg_Profil extends Fragment implements FragmentLifecycle {
+public class frg_Profil extends Fragment {
 
     public static FragmentFrgProfilBinding bindingProfil;
     private String TAG = "Profil";
@@ -174,25 +168,6 @@ public class frg_Profil extends Fragment implements FragmentLifecycle {
         //set the data for the adapter
         bindingProfil.vp2Profil.setAdapter(viewPager2Adapter);
     }
-
-
-    @Override
-    public void onPauseFragment() {
-        Toast.makeText(getContext(), "on Pause", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onResumeFragment() {
-        Toast.makeText(getContext(), "on Resume", Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        onPauseFragment();
-    }
-
 
     private void getUserInfo() {
         if (!Type_User.equals(TAG_MODE_INVITE)) {

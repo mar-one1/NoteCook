@@ -17,9 +17,7 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -394,32 +392,6 @@ public class add_recipe extends Fragment {
         });
     }
 
-    private void postRecipe(RecipeResponse recipeR, Recipe recipe, Bitmap bitmap) {
-        recipeR.setRecipe(recipe);
-        recipeVM.postFullRecipeLocal(recipeR).observe(requireActivity(), new Observer<RecipeResponse>() {
-            @Override
-            public void onChanged(RecipeResponse recipeResponse) {
-                if (recipeResponse != null) {
-                    add_recipe.recipeR.setAddedToLocal(true);
-                    Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
-                    recipeVM.postFullRecipe(recipeR, bitmap).observe(requireActivity(), new Observer<Integer>() {
-                        @Override
-                        public void onChanged(Integer recipe) {
-                            if (recipe != -1)
-                                add_recipe.recipeR.setAddedToRemote(true);
-                            Toast.makeText(getContext(), "recipe add success in Remote", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    if (recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
-                        MainFragment.viewPager2.setCurrentItem(4);
-                        detach();
-                    }
-                }
-            }
-        });
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -436,51 +408,6 @@ public class add_recipe extends Fragment {
             }
         }
     }
-
-//    public void captureImage(Context context) {
-//        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//        builder.setTitle("Add Photo!");
-//        builder.setItems(options, (dialog, item) -> {
-//
-//            if (options[item].equals("Take Photo")) {
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.CAMERA)
-//                        != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-//                }
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.CAMERA)
-//                        == PackageManager.PERMISSION_GRANTED) {
-//
-//                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                    String picture = getString(R.string.Puctire);
-//                    String pick = getString(R.string.pick);
-////                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
-//                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
-//                }
-//
-//
-//            } else if (options[item].equals("Choose from Gallery")) {
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.READ_EXTERNAL_STORAGE)
-//                        != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions((Activity) context, new String[]{
-//                                    Manifest.permission.READ_EXTERNAL_STORAGE}
-//                            , STORAGE_PERMISSION_CODE);
-//                }
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.READ_EXTERNAL_STORAGE)
-//                        == PackageManager.PERMISSION_GRANTED) {
-//                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
-//                }
-//            } else if (options[item].equals("Cancel")) {
-//                dialog.dismiss();
-//            }
-//        });
-//        builder.show();
-//    }
 
     private void expand(LinearLayout linearLayout) {
         linearLayout.setVisibility(View.VISIBLE);

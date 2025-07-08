@@ -1,28 +1,21 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
 import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.captureImage;
-import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.saveToken;
 import static com.example.notecook.Utils.Constants.user_login;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -52,7 +43,6 @@ import com.example.notecook.databinding.FragmentFrgEditProfilBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -108,13 +98,6 @@ public class Frg_EditProfil extends Fragment {
                     // ...
                 });
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
     @Override
     public void onPause() {
         super.onPause();
@@ -202,51 +185,6 @@ public class Frg_EditProfil extends Fragment {
 
         return binding.getRoot();
     }
-
-//    public void captureImage(Context context) {
-//        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-//        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//        builder.setTitle("Add Photo!");
-//        builder.setItems(options, (dialog, item) -> {
-//
-//            if (options[item].equals("Take Photo")) {
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.CAMERA)
-//                        != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-//                }
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.CAMERA)
-//                        == PackageManager.PERMISSION_GRANTED) {
-//
-//                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                    String picture = getString(R.string.Puctire);
-//                    String pick = getString(R.string.pick);
-////                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
-//                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
-//                }
-//
-//
-//            } else if (options[item].equals("Choose from Gallery")) {
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.READ_EXTERNAL_STORAGE)
-//                        != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions((Activity) context, new String[]{
-//                                    Manifest.permission.READ_EXTERNAL_STORAGE}
-//                            , STORAGE_PERMISSION_CODE);
-//                }
-//                if (ContextCompat.checkSelfPermission(context,
-//                        Manifest.permission.READ_EXTERNAL_STORAGE)
-//                        == PackageManager.PERMISSION_GRANTED) {
-//                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
-//                }
-//            } else if (options[item].equals("Cancel")) {
-//                dialog.dismiss();
-//            }
-//        });
-//        builder.show();
-//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

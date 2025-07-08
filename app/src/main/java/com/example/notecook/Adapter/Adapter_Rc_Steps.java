@@ -107,31 +107,6 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
             linearlayout = itemView.findViewById(R.id.ly_scrole);
             linearlayoutPlay = itemView.findViewById(R.id.ly_play);
         }
-
-        public Button getBtn_del() {
-            return btn_del;
-        }
-
-        public void setBtn_del(Button btn_del) {
-            this.btn_del = btn_del;
-        }
-
-        public TextView getTextViewDetailStep() {
-            return textViewDetailStep;
-        }
-
-        public void setTextViewDetailStep(TextView textViewDetailStep) {
-            this.textViewDetailStep = textViewDetailStep;
-        }
-
-
-        public TextView getTextViewOrderStep() {
-            return textViewOrderStep;
-        }
-
-        public void setTextViewOrderStep(TextView textViewOrderStep) {
-            this.textViewOrderStep = textViewOrderStep;
-        }
     }
 
 }

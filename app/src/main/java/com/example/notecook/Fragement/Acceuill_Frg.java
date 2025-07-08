@@ -3,13 +3,10 @@ package com.example.notecook.Fragement;
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static com.example.notecook.Utils.Constants.Remotelist_recipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
-import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
-import static com.example.notecook.Utils.Constants.TAG_ONLINE;
 import static com.example.notecook.Utils.Constants.TAG_REMOTE;
 import static com.example.notecook.Utils.Constants.list_recipe;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -29,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Adapter.Adapter_RC_MenuCat;
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Model.Category_Recipe;
@@ -52,7 +47,6 @@ public class Acceuill_Frg extends Fragment {
     private FragmentAcceuillFrgBinding binding;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecipeViewModel recipeVM;
-    private FragmentActivity fragmentActivity;
     private IngredientsViewModel ingredientsVM;
 
     public Acceuill_Frg() {
@@ -82,7 +76,6 @@ public class Acceuill_Frg extends Fragment {
         });
 
         bindingRcV_categories(binding.RcCatMenu, true, getContext());
-        fragmentActivity = (FragmentActivity) getContext();
         recipeVM = new RecipeViewModel(getContext(), getActivity());
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         //Get All Ingredients Recipes

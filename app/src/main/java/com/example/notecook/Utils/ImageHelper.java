@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Base64;
 import android.util.Log;
 
 import com.example.notecook.Data.MySQLiteHelper;
@@ -34,6 +35,19 @@ public class ImageHelper {
         return bitmap;
     }
 
+    public static Bitmap decodeBase64ToBitmap(String base64Image) {
+        Bitmap bitmap = null;
+        try {
+            // Decode Base64 string into byte[]
+            byte[] decodedBytes = Base64.decode(base64Image, Base64.DEFAULT);
+
+            // Convert byte[] to Bitmap
+            bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+        } catch (Exception e) {
+            Log.e("DecodeError", "Failed to decode Base64 to Bitmap: " + e.getMessage());
+        }
+        return bitmap;
+    }
 
     public static Drawable bitmapToDrawable(Context context, Bitmap bitmap) {
         return new BitmapDrawable(context.getResources(), bitmap);

@@ -1,6 +1,7 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Api.env.BASE_URL;
+import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 
 import android.app.NotificationChannel;
@@ -146,21 +147,18 @@ public class Frg_Step_Recipe extends Fragment {
         int NOTIFICATION_ID = 234;
         @SuppressWarnings("AccessStaticViaInstance") NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(getContext().NOTIFICATION_SERVICE);
         String CHANNEL_ID = "";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            CHANNEL_ID = "my_channel_01";
-            CharSequence name = "my_channel";
-            String Description = "This is my channel";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-            mChannel.setDescription(Description);
-            mChannel.enableLights(true);
-            mChannel.setLightColor(Color.RED);
-            mChannel.enableVibration(true);
-            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-            mChannel.setShowBadge(false);
-            notificationManager.createNotificationChannel(mChannel);
-        }
-
+        CHANNEL_ID = "my_channel_01";
+        CharSequence name = "my_channel";
+        String Description = "This is my channel";
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+        mChannel.setDescription(Description);
+        mChannel.enableLights(true);
+        mChannel.setLightColor(Color.RED);
+        mChannel.enableVibration(true);
+        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+        mChannel.setShowBadge(false);
+        notificationManager.createNotificationChannel(mChannel);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_icon_app)
                 .setContentTitle("")
@@ -194,6 +192,7 @@ public class Frg_Step_Recipe extends Fragment {
                         .load(url)
                         .error(R.drawable.eror_image_download)
                         .memoryPolicy(MemoryPolicy.NO_STORE)
+
                         .into(binding.imgStep);
             }
         }
@@ -204,9 +203,7 @@ public class Frg_Step_Recipe extends Fragment {
         public CounterClass(long millisInFuture, long countDownInterval) {
             super(millisInFuture, countDownInterval);
         }
-
         String hms;
-
         @Override
         public void onTick(long millisUntilFinished) {
             long millis = millisUntilFinished;
@@ -220,13 +217,12 @@ public class Frg_Step_Recipe extends Fragment {
 
         @Override
         public void onFinish() {
-            addNotification("Time Finished", "recipe 1");
+            addNotification("Time Finished", CURRENT_RECIPE.getNom_recipe());
             Toast.makeText(getContext(), "Time Finished", Toast.LENGTH_SHORT).show();
             binding.lyPicker.setVisibility(View.VISIBLE);
             binding.lyTimer.setVisibility(View.GONE);
             hms = "00:00:00";
             getActivity().startService(new Intent(getContext(), SimpleService.class));
-
         }
 
     }

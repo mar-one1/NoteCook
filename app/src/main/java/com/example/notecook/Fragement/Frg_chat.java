@@ -92,7 +92,7 @@ public class Frg_chat extends Fragment {
         chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(), CURRENT_RECIPE.getFrk_user())
                 .observe(this, newMessages -> {
                     messages.clear();
-                    messages.addAll(newMessages);
+                    messages.addAll(newMessages); 
                     updateMessagesInView(messages);
                     scrollToBottom();
                 });

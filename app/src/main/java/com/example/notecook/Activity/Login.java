@@ -578,60 +578,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         return isPosted;
     }
 
-
-//    private void captureImage() {
-//        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-//        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-//        builder.setTitle("Add Photo!");
-//        builder.setItems(options, (dialog, item) -> {
-//
-//            if (options[item].equals("Take Photo")) {
-//                if (ContextCompat.checkSelfPermission(view.getContext(),
-//                        Manifest.permission.CAMERA)
-//                        != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions(Login.this, new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-//                }
-//                if (ContextCompat.checkSelfPermission(view.getContext(),
-//                        Manifest.permission.CAMERA)
-//                        == PackageManager.PERMISSION_GRANTED) {
-//                    {
-//                        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                        String picture = getString(R.string.Puctire);
-//                        String pick = getString(R.string.pick);
-////                            startActivityForResult(Intent.createChooser(cameraIntent,pick),GALLERY_REQUEST_CODE);
-//                        startActivityForResult(cameraIntent, CAMERA_REQUEST);
-//                    }
-//                }
-//            } else if (options[item].equals("Choose from Gallery")) {
-//                if (ContextCompat.checkSelfPermission(view.getContext(),
-//                        Manifest.permission.READ_EXTERNAL_STORAGE)
-//                        != PackageManager.PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions(Login.this, new String[]{
-//                                    Manifest.permission.READ_EXTERNAL_STORAGE}
-//                            , STORAGE_PERMISSION_CODE);
-//                }
-//                if (ContextCompat.checkSelfPermission(view.getContext(),
-//                        Manifest.permission.READ_EXTERNAL_STORAGE)
-//                        == PackageManager.PERMISSION_GRANTED) {
-//                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                    startActivityForResult(intent, GALLERY_REQUEST_CODE);
-//                }
-//            } else if (options[item].equals("Cancel")) {
-//                dialog.dismiss();
-//            }
-//        });
-//        builder.show();
-//    }
-
     void putPicture(Bitmap bitmap) {
         binding.editIconProfil.setImageBitmap(bitmap);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //TokenApi();
-    }
 
 
     @Override

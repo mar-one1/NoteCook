@@ -3,10 +3,9 @@ package com.example.notecook.Activity;
 import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.Token;
-import static com.example.notecook.Utils.Constants.decodeBase64ToBitmap;
 import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
-import static com.example.notecook.Utils.Constants.user_login;
+import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
 
 import android.Manifest;
 import android.content.Intent;
