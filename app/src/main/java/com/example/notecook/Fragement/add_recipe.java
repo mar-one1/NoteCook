@@ -150,7 +150,7 @@ public class add_recipe extends Fragment {
                     Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());
                     binding.txtTotTiemsp.setText("0");
                     binding.edtDetail.setText("");
-                    binding.addIconRecipe.setImageDrawable(view.getResources().getDrawable(R.drawable.add_photo_profil));
+                    binding.addIconStep.setImageDrawable(view.getResources().getDrawable(R.drawable.add_photo_profil));
                 } else Constants.showToast(getContext(), "step vide!!");
             }
         });
@@ -194,15 +194,6 @@ public class add_recipe extends Fragment {
         return binding.getRoot();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d("TAG", "onstart");
-        //if (TAG_EDIT_RECIPE) {
-        //  fullRecipeDetails(CURRENT_FULL_RECIPE);
-        //binding.btnAddRecipe.setText("Update");
-        //}
-    }
 
     @Override
     public void onDestroyView() {
