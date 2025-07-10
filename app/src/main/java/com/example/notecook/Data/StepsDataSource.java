@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.notecook.Model.Step;
+import com.example.notecook.Utils.ImageHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -232,5 +234,15 @@ public class StepsDataSource {
         deleteByIdRecipeStep(id);
         insert_Steps(steps, id);
         return updatedSteps;
+    }
+
+    public int UpdateStepImage(Context context, Bitmap bitmap, int id) {
+        open();
+        String imagePath = ImageHelper.saveImageToInternalStorage(context,bitmap,"StepImages");
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_IMAGE_STEP, imagePath);
+        int updateid = database.update(MySQLiteHelper.TABLE_STEP_RECIPE, values, MySQLiteHelper.COLUMN_IMAGE_STEP + " = " + id, null);
+        close();
+        return updateid;
     }
 }

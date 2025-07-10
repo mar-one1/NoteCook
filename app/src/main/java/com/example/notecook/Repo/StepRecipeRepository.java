@@ -6,6 +6,7 @@ import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.Token;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.example.notecook.Api.ApiClient;
@@ -26,8 +27,10 @@ public class StepRecipeRepository {
     private ApiService apiService;
     private RecipeDatasource recipeDatasource;
     private StepsDataSource stepsDataSource;
+    private Context context;
 
     public StepRecipeRepository(Context context) {
+        this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
         recipeDatasource = new RecipeDatasource(context);
         stepsDataSource = new StepsDataSource(context);
@@ -69,5 +72,9 @@ public class StepRecipeRepository {
                 TAG_CONNEXION = call.hashCode();
             }
         });
+    }
+
+    public int updateStepImageLocally(Bitmap image, int id) {
+        return stepsDataSource.UpdateStepImage(context, image, id);
     }
 }

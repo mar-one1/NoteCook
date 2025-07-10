@@ -3,6 +3,8 @@ package com.example.notecook.Utils;
 import static android.content.Context.MODE_PRIVATE;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
+import static com.example.notecook.Api.env.BASE_URL;
+import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
 import static org.chromium.base.ThreadUtils.runOnUiThread;
 
 import android.Manifest;
@@ -76,10 +78,15 @@ import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
+import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.StepViewModel;
 import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -91,12 +98,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class    Constants {
@@ -567,6 +575,99 @@ public class    Constants {
         return t;
     }
 
+    public static void showImageRecipes(RecipeViewModel recipeVM, Recipe recipe, ImageView imageView) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            if (recipe.getPathimagerecipe() != null) {
+                if (recipe.getPathimagerecipe().startsWith("data:")) {
+                    // Base64 image - decode in background
+                    String imageUrl = recipe.getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
+                    Bitmap bitmap = decodeBase64ToBitmap(imageUrl);
+                    handler.post(() -> imageView.setImageBitmap(bitmap));
+
+                } else if (recipe.getPathimagerecipe().startsWith("/data")) {
+                    // Local file - load in background
+                    Bitmap bitmap = ImageHelper.loadImageFromPath(recipe.getPathimagerecipe());
+                    handler.post(() -> imageView.setImageBitmap(bitmap));
+
+                } else {
+                    // Remote image - Picasso handles threading itself
+                    String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
+                    handler.post(() -> {
+                        Picasso.get()
+                                .load(url)
+                                .error(R.drawable.eror_image_download)
+                                .memoryPolicy(MemoryPolicy.NO_STORE)
+                                .into(imageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        recipeVM.postImageRecipeLocal(ImageHelper.drawableToBitmap(imageView.getDrawable()), recipe.getId_recipe());
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        if (recipe.getPathimagerecipe().startsWith("/data")) {
+                                            Bitmap fallback = ImageHelper.loadImageFromPath(recipe.getPathimagerecipe());
+                                            imageView.setImageBitmap(fallback);
+                                        }
+                                    }
+                                });
+                    });
+                }
+            } else {
+                handler.post(() -> imageView.setImageDrawable(imageView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24)));
+            }
+        });
+    }
+
+    public static void showImageSteps(StepViewModel stepViewModel, Step step, ImageView imageView) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            if (step.getImage_step() != null) {
+                if (step.getImage_step().startsWith("data:")) {
+                    // Base64 image - decode in background
+                    String imageUrl = step.getImage_step().replaceFirst("^data:image/[^;]+;base64,", "");
+                    Bitmap bitmap = decodeBase64ToBitmap(imageUrl);
+                    handler.post(() -> imageView.setImageBitmap(bitmap));
+
+                } else if (step.getImage_step().startsWith("/data")) {
+                    // Local file - load in background
+                    Bitmap bitmap = ImageHelper.loadImageFromPath(step.getImage_step());
+                    handler.post(() -> imageView.setImageBitmap(bitmap));
+
+                } else {
+                    // Remote image - Picasso handles threading itself
+                    String url = BASE_URL + "data/uploads/" + step.getImage_step();
+                    handler.post(() -> {
+                        Picasso.get()
+                                .load(url)
+                                .error(R.drawable.eror_image_download)
+                                .memoryPolicy(MemoryPolicy.NO_STORE)
+                                .into(imageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        stepViewModel.postImageStepLocal(ImageHelper.drawableToBitmap(imageView.getDrawable()), step.getFRK_recipe_step());
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        if (step.getImage_step().startsWith("/data")) {
+                                            Bitmap fallback = ImageHelper.loadImageFromPath(step.getImage_step());
+                                            imageView.setImageBitmap(fallback);
+                                        }
+                                    }
+                                });
+                    });
+                }
+            } else {
+                handler.post(() -> imageView.setImageDrawable(imageView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24)));
+            }
+        });
+    }
 
 
 }

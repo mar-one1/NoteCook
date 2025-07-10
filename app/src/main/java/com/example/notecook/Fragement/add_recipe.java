@@ -224,7 +224,7 @@ public class add_recipe extends Fragment {
         }
 
         //Load the recipe icon if available
-        MainActivity.showImageRecipes(recipeVM,recipeR.getRecipe(),binding.addIconRecipe);
+        Constants.showImageRecipes(recipeVM,recipeR.getRecipe(),binding.addIconRecipe);
 
         // Set the ingredients (assuming you're using a RecyclerView or ListView for ingredients)
         ingredientsList.clear();

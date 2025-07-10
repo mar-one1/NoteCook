@@ -33,6 +33,7 @@ import com.example.notecook.Activity.OnBoarding.OnBoarding_screen;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Recipe;
+import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -40,6 +41,7 @@ import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.NetworkChangeReceiver;
 import com.example.notecook.ViewModel.CategoriesViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.StepViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityMainBinding;
 import com.squareup.picasso.Callback;
@@ -205,52 +207,6 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(networkChangeReceiver);
     }
 
-    public static void showImageRecipes(RecipeViewModel recipeVM, Recipe recipe, ImageView imageView) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        executor.execute(() -> {
-            if (recipe.getPathimagerecipe() != null) {
-                if (recipe.getPathimagerecipe().startsWith("data:")) {
-                    // Base64 image - decode in background
-                    String imageUrl = recipe.getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
-                    Bitmap bitmap = decodeBase64ToBitmap(imageUrl);
-                    handler.post(() -> imageView.setImageBitmap(bitmap));
-
-                } else if (recipe.getPathimagerecipe().startsWith("/data")) {
-                    // Local file - load in background
-                    Bitmap bitmap = ImageHelper.loadImageFromPath(recipe.getPathimagerecipe());
-                    handler.post(() -> imageView.setImageBitmap(bitmap));
-
-                } else {
-                    // Remote image - Picasso handles threading itself
-                    String url = BASE_URL + "data/uploads/" + recipe.getPathimagerecipe();
-                    handler.post(() -> {
-                        Picasso.get()
-                                .load(url)
-                                .error(R.drawable.eror_image_download)
-                                .memoryPolicy(MemoryPolicy.NO_STORE)
-                                .into(imageView, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        recipeVM.postImageRecipeLocal(ImageHelper.drawableToBitmap(imageView.getDrawable()), recipe.getId_recipe());
-                                    }
-
-                                    @Override
-                                    public void onError(Exception e) {
-                                        if (recipe.getPathimagerecipe().startsWith("/data")) {
-                                            Bitmap fallback = ImageHelper.loadImageFromPath(recipe.getPathimagerecipe());
-                                            imageView.setImageBitmap(fallback);
-                                        }
-                                    }
-                                });
-                    });
-                }
-            } else {
-                handler.post(() -> imageView.setImageDrawable(imageView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24)));
-            }
-        });
-    }
 
     public static void showImageUsers(User user, ImageView imageView) {
         ExecutorService executor = Executors.newSingleThreadExecutor();

@@ -17,9 +17,13 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
+import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.StepViewModel;
 import com.google.android.material.textview.MaterialTextView;
 import com.squareup.picasso.Picasso;
 
@@ -31,10 +35,16 @@ import java.util.List;
 public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.ViewHolder> {
     private List<Step> steps;
     private Context context;
+    private StepViewModel stepVM;
 
     public Adapter_Rc_Steps(List<Step> steps,Context context) {
         this.steps = steps;
         this.context = context;
+    }
+    public Adapter_Rc_Steps(List<Step> steps,Context context,StepViewModel stepVM) {
+        this.steps = steps;
+        this.context = context;
+        this.stepVM = stepVM;
     }
 
     // Method to update the dataset with new data
@@ -57,6 +67,7 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         Step step = steps.get(position);
         holder.textViewDetailStep.setText(step.getDetail_step());
         holder.textViewOrderStep.setText(steps.size() + "/" + (position + 1));
+        Constants.showImageSteps(stepVM,step,holder.imgStep);
         holder.imgStep.setImageBitmap(ImageHelper.loadImageFromPath(step.getImage_step()));
         holder.textViewTimeStep.setVisibility(View.GONE);
         holder.txtViewTimeStep.setText(String.valueOf(step.getTime_step()));
