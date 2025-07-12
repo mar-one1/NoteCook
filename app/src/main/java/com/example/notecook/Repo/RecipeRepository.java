@@ -73,6 +73,7 @@ public class RecipeRepository {
     private ReviewDataSource reviewDataSource;
     private Context context;
     private DetailRecipeRepository detailRecipeRepository;
+    private StepRecipeRepository stepRecipeRepository;
     private UserRepository userRepo;
     private Activity appCompatActivity;
 
@@ -87,6 +88,7 @@ public class RecipeRepository {
         ingredientsDataSource = new IngredientsDataSource(context);
         reviewDataSource = new ReviewDataSource(context);
         detailRecipeRepository = new DetailRecipeRepository(context);
+        stepRecipeRepository = new StepRecipeRepository(context);
         userRepo = new UserRepository(context, appCompatActivity);
     }
 
@@ -100,6 +102,7 @@ public class RecipeRepository {
         ingredientsDataSource = new IngredientsDataSource(context);
         detailRecipeRepository = new DetailRecipeRepository(context);
         reviewDataSource = new ReviewDataSource(context);
+        stepRecipeRepository = new StepRecipeRepository(context);
         userRepo = new UserRepository(context, appCompatActivity);
     }
 
@@ -191,6 +194,11 @@ public class RecipeRepository {
                     //Log.d("TAG", recipe1.getId_recipe() + "et nom :  " + recipe1.getNom_recipe());
                     //ResponseBody responseBody = response.body();
                     uploadRemoteImageRecipe(recipe.getRecipe().getUnique_key_recipe(), bitmap);
+                    for (int i=0;i<recipe.getSteps().size();i++)
+                    {
+                        String url = recipe.getSteps().get(i).getImage_step();
+                        stepRecipeRepository.uploadRemoteImageStep(url,ImageHelper.loadImageFromPath(url));
+                    }
                     //fetchImage(str,tag,0,context);
                     Toast.makeText(context, "succes Full Created Api ", Toast.LENGTH_SHORT).show();
                 } else {

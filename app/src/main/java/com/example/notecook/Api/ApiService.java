@@ -182,6 +182,14 @@ public interface ApiService {
     @Headers("Content-Type: application/json")
     Call<Step> updateStep(@Path("id") int stepId, @Body Step step);
 
+    @Multipart
+    @PUT("steprecipes/upload/{id}")
+    Call<ResponseBody> updateImageStep(
+            @Header("Authorization") String token,
+            @Path("id") String unique_key,
+            @Part MultipartBody.Part image
+    );
+
     @DELETE("steps/{id}")
     Call<Void> deleteStep(@Path("id") int stepId);
 
