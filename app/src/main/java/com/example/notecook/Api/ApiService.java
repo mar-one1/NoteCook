@@ -247,10 +247,10 @@ public interface ApiService {
     Call<Favorite_User_Recipe> createFavorite(@Header("Authorization") String token, @Body Favorite_User_Recipe favorite);
 
     // categories
-    @GET("categories")
+    @GET("category")
     Call<List<Category_Recipe>> getAllCategories(@Header("Authorization") String token);
 
-    @GET("categories/{id}")
+    @GET("category/{id}")
     Call<Category_Recipe> getCategory(@Path("id") int Id, @Header("Authorization") String token);
 
     // Chat EndPoint
