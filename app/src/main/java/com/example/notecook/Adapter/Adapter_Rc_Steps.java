@@ -68,7 +68,7 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         holder.textViewDetailStep.setText(step.getDetail_step());
         holder.textViewOrderStep.setText(steps.size() + "/" + (position + 1));
         Constants.showImageSteps(stepVM,step,holder.imgStep);
-        if(!step.getImage_step().isEmpty()) holder.imgStep.setImageBitmap(ImageHelper.loadImageFromPath(step.getImage_step()));
+        if(step.getImage_step()!=null && !step.getImage_step().isEmpty()) holder.imgStep.setImageBitmap(ImageHelper.loadImageFromPath(step.getImage_step()));
         holder.textViewTimeStep.setVisibility(View.GONE);
         holder.txtViewTimeStep.setText(String.valueOf(step.getTime_step()));
         holder.linearlayout.setVisibility(View.GONE);
