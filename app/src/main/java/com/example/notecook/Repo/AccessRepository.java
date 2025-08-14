@@ -62,7 +62,7 @@ public class AccessRepository {
         login.setUsername(username);
         login.setPassword(password);
 
-        Call<LoginResponse> call = apiService.authontification(login);
+        Call<LoginResponse> call = apiService.authentication(login);
 
         call.enqueue(new Callback<LoginResponse>() {
             @Override

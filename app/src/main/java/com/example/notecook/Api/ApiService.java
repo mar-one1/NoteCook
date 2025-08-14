@@ -45,7 +45,7 @@ public interface ApiService {
     //    @FormUrlEncoded
     @Headers("Content-Type: application/json")
     @POST("auth/login")
-    Call<LoginResponse> authontification(@Body LoginResponse loginResponse);
+    Call<LoginResponse> authentication(@Body LoginResponse loginResponse);
 
     @GET("users")
     Call<List<User>> getData(@Header("Authorization") String token);

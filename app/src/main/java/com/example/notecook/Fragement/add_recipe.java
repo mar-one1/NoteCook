@@ -1,5 +1,6 @@
 package com.example.notecook.Fragement;
 
+import static android.provider.MediaStore.Images.Media.getBitmap;
 import static com.example.notecook.Utils.Constants.AffichageMessage;
 import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
 import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
@@ -315,7 +316,7 @@ public class add_recipe extends Fragment {
 
     private void updateRecipe() {
         CURRENT_FULL_RECIPE.getRecipe().setNom_recipe(binding.editTextRecipeName.getText().toString());
-        Bitmap bitmap = ((BitmapDrawable) binding.addIconRecipe.getDrawable()).getBitmap();
+        Bitmap bitmap = ImageHelper.drawableToBitmap(binding.addIconRecipe.getDrawable());
 
         CURRENT_FULL_RECIPE.getDetail_recipe().setDt_recipe(binding.editTextInstructions.getText().toString());
         CURRENT_FULL_RECIPE.getDetail_recipe().setTime(Integer.parseInt(binding.txtTotTime.getText().toString()));
