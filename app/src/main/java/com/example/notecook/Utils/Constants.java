@@ -227,7 +227,7 @@ public class    Constants {
     }
     public static void showSnackPar(View view,String message)
     {
-        Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
                 .setAction("UNDO", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -622,51 +622,52 @@ public class    Constants {
         });
     }
 
+    private static final ExecutorService executor = Executors.newFixedThreadPool(2);
+    private static final Handler handler = new Handler(Looper.getMainLooper());
+
     public static void showImageSteps(StepViewModel stepViewModel, Step step, ImageView imageView) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
+        if (step.getImage_step() == null) {
+            imageView.setImageResource(R.drawable.ic_baseline_image_not_supported_24);
+            return;
+        }
 
-        executor.execute(() -> {
-            if (step.getImage_step() != null) {
-                if (step.getImage_step().startsWith("data:")) {
-                    // Base64 image - decode in background
-                    String imageUrl = step.getImage_step().replaceFirst("^data:image/[^;]+;base64,", "");
-                    Bitmap bitmap = decodeBase64ToBitmap(imageUrl);
-                    handler.post(() -> imageView.setImageBitmap(bitmap));
+        if (step.getImage_step().startsWith("data:")) {
+            // Base64 → decode async
+            executor.execute(() -> {
+                String imageUrl = step.getImage_step().replaceFirst("^data:image/[^;]+;base64,", "");
+                Bitmap bitmap = decodeBase64ToBitmap(imageUrl);
+                handler.post(() -> imageView.setImageBitmap(bitmap));
+            });
 
-                } else if (step.getImage_step().startsWith("/data")) {
-                    // Local file - load in background
-                    Bitmap bitmap = ImageHelper.loadImageFromPath(step.getImage_step());
-                    handler.post(() -> imageView.setImageBitmap(bitmap));
+        } else if (step.getImage_step().startsWith("/data")) {
+            // Local file → load async
+            executor.execute(() -> {
+                Bitmap bitmap = ImageHelper.loadImageFromPath(step.getImage_step());
+                handler.post(() -> imageView.setImageBitmap(bitmap));
+            });
 
-                } else {
-                    // Remote image - Picasso handles threading itself
-                    String url = BASE_URL + "data/uploads/" + step.getImage_step();
-                    handler.post(() -> {
-                        Picasso.get()
-                                .load(url)
-                                .error(R.drawable.eror_image_download)
-                                .memoryPolicy(MemoryPolicy.NO_STORE)
-                                .into(imageView, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
-                                        stepViewModel.postImageStepLocal(ImageHelper.drawableToBitmap(imageView.getDrawable()), step.getFRK_recipe_step());
-                                    }
-
-                                    @Override
-                                    public void onError(Exception e) {
-                                        if (step.getImage_step().startsWith("/data")) {
-                                            Bitmap fallback = ImageHelper.loadImageFromPath(step.getImage_step());
-                                            imageView.setImageBitmap(fallback);
-                                        }
-                                    }
-                                });
+        } else {
+            // Remote image → let Picasso handle threading + cache
+            String url = BASE_URL + "data/uploads/" + step.getImage_step();
+            Picasso.get()
+                    .load(url)
+                    .placeholder(R.drawable.baseline_image_24)
+                    .error(R.drawable.eror_image_download)
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            stepViewModel.postImageStepLocal(
+                                    ImageHelper.drawableToBitmap(imageView.getDrawable()),
+                                    step.getFRK_recipe_step()
+                            );
+                        }
+                        @Override
+                        public void onError(Exception e) {
+                            Bitmap fallback = ImageHelper.loadImageFromPath(step.getImage_step());
+                            if (fallback != null) imageView.setImageBitmap(fallback);
+                        }
                     });
-                }
-            } else {
-                handler.post(() -> imageView.setImageDrawable(imageView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24)));
-            }
-        });
+        }
     }
 
 

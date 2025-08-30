@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Fragement.Acceuill_Frg;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Model.Recipe;
@@ -82,13 +83,9 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Recipe recipe = recipes.get(position);
-        Drawable defaultImagelike = holder.itemView.getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
-        Drawable defaultImagenot = holder.itemView.getResources().getDrawable(R.drawable.ic_favorite_border_black_24dp);
         holder.detail.setText(recipe.getNom_recipe());
         holder.txt_rate.setText(String.valueOf(recipe.getFav()));
-
         Constants.showImageRecipes(recipeVM,recipe,holder.Image);
-
         if (Objects.equals(b, TAG_LOCAL)) {
             holder.txt_time.setText("Local");
             holder.pin.setVisibility(View.VISIBLE);
@@ -120,10 +117,10 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         holder.heat.setOnClickListener(view -> {
             Drawable pic = holder.heat.getDrawable().getCurrent();
             Toast.makeText(view.getContext(), "" + pic, Toast.LENGTH_SHORT).show();
-            if (defaultImagelike.getConstantState().equals(holder.heat.getDrawable().getConstantState())) {
-                holder.heat.setImageDrawable(defaultImagenot);
+            if (Acceuill_Frg.defaultImagelike.getConstantState().equals(holder.heat.getDrawable().getConstantState())) {
+                holder.heat.setImageDrawable(Acceuill_Frg.defaultImagelike);
             } else {
-                holder.heat.setImageDrawable(defaultImagelike);
+                holder.heat.setImageDrawable(Acceuill_Frg.defaultImagelike);
                 Recipes_Fav_User.add(recipe);
                 Insert_Fav(user_login.getUser().getId_User(), recipe.getId_recipe());
             }

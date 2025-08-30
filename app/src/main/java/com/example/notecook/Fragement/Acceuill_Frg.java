@@ -48,6 +48,10 @@ public class Acceuill_Frg extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecipeViewModel recipeVM;
     private IngredientsViewModel ingredientsVM;
+    private Adapter_RC_RecipeDt adapter_rc_recipeDt;
+    private LinearLayoutManager manager;
+    public static Drawable defaultImagelike;
+    public Drawable defaultImagenot;
 
     public Acceuill_Frg() {
         // Required empty public constructor
@@ -69,6 +73,9 @@ public class Acceuill_Frg extends Fragment {
             ViewPager2 viewPager2 = getActivity().findViewById(R.id.vp2);
             viewPager2.setCurrentItem(2, false);
         });
+
+        defaultImagelike = getActivity().getDrawable(R.drawable.ic_baseline_favorite_24);
+        defaultImagenot = getActivity().getDrawable(R.drawable.ic_favorite_border_black_24dp);
 
         binding.seeMoreTxt.setOnClickListener(view -> {
             ViewPager2 viewPager2 = getActivity().findViewById(R.id.vp2);
@@ -167,21 +174,20 @@ public class Acceuill_Frg extends Fragment {
 
 
     public void bindingRcV_recipes(List<Recipe> list, RecyclerView mRecyclerView, boolean isgarde) {
-        Adapter_RC_RecipeDt adapter_rc_recipeDt;
         if (list != null && !list.isEmpty()) {
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), Remotelist_recipe.getValue(), TAG_REMOTE);
-            LinearLayoutManager manager = new LinearLayoutManager(getContext());
+            manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(adapter_rc_recipeDt);
         } else if (list_recipe != null && list_recipe.getValue() != null && !list_recipe.getValue().isEmpty()) {
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), list_recipe.getValue(), TAG_LOCAL);
-            LinearLayoutManager manager = new LinearLayoutManager(getContext());
+            manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(adapter_rc_recipeDt);
         }
-
+        mRecyclerView.setHasFixedSize(true);
     }
 
 }

@@ -49,6 +49,7 @@ import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.StepViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -56,6 +57,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 
@@ -67,10 +69,10 @@ public class add_recipe extends Fragment {
     FragmentAddRecipeBinding binding;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
+    private StepViewModel stepVM;
     private List<Step> stepsList = new ArrayList<>();
     private List<Ingredients> ingredientsList = new ArrayList<>();
     private ImageView currentTargetImageView;
-
 
 
     public add_recipe() {
@@ -91,6 +93,7 @@ public class add_recipe extends Fragment {
         TAG_MY = true;
         recipeVM = new RecipeViewModel(getContext(), getActivity());
         userVM = new UserViewModel(getContext(), getActivity());
+        stepVM = new StepViewModel(getContext(), getActivity());
         Constants.level(binding.levelRecipe, getContext());
         binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,10 +117,10 @@ public class add_recipe extends Fragment {
                     Ingredients ingredient = All_Ingredients_Recipe.get(binding.spIngredients.getSelectedItemPosition());
                     Adapter_Rc_Ingredents adapter = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
                     if (adapter != null) ingredientsList = adapter.getDataList();
-                    if(!ingredientsList.contains(ingredient)) {
+                    if (!ingredientsList.contains(ingredient)) {
                         ingredientsList.add(ingredient);
                         Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext());
-                    }else Constants.showSnackPar(v,"this ingredient in the list!!!");
+                    } else Constants.showSnackPar(v, "this ingredient in the list!!!");
                 }
             }
         });
@@ -140,7 +143,7 @@ public class add_recipe extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!binding.txtTotTiemsp.getText().toString().equals("0") && !binding.edtDetail.getText().toString().isEmpty()) {
-                    String imageUrl = ImageHelper.saveImageToInternalStorage(view.getContext(),ImageHelper.drawableToBitmap(binding.addIconStep.getDrawable()),"Steps");
+                    String imageUrl = ImageHelper.saveImageToInternalStorage(view.getContext(), ImageHelper.drawableToBitmap(binding.addIconStep.getDrawable()), "Steps");
                     Step step = new Step(binding.edtDetail.getText().toString(), imageUrl, Integer.parseInt(binding.txtTotTiemsp.getText().toString()), 0);
                     Adapter_Rc_Steps adapter = (Adapter_Rc_Steps) binding.recyclerViewSteps.getAdapter();
                     if (adapter != null)
@@ -223,7 +226,7 @@ public class add_recipe extends Fragment {
         }
 
         //Load the recipe icon if available
-        Constants.showImageRecipes(recipeVM,recipeR.getRecipe(),binding.addIconRecipe);
+        Constants.showImageRecipes(recipeVM, recipeR.getRecipe(), binding.addIconRecipe);
 
         // Set the ingredients (assuming you're using a RecyclerView or ListView for ingredients)
         ingredientsList.clear();
@@ -315,49 +318,96 @@ public class add_recipe extends Fragment {
     }
 
     private void updateRecipe() {
+        // 1️⃣ Update local recipe object
         CURRENT_FULL_RECIPE.getRecipe().setNom_recipe(binding.editTextRecipeName.getText().toString());
         Bitmap bitmap = ImageHelper.drawableToBitmap(binding.addIconRecipe.getDrawable());
 
         CURRENT_FULL_RECIPE.getDetail_recipe().setDt_recipe(binding.editTextInstructions.getText().toString());
-        CURRENT_FULL_RECIPE.getDetail_recipe().setTime(Integer.parseInt(binding.txtTotTime.getText().toString()));
-        CURRENT_FULL_RECIPE.getDetail_recipe().setCal(Integer.parseInt(binding.txtTotCal.getText().toString()));
+        CURRENT_FULL_RECIPE.getDetail_recipe().setTime(parseIntSafe(binding.txtTotTime.getText().toString()));
+        CURRENT_FULL_RECIPE.getDetail_recipe().setCal(parseIntSafe(binding.txtTotCal.getText().toString()));
         CURRENT_FULL_RECIPE.getDetail_recipe().setLevel(binding.levelRecipe.getSelectedItem().toString());
-        Adapter_Rc_Ingredents adapter = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
-        if (adapter != null) {
-            ingredientsList = adapter.getDataList();
-        }
-        CURRENT_FULL_RECIPE.setIngredients(ingredientsList);
+
+        // 2️⃣ Get ingredients and steps
+        Adapter_Rc_Ingredents adapterIng = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
+        CURRENT_FULL_RECIPE.setIngredients(adapterIng != null ? adapterIng.getDataList() : new ArrayList<>());
+
         Adapter_Rc_Steps adapterSteps = (Adapter_Rc_Steps) binding.recyclerViewSteps.getAdapter();
-        if (adapterSteps != null)
-            stepsList = adapterSteps.getDataList();
-        CURRENT_FULL_RECIPE.setSteps(stepsList);
-        recipeVM.updateFullRecipeLocal(CURRENT_FULL_RECIPE).observe(requireActivity(), new Observer<RecipeResponse>() {
-            @Override
-            public void onChanged(RecipeResponse Recipe) {
-                if (Recipe != null) {
-                    if (bitmap != null)
-                        recipeVM.updateImageRecipeLocal(bitmap, CURRENT_FULL_RECIPE.getRecipe().getId_recipe());
-                    recipeVM.updateFullRemoteRecipe(Recipe).observe(requireActivity(), new Observer<String>() {
-                        @Override
-                        public void onChanged(String Result) {
-                            if (!Result.isEmpty()) {
-                                if (bitmap != null)
-                                    recipeVM.uploadRemoteRecipeImage(Recipe.getRecipe().getUnique_key_recipe(), bitmap).observe(requireActivity(), new Observer<String>() {
-                                        @Override
-                                        public void onChanged(String s) {
-                                            Recipe.getRecipe().setPathimagerecipe(s);
-                                            CURRENT_FULL_RECIPE.setRecipe(Recipe.getRecipe());
-                                            Constants.AffichageMessage("success", "", requireActivity());
-                                            detach();
-                                        }
-                                    });
-                            }
-                        }
-                    });
-                } else AffichageMessage("eror", "Error fro update !!!", getActivity());
+        CURRENT_FULL_RECIPE.setSteps(adapterSteps != null ? adapterSteps.getDataList() : new ArrayList<>());
+
+        // 3️⃣ Update local DB
+        recipeVM.updateFullRecipeLocal(CURRENT_FULL_RECIPE).observe(requireActivity(), recipeResponse -> {
+            if (recipeResponse == null) {
+                AffichageMessage("error", "Error updating local recipe!", getActivity());
+                return;
             }
+
+            // 4️⃣ Update local recipe image if exists
+            if (bitmap != null) {
+                recipeVM.updateImageRecipeLocal(bitmap, CURRENT_FULL_RECIPE.getRecipe().getId_recipe());
+            }
+
+            // 5️⃣ Update recipe remotely
+            recipeVM.updateFullRemoteRecipe(recipeResponse).observe(requireActivity(), remoteResult -> {
+                if (remoteResult == null || remoteResult.isEmpty()) {
+                    AffichageMessage("error", "Error updating remote recipe!", getActivity());
+                    return;
+                }
+
+                uploadRecipeImages(recipeResponse, bitmap);
+            });
         });
     }
+
+    /** Upload main recipe image and all step images, then show success */
+    private void uploadRecipeImages(RecipeResponse recipe, Bitmap mainBitmap) {
+        if (mainBitmap != null) {
+            recipeVM.uploadRemoteRecipeImage(recipe.getRecipe().getUnique_key_recipe(), mainBitmap)
+                    .observe(requireActivity(), mainImageUrl -> {
+                        recipe.getRecipe().setPathimagerecipe(mainImageUrl);
+                        uploadStepImages(recipe);
+                    });
+        } else {
+            uploadStepImages(recipe);
+        }
+    }
+
+    /** Upload all step images and finish when done */
+    private void uploadStepImages(RecipeResponse recipe) {
+        List<Step> steps = recipe.getSteps();
+        if (steps.isEmpty()) {
+            finishUpdate(recipe);
+            return;
+        }
+
+        AtomicInteger completed = new AtomicInteger(0);
+        for (Step step : steps) {
+            String url = step.getImage_step();
+            stepVM.postImageStepRemote(url, ImageHelper.loadImageFromPath(url))
+                    .observe(requireActivity(), uploadedUrl -> {
+                        step.setImage_step(uploadedUrl);
+                        if (completed.incrementAndGet() == steps.size()) {
+                            finishUpdate(recipe);
+                        }
+                    });
+        }
+    }
+
+    /** Finalize update */
+    private void finishUpdate(RecipeResponse recipe) {
+        CURRENT_FULL_RECIPE.setRecipe(recipe.getRecipe());
+        Constants.AffichageMessage("success", "", requireActivity());
+        detach();
+    }
+
+    /** Safe integer parsing */
+    private int parseIntSafe(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
 
     private void detach() {
         FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -374,7 +424,7 @@ public class add_recipe extends Fragment {
                     add_recipe.recipeR.setAddedToLocal(true);
                     Toast.makeText(getContext(), "recipe add success locally", Toast.LENGTH_SHORT).show();
                     if (recipeR.isAddedToLocal() && recipeR.isAddedToRemote()) {
-                        MainFragment.viewPager2.setCurrentItem(4,false);
+                        MainFragment.viewPager2.setCurrentItem(4, false);
                         detach();
                     }
                 }
