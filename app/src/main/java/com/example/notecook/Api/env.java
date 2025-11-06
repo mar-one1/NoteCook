@@ -1,9 +1,7 @@
 package com.example.notecook.Api;
-
+import com.example.notecook.BuildConfig;
 public class env {
-    public static final String IP = "192.168.0.114";
-    public static final String PORT = "3000";
-//    public static final String PORT = "3001";
-    public static final String BASE_URL = "http://" + IP + ":" + PORT + "/";
-//      public static final String BASE_URL = "https://notecookapi.netlify.app/";
+    public static final String IP = BuildConfig.IP;
+    public static final String PORT = BuildConfig.PORT;
+    public static final String BASE_URL = BuildConfig.BASE_URL;
 }

@@ -13,15 +13,24 @@ android {
         targetSdk 30
         versionCode 1
         versionName "1.0"
-
+        buildConfigField "String", "IP", "\"192.168.0.122\""
+        buildConfigField "String", "PORT", "\"3000\""
+        buildConfigField "String", "BASE_URL", "\"https://notecookapi.netlify.app/\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
+        debug {
+            // Example: use local API in debug
+            buildConfigField "String", "BASE_URL", "\"http://192.168.0.122:3000/\""
+        }
+
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Example: use production API in release
+            buildConfigField "String", "BASE_URL", "\"https://notecookapi.netlify.app/\""
         }
     }
     compileOptions {
