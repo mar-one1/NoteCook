@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.notecook.Adapter.ChatAdapter;
+import com.example.notecook.Adapter.Adapter_RC_Chat;
 import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -33,7 +33,7 @@ import java.util.List;
 public class Frg_chat extends Fragment {
 
     private RecyclerView messagesRecyclerView;
-    private ChatAdapter chatAdapter;
+    private Adapter_RC_Chat adapterRCChat;
     private List<ChatMessage> messages;
     private int currentUserID = user_login.getUser().getId_User();
     private ChatViewModel chatViewModel;
@@ -42,8 +42,8 @@ public class Frg_chat extends Fragment {
     private SocketManager socketManager;
 
     private void updateMessagesInView(List<ChatMessage> messages) {
-        chatAdapter.setMessages(messages);
-        chatAdapter.notifyDataSetChanged();
+        adapterRCChat.setMessages(messages);
+        adapterRCChat.notifyDataSetChanged();
         scrollToBottom();
 
         // ✅ إرسال message read لكل رسالة موجهة للمستخدم الحالي
@@ -77,7 +77,7 @@ public class Frg_chat extends Fragment {
     }
 
     private void scrollToBottom() {
-        messagesRecyclerView.scrollToPosition(chatAdapter.getItemCount() - 1);
+        messagesRecyclerView.scrollToPosition(adapterRCChat.getItemCount() - 1);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class Frg_chat extends Fragment {
         chatViewModel = new ViewModelProvider(this, new ChatViewModel(getContext(), getActivity())).get(ChatViewModel.class);
 
         messages = new ArrayList<>();
-        chatAdapter = new ChatAdapter(getContext(), messages, currentUserID);
+        adapterRCChat = new Adapter_RC_Chat(getContext(), messages, currentUserID);
 
         chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(), CURRENT_RECIPE.getFrk_user())
                 .observe(this, newMessages -> {
@@ -104,7 +104,7 @@ public class Frg_chat extends Fragment {
 
         messagesRecyclerView = rootView.findViewById(R.id.messages_view);
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        messagesRecyclerView.setAdapter(chatAdapter);
+        messagesRecyclerView.setAdapter(adapterRCChat);
 
         ViewPager2 Vp2 = getActivity().findViewById(R.id.vp2);
         Constants.navAction((AppCompatActivity) getActivity(), Frg_chat.this, Vp2);

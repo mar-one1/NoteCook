@@ -34,6 +34,7 @@ import com.example.notecook.databinding.FragmentFrgRecipeIngredientsBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Frg_recipe_ingredients extends Fragment {
 
@@ -92,7 +93,7 @@ public class Frg_recipe_ingredients extends Fragment {
         // Inflate the layout for this fragment
         mRecyclerView = binding.RcIngred;
         VMIngredient = new IngredientsViewModel(getContext(), getActivity());
-        if(Ingredients_CurrentRecipe!=null) Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe.getValue(), getContext());
+        if(Ingredients_CurrentRecipe.getValue()!=null && !Ingredients_CurrentRecipe.getValue().isEmpty())  Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe.getValue(), getContext());
         Remote_nutritions.observe(getViewLifecycleOwner(), new Observer<Nutrition>() {
             @Override
             public void onChanged(Nutrition nutrition) {

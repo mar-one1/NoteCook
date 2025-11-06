@@ -18,13 +18,13 @@ import com.example.notecook.Utils.Constants;
 
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
+public class Adapter_RC_Chat extends RecyclerView.Adapter<Adapter_RC_Chat.ViewHolder> {
 
     private List<ChatMessage> messages;
     private Context context;
     private int currentUserID;
 
-    public ChatAdapter(Context context, List<ChatMessage> messages, int currentUserID) {
+    public Adapter_RC_Chat(Context context, List<ChatMessage> messages, int currentUserID) {
         this.context = context;
         this.messages = messages;
         this.currentUserID = currentUserID;
@@ -47,6 +47,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         String timestamp = Constants.DateTimeNow(message.getTimestamp());
         holder.timestampText.setText(timestamp);
 
+        if (message.getStatus()!=null && message.getStatus().equals("read")) {
+            holder.messageStatus.setText("✔✔");
+            holder.messageText.setAlpha(1f);   // normal color
+        }else {
+            holder.messageStatus.setText("✔");  // single check
+            holder.messageText.setAlpha(0.5f); // greyed-out text
+        }
+
         // Align message based on sender/receiver
         if (message.getSenderId() == currentUserID) {
             // Align right
@@ -56,11 +64,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             // Align left
             holder.ll_message.setGravity(Gravity.START);
             holder.image_message.setBackgroundResource(R.drawable.ic_tips_and_updates_fill0_wght400_grad0_opsz48_red);
+            holder.messageStatus.setVisibility(View.GONE);
         }
 
-        if (message.getStatus()!=null && message.getStatus().equals("read")) {
-            holder.messageStatus.setText("✔✔");
-        }
     }
 
     @Override
