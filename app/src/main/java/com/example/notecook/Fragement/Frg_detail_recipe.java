@@ -3,10 +3,7 @@ package com.example.notecook.Fragement;
 
 import static com.example.notecook.Activity.MainActivity.Type_User;
 import static com.example.notecook.Api.env.BASE_URL;
-import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
-import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
-import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
 import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
 
 import android.annotation.SuppressLint;
@@ -22,12 +19,14 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgDetailRecipeBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
@@ -50,6 +49,7 @@ public class Frg_detail_recipe extends Fragment {
     private Recipe recipe;
     private ImageView chat_view;
     private Adapter_Vp2_recipeProfil viewPager2Adapter;
+    private SharedRecipeViewModel viewModel;
 
 
     public Frg_detail_recipe() {
@@ -61,42 +61,42 @@ public class Frg_detail_recipe extends Fragment {
         super.onResume();
         binding.vp2Detairecipe.setCurrentItem(0, true);
         if (!Type_User.equals(TAG_MODE_INVITE)) {
-            if (Detail_CurrentRecipe != null) {
-                if (User_CurrentRecipe != null && CURRENT_RECIPE != null) {
-                    binding.recipeNameTxt.setText(CURRENT_RECIPE.getNom_recipe());
-                    binding.NomUserRecipe.setText(User_CurrentRecipe.getUsername());
-                    binding.GradeUserRecipe.setText(User_CurrentRecipe.getGrade() + "-" + User_CurrentRecipe.getStatus());
-                    if (CURRENT_RECIPE.getPathimagerecipe() != null) {
-                        if (CURRENT_RECIPE.getPathimagerecipe().startsWith("data:")) {
-                            String imageUrl = CURRENT_RECIPE.getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
+            if (viewModel.getDetailCurrentRecipe() != null) {
+                if (viewModel.getUserCurrentRecipe() != null && viewModel.getCurrentRecipe() != null) {
+                    binding.recipeNameTxt.setText(viewModel.getCurrentRecipe().getValue().getNom_recipe());
+                    binding.NomUserRecipe.setText(viewModel.getUserCurrentRecipe().getValue().getUsername());
+                    binding.GradeUserRecipe.setText(viewModel.getUserCurrentRecipe().getValue().getGrade() + "-" + viewModel.getUserCurrentRecipe().getValue().getStatus());
+                    if (viewModel.getCurrentRecipe().getValue().getPathimagerecipe() != null) {
+                        if (viewModel.getCurrentRecipe().getValue().getPathimagerecipe().startsWith("data:")) {
+                            String imageUrl = viewModel.getCurrentRecipe().getValue().getPathimagerecipe().replaceFirst("^data:image/[^;]+;base64,", "");
                             binding.iconRecipe.setImageBitmap(decodeBase64ToBitmap(imageUrl));
-                        } else if (CURRENT_RECIPE.getPathimagerecipe().startsWith("/data"))
-                            binding.iconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(CURRENT_RECIPE.getPathimagerecipe()));
+                        } else if (viewModel.getCurrentRecipe().getValue().getPathimagerecipe().startsWith("/data"))
+                            binding.iconRecipe.setImageBitmap(ImageHelper.loadImageFromPath(viewModel.getCurrentRecipe().getValue().getPathimagerecipe()));
                         else {
-                            String url = BASE_URL + "data/uploads/" + CURRENT_RECIPE.getPathimagerecipe();
+                            String url = BASE_URL + "data/uploads/" + viewModel.getCurrentRecipe().getValue().getPathimagerecipe();
                             Picasso.get().load(url).into(binding.iconRecipe);
                         }
                     }
 
 
                     //binding.iconRecipe.setImageBitmap(m.decod(recipe.get(0).getIcon_recipe()));
-                    if (User_CurrentRecipe != null && User_CurrentRecipe.getPathimageuser() != null) {
-                        if (User_CurrentRecipe.getPathimageuser().startsWith("data:")) {
-                            String imageUrl = User_CurrentRecipe.getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
+                    if (viewModel.getUserCurrentRecipe() != null && viewModel.getUserCurrentRecipe().getValue().getPathimageuser() != null) {
+                        if (viewModel.getUserCurrentRecipe().getValue().getPathimageuser().startsWith("data:")) {
+                            String imageUrl = viewModel.getUserCurrentRecipe().getValue().getPathimageuser().replaceFirst("^data:image/[^;]+;base64,", "");
                             binding.iconProfilDetailrecipe.setImageBitmap(decodeBase64ToBitmap(imageUrl));
                         } else {
-                            String url = BASE_URL + "uploads/" + User_CurrentRecipe.getPathimageuser();
+                            String url = BASE_URL + "uploads/" + viewModel.getUserCurrentRecipe().getValue().getPathimageuser();
                             Picasso.get().load(url).into(binding.iconProfilDetailrecipe);
                             //binding.iconProfilDetailrecipe.setImageBitmap(decod(User_CurrentRecipe.getIcon()));
                         }
                     }
 
-                    Log.d("TAG", String.valueOf(Detail_CurrentRecipe.getId_detail_recipe()));
-                    binding.rateDtRecipe.setText(String.valueOf(Detail_CurrentRecipe.getRate()));
-                    binding.icludeRoxDetailRecipe.vlTime.setText(String.valueOf(Detail_CurrentRecipe.getTime()));
-                    binding.icludeRoxDetailRecipe.valCal.setText(String.valueOf(Detail_CurrentRecipe.getCal()));
-                    binding.icludeRoxDetailRecipe.valLevel.setText(String.valueOf(Detail_CurrentRecipe.getLevel()));
-                    //synchronizeDataDetailRecipe(Detail_CurrentRecipe, getContext());
+                    Log.d("TAG", String.valueOf(viewModel.getDetailCurrentRecipe().getId_detail_recipe()));
+                    binding.rateDtRecipe.setText(String.valueOf(viewModel.getDetailCurrentRecipe().getRate()));
+                    binding.icludeRoxDetailRecipe.vlTime.setText(String.valueOf(viewModel.getDetailCurrentRecipe().getTime()));
+                    binding.icludeRoxDetailRecipe.valCal.setText(String.valueOf(viewModel.getDetailCurrentRecipe().getCal()));
+                    binding.icludeRoxDetailRecipe.valLevel.setText(String.valueOf(viewModel.getDetailCurrentRecipe().getLevel()));
+                    //synchronizeDataDetailRecipe(viewModel.getDetailCurrentRecipe(, getContext());
                 }
             }
         }
@@ -121,7 +121,7 @@ public class Frg_detail_recipe extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentFrgDetailRecipeBinding.inflate(inflater, container, false);
         View rootView = inflater.inflate(R.layout.recipe_detail_row, container, false);
-
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
 
         viewPager = binding.vp2Detairecipe;
         tabLayout = binding.tl;

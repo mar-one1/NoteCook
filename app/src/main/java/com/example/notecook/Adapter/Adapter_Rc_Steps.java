@@ -1,11 +1,9 @@
 package com.example.notecook.Adapter;
 
-import static com.example.notecook.Api.env.BASE_URL;
-import static com.example.notecook.Utils.Constants.TAG_MY;
+
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,19 +12,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
-import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.StepViewModel;
 import com.google.android.material.textview.MaterialTextView;
-import com.squareup.picasso.Picasso;
-
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
@@ -36,10 +29,12 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
     private List<Step> steps;
     private Context context;
     private StepViewModel stepVM;
+    private SharedRecipeViewModel viewModel;
 
-    public Adapter_Rc_Steps(List<Step> steps,Context context) {
+    public Adapter_Rc_Steps(List<Step> steps, Context context,SharedRecipeViewModel viewModel) {
         this.steps = steps;
         this.context = context;
+        this.viewModel =viewModel;
     }
     public Adapter_Rc_Steps(List<Step> steps,Context context,StepViewModel stepVM) {
         this.steps = steps;
@@ -75,7 +70,7 @@ public class Adapter_Rc_Steps extends RecyclerView.Adapter<Adapter_Rc_Steps.View
         holder.linearlayoutPlay.setVisibility(View.GONE);
         holder.btn_del.setVisibility(View.GONE);
 
-        if (TAG_MY) {
+        if (Boolean.TRUE.equals(viewModel.getTagMy().getValue())) {
             holder.btn_del.setVisibility(View.VISIBLE);
         }else holder.btn_del.setVisibility(View.GONE);
 

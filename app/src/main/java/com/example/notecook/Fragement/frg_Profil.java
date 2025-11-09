@@ -1,10 +1,8 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Activity.MainActivity.Type_User;
-import static com.example.notecook.Utils.Constants.MODE_ONLINE;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.getUserInput;
-import static com.example.notecook.Utils.Constants.user_login;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,6 +23,7 @@ import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgProfilBinding;
@@ -43,6 +42,7 @@ public class frg_Profil extends Fragment {
     private FloatingActionButton b;
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
+    private SharedRecipeViewModel viewModel;
 
 
     public frg_Profil() {
@@ -71,11 +71,11 @@ public class frg_Profil extends Fragment {
     private void extracted() {
         if (!Type_User.equals(Constants.TAG_MODE_INVITE)) {
             user = new User();
-            if (user_login.getUser() != null) {
-                user = user_login.getUser();
+            if (viewModel.getUserLogin().getValue().getUser() != null) {
+                user = viewModel.getUserLogin().getValue().getUser();
                 bindingProfil.txtUsername.setText(user.getUsername());
                 bindingProfil.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
-                MainActivity.showImageUsers(user_login.getUser(), bindingProfil.iconProfil);
+                MainActivity.showImageUsers(viewModel.getUserLogin().getValue().getUser(), bindingProfil.iconProfil);
             }
         }
     }
@@ -94,12 +94,13 @@ public class frg_Profil extends Fragment {
         viewPager2 = bindingProfil.vp2Profil;
         tabLayout = bindingProfil.tl;
         b = getActivity().findViewById(R.id.floating_action_button);
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         b.show();
         tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
         tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
         viewPager2.setUserInputEnabled(true);
-        recipeVM = new RecipeViewModel(requireContext(), requireActivity());
-        userVM = new UserViewModel(requireContext(), requireActivity());
+        recipeVM = new RecipeViewModel(requireContext(), requireActivity(),viewModel);
+        userVM = new UserViewModel(requireContext(), requireActivity(),viewModel);
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
         getUserInfo();
@@ -173,7 +174,7 @@ public class frg_Profil extends Fragment {
         if (!Type_User.equals(TAG_MODE_INVITE)) {
             Constants.loading_ui(getContext(), getActivity(), "Loading...");
             String s1 = getUserInput(getContext());
-            if (MODE_ONLINE)
+            if (Boolean.TRUE.equals(viewModel.getModeOnline().getValue()))
                 userVM.getUser(s1).observe(getViewLifecycleOwner(), new Observer<User>() {
                     @Override
                     public void onChanged(User user) {

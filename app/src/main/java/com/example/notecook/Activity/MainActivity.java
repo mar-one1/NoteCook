@@ -2,7 +2,6 @@ package com.example.notecook.Activity;
 
 import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
-import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
@@ -39,6 +38,7 @@ import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.NetworkChangeReceiver;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.CategoriesViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.StepViewModel;
@@ -70,11 +70,11 @@ public class MainActivity extends AppCompatActivity {
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
     private CategoriesViewModel categoryVM;
-
     private ActivityMainBinding binding;
     private View view;
     private boolean doubleBackToExitPressedOnce = false;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private SharedRecipeViewModel viewModel;
 
 
     @Override
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         view = binding.getRoot();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
-
+        viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
         //check OnBoarding
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
         boolean isFirstRun = prefs.getBoolean("isFirstRun", true);
@@ -112,15 +112,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        Constants.init();
-        Token = getToken(this);
+        viewModel.init();
+        viewModel.setToken(getToken(this));
 
         String[] permissions = {"android.permission.READ_PHONE_STATE", "android.permission.CAMERA", "android.permission.INTERNET"};
         ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
 
-        recipeVM = new RecipeViewModel(this, this);
-        userVM = new UserViewModel(this, this);
-        categoryVM = new CategoriesViewModel(this, this);
+        recipeVM = new RecipeViewModel(this, this,viewModel);
+        userVM = new UserViewModel(this, this,viewModel);
+        categoryVM = new CategoriesViewModel(this, this,viewModel);
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
         categoryVM = new ViewModelProvider(this, categoryVM).get(CategoriesViewModel.class);
@@ -138,8 +138,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onChanged(List<Category_Recipe> category_recipes) {
                     if (category_recipes != null) {
-                        Constants.All_Categories_Recipe = category_recipes;
-                        Log.d("tag cat", String.valueOf(Constants.All_Categories_Recipe.size()));
+                        viewModel.setAllCategoriesRecipe(category_recipes);
+                        Log.d("tag cat", String.valueOf(viewModel.getAllCategoriesRecipe().size()));
                     }
                 }
             });

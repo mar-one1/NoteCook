@@ -1,11 +1,8 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
 import static com.example.notecook.Utils.Constants.captureImage;
 import static com.example.notecook.Utils.Constants.saveToken;
-import static com.example.notecook.Utils.Constants.user_login;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -29,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Activity.Login;
@@ -38,6 +36,7 @@ import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgEditProfilBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -70,6 +69,7 @@ public class Frg_EditProfil extends Fragment {
     private SharedPreferences sharedPreferences;
     private UserViewModel userVM;
     private FragmentActivity fragmentActivity;
+    private SharedRecipeViewModel viewModel;
 
 
     public Frg_EditProfil() {
@@ -81,8 +81,8 @@ public class Frg_EditProfil extends Fragment {
         Intent lointent = new Intent(activity, Login.class);
         activity.startActivity(lointent);
         saveToken("", activity);
-        TAG_CONNEXION = 0;
-        TAG_CONNEXION_LOCAL = "";
+//        viewModel.setTagConnexion(0);
+//        viewModel.setTagConnexionLocal("");
         //Constants.alertDialog.cancel();
         activity.finish();
     }
@@ -116,11 +116,12 @@ public class Frg_EditProfil extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentFrgEditProfilBinding.inflate(inflater, container, false);
-        userVM = new UserViewModel(getContext(), getActivity());
+        userVM = new UserViewModel(getContext(), getActivity(),viewModel);
         fragmentActivity = (FragmentActivity) getContext();
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         User user = new User();
-        user = user_login.getUser();
-        //Log.d("TAG",user_login.getUser().getUser_name().toString());
+        user = viewModel.getUserLogin().getValue().getUser();
+        //Log.d("TAG",viewModel.getUserLogin().getValue().getUser().getUser_name().toString());
         binding.Nome.setText(user.getFirstname());
         binding.myEditText.setText(user.getLastname());
         binding.txtBirth.setText(user.getBirthday());
@@ -248,8 +249,8 @@ public class Frg_EditProfil extends Fragment {
 
     private void updateUser() {
         try {
-            User currentuser = user_login.getUser();
-            String oldPathImage = user_login.getUser().getPathimageuser();
+            User currentuser = viewModel.getUserLogin().getValue().getUser();
+            String oldPathImage = viewModel.getUserLogin().getValue().getUser().getPathimageuser();
             mUserDatasource = new UserDatasource(getContext());
             String nom = binding.Nome.getText().toString();
             String prenom = binding.myEditText.getText().toString();
@@ -259,16 +260,16 @@ public class Frg_EditProfil extends Fragment {
             Drawable d = binding.iconEditprofil.getDrawable();
             Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
             byte[] icon1 = null;
-            String pass = user_login.getUser().getPassWord();
-            String username = user_login.getUser().getUsername();
+            String pass = viewModel.getUserLogin().getValue().getUser().getPassWord();
+            String username = viewModel.getUserLogin().getValue().getUser().getUsername();
             String Status = "active";
-            String grade = user_login.getUser().getGrade();
+            String grade = viewModel.getUserLogin().getValue().getUser().getGrade();
             String Path = ImageHelper.saveImageToInternalStorage(requireContext(), bitmap, "UserImages");
-            getUser = new User(user_login.getUser().getId_User(), username, nom, prenom, naissance, mail, icon1, tel, pass, Status, grade, Path);
-            int value = mUserDatasource.UpdateUserByUsername(getUser, user_login.getUser().getUsername());
+            getUser = new User(viewModel.getUserLogin().getValue().getUser().getId_User(), username, nom, prenom, naissance, mail, icon1, tel, pass, Status, grade, Path);
+            int value = mUserDatasource.UpdateUserByUsername(getUser, viewModel.getUserLogin().getValue().getUser().getUsername());
             Toast.makeText(getContext(), String.valueOf(value), Toast.LENGTH_SHORT).show();
             if (value == 1) {
-                user_login.setUser(getUser);
+                viewModel.getUserLogin().getValue().setUser(getUser);
                 Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "", (AppCompatActivity) getContext());
             } else if (value == 0) {
                 mUserDatasource.insertUser(getUser);
@@ -276,9 +277,9 @@ public class Frg_EditProfil extends Fragment {
             } else {
                 Constants.DisplayErrorMessage((AppCompatActivity) getContext(), "the Change Not saved");
             }
-            //user_login.setUser(mUserDatasource.select_User_BYid(user_login.getUser().getId_User()));
+            //viewModel.getUserLogin().getValue().setUser(mUserDatasource.select_User_BYid(viewModel.getUserLogin().getValue().getUser().getId_User()));
 
-//                if (!Objects.equals(user_login.getMessage(), TAG_LOCAL)) {
+//                if (!Objects.equals(viewModel.getUserLogin().getValue().getMessage(), TAG_LOCAL)) {
             currentuser.setIcon(null);
             getUser.setIcon(null);
             if (!currentuser.equals(getUser))
@@ -289,8 +290,8 @@ public class Frg_EditProfil extends Fragment {
                             userVM.updateUserImageRemote(user.getUsername(), bitmap, oldPathImage, "").observe(getViewLifecycleOwner(), new Observer<String>() {
                                 @Override
                                 public void onChanged(String s) {
-                                    user_login.setUser(user);
-                                    user_login.getUser().setPathimageuser(s);
+                                    viewModel.getUserLogin().getValue().setUser(user);
+                                    viewModel.getUserLogin().getValue().getUser().setPathimageuser(s);
                                     detach();
                                     frg_Profil.bindingProfil.iconProfil.setImageBitmap(bitmap);
                                 }

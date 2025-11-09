@@ -1,8 +1,5 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
-import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.user_login;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +21,7 @@ import com.example.notecook.Adapter.Adapter_RC_Chat;
 import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.Utils.SocketManager;
 import com.example.notecook.ViewModel.ChatViewModel;
 
@@ -35,18 +33,20 @@ public class Frg_chat extends Fragment {
     private RecyclerView messagesRecyclerView;
     private Adapter_RC_Chat adapterRCChat;
     private List<ChatMessage> messages;
-    private int currentUserID = user_login.getUser().getId_User();
+    private int currentUserID;
     private ChatViewModel chatViewModel;
     private EditText messageInput;
     private Button sendButton;
     private SocketManager socketManager;
+    private SharedRecipeViewModel viewModel;
+
+
 
     private void updateMessagesInView(List<ChatMessage> messages) {
         adapterRCChat.setMessages(messages);
         adapterRCChat.notifyDataSetChanged();
         scrollToBottom();
 
-        // ✅ إرسال message read لكل رسالة موجهة للمستخدم الحالي
         for (ChatMessage msg : messages) {
             if (msg.getReceiverId() == currentUserID) {
                 socketManager.sendMessageRead(msg.getId(), msg.getSenderId());
@@ -58,13 +58,13 @@ public class Frg_chat extends Fragment {
         String message = messageInput.getText().toString().trim();
         if (!message.isEmpty()) {
             chatViewModel.sendMessage(
-                    String.valueOf(CURRENT_RECIPE.getId_recipe()),
-                    String.valueOf(User_CurrentRecipe.getId_User()),
+                    String.valueOf(viewModel.getCurrentRecipe().getValue().getId_recipe()),
+                    String.valueOf(viewModel.getUserCurrentRecipe().getValue().getId_User()),
                     message
             );
             messageInput.setText("");
 
-            chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(), CURRENT_RECIPE.getFrk_user())
+            chatViewModel.getMessageByRecipeId(viewModel.getCurrentRecipe().getValue().getId_recipe(), viewModel.getCurrentRecipe().getValue().getFrk_user())
                     .observe(getViewLifecycleOwner(), new Observer<List<ChatMessage>>() {
                         @Override
                         public void onChanged(List<ChatMessage> chatMessages) {
@@ -83,19 +83,21 @@ public class Frg_chat extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        chatViewModel = new ViewModelProvider(this, new ChatViewModel(getContext(), getActivity())).get(ChatViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
+        currentUserID = viewModel.getUserLogin().getValue().getUser().getId_User();
+        chatViewModel = new ViewModelProvider(this, new ChatViewModel(getContext(), getActivity(),viewModel)).get(ChatViewModel.class);
 
         messages = new ArrayList<>();
         adapterRCChat = new Adapter_RC_Chat(getContext(), messages, currentUserID);
 
-        chatViewModel.getMessageByRecipeId(CURRENT_RECIPE.getId_recipe(), CURRENT_RECIPE.getFrk_user())
+        chatViewModel.getMessageByRecipeId(viewModel.getCurrentRecipe().getValue().getId_recipe(), viewModel.getCurrentRecipe().getValue().getFrk_user())
                 .observe(this, newMessages -> {
                     messages.clear();
                     messages.addAll(newMessages); 
                     updateMessagesInView(messages);
                     scrollToBottom();
                 });
+        MainFragment.flBtn.hide();
     }
 
     @Override
@@ -114,7 +116,7 @@ public class Frg_chat extends Fragment {
                 chatViewModel.addMessage(chatMessage);
                 updateMessagesInView(chatViewModel.getMessages().getValue());
             });
-        });
+        },viewModel);
         socketManager.connect();
 
         messageInput = rootView.findViewById(R.id.message_input);

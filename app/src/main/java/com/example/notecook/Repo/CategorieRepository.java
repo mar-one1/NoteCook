@@ -1,7 +1,5 @@
 package com.example.notecook.Repo;
 
-import static com.example.notecook.Utils.Constants.Token;
-
 import android.app.Activity;
 import android.content.Context;
 
@@ -13,6 +11,7 @@ import com.example.notecook.Api.ApiService;
 import com.example.notecook.Data.CategoryRecipeDataSource;
 import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import java.util.List;
 
@@ -25,24 +24,27 @@ public class CategorieRepository {
     private CategoryRecipeDataSource categoryRecipeDataSource;
     private Context context;
     private Activity appCompatActivity;
+    private SharedRecipeViewModel viewModel;
 
-    public CategorieRepository(ApiService apiService, CategoryRecipeDataSource categoryRecipeDataSource, Context context, Activity appCompatActivity) {
+    public CategorieRepository(ApiService apiService, CategoryRecipeDataSource categoryRecipeDataSource, Context context, Activity appCompatActivity, SharedRecipeViewModel viewModel) {
         this.apiService = apiService;
         this.categoryRecipeDataSource = categoryRecipeDataSource;
         this.context = context;
         this.appCompatActivity = appCompatActivity;
+        this.viewModel = viewModel;
     }
 
-    public CategorieRepository(Context context, Activity appCompatActivity) {
+    public CategorieRepository(Context context, Activity appCompatActivity, SharedRecipeViewModel viewModel) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;
+        this.viewModel = viewModel;
         apiService = ApiClient.getClient().create(ApiService.class);
     }
 
     public LiveData<List<Category_Recipe>> getAllCatRecipe() {
         MutableLiveData<List<Category_Recipe>> CategoriesLiveData = new MutableLiveData<>();
         // Enqueue the download request
-        apiService.getAllCategories(Token).enqueue(new Callback<List<Category_Recipe>>() {
+        apiService.getAllCategories(viewModel.getToken().getValue()).enqueue(new Callback<List<Category_Recipe>>() {
             @Override
             public void onResponse(Call<List<Category_Recipe>> call, Response<List<Category_Recipe>> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -61,7 +63,7 @@ public class CategorieRepository {
     public LiveData<Category_Recipe> getCatRecipe(int id) {
         MutableLiveData<Category_Recipe> CategoriesLiveData = new MutableLiveData<>();
         // Enqueue the download request
-        apiService.getCategory(id,Token).enqueue(new Callback<Category_Recipe>() {
+        apiService.getCategory(id,viewModel.getToken().getValue()).enqueue(new Callback<Category_Recipe>() {
             @Override
             public void onResponse(Call<Category_Recipe> call, Response<Category_Recipe> response) {
                 if (response.isSuccessful() && response.body() != null) {

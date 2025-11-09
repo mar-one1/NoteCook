@@ -1,21 +1,11 @@
 package com.example.notecook.Adapter;
 
 
+import static com.example.notecook.Fragement.MainFragment.flBtn;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
 import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
-import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
-import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
-import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Favorite_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Recipes_Fav_User;
-import static com.example.notecook.Utils.Constants.Remote_nutritions;
-import static com.example.notecook.Utils.Constants.Review_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
-import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.user_login;
+
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -33,7 +23,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Fragement.Acceuill_Frg;
 import com.example.notecook.Fragement.MainFragment;
@@ -42,9 +31,9 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.FetchNutritionTask;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -59,16 +48,17 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private UserViewModel userVM;
     private Context context;
     private Activity activity;
-    private FloatingActionButton Flbtn;
+    private SharedRecipeViewModel viewModel;
 
 
-    public Adapter_RC_RecipeDt(Context context, Activity activity, List<Recipe> recipes, String bb) {
+    public Adapter_RC_RecipeDt(Context context, Activity activity,SharedRecipeViewModel viewModel, List<Recipe> recipes, String bb) {
         this.recipes = recipes;
         b = bb;
         this.context = context;
         this.activity = activity;
-        recipeVM = new RecipeViewModel(context, activity);
-        userVM = new UserViewModel(context, activity);
+        this.viewModel = viewModel;
+        recipeVM = new RecipeViewModel(context, activity,viewModel);
+        userVM = new UserViewModel(context, activity,viewModel);
         notifyDataSetChanged();
     }
 
@@ -96,18 +86,17 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
 
         holder.pin.setOnClickListener(view -> {
             FragmentActivity fragmentActivity = (FragmentActivity) view.getContext();
-            Flbtn = fragmentActivity.findViewById(R.id.floating_action_button);
-            CURRENT_RECIPE = recipe;
-            TAG_EDIT_RECIPE = true;
+            flBtn = fragmentActivity.findViewById(R.id.floating_action_button);
+            viewModel.setCurrentRecipe(recipe);
+            viewModel.setTagEditRecipe(true);
             recipeVM.getFullRecipeLocal(recipe).observe(fragmentActivity, new Observer<RecipeResponse>() {
                 @Override
                 public void onChanged(RecipeResponse recipeResponse) {
                     if (recipeResponse != null) {
                         //viewPager2.setCurrentItem(1);
                         fetchRecipe(recipeResponse);
-                        CURRENT_FULL_RECIPE = recipeResponse;
-                        //MainFragment.viewPager2.setCurrentItem(1, false);
-                        Flbtn.callOnClick();
+                        viewModel.setCurrentFullRecipe(recipeResponse);
+                        flBtn.callOnClick();
                     }
                     Constants.dismissLoadingDialog();
                 }
@@ -121,16 +110,16 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                 holder.heat.setImageDrawable(Acceuill_Frg.defaultImagelike);
             } else {
                 holder.heat.setImageDrawable(Acceuill_Frg.defaultImagelike);
-                Recipes_Fav_User.add(recipe);
-                Insert_Fav(user_login.getUser().getId_User(), recipe.getId_recipe());
+                viewModel.getRecipesFavUser().add(recipe);
+                Insert_Fav(viewModel.getUserLogin().getValue().getUser().getId_User(), recipe.getId_recipe(),context);
             }
         });
 
         holder.Image.setOnClickListener(v -> {
-            TAG_EDIT_RECIPE = false;
+            viewModel.setTagEditRecipe(false);
             // Get the FragmentActivity associated with the context of the clicked view
             FragmentActivity fragmentActivity = (FragmentActivity) v.getContext();
-            if (CURRENT_RECIPE != recipe) {
+            if (viewModel.getCurrentRecipe().getValue() != recipe) {
                 Constants.loading_ui(context, activity, "Chargement Recipe");
                 if (!Objects.equals(b, TAG_LOCAL)) {
                     //CURRENT_RECIPE = recipe;
@@ -140,9 +129,9 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                             if (recipe != null) {
                                 //viewPager2.setCurrentItem(1);
                                 fetchRecipe(recipe);
-                                CURRENT_FULL_RECIPE = recipe;
+                                viewModel.setCurrentFullRecipe(recipe);
                                 // Fetch nutrition for "apple"
-                                fetchNutritionData(CURRENT_FULL_RECIPE.getRecipe().getNom_recipe(), 100);
+                                fetchNutritionData(viewModel.getCurrentFullRecipe().getValue().getRecipe().getNom_recipe(), 100);
                                 MainFragment.viewPager2.setCurrentItem(1, false);
 
                             }
@@ -157,9 +146,9 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                             if (recipeResponse != null) {
                                 //viewPager2.setCurrentItem(1);
                                 fetchRecipe(recipeResponse);
-                                CURRENT_FULL_RECIPE = recipeResponse;
-                                User_CurrentRecipe = user_login.getUser();
-                                fetchNutritionData(CURRENT_FULL_RECIPE.getRecipe().getNom_recipe(), 100, "g");
+                                viewModel.setCurrentFullRecipe(recipeResponse);
+                                viewModel.setUserCurrentRecipe(viewModel.getUserLogin().getValue().getUser());
+                                fetchNutritionData(viewModel.getCurrentFullRecipe().getValue().getRecipe().getNom_recipe(), 100, "g");
                                 MainFragment.viewPager2.setCurrentItem(1, false);
                             }
                             Constants.dismissLoadingDialog();
@@ -199,8 +188,8 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
                     "Carbs: " + customCarbs + " g\n" +
                     "Serving Size: " + nutrition.getServingSize() + " " + nutrition.getServingSizeUnit();
 
-            CURRENT_FULL_RECIPE.setNutrition(nutrition);
-            Remote_nutritions.setValue(nutrition);
+            viewModel.getCurrentFullRecipe().getValue().setNutrition(nutrition);
+            viewModel.setRemoteNutritions(nutrition);
             Log.e("nutrition", nutritionInfo);
             Log.e("nutrition", String.valueOf(nutrition.getCarbs()));
 
@@ -210,14 +199,13 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     }
 
     private void fetchRecipe(RecipeResponse recipeResponse) {
-        User_CurrentRecipe = recipeResponse.getUser();
-        CURRENT_RECIPE = recipeResponse.getRecipe();
-        Detail_CurrentRecipe = recipeResponse.getDetail_recipe();
-        Steps_CurrentRecipe = recipeResponse.getSteps();
-        Review_CurrentRecipe = recipeResponse.getReviews();
-        Ingredients_CurrentRecipe.setValue(recipeResponse.getIngredients());
-        Review_CurrentRecipe = recipeResponse.getReviews();
-        Favorite_CurrentRecipe = recipeResponse.getFavs();
+        viewModel.setUserCurrentRecipe(recipeResponse.getUser());
+        viewModel.setCurrentRecipe(recipeResponse.getRecipe());
+        viewModel.setDetailCurrentRecipe(recipeResponse.getDetail_recipe());
+        viewModel.setStepsCurrentRecipe(recipeResponse.getSteps());
+        viewModel.setReviewCurrentRecipe(recipeResponse.getReviews());
+        viewModel.setIngredientsCurrentRecipe(recipeResponse.getIngredients());
+        viewModel.setFavoriteCurrentRecipe(recipeResponse.getFavs());
     }
 
     @Override

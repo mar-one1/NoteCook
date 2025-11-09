@@ -1,7 +1,5 @@
 package com.example.notecook.Repo;
 
-import static com.example.notecook.Utils.Constants.Token;
-
 import android.app.Activity;
 import android.content.Context;
 
@@ -11,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Model.ChatMessage;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.Utils.SocketManager;
 
 import java.util.ArrayList;
@@ -27,23 +26,25 @@ public class Chat_Repository {
     private ApiService apiService;
     private Context context;
     private Activity appCompatActivity;
+    private SharedRecipeViewModel viewModel;
 
-    public Chat_Repository(Context context, Activity appCompatActivity) {
+    public Chat_Repository(Context context, Activity appCompatActivity,SharedRecipeViewModel viewModel) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;
         this.apiService = ApiClient.getClient().create(ApiService.class);
+        this.viewModel = viewModel;
 
         socketManager = new SocketManager(new SocketManager.SocketCallback() {
             @Override
             public void onNewMessage(ChatMessage chatMessage) {
                 addMessage(chatMessage);
             }
-        });
+        },viewModel);
         socketManager.connect();
     }
 
     public LiveData<List<ChatMessage>> getMessages() {
-        apiService.getAllMessage(Token).enqueue(new Callback<List<ChatMessage>>() {
+        apiService.getAllMessage(viewModel.getToken().getValue()).enqueue(new Callback<List<ChatMessage>>() {
             @Override
             public void onResponse(Call<List<ChatMessage>> call, Response<List<ChatMessage>> response) {
                 if (response.isSuccessful()) {
@@ -65,7 +66,7 @@ public class Chat_Repository {
     }
 
     public LiveData<List<ChatMessage>> getMessageByRecipeId(int id_recipe,int userId) {
-        apiService.getMessageByRecipe(Token, id_recipe,userId).enqueue(new Callback<List<ChatMessage>>() {
+        apiService.getMessageByRecipe(viewModel.getToken().getValue(), id_recipe,userId).enqueue(new Callback<List<ChatMessage>>() {
             @Override
             public void onResponse(Call<List<ChatMessage>> call, Response<List<ChatMessage>> response) {
                 if (response.isSuccessful()) {

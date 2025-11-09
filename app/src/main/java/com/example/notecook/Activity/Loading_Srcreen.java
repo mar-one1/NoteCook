@@ -1,10 +1,5 @@
 package com.example.notecook.Activity;
-
-import static com.example.notecook.Utils.Constants.MODE_ONLINE;
-
 import static com.example.notecook.Utils.Constants.NetworkIsConnected;
-import static com.example.notecook.Utils.Constants.Token;
-import static com.example.notecook.Utils.Constants.dismissLoadingDialog;
 import static com.example.notecook.Utils.Constants.getToken;
 
 
@@ -19,11 +14,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
 
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.AccessViewModel;
 import com.example.notecook.databinding.ActivityLoadingSrcreenBinding;
 
@@ -37,6 +34,8 @@ public class Loading_Srcreen extends AppCompatActivity {
     private IntentFilter filtreConectivite = new IntentFilter();
     private NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
     private AccessViewModel accessVM;
+    private SharedRecipeViewModel viewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +44,15 @@ public class Loading_Srcreen extends AppCompatActivity {
         registerReceiver(networkChangeReceiver, filtreConectivite);
         binding = ActivityLoadingSrcreenBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        accessVM = new AccessViewModel(this,this);
-        Token = getToken(this);
+        viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
+        accessVM = new AccessViewModel(this,this,viewModel);
+        SharedRecipeViewModel viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
+        viewModel.setToken(getToken(this));
+        String Token = viewModel.getToken().getValue();
         Log.e("tag",Token);
         Intent i = new Intent(getBaseContext(), Login.class);
         Intent iM = new Intent(getBaseContext(), MainActivity.class);
-        if (!MODE_ONLINE && Objects.equals(Token, "")) {
+        if (Boolean.FALSE.equals(viewModel.getModeOnline().getValue()) && Objects.equals(Token, "")) {
             Constants.AffichageMessage("Welcome to Notebook APP!!!","ok", Loading_Srcreen.this);
             startActivity(i);
         } else if (!Objects.equals(Token, "") && NetworkIsConnected(getBaseContext())) {

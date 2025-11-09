@@ -3,13 +3,9 @@ package com.example.notecook.Activity;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_EMAIL_USER;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
+import static com.example.notecook.Utils.Constants.LOGIN_KEY;
 import static com.example.notecook.Utils.Constants.captureImage;
-import static com.example.notecook.Utils.Constants.lOGIN_KEY;
-import static com.example.notecook.Utils.Constants.saveUserInput;
-import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Utils.Constants.user_login_local;
+
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -39,6 +35,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.User;
@@ -47,6 +44,7 @@ import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.AccessViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityLoginBinding;
@@ -93,6 +91,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private UserViewModel userVM;
     private AccessViewModel accessVM;
     private Boolean isPosted = false;
+    private SharedRecipeViewModel viewModel;
 
     //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
@@ -102,8 +101,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
-        userVM = new UserViewModel(this, this);
-        accessVM = new AccessViewModel(this, this);
+        userVM = new UserViewModel(this, this,viewModel);
+        accessVM = new AccessViewModel(this, this,viewModel);
+        viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
 
         // Check FingerPrint In Device
         try {
@@ -113,8 +113,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
 
         try {
-            sharedPreferences = getSharedPreferences(lOGIN_KEY, Context.MODE_PRIVATE);
-            if (sharedPreferences.getBoolean(lOGIN_KEY, true)) {
+            sharedPreferences = getSharedPreferences(LOGIN_KEY, Context.MODE_PRIVATE);
+            if (sharedPreferences.getBoolean(LOGIN_KEY, true)) {
                 String s1 = sharedPreferences.getString("username", "");
                 String s2 = sharedPreferences.getString("password", "");
                 userVM.getUserLocal(s1, "success");
@@ -127,8 +127,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             Log.e("tag", e.getMessage());
         }
 
-        if (user_login_local.getUser() != null && user_login_local.getUser().getPathimageuser() != null) {
-            binding.ivUserlogo1.setImageBitmap(ImageHelper.loadImageFromPath(user_login_local.getUser().getPathimageuser()));
+        if (viewModel.getUserLoginLocal().getValue()!=null && viewModel.getUserLoginLocal().getValue().getUser() != null && viewModel.getUserLoginLocal().getValue().getUser().getPathimageuser() != null) {
+            binding.ivUserlogo1.setImageBitmap(ImageHelper.loadImageFromPath(viewModel.getUserLoginLocal().getValue().getUser().getPathimageuser()));
         }
 
 
@@ -399,8 +399,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        TAG_CONNEXION = -1;
-
+        viewModel.setTagConnexion(-1);
     }
 
     private void addNotification() {

@@ -1,10 +1,5 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Utils.Constants.Basket_list;
-import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
-import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
-import static com.example.notecook.Utils.Constants.Ingredients_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.Remote_nutritions;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 
@@ -17,24 +12,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_RC_Nutrition;
-import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
-import com.example.notecook.Data.IngredientsDataSource;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeIngredientsBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Frg_recipe_ingredients extends Fragment {
 
@@ -44,6 +36,7 @@ public class Frg_recipe_ingredients extends Fragment {
     private Button btn_plus, btn_moins;
     private TextView txt_cal;
     private IngredientsViewModel VMIngredient;
+    private SharedRecipeViewModel viewModel;
 
 
     public Frg_recipe_ingredients() {
@@ -53,7 +46,7 @@ public class Frg_recipe_ingredients extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe.getValue(), getContext());
+        Constants.bindingRcV_Ingredients(mRecyclerView, viewModel.getIngredientsCurrentRecipe().getValue(), getContext(),viewModel);
         Toast.makeText(getContext(), "onDestroyView", Toast.LENGTH_SHORT).show();
     }
 
@@ -92,9 +85,11 @@ public class Frg_recipe_ingredients extends Fragment {
         txt_cal = binding.txtTot;
         // Inflate the layout for this fragment
         mRecyclerView = binding.RcIngred;
-        VMIngredient = new IngredientsViewModel(getContext(), getActivity());
-        if(Ingredients_CurrentRecipe.getValue()!=null && !Ingredients_CurrentRecipe.getValue().isEmpty())  Constants.bindingRcV_Ingredients(mRecyclerView, Ingredients_CurrentRecipe.getValue(), getContext());
-        Remote_nutritions.observe(getViewLifecycleOwner(), new Observer<Nutrition>() {
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
+        VMIngredient = new IngredientsViewModel(getContext(), getActivity(),viewModel);
+        if(viewModel.getIngredientsCurrentRecipe().getValue() != null
+        && !viewModel.getIngredientsCurrentRecipe().getValue().isEmpty()) Constants.bindingRcV_Ingredients(mRecyclerView, viewModel.getIngredientsCurrentRecipe().getValue(), getContext(),viewModel);
+        viewModel.getRemoteNutritions().observe(getViewLifecycleOwner(), new Observer<Nutrition>() {
             @Override
             public void onChanged(Nutrition nutrition) {
                 bindingRcV_Nutrition(binding.RcvNutrition);
@@ -105,9 +100,9 @@ public class Frg_recipe_ingredients extends Fragment {
             @Override
             public void onClick(View view) {
                 int v =clickPlus(txt_cal, btn_moins);
-                Nutrition nutrition = Remote_nutritions.getValue();
+                Nutrition nutrition = viewModel.getRemoteNutritions().getValue();
                 if(nutrition!=null) nutrition.scaleToServing(v,"g");
-                Remote_nutritions.setValue(nutrition);
+                viewModel.setRemoteNutritions(nutrition);
                 bindingRcV_Nutrition(binding.RcvNutrition);
             }
         });
@@ -121,15 +116,15 @@ public class Frg_recipe_ingredients extends Fragment {
         binding.btnAddBasket.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Basket_list.add(CURRENT_RECIPE);
+                viewModel.getBasketList().add(viewModel.getCurrentRecipe().getValue());
             }
         });
 
-        Ingredients_CurrentRecipe.observe(getViewLifecycleOwner(), new Observer<List<Ingredients>>() {
+        viewModel.getIngredientsCurrentRecipe().observe(getViewLifecycleOwner(), new Observer<List<Ingredients>>() {
             @Override
             public void onChanged(List<Ingredients> ingredients) {
                 // Update the adapter with new data
-                Constants.bindingRcV_Ingredients(mRecyclerView, ingredients, getContext());
+                Constants.bindingRcV_Ingredients(mRecyclerView, ingredients, getContext(),viewModel);
             }
         });
         return binding.getRoot();
@@ -145,7 +140,7 @@ public class Frg_recipe_ingredients extends Fragment {
 //        ingredientsDataSource1.close();
 
         List<Nutrition> nutritions = new ArrayList<>();
-        nutritions.add(CURRENT_FULL_RECIPE.getNutrition());
+        nutritions.add(viewModel.getCurrentFullRecipe().getValue().getNutrition());
         Adapter_RC_Nutrition adapter_rc_nutrition = new Adapter_RC_Nutrition(nutritions);
         GridLayoutManager manager = new GridLayoutManager(getContext(), 1);
         recyclerView.setHorizontalScrollBarEnabled(true);

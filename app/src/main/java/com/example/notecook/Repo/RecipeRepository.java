@@ -4,16 +4,9 @@ import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_NOM_RECIPE;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_UNIQUE_KEY;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_RECIPE;
-import static com.example.notecook.Utils.Constants.RemotelistFullRecipe;
-import static com.example.notecook.Utils.Constants.Search_list;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.getUserSynch;
-import static com.example.notecook.Utils.Constants.list_recipe;
 import static com.example.notecook.Utils.Constants.saveUserSynch;
 import static com.example.notecook.Utils.Constants.showToast;
-import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.app.Activity;
 import android.content.Context;
@@ -39,6 +32,7 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -47,11 +41,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -76,8 +68,9 @@ public class RecipeRepository {
     private StepRecipeRepository stepRecipeRepository;
     private UserRepository userRepo;
     private Activity appCompatActivity;
+    private SharedRecipeViewModel viewModel;
 
-    public RecipeRepository(Context context, Activity appCompatActivity) {
+    public RecipeRepository(Context context, Activity appCompatActivity,SharedRecipeViewModel viewModel) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;
         apiService = ApiClient.getClient().create(ApiService.class);
@@ -87,9 +80,10 @@ public class RecipeRepository {
         stepsDataSource = new StepsDataSource(context);
         ingredientsDataSource = new IngredientsDataSource(context);
         reviewDataSource = new ReviewDataSource(context);
-        detailRecipeRepository = new DetailRecipeRepository(context);
-        stepRecipeRepository = new StepRecipeRepository(context);
-        userRepo = new UserRepository(context, appCompatActivity);
+        detailRecipeRepository = new DetailRecipeRepository(context,viewModel);
+        stepRecipeRepository = new StepRecipeRepository(context,viewModel);
+        userRepo = new UserRepository(context, appCompatActivity,viewModel);
+        this.viewModel = viewModel;
     }
 
     public RecipeRepository(Context context) {
@@ -100,10 +94,10 @@ public class RecipeRepository {
         detailRecipeDataSource = new DetailRecipeDataSource(context);
         stepsDataSource = new StepsDataSource(context);
         ingredientsDataSource = new IngredientsDataSource(context);
-        detailRecipeRepository = new DetailRecipeRepository(context);
+        detailRecipeRepository = new DetailRecipeRepository(context,viewModel);
         reviewDataSource = new ReviewDataSource(context);
-        stepRecipeRepository = new StepRecipeRepository(context);
-        userRepo = new UserRepository(context, appCompatActivity);
+        stepRecipeRepository = new StepRecipeRepository(context,viewModel);
+        userRepo = new UserRepository(context, appCompatActivity,viewModel);
     }
 
     private static void markRecipeAsDeletedLocally(Recipe localRecipe, Context context) {
@@ -155,7 +149,7 @@ public class RecipeRepository {
     public LiveData<Recipe> InsertRecipeApi(Recipe recipe, Bitmap bitmap) {
 
         // Enqueue the download request
-        apiService.createRecipe(Token, recipe).enqueue(new Callback<Recipe>() {
+        apiService.createRecipe(viewModel.getToken().getValue(), recipe).enqueue(new Callback<Recipe>() {
             @Override
             public void onResponse(Call<Recipe> call, Response<Recipe> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -185,7 +179,7 @@ public class RecipeRepository {
     public LiveData<Integer> insertFullRecipeApi(RecipeResponse recipe, Bitmap bitmap) {
         MutableLiveData<Integer> fullRecipeLiveData = new MutableLiveData<>();
         // Enqueue the download request
-        apiService.postFullRecipe(Token, recipe).enqueue(new Callback<Integer>() {
+        apiService.postFullRecipe(viewModel.getToken().getValue(), recipe).enqueue(new Callback<Integer>() {
             @Override
             public void onResponse(Call<Integer> call, Response<Integer> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -220,15 +214,15 @@ public class RecipeRepository {
 
     public LiveData<List<Recipe>> getLocalRecipes(int i, int pages, int itemperpage) {
         MutableLiveData<List<Recipe>> recipe = new MutableLiveData<>();
-        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i, 3, 3));
-        recipe.setValue(list_recipe.getValue());
+        viewModel.setListRecipe(recipeDatasource.getRecipeByIdUser(i, 3, 3));
+        recipe.setValue(viewModel.getListRecipe().getValue());
         return recipe;
     }
 
     public LiveData<List<Recipe>> getLocalRecipes(int i) {
         MutableLiveData<List<Recipe>>  recipe = new MutableLiveData<>();
-        list_recipe.setValue(recipeDatasource.getRecipeByIdUser(i));
-        recipe.setValue(list_recipe.getValue());
+        viewModel.setListRecipe(recipeDatasource.getRecipeByIdUser(i));
+        recipe.setValue(viewModel.getListRecipe().getValue());
         ImageHelper.deleteUnusedImages(context, recipeDatasource.getAllRecipesImagePath(), "RecipeImages");
         return recipe;
     }
@@ -266,7 +260,7 @@ public class RecipeRepository {
                 stepsDataSource.insert_Steps(RC.getSteps(), (int) id_recipe);
                 fullRecipeLiveData.postValue(RC);
                 fullRecipeLiveData.postValue(RC);
-                list_recipe.postValue(recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User()));
+                viewModel.setListRecipe(recipeDatasource.getRecipeByIdUser((int) viewModel.getUserLoginLocal().getValue().getUser().getId_User()));
             }
         }
         return fullRecipeLiveData;
@@ -291,7 +285,7 @@ public class RecipeRepository {
                 stepsDataSource.Update_Step2(RC.getSteps(), id_recipe);
                 fullRecipeLiveData.setValue(RC);
                 fullRecipeLiveData.postValue(RC);
-                list_recipe.postValue(recipeDatasource.getRecipeByIdUser((int) user_login_local.getUser().getId_User()));
+                viewModel.setListRecipe((recipeDatasource.getRecipeByIdUser((int) viewModel.getUserLoginLocal().getValue().getUser().getId_User())));
             }
         }
         return fullRecipeLiveData;
@@ -300,7 +294,7 @@ public class RecipeRepository {
 
     public LiveData<RecipeResponse> getFullRecipeApi(int Recipeid) {
         MutableLiveData<RecipeResponse> recipeResponseMutableLiveData = new MutableLiveData<>();
-        apiService.getRecipeById(Token, Recipeid).enqueue(new Callback<RecipeResponse>() {
+        apiService.getRecipeById(viewModel.getToken().getValue(), Recipeid).enqueue(new Callback<RecipeResponse>() {
             @Override
             public void onResponse(Call<RecipeResponse> call, Response<RecipeResponse> response) {
                 if (response.isSuccessful()) {
@@ -309,8 +303,8 @@ public class RecipeRepository {
                     if (recipeResponse != null) {
                         recipeResponseMutableLiveData.setValue(recipeResponse);
                     }
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    TAG_CONNEXION = response.code();
+                    viewModel.setTagConnexionMessage(response.message());
+                    viewModel.setTagConnexion(response.code());
 //                    if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
 //                        userRepo.getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe());
 //                    else if (User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user()) {
@@ -324,7 +318,7 @@ public class RecipeRepository {
 
             @Override
             public void onFailure(Call<RecipeResponse> call, Throwable t) {
-                TAG_CONNEXION = call.hashCode();
+                viewModel.setTagConnexion(call.hashCode());
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
@@ -333,7 +327,7 @@ public class RecipeRepository {
 
     public LiveData<String> updateFullRecipeApi(RecipeResponse recipe) {
         MutableLiveData<String> recipeResponseMutableLiveData = new MutableLiveData<>();
-        apiService.updateRecipe(Token, recipe).enqueue(new Callback<String>() {
+        apiService.updateRecipe(viewModel.getToken().getValue(), recipe).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
@@ -341,8 +335,8 @@ public class RecipeRepository {
                     if (recipeResponse != null) {
                         recipeResponseMutableLiveData.setValue(recipeResponse);
                     }
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    TAG_CONNEXION = response.code();
+                    viewModel.setTagConnexionMessage(response.message());
+                    viewModel.setTagConnexion(response.code());
 //                    if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
 //                        userRepo.getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe());
 //                    else if (User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user()) {
@@ -356,7 +350,7 @@ public class RecipeRepository {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                TAG_CONNEXION = call.hashCode();
+                viewModel.setTagConnexion(call.hashCode());
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });
@@ -371,7 +365,7 @@ public class RecipeRepository {
         conditions.put("ingredientName", "Tomato");
         conditions.put("userId", "1");*/
 
-        apiService.getRecipesByConditions(Token, conditions).enqueue(new Callback<List<Recipe>>() {
+        apiService.getRecipesByConditions(viewModel.getToken().getValue(), conditions).enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
@@ -392,7 +386,7 @@ public class RecipeRepository {
 
     public LiveData<List<Recipe>> getRecipes() {
         MutableLiveData<List<Recipe>> remoteRecipeList = new MutableLiveData<>();
-        apiService.getAllRecipes(Token).enqueue(new Callback<List<Recipe>>() {
+        apiService.getAllRecipes(viewModel.getToken().getValue()).enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
@@ -415,12 +409,12 @@ public class RecipeRepository {
     //TODO make synch with recipe with it image and with full data
     public LiveData<List<Recipe>> getRecipesByUsername(String username) {
         MutableLiveData<List<Recipe>> remoteRecipeListByUser = new MutableLiveData<>();
-        apiService.getRecipeByUsernameUser(Token, username).enqueue(new Callback<List<Recipe>>() {
+        apiService.getRecipeByUsernameUser(viewModel.getToken().getValue(), username).enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
                     remoteRecipeListByUser.postValue(response.body());
-                    if (!getUserSynch(username, context) && list_recipe.getValue().size() < remoteRecipeListByUser.getValue().size()) {
+                    if (!getUserSynch(username, context) && viewModel.getListRecipe().getValue().size() < remoteRecipeListByUser.getValue().size()) {
                         if (remoteRecipeListByUser.getValue() != null && !remoteRecipeListByUser.getValue().isEmpty()) {
                             // Synchronize data from local to remote
                             //synchronizeDataFromLocalToRemote(list_recipe.getValue(), remoteRecipeListByUser.getValue(), username);
@@ -449,11 +443,11 @@ public class RecipeRepository {
     //TODO make synch with recipe with it image and with full data
     public LiveData<List<RecipeResponse>> getFullRecipesByUsername(String username) {
         MutableLiveData<List<RecipeResponse>> remoteRecipeListByUser = new MutableLiveData<>();
-        apiService.getFullRecipesByIdUsername(Token, username).enqueue(new Callback<List<RecipeResponse>>() {
+        apiService.getFullRecipesByIdUsername(viewModel.getToken().getValue(), username).enqueue(new Callback<List<RecipeResponse>>() {
             @Override
             public void onResponse(Call<List<RecipeResponse>> call, Response<List<RecipeResponse>> response) {
                 if (response.isSuccessful()) {
-                    RemotelistFullRecipe.postValue(response.body());
+                    viewModel.setRemoteListFullRecipe(response.body());
                     remoteRecipeListByUser.setValue(response.body());
                 } else {
                     // Handle error response here
@@ -492,7 +486,7 @@ public class RecipeRepository {
         // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         // Call the method to upload the file
-        apiService.UpdateRecipeImage(Token, unique_key, filePart).enqueue(new Callback<ResponseBody>() {
+        apiService.UpdateRecipeImage(viewModel.getToken().getValue(), unique_key, filePart).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
@@ -509,7 +503,7 @@ public class RecipeRepository {
                     Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
                     // File upload successful
                     //fetchImage(path);
-                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "upload image : " + viewModel.getTagConnexionMessage(), Toast.LENGTH_SHORT).show();
 
                 } else {
                     // Handle unsuccessful upload
@@ -546,11 +540,11 @@ public class RecipeRepository {
     private int getUserId(String username) {
         userDatasource.open();
         try {
-            if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0) {
-                return user_login_local.getUser().getId_User();
+            if (viewModel.getUserLoginLocal().getValue()!=null && viewModel.getUserLoginLocal().getValue().getUser() != null && viewModel.getUserLoginLocal().getValue().getUser().getId_User() != 0) {
+                return viewModel.getUserLoginLocal().getValue().getUser().getId_User();
             }
-            user_login_local.setUser(userDatasource.select_User_BYUsername(username));
-            return user_login_local.getUser() != null ? user_login_local.getUser().getId_User() : -1;
+            viewModel.getUserLoginLocal().getValue().setUser(userDatasource.select_User_BYUsername(username));
+            return viewModel.getUserLoginLocal().getValue().getUser() != null ? viewModel.getUserLoginLocal().getValue().getUser().getId_User() : -1;
         } finally {
             userDatasource.close();
         }
@@ -616,14 +610,14 @@ public class RecipeRepository {
 
     public LiveData<List<Recipe>> searchRecipes(String key) {
         MutableLiveData<List<Recipe>> SearchRecipeList = new MutableLiveData<>();
-        apiService.searchRecipes(Token, key).enqueue(new Callback<List<Recipe>>() {
+        apiService.searchRecipes(viewModel.getToken().getValue(), key).enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
-                    Search_list = response.body();
-                    SearchRecipeList.setValue(Search_list);
-                    if (Search_list.size() > 0)
-                        Log.d("TAG", Constants.Search_list.toString());
+                    viewModel.setSearchList(response.body());
+                    SearchRecipeList.setValue(viewModel.getSearchList());
+                    if (!viewModel.getSearchList().isEmpty())
+                        Log.d("TAG", viewModel.getSearchList().toString());
                     // Handle the list of products obtained from the server
                 } else {
                     // Handle unsuccessful response

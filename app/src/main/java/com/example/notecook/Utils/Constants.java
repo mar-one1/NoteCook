@@ -17,17 +17,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -39,50 +34,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.notecook.Activity.Login;
-import com.example.notecook.Activity.MainActivity;
-import com.example.notecook.Adapter.AdapterFragment;
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Adapter.Adapter_Rc_Steps;
-import com.example.notecook.Api.ApiClient;
-import com.example.notecook.Api.ApiService;
-import com.example.notecook.Dto.RecipeRequest;
-import com.example.notecook.Dto.RecipeResponse;
-import com.example.notecook.Dto.TokenResponse;
-import com.example.notecook.Fragement.Acceuill_Frg;
-import com.example.notecook.Fragement.Frg_Basket;
-import com.example.notecook.Fragement.Frg_EditProfil;
-import com.example.notecook.Fragement.Frg_Search;
-import com.example.notecook.Fragement.Frg_detail_recipe;
-import com.example.notecook.Fragement.MainFragment;
-import com.example.notecook.Fragement.frg_Profil;
-import com.example.notecook.Model.Category_Recipe;
-import com.example.notecook.Model.Detail_Recipe;
-import com.example.notecook.Model.Favorite_Recipe;
 import com.example.notecook.Model.Ingredients;
-import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
-import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.StepViewModel;
-import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
@@ -93,22 +60,18 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Response;
 
-public class    Constants {
+public class Constants {
 
+    // String tags
     public static final String TAG_ERREUR_SYSTEM = "erreur_Systeme";
     public static final String TAG_CHARGEMENT_VALIDE = "chargement_Valide";
     public static final String TAG_PAS_RESULTAT = "palertDialogeResultat";
@@ -119,68 +82,42 @@ public class    Constants {
     public static final String TAG_NOT_FOUND = "404 Not Found";
     public static final String TAG_REMOTE = "Remote";
     public static final String TAG_LOCAL = "Local";
-    public static Boolean TAG_EDIT_RECIPE = false;
-    public static Boolean TAG_MY = false;
-    public static final String lOGIN_KEY = "Connection_complete";
-    public static final String SYNCH_KEY = "Synch_complete";
     public static final String TAG_MODE_INVITE = "Mode Invite";
+
+    // Keys
+    public static final String LOGIN_KEY = "Connection_complete";
+    public static final String SYNCH_KEY = "Synch_complete";
+
+    // Default categories
     public static final String[] DEFAULT_SEARCH_CATEGORIES =
             {"Barbecue", "Breakfast", "Chicken", "Beef", "Brunch", "Dinner", "Wine", "Italian"};
-    public static final String[] DEFAULT_SEARCH_CATEGORY_IMAGES =
-            {
-                    "barbecue",
-                    "breakfast",
-                    "chicken",
-                    "beef",
-                    "brunch",
-                    "dinner",
-                    "wine",
-                    "italian"
-            };
-    public static String Token = "";
-    public static int TAG_CONNEXION = -1;
-    public static String TAG_CONNEXION_MESSAGE = "";
-    public static MutableLiveData<List<Recipe>> list_recipe = new MutableLiveData<>();
-    public static List<Detail_Recipe> list_Detailrecipe;
-    public static Detail_Recipe Detail_CurrentRecipe;
-    public static List<Step> Steps_CurrentRecipe = new ArrayList<>();
-    public static List<Review> Review_CurrentRecipe = new ArrayList<>();
-    public static MutableLiveData<List<Ingredients>> Ingredients_CurrentRecipe = null;
-    public static List<Favorite_Recipe> Favorite_CurrentRecipe = new ArrayList<>();
-    public static List<Ingredients> All_Ingredients_Recipe = new ArrayList<>();
-    public static List<Category_Recipe> All_Categories_Recipe = new ArrayList<>();
-    public static List<Recipe> Search_list = new ArrayList<>();
-    public static List<Recipe> Basket_list = new ArrayList<>();
-    public static User User_CurrentRecipe = new User();
-    public static List<Recipe> Recipes_Fav_User = new ArrayList<>();
-    public static MutableLiveData<List<Recipe>> Remotelist_recipe = new MutableLiveData<>();
-    public static MutableLiveData<List<Recipe>> RemotelistByIdUser_recipe = new MutableLiveData<>();
-    public static MutableLiveData<List<RecipeResponse>> RemotelistFullRecipe = new MutableLiveData<>();
-    public static MutableLiveData<Nutrition> Remote_nutritions = new MutableLiveData<>();
-    public static String TAG_CONNEXION_LOCAL = "";
-    public static TokenResponse user_login = new TokenResponse();
-    public static TokenResponse user_login_local = new TokenResponse();
-    public static boolean MODE_ONLINE = false;
-    public static SweetAlertDialog alertDialog;
-    public static Recipe CURRENT_RECIPE = null;
-    public static RecipeResponse CURRENT_FULL_RECIPE = null;
-    public static SweetAlertDialog loadingDialog;
-    private static final int STORAGE_PERMISSION_CODE = 23;
-    private static final int GALLERY_REQUEST_CODE = 24;
-    private static  final int CAMERA_REQUEST = 1888;
 
+    public static final String[] DEFAULT_SEARCH_CATEGORY_IMAGES =
+            {"barbecue", "breakfast", "chicken", "beef", "brunch", "dinner", "wine", "italian"};
+
+    // Permissions / request codes
+    public static final int STORAGE_PERMISSION_CODE = 23;
+    public static final int GALLERY_REQUEST_CODE = 24;
+    public static final int CAMERA_REQUEST = 1888;
     public static boolean fingerprint_id = false;
 
+    public static SweetAlertDialog loadingDialog;
+    public static SweetAlertDialog alertDialog;
+    public static List<Step> Steps_CurrentRecipe;
+
     public static void DisplayErrorMessage(final AppCompatActivity _context, String message) {
-        alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);alertDialog.setTitleText("")
-                .setContentText(message);alertDialog.setOnShowListener(dialog -> {
+        alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);
+        alertDialog.setTitleText("")
+                .setContentText(message);
+        alertDialog.setOnShowListener(dialog -> {
             SweetAlertDialog alertDialog = (SweetAlertDialog) dialog;
             TextView text = (TextView) alertDialog.findViewById(cn.pedant.SweetAlert.R.id.content_text);
             text.setTextAppearance(_context, android.R.style.TextAppearance_Large);
             text.setGravity(Gravity.CENTER);
             text.setSingleLine(false);
             text.setLines(5);
-        });alertDialog.show();
+        });
+        alertDialog.show();
     }
 
     public static void loading_ui(final Context _context, final Activity activity, String message) {
@@ -225,8 +162,8 @@ public class    Constants {
             loadingDialog.dismiss();
         }
     }
-    public static void showSnackPar(View view,String message)
-    {
+
+    public static void showSnackPar(View view, String message) {
         Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
                 .setAction("UNDO", new View.OnClickListener() {
                     @Override
@@ -235,6 +172,7 @@ public class    Constants {
                     }
                 }).show();
     }
+
     public static View getRootViewFromContext(Context context) {
         if (context instanceof Activity) {
             return ((Activity) context).findViewById(android.R.id.content);
@@ -257,23 +195,6 @@ public class    Constants {
         loadingDialog.setTitleText(val);
     }
 
-
-    public static void init() {
-        //Token = "";
-        TAG_CONNEXION = -1;
-        TAG_CONNEXION_MESSAGE = "";
-        list_recipe = new MutableLiveData<>();
-        Steps_CurrentRecipe = new ArrayList<>();
-        Review_CurrentRecipe = new ArrayList<>();
-        Ingredients_CurrentRecipe = new MutableLiveData<>();
-        All_Ingredients_Recipe = new ArrayList<>();
-        Search_list = new ArrayList<>();
-        Basket_list = new ArrayList<>();
-        User_CurrentRecipe = new User();
-        Recipes_Fav_User = new ArrayList<>();
-        Remotelist_recipe = new MutableLiveData<>();
-        RemotelistByIdUser_recipe = new MutableLiveData<>();
-    }
 
     public static void Loading(SweetAlertDialog pDialog) {
 
@@ -351,35 +272,43 @@ public class    Constants {
     public static void AffichageMessage(String _tag, String title, final Activity _context) {
         switch (_tag) {
             case TAG_CHARGEMENT_VALIDE:
-                alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.SUCCESS_TYPE);alertDialog.setTitleText(title)
+                alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.SUCCESS_TYPE);
+                alertDialog.setTitleText(title)
                         .setContentText(_context.getResources().getString(R.string.message_chargement_valide));
                 break;
             case TAG_ERREUR_SYSTEM:
-                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.ERROR_TYPE);alertDialog.setTitleText("Alerte")
+                alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.ERROR_TYPE);
+                alertDialog.setTitleText("Alerte")
                         .setContentText(_context.getResources().getString(R.string.message_erreur_system));
                 break;
             case TAG_PAS_RESULTAT:
-                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);alertDialog.setTitleText(title)
+                alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);
+                alertDialog.setTitleText(title)
                         .setContentText(_context.getResources().getString(R.string.message_erreur_pas_resultat));
                 break;
             case TAG_TOKEN_EXPIRE:
-                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);alertDialog.setTitleText("Alerte")
+                alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);
+                alertDialog.setTitleText("Alerte")
                         .setContentText(_context.getResources().getString(R.string.message_erreur_token_expire));
                 _context.finish();
                 break;
             case TAG_AUTHENTIFICATION_ECHOUE:
-                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);alertDialog.setTitleText("Alerte")
+                alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);
+                alertDialog.setTitleText("Alerte")
                         .setContentText(_context.getResources().getString(R.string.message_erreur_auth_echoue));
                 break;
             case TAG_OFFLINE:
-                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);alertDialog.setTitleText(title)
+                alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);
+                alertDialog.setTitleText(title)
                         .setContentText(_context.getResources().getString(R.string.message_erreur_offline));
                 break;
             default:
-                alertDialog= new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);alertDialog.setTitleText(title)
+                alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.NORMAL_TYPE);
+                alertDialog.setTitleText(title)
                         .setContentText(_tag);
                 break;
-        }alertDialog.setOnShowListener(dialog -> {
+        }
+        alertDialog.setOnShowListener(dialog -> {
             alertDialog = (SweetAlertDialog) dialog;
             alertDialog.setCanceledOnTouchOutside(false);
             TextView text = (TextView) alertDialog.findViewById(cn.pedant.SweetAlert.R.id.content_text);
@@ -387,7 +316,8 @@ public class    Constants {
             text.setGravity(Gravity.CENTER);
             text.setSingleLine(false);
             text.setLines(7);
-        });alertDialog.show();
+        });
+        alertDialog.show();
     }
 
     public static void DesableTimeOut(final View view)
@@ -418,7 +348,7 @@ public class    Constants {
     }
 
     public static void saveUserInput(String username, String password, Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(lOGIN_KEY, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(LOGIN_KEY, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("username", username);
         editor.putString("password", password);
@@ -439,7 +369,7 @@ public class    Constants {
     }
 
     public static String getUserInput(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(lOGIN_KEY, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(LOGIN_KEY, MODE_PRIVATE);
         return sharedPreferences.getString("username", "");
     }
 
@@ -493,9 +423,9 @@ public class    Constants {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public static void bindingRcV_Ingredients(RecyclerView recyclerView, List<Ingredients> list, Context context) {
+    public static void bindingRcV_Ingredients(RecyclerView recyclerView, List<Ingredients> list, Context context,SharedRecipeViewModel viewModel) {
         // Create and set adapter for RecyclerView
-        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list, context);
+        Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list, context,viewModel);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));
         recyclerView.setHorizontalScrollBarEnabled(true);
         adapter.notifyDataSetChanged();
@@ -503,8 +433,8 @@ public class    Constants {
     }
 
 
-    public static void bindingRcV_Steps(RecyclerView recyclerView, List<Step> list, Context context) {
-        Adapter_Rc_Steps adapter = new Adapter_Rc_Steps(list, context);
+    public static void bindingRcV_Steps(RecyclerView recyclerView, List<Step> list, Context context,SharedRecipeViewModel viewModel) {
+        Adapter_Rc_Steps adapter = new Adapter_Rc_Steps(list, context,viewModel);
         GridLayoutManager manager = new GridLayoutManager(context, 1);
         recyclerView.setLayoutManager(manager);
         manager.setOrientation(HORIZONTAL);
@@ -525,7 +455,7 @@ public class    Constants {
         sp.setAdapter(adapter);
     }
 
-    public static void navAction(AppCompatActivity activity ,Fragment fragment,ViewPager2 Vp2) {
+    public static void navAction(AppCompatActivity activity, Fragment fragment, ViewPager2 Vp2) {
         int bnvId = R.id.bottom_nav;
         BottomNavigationView btnV = activity.findViewById(bnvId);
 
@@ -661,6 +591,7 @@ public class    Constants {
                                     step.getFRK_recipe_step()
                             );
                         }
+
                         @Override
                         public void onError(Exception e) {
                             Bitmap fallback = ImageHelper.loadImageFromPath(step.getImage_step());

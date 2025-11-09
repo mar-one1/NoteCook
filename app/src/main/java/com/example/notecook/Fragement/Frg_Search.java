@@ -1,9 +1,6 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Utils.Constants.Remotelist_recipe;
-import static com.example.notecook.Utils.Constants.Search_list;
 import static com.example.notecook.Utils.Constants.TAG_REMOTE;
-import static com.example.notecook.Utils.Constants.Token;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -21,6 +18,7 @@ import android.widget.ArrayAdapter;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,6 +29,7 @@ import com.example.notecook.BuildConfig;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgSearchBinding;
 
@@ -54,6 +53,7 @@ public class Frg_Search extends Fragment {
     private Drawable defaultImagelike;
     private RecipeViewModel recipeVM;
     private FragmentActivity fragmentActivity;
+    private SharedRecipeViewModel viewModel;
 
 
     public Frg_Search() {
@@ -71,11 +71,11 @@ public class Frg_Search extends Fragment {
         binding = FragmentFrgSearchBinding.inflate(inflater, container, false);
         // Inflate the layout for this fragment
         fragmentActivity = (FragmentActivity) getContext();
-        recipeVM = new RecipeViewModel(getContext(), getActivity());
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
+        recipeVM = new RecipeViewModel(getContext(), getActivity(),viewModel);
         bindingRcV_recipes(binding.RcRecipeSearch, null, "default");
         //defaultImagelike=binding.HeartImgeclk;
         defaultImagelike = getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
-
         binding.filtreSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -172,11 +172,11 @@ public class Frg_Search extends Fragment {
 
     public void bindingRcV_recipes(RecyclerView recyclerView, List<Recipe> searchList, String tag) {
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-        if (!tag.equals("search") && Remotelist_recipe.getValue() != null)
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), Remotelist_recipe.getValue(), TAG_REMOTE);
+        if (!tag.equals("search") && viewModel.getRemoteListRecipe().getValue() != null)
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), viewModel,viewModel.getRemoteListRecipe().getValue(), TAG_REMOTE);
         else {
             if (searchList == null) searchList = new ArrayList<>();
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), searchList, TAG_REMOTE);
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(),viewModel, searchList, TAG_REMOTE);
         }
         GridLayoutManager manager = new GridLayoutManager(getContext(), 2);
         recyclerView.setLayoutManager(manager);
@@ -187,15 +187,15 @@ public class Frg_Search extends Fragment {
     private void searchRecipes(String key) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        Call<List<Recipe>> call = apiService.searchRecipes(Token, key);
+        Call<List<Recipe>> call = apiService.searchRecipes(viewModel.getToken().getValue(), key);
         call.enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
-                    Constants.Search_list = response.body();
-                    if (Search_list.size() > 0)
-                        bindingRcV_recipes(binding.RcRecipeSearch, Search_list, "search");
-                    Log.d("TAG", Constants.Search_list.toString());
+                    viewModel.setSearchList(response.body());
+                    if (!viewModel.getSearchList().isEmpty())
+                        bindingRcV_recipes(binding.RcRecipeSearch, viewModel.getSearchList(), "search");
+                    Log.d("TAG", viewModel.getSearchList().toString());
                     // Handle the list of products obtained from the server
                 } else {
                     // Handle unsuccessful response

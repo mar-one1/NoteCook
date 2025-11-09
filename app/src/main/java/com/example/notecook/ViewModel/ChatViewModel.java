@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.Repo.Chat_Repository;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +21,19 @@ public class ChatViewModel extends ViewModel implements ViewModelProvider.Factor
     private LiveData<List<ChatMessage>> messages;
     private Context context;
     private Activity appCompatActivity;
+    private SharedRecipeViewModel viewModel;
 
-    public ChatViewModel(Context context, Activity appCompatActivity) {
+    public ChatViewModel(Context context, Activity appCompatActivity, SharedRecipeViewModel viewModel) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;
-        chatRepository = new Chat_Repository(context, appCompatActivity);
+        this.viewModel = viewModel;
+        chatRepository = new Chat_Repository(context, appCompatActivity,viewModel);
         messages = new MutableLiveData<>(new ArrayList<>());
     }
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(ChatViewModel.class)) {
-            return (T) new ChatViewModel(context, appCompatActivity);
+            return (T) new ChatViewModel(context, appCompatActivity,viewModel);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

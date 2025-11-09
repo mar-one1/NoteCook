@@ -2,15 +2,7 @@ package com.example.notecook.Repo;
 
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
-import static com.example.notecook.Utils.Constants.TAG_OFFLINE;
-import static com.example.notecook.Utils.Constants.Token;
-import static com.example.notecook.Utils.Constants.User_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Utils.Constants.user_login_local;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,20 +16,18 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Dto.TokenResponse;
-import com.example.notecook.Api.ValidationError;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.PasswordHasher;
-import com.google.gson.Gson;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -55,12 +45,14 @@ public class UserRepository {
     private Context context;
     private SharedPreferences sharedPreferences;
     private Activity appCompatActivity;
+    private SharedRecipeViewModel viewModel;
 
-    public UserRepository(Context context, Activity appCompatActivity) {
+    public UserRepository(Context context, Activity appCompatActivity,SharedRecipeViewModel viewModel) {
         this.context = context;
         apiService = ApiClient.getClient().create(ApiService.class);
         userDatasource = new UserDatasource(context);
         this.appCompatActivity = appCompatActivity;
+        this.viewModel = viewModel;
     }
 
     public LiveData<User> getUserApi(String username) {
@@ -74,11 +66,11 @@ public class UserRepository {
                     if (UserResponse != null) {
                         //UserResponse.setId_User(user_login.getUser().getId_User());
                         //userLogin.setValue(UserResponse);
-                        user_login.setUser(UserResponse);
+                        viewModel.getUserLogin().getValue().setUser(UserResponse);
                         userLogin.setValue(getLocalUserLogin(username, "success").getValue());
-                        Log.e("tag","image url"+user_login.getUser().getPathimageuser());
+                        Log.e("tag","image url"+viewModel.getUserLogin().getValue().getUser().getPathimageuser());
                         //getImageUserUrl(user_login.getUser().getUsername(), "user_login", context);
-                        Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "get user from Api", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, viewModel.getTagConnexionMessage()  + " " + "get user from Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     ErrorHandler.handleErrorResponse(response, appCompatActivity);
@@ -119,9 +111,9 @@ public class UserRepository {
                     str = str.replaceAll("\"", "");// For UTF-8 encoding
                     Log.d("tag", str);
                     if (Objects.equals(tag, "user_login"))
-                        user_login.getUser().setPathimageuser(str);
+                        viewModel.getUserLogin().getValue().getUser().setPathimageuser(str);
                     if (Objects.equals(tag, "recipe_user")) {
-                        User_CurrentRecipe.setPathimageuser(str);
+                        viewModel.getUserCurrentRecipe().getValue().setPathimageuser(str);
                         MainFragment.viewPager2.setCurrentItem(1, false);
                     }
                     //fetchImage(str,tag,0,context);
@@ -153,12 +145,12 @@ public class UserRepository {
                     User UserResponse = response.body();
                     if (UserResponse != null) {
                         try {
-                            UserResponse.setId_User(user_login.getUser().getId_User());
+                            UserResponse.setId_User(viewModel.getUserLogin().getValue().getUser().getId_User());
                             userUpdated.setValue(UserResponse);
                         } catch (Exception e) {
                             Log.e("tag", "" + e);
                         }
-                        Toast.makeText(context, TAG_CONNEXION_MESSAGE + " " + "user updated To Api", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, viewModel.getTagConnexionMessage()  + " " + "user updated To Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     ErrorHandler.handleErrorResponse(response,appCompatActivity);
@@ -238,7 +230,7 @@ public class UserRepository {
                     Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
                     // File upload successful
                     //fetchImage(path);
-                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "upload image : " + viewModel.getTagConnexionMessage() , Toast.LENGTH_SHORT).show();
 
                 } else {
                     // Handle unsuccessful upload
@@ -260,18 +252,18 @@ public class UserRepository {
 
     public LiveData<User> getUserByIdRecipeApi(int Recipeid) {
         MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
-        apiService.getUserByIdRecipe(Token, Recipeid).enqueue(new Callback<User>() {
+        apiService.getUserByIdRecipe(viewModel.getToken().getValue(), Recipeid).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
 
                 if (response.isSuccessful()) {
                     User user = response.body();
                     userMutableLiveData.setValue(user);
-                    User_CurrentRecipe = user;
+                    viewModel.setUserCurrentRecipe(user);
                     //getImageUserUrl(User_CurrentRecipe.getUsername(), "recipe_user", context);
                     Log.d("TAG", user.getUsername().toString());
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    TAG_CONNEXION = response.code();
+                    viewModel.setTagConnexionMessage(response.message());
+                    viewModel.setTagConnexion(response.code());
                     //MainFragment.viewPager2.setCurrentItem(1);
                 } else {
                     // Handle error response here
@@ -281,7 +273,7 @@ public class UserRepository {
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                TAG_CONNEXION = call.hashCode();
+                viewModel.setTagConnexion(call.hashCode());
                 ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });
@@ -293,19 +285,19 @@ public class UserRepository {
 
     public LiveData<User> getLocalUserLogin(String username, String tag) {
         MutableLiveData<User> user = new MutableLiveData<>();
-        if (user_login == null) {
-            user_login = new TokenResponse();
+        if (viewModel.getUserLogin()== null) {
+            viewModel.setUserLogin(new TokenResponse());
         }
         user.setValue(userDatasource.select_User_BYUsername(username));
-        if (user_login_local == null) {
-            user_login_local = new TokenResponse();
+        if (viewModel.getUserLoginLocal() == null) {
+            viewModel.setUserLoginLocal(new TokenResponse());
         }
         if (tag.equals("success")) {
-            user_login_local.setUser(user.getValue());
+            viewModel.getUserLoginLocal().getValue().setUser(user.getValue());
         } else {
-            user_login.setUser(user.getValue());
-            user_login.setMessage(TAG_LOCAL);
-            user_login_local.setUser(user.getValue());
+            viewModel.getUserLogin().getValue().setUser(user.getValue());
+            viewModel.getUserLogin().getValue().setMessage(TAG_LOCAL);
+            viewModel.getUserLoginLocal().getValue().setUser(user.getValue());
         }
         ImageHelper.deleteUnusedImages(context,userDatasource.getAllUsersImagePath(),"UserImages");
         return  user;
@@ -322,8 +314,8 @@ public class UserRepository {
                     User UserResponse = response.body();
                     if (UserResponse != null) {
                         // Store the token securely (e.g., in SharedPreferences) for later use
-                        TAG_CONNEXION = response.code();
-                        TAG_CONNEXION_MESSAGE = response.message();
+                        viewModel.setTagConnexion(response.code());
+                        viewModel.setTagConnexionMessage(response.message());
                         userInsered.setValue(UserResponse);
                         if (type != null && type.equals("registre"))
                             uploadImage(user.getUsername(), bitmap,"", type);
@@ -331,7 +323,7 @@ public class UserRepository {
                             updateGoogleUserImage(user.getUsername(), url).getValue();
                         }
                         Constants.AffichageMessage("Vous avez Register avec succes with server","200", appCompatActivity);
-                        Log.d("TAG", TAG_CONNEXION_MESSAGE + " " + "Add User To Api");
+                        Log.d("TAG", viewModel.getTagConnexionMessage() + " " + "Add User To Api");
                     }
                 } else {
                     ErrorHandler.handleErrorResponse(response,appCompatActivity);
@@ -367,7 +359,7 @@ public class UserRepository {
                     Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
                     // File upload successful
                     //fetchImage(path);
-                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "upload image : " + viewModel.getTagConnexionMessage() , Toast.LENGTH_SHORT).show();
 
                 } else {
                     // Handle unsuccessful upload
@@ -392,7 +384,7 @@ public class UserRepository {
         PasswordHasher passwordHasher = new PasswordHasher();
         String passwordHacher = passwordHasher.hashPassword(user.getPassWord());
         user.setPassWord(passwordHacher);
-        user_login.setUser(user);
+        viewModel.getUserLogin().getValue().setUser(user);
         if (!userDatasource.isRecordExist(TABLE_USER, COLUMN_USERNAME, user.getUsername())) {
             userInsered.setValue(userDatasource.insertUser(user));
             Log.e("tag", user.getUsername());

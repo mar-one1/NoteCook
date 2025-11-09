@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Model.User;
 import com.example.notecook.Repo.UserRepository;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 
 public class UserViewModel extends ViewModel implements ViewModelProvider.Factory{
@@ -18,17 +19,19 @@ public class UserViewModel extends ViewModel implements ViewModelProvider.Factor
     private UserRepository repository;
     private Context context;
     private Activity appCompatActivity;
+    private SharedRecipeViewModel viewModel;
 
-    public UserViewModel(Context context, Activity appCompatActivity) {
+    public UserViewModel(Context context, Activity appCompatActivity,SharedRecipeViewModel viewModel) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;
-        repository = new UserRepository(context, appCompatActivity);
+        this.viewModel = viewModel;
+        repository = new UserRepository(context, appCompatActivity,viewModel);
     }
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(UserViewModel.class)) {
-            return (T) new UserViewModel(context,appCompatActivity);
+            return (T) new UserViewModel(context,appCompatActivity,viewModel);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

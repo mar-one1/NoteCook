@@ -1,8 +1,6 @@
 package com.example.notecook.Fragement;
 
 import static com.example.notecook.Api.env.BASE_URL;
-import static com.example.notecook.Utils.Constants.CURRENT_RECIPE;
-import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -25,12 +23,14 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.TaskStackBuilder;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Activity.Login;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.databinding.FragmentFrgStepRecipeBinding;
 import com.squareup.picasso.Callback;
@@ -53,6 +53,7 @@ public class Frg_Step_Recipe extends Fragment {
     private int current_id_step;
     private View.OnClickListener startListener = v -> getActivity().startService(new Intent(getActivity(), SimpleService.class));
     private View.OnClickListener stopListener = v -> getActivity().stopService(new Intent(getActivity(), SimpleService.class));
+    private SharedRecipeViewModel viewModel;
 
     public Frg_Step_Recipe() {
         // Required empty public constructor
@@ -72,6 +73,7 @@ public class Frg_Step_Recipe extends Fragment {
         binding = FragmentFrgStepRecipeBinding.inflate(inflater, container, false);
         //picker_hours = binding.pickerHours;
         //picker_minute = binding.pickerMin;
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         textViewTime = binding.txtAff;
         btn_star = binding.btnStar;
         btn_cancel = binding.btnCancel;
@@ -138,7 +140,7 @@ public class Frg_Step_Recipe extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        steps = Constants.Steps_CurrentRecipe;
+        steps = viewModel.getStepsCurrentRecipe();
         if (steps.size() > 0)
             step_switcher(0);
     }
@@ -217,7 +219,7 @@ public class Frg_Step_Recipe extends Fragment {
 
         @Override
         public void onFinish() {
-            addNotification("Time Finished", CURRENT_RECIPE.getNom_recipe());
+            addNotification("Time Finished", viewModel.getCurrentRecipe().getValue().getNom_recipe());
             Toast.makeText(getContext(), "Time Finished", Toast.LENGTH_SHORT).show();
             binding.lyPicker.setVisibility(View.VISIBLE);
             binding.lyTimer.setVisibility(View.GONE);

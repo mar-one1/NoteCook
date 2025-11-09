@@ -1,17 +1,10 @@
 package com.example.notecook.Fragement;
 
-import static android.provider.MediaStore.Images.Media.getBitmap;
 import static com.example.notecook.Utils.Constants.AffichageMessage;
-import static com.example.notecook.Utils.Constants.All_Ingredients_Recipe;
-import static com.example.notecook.Utils.Constants.CURRENT_FULL_RECIPE;
-import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
-import static com.example.notecook.Utils.Constants.TAG_MY;
 import static com.example.notecook.Utils.Constants.captureImage;
 import static com.example.notecook.Utils.Constants.clickMoins;
 import static com.example.notecook.Utils.Constants.clickPlus;
 import static com.example.notecook.Utils.Constants.isConnected;
-import static com.example.notecook.Utils.Constants.user_login;
-import static com.example.notecook.Utils.Constants.user_login_local;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -34,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Adapter.Adapter_Rc_Steps;
@@ -48,6 +42,7 @@ import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.InputValidator;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.StepViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
@@ -56,6 +51,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -73,6 +69,7 @@ public class add_recipe extends Fragment {
     private List<Step> stepsList = new ArrayList<>();
     private List<Ingredients> ingredientsList = new ArrayList<>();
     private ImageView currentTargetImageView;
+    private SharedRecipeViewModel viewModel;
 
 
     public add_recipe() {
@@ -88,13 +85,15 @@ public class add_recipe extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentAddRecipeBinding.inflate(inflater, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         int bnvId = R.id.bottom_nav;
         BottomNavigationView btnV = getActivity().findViewById(bnvId);
-        TAG_MY = true;
-        recipeVM = new RecipeViewModel(getContext(), getActivity());
-        userVM = new UserViewModel(getContext(), getActivity());
-        stepVM = new StepViewModel(getContext(), getActivity());
+        viewModel.setTagMy(true);
+        recipeVM = new RecipeViewModel(getContext(), getActivity(),viewModel);
+        userVM = new UserViewModel(getContext(), getActivity(),viewModel);
+        stepVM = new StepViewModel(getContext(), getActivity(),viewModel);
         Constants.level(binding.levelRecipe, getContext());
+
         binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,13 +112,13 @@ public class add_recipe extends Fragment {
         binding.addIngredients.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (All_Ingredients_Recipe != null && !All_Ingredients_Recipe.isEmpty()) {
-                    Ingredients ingredient = All_Ingredients_Recipe.get(binding.spIngredients.getSelectedItemPosition());
+                if (viewModel.getAllIngredientsRecipe() != null && !viewModel.getAllIngredientsRecipe().isEmpty()) {
+                    Ingredients ingredient = viewModel.getAllIngredientsRecipe().get(binding.spIngredients.getSelectedItemPosition());
                     Adapter_Rc_Ingredents adapter = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
                     if (adapter != null) ingredientsList = adapter.getDataList();
                     if (!ingredientsList.contains(ingredient)) {
                         ingredientsList.add(ingredient);
-                        Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext());
+                        Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext(),viewModel);
                     } else Constants.showSnackPar(v, "this ingredient in the list!!!");
                 }
             }
@@ -149,7 +148,7 @@ public class add_recipe extends Fragment {
                     if (adapter != null)
                         stepsList = adapter.getDataList();
                     stepsList.add(step);
-                    Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());
+                    Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext(),viewModel);
                     binding.txtTotTiemsp.setText("0");
                     binding.edtDetail.setText("");
                     binding.addIconStep.setImageDrawable(view.getResources().getDrawable(R.drawable.add_photo_profil));
@@ -157,8 +156,8 @@ public class add_recipe extends Fragment {
             }
         });
 
-        if (TAG_EDIT_RECIPE) {
-            fullRecipeDetails(CURRENT_FULL_RECIPE);
+        if (Boolean.TRUE.equals(viewModel.getTagEditRecipe().getValue())) {
+            fullRecipeDetails(Objects.requireNonNull(viewModel.getCurrentFullRecipe().getValue()));
             binding.btnAddRecipe.setText("Update");
         }
 
@@ -166,7 +165,7 @@ public class add_recipe extends Fragment {
         binding.btnAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (TAG_EDIT_RECIPE)
+                if (Boolean.TRUE.equals(viewModel.getTagEditRecipe().getValue()))
                     updateRecipe();
                 else insertRecipe();
             }
@@ -200,9 +199,9 @@ public class add_recipe extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        CURRENT_FULL_RECIPE = new RecipeResponse();
-        TAG_EDIT_RECIPE = false;
-        TAG_MY = false;
+        viewModel.setCurrentFullRecipe(new RecipeResponse());
+        viewModel.setTagEditRecipe(false);
+        viewModel.setTagMy(false);
     }
 
     private void fullRecipeDetails(RecipeResponse recipeR) {
@@ -231,13 +230,13 @@ public class add_recipe extends Fragment {
         // Set the ingredients (assuming you're using a RecyclerView or ListView for ingredients)
         ingredientsList.clear();
         ingredientsList.addAll(recipeR.getIngredients());
-        Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext());
+        Constants.bindingRcV_Ingredients(binding.recyclerViewIngredients, ingredientsList, getContext(),viewModel);
         // Update the adapter to show ingredients
 
         // Set the steps (assuming you're using a RecyclerView or ListView for steps)
         stepsList.clear();
         stepsList.addAll(recipeR.getSteps());
-        Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext());  // Update the adapter to show steps
+        Constants.bindingRcV_Steps(binding.recyclerViewSteps, stepsList, getContext(),viewModel);  // Update the adapter to show steps
     }
 
 
@@ -266,19 +265,19 @@ public class add_recipe extends Fragment {
             recipeR.setSteps(stepsList);
 
             if (isConnected(getContext()) && !recipeR.isAddedToRemote())
-                if (user_login.getUser() != null) {
-                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, user_login.getUser().getId_User(), randomKey);
+                if (viewModel.getUserLogin().getValue() !=null  && viewModel.getUserLogin().getValue().getUser() != null) {
+                    Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, viewModel.getUserLogin().getValue().getUser().getId_User(), randomKey);
                     postRecipeToRemote(recipeR, recipe, bitmap);
                 }
             Recipe recipe = new Recipe(binding.editTextRecipeName.getText().toString(), null, 0, 0, randomKey);
             String pathImage = ImageHelper.saveImageToInternalStorage(getContext(), bitmap, "RecipeImages");
             recipe.setPathimagerecipe(pathImage);
-            if (user_login_local.getUser() != null && user_login_local.getUser().getId_User() != 0)
-                recipe.setFrk_user(user_login_local.getUser().getId_User());
+            if (viewModel.getUserLoginLocal().getValue()!=null && viewModel.getUserLoginLocal().getValue().getUser() != null && viewModel.getUserLoginLocal().getValue().getUser().getId_User() != 0)
+                recipe.setFrk_user(viewModel.getUserLoginLocal().getValue().getUser().getId_User());
             else {
                 userVM.getUserLocal(Constants.getUserInput(requireContext()), "success");
                 detach();
-                recipe.setFrk_user(user_login_local.getUser().getId_User());
+                recipe.setFrk_user(viewModel.getUserLoginLocal().getValue().getUser().getId_User());
             }
             if (!recipeR.isAddedToLocal())
                 postRecipeToLocal(recipeR, recipe);
@@ -288,7 +287,7 @@ public class add_recipe extends Fragment {
     public void IngredientToSp(Spinner sp) {
         List<String> ingredientNames = new ArrayList<>();
         // Iterate over All_Ingredients_Recipe to collect all ingredient names
-        for (Ingredients ingredient : All_Ingredients_Recipe) {
+        for (Ingredients ingredient : viewModel.getAllIngredientsRecipe()) {
             String name = ingredient.getNome();
             if (name != null && !ingredientNames.contains(name)) {
                 ingredientNames.add(name);
@@ -319,23 +318,23 @@ public class add_recipe extends Fragment {
 
     private void updateRecipe() {
         // 1️⃣ Update local recipe object
-        CURRENT_FULL_RECIPE.getRecipe().setNom_recipe(binding.editTextRecipeName.getText().toString());
+        viewModel.getCurrentFullRecipe().getValue().getRecipe().setNom_recipe(binding.editTextRecipeName.getText().toString());
         Bitmap bitmap = ImageHelper.drawableToBitmap(binding.addIconRecipe.getDrawable());
 
-        CURRENT_FULL_RECIPE.getDetail_recipe().setDt_recipe(binding.editTextInstructions.getText().toString());
-        CURRENT_FULL_RECIPE.getDetail_recipe().setTime(parseIntSafe(binding.txtTotTime.getText().toString()));
-        CURRENT_FULL_RECIPE.getDetail_recipe().setCal(parseIntSafe(binding.txtTotCal.getText().toString()));
-        CURRENT_FULL_RECIPE.getDetail_recipe().setLevel(binding.levelRecipe.getSelectedItem().toString());
+        viewModel.getCurrentFullRecipe().getValue().getDetail_recipe().setDt_recipe(binding.editTextInstructions.getText().toString());
+        viewModel.getCurrentFullRecipe().getValue().getDetail_recipe().setTime(parseIntSafe(binding.txtTotTime.getText().toString()));
+        viewModel.getCurrentFullRecipe().getValue().getDetail_recipe().setCal(parseIntSafe(binding.txtTotCal.getText().toString()));
+        viewModel.getCurrentFullRecipe().getValue().getDetail_recipe().setLevel(binding.levelRecipe.getSelectedItem().toString());
 
         // 2️⃣ Get ingredients and steps
         Adapter_Rc_Ingredents adapterIng = (Adapter_Rc_Ingredents) binding.recyclerViewIngredients.getAdapter();
-        CURRENT_FULL_RECIPE.setIngredients(adapterIng != null ? adapterIng.getDataList() : new ArrayList<>());
+        viewModel.getCurrentFullRecipe().getValue().setIngredients(adapterIng != null ? adapterIng.getDataList() : new ArrayList<>());
 
         Adapter_Rc_Steps adapterSteps = (Adapter_Rc_Steps) binding.recyclerViewSteps.getAdapter();
-        CURRENT_FULL_RECIPE.setSteps(adapterSteps != null ? adapterSteps.getDataList() : new ArrayList<>());
+        viewModel.getCurrentFullRecipe().getValue().setSteps(adapterSteps != null ? adapterSteps.getDataList() : new ArrayList<>());
 
         // 3️⃣ Update local DB
-        recipeVM.updateFullRecipeLocal(CURRENT_FULL_RECIPE).observe(requireActivity(), recipeResponse -> {
+        recipeVM.updateFullRecipeLocal(viewModel.getCurrentFullRecipe().getValue()).observe(requireActivity(), recipeResponse -> {
             if (recipeResponse == null) {
                 AffichageMessage("error", "Error updating local recipe!", getActivity());
                 return;
@@ -343,7 +342,7 @@ public class add_recipe extends Fragment {
 
             // 4️⃣ Update local recipe image if exists
             if (bitmap != null) {
-                recipeVM.updateImageRecipeLocal(bitmap, CURRENT_FULL_RECIPE.getRecipe().getId_recipe());
+                recipeVM.updateImageRecipeLocal(bitmap, viewModel.getCurrentFullRecipe().getValue().getRecipe().getId_recipe());
             }
 
             // 5️⃣ Update recipe remotely
@@ -394,7 +393,7 @@ public class add_recipe extends Fragment {
 
     /** Finalize update */
     private void finishUpdate(RecipeResponse recipe) {
-        CURRENT_FULL_RECIPE.setRecipe(recipe.getRecipe());
+        viewModel.getCurrentFullRecipe().getValue().setRecipe(recipe.getRecipe());
         Constants.AffichageMessage("success", "", requireActivity());
         detach();
     }

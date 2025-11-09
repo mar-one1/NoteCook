@@ -3,15 +3,10 @@ package com.example.notecook.Repo;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
 import static com.example.notecook.Utils.Constants.TAG_CHARGEMENT_VALIDE;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_LOCAL;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.Token;
 import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.saveToken;
 import static com.example.notecook.Utils.Constants.saveUserInput;
-import static com.example.notecook.Utils.Constants.user_login;
 
 import android.app.Activity;
 import android.content.Context;
@@ -32,6 +27,7 @@ import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.PasswordHasher;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import java.io.IOException;
 
@@ -45,12 +41,14 @@ public class AccessRepository {
     private PasswordHasher passwordHasher;
     private UserDatasource userDatasource;
     private Activity activity;
+    private SharedRecipeViewModel viewModel;
 
-    public AccessRepository(Context context, Activity activity) {
+    public AccessRepository(Context context, Activity activity,SharedRecipeViewModel viewModel) {
         apiService = ApiClient.getClient().create(ApiService.class);
         this.context = context;
         userDatasource = new UserDatasource(context);
         this.activity = activity;
+        this.viewModel = viewModel;
     }
 
     // TODO make insert user local in methode
@@ -73,23 +71,23 @@ public class AccessRepository {
                         String token = loginResponse.getToken();
                         TokenMutableLiveData.setValue(token);
                         // Store the token securely (e.g., in SharedPreferences) for later use
-                        TAG_CONNEXION = response.code();
-                        TAG_CONNEXION_MESSAGE = response.message();
+                        viewModel.setTagConnexion(response.code());
+                        viewModel.setTagConnexionMessage(response.message());
 
-                        Log.d("TAG", TAG_CONNEXION_MESSAGE);
+                        Log.d("TAG", viewModel.getTagConnexionMessage().getValue());
                         try {
                             User user = new User();
                             user.setUsername(username);
                             passwordHasher = new PasswordHasher();
                             String passwordHacher = passwordHasher.hashPassword(password);
                             user.setPassWord(passwordHacher);
-                            user_login.setUser(user);
+                            viewModel.getUserLogin().getValue().setUser(user);
                             if (!userDatasource.isRecordExist(TABLE_USER, COLUMN_USERNAME, username)) {
                                 userDatasource.insertUser(user);
                                 Log.e("tag", user.getUsername());
                             }
                             saveToken(token, context);
-                            Token = token;
+                            viewModel.setToken(token);
                             saveUserInput(username, password, context);
                             Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "message", activity);
                         } catch (Exception e) {
@@ -107,7 +105,7 @@ public class AccessRepository {
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
 
-                TAG_CONNEXION_MESSAGE = call.toString();
+                viewModel.setTagConnexionMessage(call.toString());
                 ErrorHandler.handleNetworkFailure(t, activity,call);
             }
         });
@@ -122,9 +120,9 @@ public class AccessRepository {
             //Toast.makeText(getBaseContext(), "user : " + item.getUser_name() + " pass : " + item.getPassWord(), Toast.LENGTH_SHORT).show();
             if (passwordHasher.verifyPassword(password, user.getPassWord())) {
                 saveUserInput(username, password, context);
-                TAG_CONNEXION_LOCAL = "success";
+                viewModel.setTagConnexionLocal("success");
                 s.postValue(user);
-                user_login.setUser(user);
+                viewModel.getUserLogin().getValue().setUser(user);
                 /*if (!Objects.equals(user_login.getUser(), null)) {
                     user_login.getUser().setUser_name(username);
                     user_login.getUser().setUser_name(item.getPassWord());
@@ -173,15 +171,15 @@ public class AccessRepository {
         int statusCode = response.code();
 
         if (tokenResponse != null) {
-            user_login = tokenResponse;
-            Constants.TAG_CONNEXION = statusCode;
+            viewModel.setUserLogin(tokenResponse);
+            viewModel.setTagConnexion(statusCode);
 
             if (statusCode == 201) {
                 saveToken(tokenResponse.getToken(), context);
                 mutableLiveDataToken.setValue(tokenResponse.getToken());
             }
 
-            Constants.Token = tokenResponse.getToken();
+            viewModel.setToken(tokenResponse.getToken());
             Toast.makeText(context, "Validation : " + statusCode, Toast.LENGTH_SHORT).show();
             Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "", activity);
 

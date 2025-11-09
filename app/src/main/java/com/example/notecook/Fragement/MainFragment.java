@@ -8,16 +8,17 @@ import android.view.ViewGroup;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.AdapterFragment;
 import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.databinding.FragmentMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
@@ -26,8 +27,8 @@ public class MainFragment extends Fragment  {
 
     FragmentMainBinding binding;
     public static ViewPager2 viewPager2;
-    TabLayout tabLayout;
-    private FloatingActionButton Flbtn;
+    public static FloatingActionButton flBtn;
+    private SharedRecipeViewModel viewModel;
 
     public MainFragment() {/* Required empty public constructor*/}
 
@@ -40,19 +41,20 @@ public class MainFragment extends Fragment  {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentMainBinding.inflate(inflater, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         viewPager2 = binding.vp2;
         //viewPager2.setOffscreenPageLimit(1);
-        Flbtn = getActivity().findViewById(R.id.floating_action_button);
-        Flbtn.show();
+        flBtn = getActivity().findViewById(R.id.floating_action_button);
+        flBtn.show();
 
-        Flbtn.setOnClickListener(v -> {
+        flBtn.setOnClickListener(v -> {
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.ly_vp_con,new add_recipe());
                 fragmentTransaction.commitNow();
 
                 //viewPager2.setCurrentItem(1,false);
-                Flbtn.setImageDrawable(getActivity().getDrawable(R.drawable.ic_playlist_add_check_black_24dp));
-                Flbtn.hide();
+                flBtn.setImageDrawable(getActivity().getDrawable(R.drawable.ic_playlist_add_check_black_24dp));
+                flBtn.hide();
         });
 
         setViewPagerAdapter();
@@ -87,7 +89,7 @@ public class MainFragment extends Fragment  {
                     if (MainActivity.Type_User.equals(Constants.TAG_MODE_INVITE) &&  i == 1)  {
                         Constants.DisplayErrorMessage((AppCompatActivity) getActivity(),"Veuillez Connecter !!");
                     }
-                    else if(Constants.CURRENT_RECIPE==null &&  i == 1)
+                    else if(viewModel.getCurrentRecipe()==null &&  i == 1)
                     {
                         Constants.DisplayErrorMessage((AppCompatActivity) getActivity(),"No Recipe yet selected !!");
                     }
@@ -102,8 +104,8 @@ public class MainFragment extends Fragment  {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                Flbtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_plus_one_24));
-                Flbtn.show();
+                flBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_plus_one_24));
+                flBtn.show();
             }
             @Override
             public void onPageSelected(int position) {

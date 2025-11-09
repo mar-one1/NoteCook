@@ -1,9 +1,5 @@
 package com.example.notecook.Repo;
 
-import static com.example.notecook.Utils.Constants.Steps_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.Token;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,8 +13,8 @@ import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.StepsDataSource;
-import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.Step;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,9 +35,11 @@ public class StepRecipeRepository {
     private RecipeDatasource recipeDatasource;
     private StepsDataSource stepsDataSource;
     private Context context;
+    private SharedRecipeViewModel viewModel;
 
-    public StepRecipeRepository(Context context) {
+    public StepRecipeRepository(Context context,SharedRecipeViewModel viewModel) {
         this.context = context;
+        this.viewModel = viewModel;
         apiService = ApiClient.getClient().create(ApiService.class);
         recipeDatasource = new RecipeDatasource(context);
         stepsDataSource = new StepsDataSource(context);
@@ -50,22 +48,21 @@ public class StepRecipeRepository {
     public void getStepRecipeByIdRecipeApi(int Recipeid) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        Call<List<Step>> call = apiService.getStepsByIdRecipe(Token, Recipeid);
+        Call<List<Step>> call = apiService.getStepsByIdRecipe(viewModel.getToken().getValue(), Recipeid);
 
         call.enqueue(new Callback<List<Step>>() {
             @Override
             public void onResponse(Call<List<Step>> call, Response<List<Step>> response) {
                 if (response.isSuccessful()) {
-                    Steps_CurrentRecipe = response.body();
+                    viewModel.setStepsCurrentRecipe(response.body());
                     //Log.d("TAG", String.valueOf(steps.get(0).getTime_step()));
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    TAG_CONNEXION = response.code();
+                    viewModel.setTagConnexionMessage(response.message());
+                    viewModel.setTagConnexion(response.code());
 
                 } else {
                     // Handle error response here
-                    int statusCode = response.code();
-                    TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
+                    viewModel.setTagConnexionMessage(response.message());
+                    viewModel.setTagConnexion(response.code());
                     if (response.errorBody() != null) {
                         try {
                             String errorResponse = response.errorBody().string();
@@ -80,7 +77,7 @@ public class StepRecipeRepository {
 
             @Override
             public void onFailure(Call<List<Step>> call, Throwable t) {
-                TAG_CONNEXION = call.hashCode();
+                viewModel.setTagConnexion(call.hashCode());
             }
         });
     }
@@ -109,7 +106,7 @@ public class StepRecipeRepository {
         // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
         // Call the method to upload the file
-        apiService.updateImageStep(Token, unique_key, filePart).enqueue(new Callback<ResponseBody>() {
+        apiService.updateImageStep(viewModel.getToken().getValue(), unique_key, filePart).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
@@ -126,7 +123,7 @@ public class StepRecipeRepository {
                     Toast.makeText(context, "upload image : " + path, Toast.LENGTH_SHORT).show();
                     // File upload successful
                     //fetchImage(path);
-                    Toast.makeText(context, "upload image : " + TAG_CONNEXION_MESSAGE, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "upload image : " + viewModel.getTagConnexionMessage(), Toast.LENGTH_SHORT).show();
 
                 } else {
                     // Handle unsuccessful upload

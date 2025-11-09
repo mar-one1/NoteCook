@@ -1,6 +1,5 @@
 package com.example.notecook.Utils;
 
-import static com.example.notecook.Utils.Constants.user_login;
 import static com.example.notecook.Api.env.BASE_URL;
 
 import android.util.Log;
@@ -24,12 +23,14 @@ public class SocketManager {
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private Socket mSocket;
     private SocketCallback socketCallback;
+    private SharedRecipeViewModel viewModel;
 
     public interface SocketCallback {
         void onNewMessage(ChatMessage chatMessage);
     }
 
-    public SocketManager(SocketCallback callback) {
+    public SocketManager(SocketCallback callback,SharedRecipeViewModel viewModel) {
+        this.viewModel = viewModel;
         try {
             mSocket = IO.socket(BASE_URL); // Replace with your server URL
             this.socketCallback = callback;
@@ -79,7 +80,7 @@ public class SocketManager {
             JSONObject data = new JSONObject();
             try {
                 data.put("recipeId", recipeId);
-                data.put("senderId", user_login.getUser().getId_User());
+                data.put("senderId", viewModel.getUserLogin().getValue().getUser().getId_User());
                 data.put("receiverId", receiverId);
                 data.put("message", message);
                 mSocket.emit("chat message", data);
@@ -132,7 +133,7 @@ public class SocketManager {
         public void call(Object... args) {
             Log.d(TAG, "Connected to Socket.IO server");
             // Register the user after connecting
-            registerUser(String.valueOf(user_login.getUser().getId_User()));
+            registerUser(String.valueOf(viewModel.getUserLogin().getValue().getUser().getId_User()));
         }
     };
 

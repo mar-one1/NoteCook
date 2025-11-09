@@ -1,10 +1,5 @@
 package com.example.notecook.Repo;
 
-import static com.example.notecook.Utils.Constants.Detail_CurrentRecipe;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION;
-import static com.example.notecook.Utils.Constants.TAG_CONNEXION_MESSAGE;
-import static com.example.notecook.Utils.Constants.Token;
-
 import android.content.Context;
 import android.util.Log;
 
@@ -14,7 +9,7 @@ import com.example.notecook.Data.DetailRecipeDataSource;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,16 +23,18 @@ public class DetailRecipeRepository {
     private static List<Detail_Recipe> list_detail_recipe = new ArrayList<>();
     private ApiService apiService;
     private DetailRecipeDataSource detailRecipeDataSource;
+    private SharedRecipeViewModel viewModel;
 
-    public DetailRecipeRepository(Context context) {
+    public DetailRecipeRepository(Context context,SharedRecipeViewModel viewModel) {
         apiService = ApiClient.getClient().create(ApiService.class);
+        this.viewModel = viewModel;
         detailRecipeDataSource = new DetailRecipeDataSource(context);
     }
 
-    public static void getDetailRecipeByIdRecipeApi(int Recipeid, Context context) {
+    public  void getDetailRecipeByIdRecipeApi(int Recipeid, Context context) {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
-        Call<Detail_Recipe> call = apiService.getDetailRecipeByIdRecipeFRK(Token, Recipeid);
+        Call<Detail_Recipe> call = apiService.getDetailRecipeByIdRecipeFRK(viewModel.getToken().getValue(), Recipeid);
 
 
         call.enqueue(new Callback<Detail_Recipe>() {
@@ -45,10 +42,10 @@ public class DetailRecipeRepository {
             public void onResponse(Call<Detail_Recipe> call, Response<Detail_Recipe> response) {
                 if (response.isSuccessful()) {
                     Detail_Recipe detail_recipe = response.body();
-                    Detail_CurrentRecipe = detail_recipe;
+                    viewModel.setDetailCurrentRecipe(detail_recipe);
                     Log.d("TAG", detail_recipe.getLevel().toString());
-                    TAG_CONNEXION_MESSAGE = response.message();
-                    TAG_CONNEXION = response.code();
+                    viewModel.setTagConnexionMessage(response.message());
+                    viewModel.setTagConnexion(response.code());
                     /*if (CURRENT_RECIPE.getFrk_user() != user_login.getUser().getId_User() && User_CurrentRecipe.getId_User() != CURRENT_RECIPE.getFrk_user())
                         //getUserByIdRecipeApi(CURRENT_RECIPE.getId_recipe(), context);
                     else if (User_CurrentRecipe.getId_User() == CURRENT_RECIPE.getFrk_user()) {
@@ -59,9 +56,8 @@ public class DetailRecipeRepository {
                     }*/
                 } else {
                     // Handle error response here
-                    int statusCode = response.code();
-                    TAG_CONNEXION = statusCode;
-                    TAG_CONNEXION_MESSAGE = response.message();
+                    viewModel.setTagConnexionMessage(response.message());
+                    viewModel.setTagConnexion(response.code());
                     if (response.errorBody() != null) {
                         try {
                             String errorResponse = response.errorBody().string();
@@ -76,7 +72,7 @@ public class DetailRecipeRepository {
 
             @Override
             public void onFailure(Call<Detail_Recipe> call, Throwable t) {
-                TAG_CONNEXION = call.hashCode();
+                viewModel.setTagConnexion(call.hashCode());
             }
         });
 
@@ -165,7 +161,7 @@ public class DetailRecipeRepository {
 
     public void getLocalDetailsRecipes() {
         detailRecipeDataSource.open();
-        Constants.list_Detailrecipe = detailRecipeDataSource.getAllDR();
+        viewModel.setListDetailRecipe(detailRecipeDataSource.getAllDR());
         detailRecipeDataSource.close();
     }
 

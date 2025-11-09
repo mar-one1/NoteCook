@@ -1,8 +1,6 @@
   package com.example.notecook.Fragement;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
-import static com.example.notecook.Utils.Constants.Basket_list;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,11 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Pay.CheckoutActivity;
 import com.example.notecook.R;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgBasketBinding;
 
   public class Frg_Basket extends Fragment {
 
     private FragmentFrgBasketBinding binding;
+      private SharedRecipeViewModel viewModel;
 
     public Frg_Basket() {
         // Required empty public constructor
@@ -35,7 +36,7 @@ import com.example.notecook.databinding.FragmentFrgBasketBinding;
       @Override
       public void onResume() {
           super.onResume();
-          if(Basket_list.size()!=0)
+          if(!viewModel.getBasketList().isEmpty())
           {
               binding.txtLstEmpty.setVisibility(View.GONE);
               bindingRcV_Baskets(binding.RcIngredBasket);
@@ -49,6 +50,7 @@ import com.example.notecook.databinding.FragmentFrgBasketBinding;
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentFrgBasketBinding.inflate(inflater, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         bindingRcV_Baskets(binding.RcIngredBasket);
         binding.btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +64,7 @@ import com.example.notecook.databinding.FragmentFrgBasketBinding;
 
       public void bindingRcV_Baskets(RecyclerView recyclerView) {
           // Create and set adapter for RecyclerView
-          Adapter_RC_RecipeDt adapter = new Adapter_RC_RecipeDt(getContext(),getActivity(),Basket_list,"remote");
+          Adapter_RC_RecipeDt adapter = new Adapter_RC_RecipeDt(getContext(),getActivity(),viewModel,viewModel.getBasketList(),"remote");
           LinearLayoutManager manager = new LinearLayoutManager(getContext());
           manager.setOrientation(HORIZONTAL);
           recyclerView.setLayoutManager(manager);

@@ -11,22 +11,25 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.notecook.Repo.StepRecipeRepository;
 import com.example.notecook.Repo.UserRepository;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 public class StepViewModel extends ViewModel implements ViewModelProvider.Factory {
     private StepRecipeRepository repository;
     private Context context;
     private Activity appCompatActivity;
+    private SharedRecipeViewModel viewModel;
 
-    public StepViewModel(Context context, Activity appCompatActivity) {
+    public StepViewModel(Context context, Activity appCompatActivity, SharedRecipeViewModel viewModel) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;
-        repository = new StepRecipeRepository(context);
+        this.viewModel = viewModel;
+        repository = new StepRecipeRepository(context,viewModel);
     }
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(StepViewModel.class)) {
-            return (T) new StepViewModel(context, appCompatActivity);
+            return (T) new StepViewModel(context, appCompatActivity,viewModel);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

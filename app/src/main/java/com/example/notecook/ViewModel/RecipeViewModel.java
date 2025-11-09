@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Repo.RecipeRepository;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import java.util.List;
 import java.util.Map;
@@ -20,22 +21,24 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
     private RecipeRepository repository;
     private Context context;
     private Activity appCompatActivity;
+    private SharedRecipeViewModel viewModel;
 
     public RecipeViewModel(Context context) {
         repository = new RecipeRepository(context);
         this.context = context;
     }
 
-    public RecipeViewModel(Context context, Activity appCompatActivity) {
+    public RecipeViewModel(Context context, Activity appCompatActivity, SharedRecipeViewModel viewModel) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;
-        repository = new RecipeRepository(context, appCompatActivity);
+        this.viewModel = viewModel;
+        repository = new RecipeRepository(context, appCompatActivity,viewModel);
     }
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(RecipeViewModel.class)) {
-            return (T) new RecipeViewModel(context, appCompatActivity);
+            return (T) new RecipeViewModel(context, appCompatActivity,viewModel);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

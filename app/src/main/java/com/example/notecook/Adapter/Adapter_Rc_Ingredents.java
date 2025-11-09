@@ -1,8 +1,5 @@
 package com.example.notecook.Adapter;
 
-import static com.example.notecook.Utils.Constants.TAG_EDIT_RECIPE;
-import static com.example.notecook.Utils.Constants.TAG_MY;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -17,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.R;
-import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -29,10 +26,12 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
     private List<Ingredients> listidIngredient = new ArrayList<>();
     private LayoutInflater mInflater;
     private Context context;
+    private SharedRecipeViewModel viewModel;
 
-    public Adapter_Rc_Ingredents(List<Ingredients> list_ingredients, Context context) {
+    public Adapter_Rc_Ingredents(List<Ingredients> list_ingredients, Context context, SharedRecipeViewModel viewModel) {
         this.context = context;
         this.listidIngredient = list_ingredients;
+        this.viewModel = viewModel;
         updateData(list_ingredients);
     }
 
@@ -71,7 +70,7 @@ public class Adapter_Rc_Ingredents extends RecyclerView.Adapter<Adapter_Rc_Ingre
             }
         });
 
-        if (TAG_MY) {
+        if (Boolean.TRUE.equals(viewModel.getTagMy().getValue())) {
             holder.btn_del.setVisibility(View.VISIBLE);
         }else holder.btn_del.setVisibility(View.GONE);
 

@@ -6,11 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.notecook.Adapter.Adapter_Rc_Review;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgFavBinding;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ public class Frg_Fav extends Fragment {
 
     private List<Review> listReview= new ArrayList<>();
     private FragmentFrgFavBinding binding;
+    private SharedRecipeViewModel viewModel;
 
     public Frg_Fav() {
         // Required empty public constructor
@@ -42,12 +45,12 @@ public class Frg_Fav extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentFrgFavBinding.inflate(inflater, container, false);
-
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         return binding.getRoot();
     }
 
     public void setViewPagerAdapter () {
-        Adapter_Rc_Review adapter_rc_review = new Adapter_Rc_Review(Constants.Review_CurrentRecipe,getContext());
+        Adapter_Rc_Review adapter_rc_review = new Adapter_Rc_Review(viewModel.getReviewCurrentRecipe(),getContext());
         GridLayoutManager manager = new GridLayoutManager(getContext(),1);
         binding.rcReview.setLayoutManager(manager);
 

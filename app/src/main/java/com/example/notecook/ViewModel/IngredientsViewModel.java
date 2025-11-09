@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Repo.IngredientsRecipeRepository;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import java.io.Closeable;
 import java.util.List;
@@ -19,17 +20,19 @@ public class IngredientsViewModel extends ViewModel implements ViewModelProvider
     private Context context;
     private Activity appCompatActivity;
     private IngredientsRecipeRepository repository;
+    private SharedRecipeViewModel viewModel;
 
-    public IngredientsViewModel(Context context, Activity appCompatActivity) {
+    public IngredientsViewModel(Context context, Activity appCompatActivity,SharedRecipeViewModel viewModel) {
         this.context = context;
         this.appCompatActivity = appCompatActivity;
-        repository = new IngredientsRecipeRepository(appCompatActivity);
+        this.viewModel = viewModel;
+        repository = new IngredientsRecipeRepository(appCompatActivity,viewModel);
     }
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.isAssignableFrom(IngredientsViewModel.class)) {
-            return (T) new IngredientsViewModel(context,appCompatActivity);
+            return (T) new IngredientsViewModel(context,appCompatActivity,viewModel);
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }

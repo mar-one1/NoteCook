@@ -1,10 +1,8 @@
 package com.example.notecook.Fragement;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
-import static com.example.notecook.Utils.Constants.Remotelist_recipe;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_REMOTE;
-import static com.example.notecook.Utils.Constants.list_recipe;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -31,6 +29,7 @@ import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
+import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentAcceuillFrgBinding;
@@ -52,6 +51,7 @@ public class Acceuill_Frg extends Fragment {
     private LinearLayoutManager manager;
     public static Drawable defaultImagelike;
     public Drawable defaultImagenot;
+    private SharedRecipeViewModel viewModel;
 
     public Acceuill_Frg() {
         // Required empty public constructor
@@ -73,6 +73,7 @@ public class Acceuill_Frg extends Fragment {
             ViewPager2 viewPager2 = getActivity().findViewById(R.id.vp2);
             viewPager2.setCurrentItem(2, false);
         });
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
 
         defaultImagelike = getActivity().getDrawable(R.drawable.ic_baseline_favorite_24);
         defaultImagenot = getActivity().getDrawable(R.drawable.ic_favorite_border_black_24dp);
@@ -83,10 +84,10 @@ public class Acceuill_Frg extends Fragment {
         });
 
         bindingRcV_categories(binding.RcCatMenu, true, getContext());
-        recipeVM = new RecipeViewModel(getContext(), getActivity());
+        recipeVM = new RecipeViewModel(getContext(), getActivity(),viewModel);
         recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
         //Get All Ingredients Recipes
-        ingredientsVM = new IngredientsViewModel(getContext(), getActivity());
+        ingredientsVM = new IngredientsViewModel(getContext(), getActivity(),viewModel);
         ingredientsVM.getAllIngredientsApi();
         fetchRecipe();
 
@@ -124,11 +125,11 @@ public class Acceuill_Frg extends Fragment {
             @Override
             public void onChanged(@Nullable List<Recipe> recipeList) {
                 if (recipeList != null) {
-                    Remotelist_recipe.setValue(recipeList);
+                    viewModel.setRemoteListRecipe(recipeList);
                     bindingRcV_recipes(recipeList, binding.RcCatPopular, true);
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.size(), Toast.LENGTH_SHORT).show();
                 } else
-                    bindingRcV_recipes(Remotelist_recipe.getValue(), binding.RcCatPopular, true);
+                    bindingRcV_recipes(viewModel.getListRecipe().getValue(), binding.RcCatPopular, true);
             }
         });
     }
@@ -175,13 +176,13 @@ public class Acceuill_Frg extends Fragment {
 
     public void bindingRcV_recipes(List<Recipe> list, RecyclerView mRecyclerView, boolean isgarde) {
         if (list != null && !list.isEmpty()) {
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), Remotelist_recipe.getValue(), TAG_REMOTE);
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), viewModel,list, TAG_REMOTE);
             manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(adapter_rc_recipeDt);
-        } else if (list_recipe != null && list_recipe.getValue() != null && !list_recipe.getValue().isEmpty()) {
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), list_recipe.getValue(), TAG_LOCAL);
+        } else if (viewModel.getListRecipe() != null && viewModel.getListRecipe().getValue() != null && !viewModel.getListRecipe().getValue().isEmpty()) {
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(),viewModel, viewModel.getListRecipe().getValue(), TAG_LOCAL);
             manager = new LinearLayoutManager(getContext());
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);
