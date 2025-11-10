@@ -15,4 +15,3 @@ public class SharedViewModel extends ViewModel {
         return showFab;
     }
 }
-
