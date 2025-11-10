@@ -1,0 +1,32 @@
+# .github/workflows/android-build.yml
+name: Android Build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      API_BASE_URL: ${{ vars.API_BASE_URL }}
+      APP_MODE: ${{ vars.APP_MODE }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      # Inject GitHub environment variables into local.properties
+      - name: Inject Environment Variables
+        run: |
+          echo "API_BASE_URL=${API_BASE_URL}" >> local.properties
+          echo "APP_MODE=${APP_MODE}" >> local.properties
+
+      - name: Build Android App
+        run: ./gradlew assembleDebug
