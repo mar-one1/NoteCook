@@ -86,8 +86,6 @@ public class add_recipe extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentAddRecipeBinding.inflate(inflater, container, false);
         viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
-        int bnvId = R.id.bottom_nav;
-        BottomNavigationView btnV = getActivity().findViewById(bnvId);
         viewModel.setTagMy(true);
         recipeVM = new RecipeViewModel(getContext(), getActivity(),viewModel);
         userVM = new UserViewModel(getContext(), getActivity(),viewModel);

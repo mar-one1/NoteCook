@@ -74,9 +74,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private static final int REQUEST_CODE = 1000;
 
 
-    private final int STORAGE_PERMISSION_CODE = 23;
     private final int GALLERY_REQUEST_CODE = 24;
-    private final int INTERNET_REQUEST_CODE = 25;
     // Variable used for storing the key in the Android Keystore container
     private ActivityLoginBinding binding;
     private GoogleSignInClient mGoogleSignInClient;
@@ -87,7 +85,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private View view;
     private PasswordHasher passwordHasher = new PasswordHasher();
     private InputValidator inputValidator = new InputValidator();
-    private UserDatasource userDatasource;
     private UserViewModel userVM;
     private AccessViewModel accessVM;
     private Boolean isPosted = false;
@@ -101,9 +98,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
+        viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
         userVM = new UserViewModel(this, this,viewModel);
         accessVM = new AccessViewModel(this, this,viewModel);
-        viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
+
 
         // Check FingerPrint In Device
         try {
@@ -120,7 +118,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 userVM.getUserLocal(s1, "success");
                 binding.etUsername.setText(s1);
                 binding.etPassword.setText("");
-                //binding.etUsername.setEnabled(false);
                 if(checkBiometricSupport()) secoundLogin();
             }
         } catch (Exception e) {
@@ -145,8 +142,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 e.printStackTrace();
             }
         });
-
-        //binding.btnLogin.setOnClickListener(view -> loginclk());
         binding.btnLogin.setOnClickListener(this);
 
 

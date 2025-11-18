@@ -116,9 +116,9 @@ public class Frg_EditProfil extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentFrgEditProfilBinding.inflate(inflater, container, false);
+        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         userVM = new UserViewModel(getContext(), getActivity(),viewModel);
         fragmentActivity = (FragmentActivity) getContext();
-        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
         User user = new User();
         user = viewModel.getUserLogin().getValue().getUser();
         //Log.d("TAG",viewModel.getUserLogin().getValue().getUser().getUser_name().toString());

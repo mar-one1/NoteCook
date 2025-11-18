@@ -26,13 +26,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.notecook.Activity.OnBoarding.OnBoarding_screen;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Category_Recipe;
-import com.example.notecook.Model.Recipe;
-import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -41,16 +38,12 @@ import com.example.notecook.Utils.NetworkChangeReceiver;
 import com.example.notecook.Utils.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.CategoriesViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
-import com.example.notecook.ViewModel.StepViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityMainBinding;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -62,8 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 1000;
     public static String Type_User = "";
-    public static byte[] iconUser = null;
-    private static ArrayList<String> array_image = new ArrayList<>();
     private IntentFilter filtreConectivite = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     private NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
     private FragmentTransaction fragmentTransaction;
@@ -73,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private View view;
     private boolean doubleBackToExitPressedOnce = false;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private SharedRecipeViewModel viewModel;
 
 

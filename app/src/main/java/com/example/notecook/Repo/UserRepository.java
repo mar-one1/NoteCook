@@ -49,10 +49,11 @@ public class UserRepository {
 
     public UserRepository(Context context, Activity appCompatActivity,SharedRecipeViewModel viewModel) {
         this.context = context;
+        this.viewModel = viewModel;
         apiService = ApiClient.getClient().create(ApiService.class);
         userDatasource = new UserDatasource(context);
         this.appCompatActivity = appCompatActivity;
-        this.viewModel = viewModel;
+
     }
 
     public LiveData<User> getUserApi(String username) {

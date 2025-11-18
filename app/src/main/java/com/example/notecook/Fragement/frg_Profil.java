@@ -94,15 +94,13 @@ public class frg_Profil extends Fragment {
         viewPager2 = bindingProfil.vp2Profil;
         tabLayout = bindingProfil.tl;
         b = getActivity().findViewById(R.id.floating_action_button);
-        viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
+        viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
         b.show();
         tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
         tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
         viewPager2.setUserInputEnabled(true);
         recipeVM = new RecipeViewModel(requireContext(), requireActivity(),viewModel);
         userVM = new UserViewModel(requireContext(), requireActivity(),viewModel);
-        recipeVM = new ViewModelProvider(this, recipeVM).get(RecipeViewModel.class);
-        userVM = new ViewModelProvider(this, userVM).get(UserViewModel.class);
         getUserInfo();
 
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));

@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.notecook"
-        minSdk 27
+        minSdk 30
         targetSdk 30
         versionCode 1
         versionName "1.0"
@@ -22,7 +22,7 @@ android {
     buildTypes {
         debug {
             // Example: use local API in debug
-            buildConfigField "String", "BASE_URL", "\"http://192.168.1.30:3000/\""
+            buildConfigField "String", "BASE_URL", "\"http://192.168.1.228:3000/\""
         }
 
         release {
