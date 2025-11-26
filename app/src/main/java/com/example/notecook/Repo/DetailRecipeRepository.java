@@ -9,7 +9,7 @@ import com.example.notecook.Data.DetailRecipeDataSource;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
 import java.io.IOException;
 import java.util.ArrayList;

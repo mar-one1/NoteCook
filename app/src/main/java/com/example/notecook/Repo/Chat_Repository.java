@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Model.ChatMessage;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.Utils.SocketManager;
 
 import java.util.ArrayList;

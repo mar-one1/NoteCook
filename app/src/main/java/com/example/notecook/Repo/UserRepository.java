@@ -3,6 +3,8 @@ package com.example.notecook.Repo;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
+import static com.example.notecook.Utils.Constants.getToken;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,7 +24,7 @@ import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.PasswordHasher;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,7 +61,7 @@ public class UserRepository {
     public LiveData<User> getUserApi(String username) {
         MutableLiveData<User> userLogin = new MutableLiveData<>();
         // Example: Fetch users from the API
-        apiService.getUserByUsername(username).enqueue(new Callback<User>() {
+        apiService.getUserByUsername(viewModel.getToken().getValue(),username).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
@@ -93,7 +95,7 @@ public class UserRepository {
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
         // Enqueue the download request
-        Call<ResponseBody> call = apiService.getImageUSerBytes(username);
+        Call<ResponseBody> call = apiService.getImageUSerBytes(viewModel.getToken().getValue(),username);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -212,7 +214,7 @@ public class UserRepository {
 // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
 // Call the method to upload the file
-        apiService.uploadFile(username, filePart).enqueue(new Callback<ResponseBody>() {
+        apiService.uploadFile(viewModel.getToken().getValue(),username, filePart).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {

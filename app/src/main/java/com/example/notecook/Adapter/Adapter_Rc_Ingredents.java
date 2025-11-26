@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.R;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 

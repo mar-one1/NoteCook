@@ -31,7 +31,7 @@ import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.ImageHelper;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;

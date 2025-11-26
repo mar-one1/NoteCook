@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.notecook.Adapter.Adapter_Rc_Review;
 import com.example.notecook.Model.Review;
-import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgFavBinding;
 
 import java.util.ArrayList;

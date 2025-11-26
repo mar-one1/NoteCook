@@ -21,7 +21,7 @@ import com.example.notecook.Adapter.Adapter_RC_Chat;
 import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.Utils.SocketManager;
 import com.example.notecook.ViewModel.ChatViewModel;
 

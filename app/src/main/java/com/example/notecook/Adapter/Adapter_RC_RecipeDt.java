@@ -3,7 +3,6 @@ package com.example.notecook.Adapter;
 
 import static com.example.notecook.Fragement.MainFragment.flBtn;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
-import static com.example.notecook.Repo.FavoritesRecipeRepository.Insert_Fav;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 
 
@@ -29,9 +28,10 @@ import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
+import com.example.notecook.Repo.FavoritesRecipeRepository;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.FetchNutritionTask;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 
@@ -49,6 +49,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
     private Context context;
     private Activity activity;
     private SharedRecipeViewModel viewModel;
+    private FavoritesRecipeRepository favoritesRecipeRepository;
 
 
     public Adapter_RC_RecipeDt(Context context, Activity activity,SharedRecipeViewModel viewModel, List<Recipe> recipes, String bb) {
@@ -57,6 +58,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         this.context = context;
         this.activity = activity;
         this.viewModel = viewModel;
+        this.favoritesRecipeRepository=new FavoritesRecipeRepository(context,activity,viewModel);
         recipeVM = new RecipeViewModel(context, activity,viewModel);
         userVM = new UserViewModel(context, activity,viewModel);
         notifyDataSetChanged();
@@ -111,7 +113,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
             } else {
                 holder.heat.setImageDrawable(Acceuill_Frg.defaultImagelike);
                 viewModel.getRecipesFavUser().add(recipe);
-                Insert_Fav(viewModel.getUserLogin().getValue().getUser().getId_User(), recipe.getId_recipe(),context);
+                favoritesRecipeRepository.Insert_Fav(viewModel.getUserLogin().getValue().getUser().getId_User(), recipe.getId_recipe());
             }
         });
 

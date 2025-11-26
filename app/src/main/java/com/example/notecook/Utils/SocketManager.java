@@ -5,6 +5,7 @@ import static com.example.notecook.Api.env.BASE_URL;
 import android.util.Log;
 
 import com.example.notecook.Model.ChatMessage;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;

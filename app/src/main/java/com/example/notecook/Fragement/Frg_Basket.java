@@ -9,14 +9,12 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Pay.CheckoutActivity;
-import com.example.notecook.R;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgBasketBinding;
 
   public class Frg_Basket extends Fragment {

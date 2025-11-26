@@ -10,8 +10,7 @@ import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Data.CategoryRecipeDataSource;
 import com.example.notecook.Model.Category_Recipe;
-import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
 import java.util.List;
 

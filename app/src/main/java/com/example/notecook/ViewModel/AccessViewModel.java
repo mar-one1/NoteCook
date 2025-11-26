@@ -8,8 +8,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.notecook.Model.User;
 import com.example.notecook.Repo.AccessRepository;
-import com.example.notecook.Repo.RecipeRepository;
-import com.example.notecook.Utils.SharedRecipeViewModel;
 
 public class AccessViewModel extends ViewModel {
 

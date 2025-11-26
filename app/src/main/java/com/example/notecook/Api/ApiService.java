@@ -98,15 +98,15 @@ public interface ApiService {
     Call<User> getUserById(@Path("id") int userId);
 
     @GET("users/filtre/{username}")
-    Call<User> getUserByUsername(@Path("username") String username);
+    Call<User> getUserByUsername(@Header("Authorization") String token, @Path("username") String username);
 
     @GET("users/image/{username}")
     @Headers("Content-Type: application/octet-stream")
-    Call<ResponseBody> getImageUSerBytes(@Path("username") String username);
+    Call<ResponseBody> getImageUSerBytes(@Header("Authorization") String token, @Path("username") String username);
 
     @Multipart
     @POST("users/upload/{username}")
-    Call<ResponseBody> uploadFile(@Path("username") String username,
+    Call<ResponseBody> uploadFile(@Header("Authorization") String token, @Path("username") String username,
                                   @Part MultipartBody.Part image
     );
 

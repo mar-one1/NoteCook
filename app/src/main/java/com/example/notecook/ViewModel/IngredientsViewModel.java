@@ -3,16 +3,13 @@ package com.example.notecook.ViewModel;
 import android.app.Activity;
 import android.content.Context;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Repo.IngredientsRecipeRepository;
-import com.example.notecook.Utils.SharedRecipeViewModel;
 
-import java.io.Closeable;
 import java.util.List;
 
 public class IngredientsViewModel extends ViewModel implements ViewModelProvider.Factory {

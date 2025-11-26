@@ -9,9 +9,6 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Repo.StepRecipeRepository;
-import com.example.notecook.Repo.UserRepository;
-import com.example.notecook.Utils.ImageHelper;
-import com.example.notecook.Utils.SharedRecipeViewModel;
 
 public class StepViewModel extends ViewModel implements ViewModelProvider.Factory {
     private StepRecipeRepository repository;

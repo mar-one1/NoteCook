@@ -5,7 +5,7 @@ import android.util.Log;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Model.Review;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
 import java.io.IOException;
 import java.util.List;

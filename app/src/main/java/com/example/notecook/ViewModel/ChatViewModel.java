@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.Repo.Chat_Repository;
-import com.example.notecook.Utils.SharedRecipeViewModel;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -21,7 +21,7 @@ import com.example.notecook.Adapter.Adapter_RC_Nutrition;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Nutrition;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeIngredientsBinding;
 

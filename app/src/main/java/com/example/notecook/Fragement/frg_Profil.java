@@ -23,7 +23,7 @@ import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgProfilBinding;

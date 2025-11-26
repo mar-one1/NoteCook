@@ -11,6 +11,8 @@ import android.content.Intent;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
+
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
     private SharedRecipeViewModel viewModel;

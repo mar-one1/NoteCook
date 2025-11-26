@@ -19,7 +19,7 @@ import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.NetworkChangeReceiver;
 
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.AccessViewModel;
 import com.example.notecook.databinding.ActivityLoadingSrcreenBinding;
 
@@ -48,7 +48,6 @@ public class Loading_Srcreen extends AppCompatActivity {
         SharedRecipeViewModel viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
         viewModel.setToken(getToken(this));
         String Token = viewModel.getToken().getValue();
-        Log.e("tag",Token);
         Intent i = new Intent(getBaseContext(), Login.class);
         Intent iM = new Intent(getBaseContext(), MainActivity.class);
         if (Boolean.FALSE.equals(viewModel.getModeOnline().getValue()) && Objects.equals(Token, "")) {

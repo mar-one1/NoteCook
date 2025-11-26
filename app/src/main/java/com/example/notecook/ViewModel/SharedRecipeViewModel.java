@@ -1,4 +1,4 @@
-package com.example.notecook.Utils;
+package com.example.notecook.ViewModel;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Model.User;
 import com.example.notecook.Repo.UserRepository;
-import com.example.notecook.Utils.SharedRecipeViewModel;
 
 
 public class UserViewModel extends ViewModel implements ViewModelProvider.Factory{

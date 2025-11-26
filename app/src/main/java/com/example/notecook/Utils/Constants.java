@@ -48,6 +48,7 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
 import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.StepViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -103,7 +104,6 @@ public class Constants {
 
     public static SweetAlertDialog loadingDialog;
     public static SweetAlertDialog alertDialog;
-    public static List<Step> Steps_CurrentRecipe;
 
     public static void DisplayErrorMessage(final AppCompatActivity _context, String message) {
         alertDialog = new SweetAlertDialog(_context, SweetAlertDialog.WARNING_TYPE);
@@ -423,7 +423,7 @@ public class Constants {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public static void bindingRcV_Ingredients(RecyclerView recyclerView, List<Ingredients> list, Context context,SharedRecipeViewModel viewModel) {
+    public static void bindingRcV_Ingredients(RecyclerView recyclerView, List<Ingredients> list, Context context, SharedRecipeViewModel viewModel) {
         // Create and set adapter for RecyclerView
         Adapter_Rc_Ingredents adapter = new Adapter_Rc_Ingredents(list, context,viewModel);
         recyclerView.setLayoutManager(new GridLayoutManager(context, 1));

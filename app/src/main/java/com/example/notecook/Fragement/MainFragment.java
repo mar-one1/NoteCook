@@ -15,7 +15,7 @@ import com.example.notecook.Adapter.AdapterFragment;
 import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.databinding.FragmentMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

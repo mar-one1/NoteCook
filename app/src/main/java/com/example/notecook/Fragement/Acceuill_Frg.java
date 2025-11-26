@@ -29,7 +29,7 @@ import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.IngredientsViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.databinding.FragmentAcceuillFrgBinding;

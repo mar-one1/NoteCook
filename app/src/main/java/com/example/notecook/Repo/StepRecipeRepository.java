@@ -14,7 +14,7 @@ import com.example.notecook.Api.ApiService;
 import com.example.notecook.Data.RecipeDatasource;
 import com.example.notecook.Data.StepsDataSource;
 import com.example.notecook.Model.Step;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
 import java.io.File;
 import java.io.FileOutputStream;

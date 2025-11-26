@@ -44,7 +44,7 @@ import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.PasswordHasher;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.AccessViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityLoginBinding;

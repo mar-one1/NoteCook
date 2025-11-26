@@ -22,7 +22,7 @@ import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeProfilBinding;

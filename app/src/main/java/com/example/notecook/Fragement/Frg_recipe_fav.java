@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Model.Recipe;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgRecipeFavBinding;
 
 import java.util.List;

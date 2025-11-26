@@ -26,7 +26,7 @@ import com.example.notecook.Adapter.Adapter_Vp2_recipeProfil;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.ImageHelper;
-import com.example.notecook.Utils.SharedRecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.databinding.FragmentFrgDetailRecipeBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
