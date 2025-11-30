@@ -47,6 +47,9 @@ public interface ApiService {
     @POST("auth/login")
     Call<LoginResponse> authentication(@Body LoginResponse loginResponse);
 
+    @POST("/auth/change-password")
+    Call<LoginResponse> changePassword(@Body Map<String, String> body);
+
     @GET("users")
     Call<List<User>> getData(@Header("Authorization") String token);
 

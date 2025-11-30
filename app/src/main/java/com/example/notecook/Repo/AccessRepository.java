@@ -24,19 +24,22 @@ import com.example.notecook.Api.ApiService;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.LoginResponse;
 import com.example.notecook.Dto.TokenResponse;
+import com.example.notecook.Activity.activity_force_change_password;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.PasswordHasher;
 import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AccessRepository {
-    private Context context;
+    private final Context context;
     private ApiService apiService;
     private PasswordHasher passwordHasher;
     private UserDatasource userDatasource;
@@ -54,7 +57,6 @@ public class AccessRepository {
     // TODO make insert user local in methode
     public LiveData<String> connectionApi(String username, String password) {
         MutableLiveData<String> TokenMutableLiveData = new MutableLiveData<>();
-        // Example: Fetch users from the API
 
         LoginResponse login = new LoginResponse();
         login.setUsername(username);
@@ -66,51 +68,75 @@ public class AccessRepository {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
-                    LoginResponse loginResponse = response.body();
-                    if (loginResponse != null) {
-                        String token = loginResponse.getToken();
-                        TokenMutableLiveData.setValue(token);
-                        // Store the token securely (e.g., in SharedPreferences) for later use
-                        viewModel.setTagConnexion(response.code());
-                        viewModel.setTagConnexionMessage(response.message());
 
-                        Log.d("TAG", viewModel.getTagConnexionMessage().getValue());
-                        try {
-                            User user = new User();
-                            user.setUsername(username);
-                            passwordHasher = new PasswordHasher();
-                            String passwordHacher = passwordHasher.hashPassword(password);
-                            user.setPassWord(passwordHacher);
-                            viewModel.getUserLogin().getValue().setUser(user);
-                            if (!userDatasource.isRecordExist(TABLE_USER, COLUMN_USERNAME, username)) {
-                                userDatasource.insertUser(user);
-                                Log.e("tag", user.getUsername());
-                            }
-                            saveToken(token, context);
-                            viewModel.setToken(token);
-                            saveUserInput(username, password, context);
-                            Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "message", activity);
-                        } catch (Exception e) {
-                            Log.e("tag", e.toString());
-                        }
-                        Intent i = new Intent(context, MainActivity.class);
-                        activity.startActivity(i);
+                    LoginResponse loginResponse = response.body();
+
+                    if (loginResponse == null) {
+                        ErrorHandler.handleErrorResponse(response, activity);
+                        return;
                     }
+
+                    // 1️⃣ Check MUST CHANGE PASSWORD
+                    if ("PASSWORD_CHANGE_REQUIRED".equals(loginResponse.getStatus())) {
+                        int userId = loginResponse.getUser_id();
+
+                        Intent intent = new Intent(activity, activity_force_change_password.class);
+                        intent.putExtra("USER_ID", userId);
+                        intent.putExtra("USERNAME", username);
+                        activity.startActivity(intent);
+                        return; // STOP normal login
+                    }
+
+                    // 2️⃣ NORMAL LOGIN
+                    String token = loginResponse.getToken();
+                    TokenMutableLiveData.setValue(token);
+
+                    viewModel.setTagConnexion(response.code());
+                    viewModel.setTagConnexionMessage(response.message());
+
+                    try {
+                        User user = new User();
+                        user.setUsername(username);
+
+                        passwordHasher = new PasswordHasher();
+                        String passwordHacher = passwordHasher.hashPassword(password);
+                        user.setPassWord(passwordHacher);
+
+                        viewModel.getUserLogin().getValue().setUser(user);
+
+                        if (!userDatasource.isRecordExist(TABLE_USER, COLUMN_USERNAME, username)) {
+                            userDatasource.insertUser(user);
+                        }
+
+                        saveToken(token, context);
+                        viewModel.setToken(token);
+
+                        saveUserInput(username, password, context);
+
+                        Constants.AffichageMessage(TAG_CHARGEMENT_VALIDE, "message", activity);
+
+                    } catch (Exception e) {
+                        Log.e("tag", e.toString());
+                    }
+
+                    Intent i = new Intent(context, MainActivity.class);
+                    activity.startActivity(i);
+
                 } else {
-                    // TODO make handle response error and failure
                     ErrorHandler.handleErrorResponse(response, activity);
                 }
             }
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
-
                 viewModel.setTagConnexionMessage(call.toString());
-                ErrorHandler.handleNetworkFailure(t, activity,call);
+                ErrorHandler.handleNetworkFailure(t, activity, call);
             }
         });
+
         return TokenMutableLiveData;
     }
+
 
     public LiveData<User> ConnectLocal(String username, String password) {
         MutableLiveData<User> s = new MutableLiveData<>();
@@ -165,6 +191,43 @@ public class AccessRepository {
 
         return mutableLiveDataToken;
     }
+
+        public LiveData<String> changePassword(long userId, String etOldPassword, String etNewPassword) {
+            MutableLiveData<String> s = new MutableLiveData<>();
+            Map<String, String> body = new HashMap<>();
+            body.put("user_id", String.valueOf(userId));
+            body.put("old_password", etOldPassword);
+            body.put("new_password", etNewPassword);
+
+            Call<LoginResponse> call = apiService.changePassword(body);
+            call.enqueue(new Callback<LoginResponse>() {
+                @Override
+                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
+
+                    if (!response.isSuccessful() || response.body() == null) {
+                        Toast.makeText(context, "Server error", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    LoginResponse api = response.body();
+
+                    if ("SUCCESS".equals(api.getStatus())) {
+                        Toast.makeText(context, "Password updated. Please login.", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(context,
+                                api.getStatus() == null ? "Failed" : api.getStatus(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<LoginResponse> call, Throwable t) {
+                    Toast.makeText(context, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+            return s;
+        }
+
 
     private void handleSuccessfulResponse(Response<TokenResponse> response, MutableLiveData<String> mutableLiveDataToken, Intent iM) {
         TokenResponse tokenResponse = response.body();

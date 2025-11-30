@@ -63,7 +63,11 @@
             android:configChanges="orientation|screenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
-
+        <activity
+            android:name=".Activity.activity_force_change_password"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <receiver
             android:name=".Utils.NetworkChangeReceiver"
             android:exported="true">

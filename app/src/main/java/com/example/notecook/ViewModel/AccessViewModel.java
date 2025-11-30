@@ -30,5 +30,9 @@ public class AccessViewModel extends ViewModel {
         return repository.ConnectLocal(username,password);
     }
 
+    public LiveData<String> mustChangePassword(long userId,String OldPassword,String NewPassword) {
+        return repository.changePassword(userId,OldPassword,NewPassword);
+    }
+
 
 }

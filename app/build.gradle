@@ -22,7 +22,7 @@ android {
     buildTypes {
         debug {
             // Example: use local API in debug
-            buildConfigField "String", "BASE_URL", "\"http://192.168.0.119:3000/\""
+            buildConfigField "String", "BASE_URL", "\"http://192.168.0.113:3000/\""
         }
 
         release {
