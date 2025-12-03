@@ -35,7 +35,6 @@ public class User {
     public User(String user_name, String user_lastname, String birthday,
                 String email, byte[] icon, String phonenumber, String passWord,
                 String status, String grade) {
-
         firstname = user_name;
         lastname = user_lastname;
         Birthday = birthday;

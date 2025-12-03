@@ -115,5 +115,27 @@ public class InputValidator {
         return true;
     }
 
+    public boolean isValidChangePassWord(EditText etOldPassword, EditText etNewPassword, EditText etConfirmNewPassword)
+    {
+        String oldPassword = etOldPassword.getText().toString().trim();
+        String newPassword = etNewPassword.getText().toString().trim();
+        String confirmNewPassword = etConfirmNewPassword.getText().toString().trim();
+
+        if (oldPassword.isEmpty()) {
+            etOldPassword.setError("Required");
+            return false;
+        }
+        if (newPassword.isEmpty()) {
+            etNewPassword.setError("Min 8 chars");
+            return false;
+        }
+        if (confirmNewPassword.isEmpty()) {
+            etConfirmNewPassword.setError("Doesn't match");
+            return false;
+        }
+        return true;
+    }
+
+
 
 }
