@@ -70,6 +70,7 @@ public class UserRepository {
                         //UserResponse.setId_User(user_login.getUser().getId_User());
                         //userLogin.setValue(UserResponse);
                         viewModel.getUserLogin().getValue().setUser(UserResponse);
+                        userDatasource.UpdateUserByUsername(UserResponse,username);
                         userLogin.setValue(getLocalUserLogin(username, "success").getValue());
                         Log.e("tag","image url"+viewModel.getUserLogin().getValue().getUser().getPathimageuser());
                         //getImageUserUrl(user_login.getUser().getUsername(), "user_login", context);
