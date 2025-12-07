@@ -165,7 +165,7 @@ public class Frg_EditProfil extends Fragment {
             Vp2.setCurrentItem(4, false);
         });
 
-        binding.editIconProfil.setOnClickListener(view -> captureImage(view, Frg_EditProfil.this));
+        binding.editIconProfil.setOnClickListener(view -> captureImage(view.getContext(), Frg_EditProfil.this));
 
         binding.logOut.setOnClickListener(view -> {
             SweetAlertDialog ppDialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.SUCCESS_TYPE);

@@ -118,11 +118,10 @@ public class MainActivity extends AppCompatActivity {
         String tag = "";
         if (getIntent().getExtras() != null) {
             tag = getIntent().getStringExtra("TAG");
-            if (Objects.equals(tag, TAG_MODE_INVITE))
                 Type_User = tag;
         }
         // get Recipe From Api
-        if (!Type_User.equals(TAG_MODE_INVITE)) {
+        if (Type_User!=null && !Type_User.equals(TAG_MODE_INVITE)) {
             getUserInfo();
             categoryVM.getCategories().observe(this, new Observer<List<Category_Recipe>>() {
                 @Override
@@ -133,11 +132,17 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fl_main, new MainFragment());
+            fragmentTransaction.commit();
+
+        }else if(getToken(this).isEmpty()) {
+            Intent intent = new Intent(this,Login.class);
+            startActivity(intent);
+            return;
         }
 
-        fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fl_main, new MainFragment());
-        fragmentTransaction.commit();
+
 
         setContentView(view);
     }

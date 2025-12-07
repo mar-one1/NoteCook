@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,11 +39,13 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Data.UserDatasource;
+import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.InputValidator;
+import com.example.notecook.Utils.NotificationUtils;
 import com.example.notecook.Utils.PasswordHasher;
 import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.AccessViewModel;
@@ -65,14 +68,9 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
-    // Nom Complexe  3 groupe
-    public static final String NOM_REGEX_3 = "^[^ ]([A-Z]*) ?[^ ]([A-Z]*)? ?[^ ]([A-Z]*)?$|^[^ ]([A-Z]*)$";
-    public static final String NOM_REGEX_2 = "^[^ ]([A-Z]*) ?[^ ]([A-Z]*)?$|^[^ ]([A-Z]*)$";
-    public static final String PRENOM_REGEX = "^[^ ]([A-Z]{1,}) ?([A-Z]{1,})?$";
     private final static int RC_SIGN_IN = 9001;
     private static final int CAMERA_REQUEST = 1888;
     private static final int REQUEST_CODE = 1000;
-
 
     private final int GALLERY_REQUEST_CODE = 24;
     // Variable used for storing the key in the Android Keystore container
@@ -130,7 +128,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
         binding.SignUp.setOnClickListener(view -> {
-            addNotification();
+            //addNotification(this);
+            NotificationUtils.showNotification(this,Login.class,"register with success","",1);
             binding.layoutLoginCheck.setVisibility(View.GONE);
             binding.layoutRegistre.setVisibility(View.VISIBLE);
         });
@@ -156,7 +155,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             binding.layoutRegistre.setVisibility(View.GONE);
         });
 
-        binding.editIconProfil.setOnClickListener(v -> captureImage(view,this ));
+        binding.editIconProfil.setOnClickListener(v -> captureImage(this,this ));
 
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -397,38 +396,50 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         viewModel.setTagConnexion(-1);
     }
 
-    private void addNotification() {
+    private void addNotification(Context context) {
+
+        String CHANNEL_ID = "my_channel_01";
         int NOTIFICATION_ID = 234;
-        NotificationManager notificationManager = (NotificationManager) getSystemService(getBaseContext().NOTIFICATION_SERVICE);
-        String CHANNEL_ID = "";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            CHANNEL_ID = "my_channel_01";
-            CharSequence name = "my_channel";
-            String Description = "This is my channel";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-            mChannel.setDescription(Description);
-            mChannel.enableLights(true);
-            mChannel.setLightColor(Color.RED);
-            mChannel.enableVibration(true);
-            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-            mChannel.setShowBadge(false);
-            notificationManager.createNotificationChannel(mChannel);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // --- Create Channel for Android O+ ---
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "My Channel",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Test Channel");
+            notificationManager.createNotificationChannel(channel);
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_icon_app)
-                .setContentTitle(getTitle())
-                .setContentText("toast notif");
+        // 👉 Intent WHEN CLICK NOTIFICATION
+        Intent intent = new Intent(this, Login.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        Intent resultIntent = new Intent(getBaseContext(), Login.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getBaseContext());
-        stackBuilder.addParentStack(Login.class);
-        stackBuilder.addNextIntent(resultIntent);
-        // PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        //builder.setContentIntent(resultPendingIntent);
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                );
+
+        // --- Build Notification ---
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_icon_app)
+                        .setContentTitle("My App")
+                        .setContentText("toast notif")
+                        .setAutoCancel(true)       // remove notification when clicked
+                        .setContentIntent(pendingIntent); // ← SUPER IMPORTANT ❗
+
         notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
+
+
 
 
     public void loginclk() {

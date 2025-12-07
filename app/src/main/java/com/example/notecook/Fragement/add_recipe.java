@@ -95,14 +95,14 @@ public class add_recipe extends Fragment {
             @Override
             public void onClick(View v) {
                 currentTargetImageView = binding.addIconRecipe;
-                captureImage(v, add_recipe.this);
+                captureImage(v.getContext(), add_recipe.this);
             }
         });
         binding.addIconStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 currentTargetImageView = binding.addIconStep;
-                captureImage(v, add_recipe.this);
+                captureImage(v.getContext(), add_recipe.this);
             }
         });
 

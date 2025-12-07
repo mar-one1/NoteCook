@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -120,6 +122,7 @@ public class AccessRepository {
                     }
 
                     Intent i = new Intent(context, MainActivity.class);
+                    i.putExtra("TAG","user");
                     activity.startActivity(i);
 
                 } else {
@@ -199,30 +202,20 @@ public class AccessRepository {
             body.put("old_password", etOldPassword);
             body.put("new_password", etNewPassword);
 
-            Call<LoginResponse> call = apiService.changePassword(body);
-            call.enqueue(new Callback<LoginResponse>() {
+            Call<ResponseBody> call = apiService.changePassword(body);
+            call.enqueue(new Callback<ResponseBody>() {
                 @Override
-                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-
-                    if (!response.isSuccessful() || response.body() == null) {
-                        Toast.makeText(context, "Server error", Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    LoginResponse api = response.body();
-
-                    if ("SUCCESS".equals(api.getStatus())) {
-                        Toast.makeText(context, "Password updated. Please login.", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(context,
-                                api.getStatus() == null ? "Failed" : api.getStatus(),
-                                Toast.LENGTH_LONG).show();
-                    }
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        s.setValue(response.message());
+                    }else
+                        ErrorHandler.handleErrorResponse(response, activity);
                 }
 
                 @Override
-                public void onFailure(Call<LoginResponse> call, Throwable t) {
-                    Toast.makeText(context, "Network error: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    viewModel.setTagConnexionMessage(call.toString());
+                    ErrorHandler.handleNetworkFailure(t, activity, call);
                 }
             });
             return s;

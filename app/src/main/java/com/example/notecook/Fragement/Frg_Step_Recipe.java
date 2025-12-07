@@ -4,6 +4,8 @@ import static com.example.notecook.Api.env.BASE_URL;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -26,9 +28,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Activity.Login;
+import com.example.notecook.Activity.MainActivity;
+import com.example.notecook.Model.Detail_Recipe;
 import com.example.notecook.Model.Step;
 import com.example.notecook.R;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.Utils.NotificationUtils;
 import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.Utils.SimpleService;
 import com.example.notecook.databinding.FragmentFrgStepRecipeBinding;
@@ -143,35 +148,46 @@ public class Frg_Step_Recipe extends Fragment {
             step_switcher(0);
     }
 
-    public void addNotification(String s, String chan) {
-        int NOTIFICATION_ID = 234;
-        @SuppressWarnings("AccessStaticViaInstance") NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(getContext().NOTIFICATION_SERVICE);
-        String CHANNEL_ID = "";
-        CHANNEL_ID = "my_channel_01";
-        CharSequence name = "my_channel";
-        String Description = "This is my channel";
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-        mChannel.setDescription(Description);
-        mChannel.enableLights(true);
-        mChannel.setLightColor(Color.RED);
-        mChannel.enableVibration(true);
-        mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
-        mChannel.setShowBadge(false);
-        notificationManager.createNotificationChannel(mChannel);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_icon_app)
-                .setContentTitle("")
-                .setContentText(s + " " + chan);
+    public void addNotification(String s, String chan,Context context) {
 
-        Intent resultIntent = new Intent(getContext(), Login.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext());
-        stackBuilder.addParentStack(Login.class);
-        stackBuilder.addNextIntent(resultIntent);
-        // PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        //builder.setContentIntent(resultPendingIntent);
+        String CHANNEL_ID = "my_channel_01";
+        int NOTIFICATION_ID = 234;
+
+        NotificationManager notificationManager =
+                (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // ---- Create Channel
+        NotificationChannel mChannel = new NotificationChannel(
+                CHANNEL_ID,
+                "my_channel",
+                NotificationManager.IMPORTANCE_HIGH
+        );
+        mChannel.setDescription("This is my channel");
+        notificationManager.createNotificationChannel(mChannel);
+
+        // ---- Intent when click notification
+        Intent intent = new Intent(requireContext(), Detail_Recipe.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                requireContext(),
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        // ---- Build notification
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+                        .setSmallIcon(R.mipmap.ic_icon_app)
+                        .setContentTitle("Notification")
+                        .setContentText(s + " " + chan)
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent);  // ← IMPORTANT !
+
         notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
+
 
     private void step_switcher(int position) {
         int time = steps.get(position).getTime_step();
@@ -217,7 +233,8 @@ public class Frg_Step_Recipe extends Fragment {
 
         @Override
         public void onFinish() {
-            addNotification("Time Finished", viewModel.getCurrentRecipe().getValue().getNom_recipe());
+            //addNotification("Time Finished", viewModel.getCurrentRecipe().getValue().getNom_recipe());-\
+            NotificationUtils.showNotification(requireContext(), MainActivity.class,"Time Finished",viewModel.getCurrentRecipe().getValue().getNom_recipe(),1);
             Toast.makeText(getContext(), "Time Finished", Toast.LENGTH_SHORT).show();
             binding.lyPicker.setVisibility(View.VISIBLE);
             binding.lyTimer.setVisibility(View.GONE);

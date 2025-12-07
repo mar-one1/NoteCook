@@ -48,13 +48,15 @@ public class MainFragment extends Fragment  {
         flBtn.show();
 
         flBtn.setOnClickListener(v -> {
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.ly_vp_con,new add_recipe());
-                fragmentTransaction.commitNow();
+                if(!MainActivity.Type_User.equals(Constants.TAG_MODE_INVITE)) {
+                    FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.ly_vp_con, new add_recipe());
+                    fragmentTransaction.commitNow();
 
-                //viewPager2.setCurrentItem(1,false);
-                flBtn.setImageDrawable(getActivity().getDrawable(R.drawable.ic_playlist_add_check_black_24dp));
-                flBtn.hide();
+                    //viewPager2.setCurrentItem(1,false);
+                    flBtn.setImageDrawable(getActivity().getDrawable(R.drawable.ic_playlist_add_check_black_24dp));
+                    flBtn.hide();
+                }else Constants.showSnackPar(this.getView(),"Veuillez Connecter !!");
         });
 
         setViewPagerAdapter();

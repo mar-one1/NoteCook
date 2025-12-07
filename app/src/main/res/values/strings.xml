@@ -42,7 +42,19 @@
     <string name="googlepay_status_unavailable" translatable="false">Unfortunately, Google Pay is
         not available on this phone.
     </string>
-    <string name="payments_show_name" translatable="false">Successfully received payment data for
-        %s!
+    <string name="payments_show_name" translatable="false">Successfully received payment data for %s!
     </string>
+        <!-- TAGS -->
+        <string name="tag_erreur_system">Erreur système</string>
+        <string name="tag_chargement_valide">chargement_Valide</string>
+        <string name="tag_pas_resultat">palertDialogeResultat</string>
+        <string name="tag_token_expire">tokenExpire</string>
+        <string name="tag_online">online</string>
+        <string name="tag_authentification_echoue">authentification_Echoue</string>
+        <string name="tag_offline">Offline</string>
+        <string name="tag_not_found">404 Not Found</string>
+        <string name="tag_remote">Remote</string>
+        <string name="tag_local">Local</string>
+        <string name="tag_mode_invite">Mode Invite</string>
+
 </resources>

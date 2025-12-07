@@ -5,7 +5,6 @@ import static android.content.Context.MODE_PRIVATE;
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
-import static org.chromium.base.ThreadUtils.runOnUiThread;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -33,7 +32,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCaller;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -72,8 +73,12 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Constants {
 
+    // Nom Complexe  3 groupe
+    public  final String NOM_REGEX_3 = "^[^ ]([A-Z]*) ?[^ ]([A-Z]*)? ?[^ ]([A-Z]*)?$|^[^ ]([A-Z]*)$";
+    public  final String NOM_REGEX_2 = "^[^ ]([A-Z]*) ?[^ ]([A-Z]*)?$|^[^ ]([A-Z]*)$";
+    public  final String PRENOM_REGEX = "^[^ ]([A-Z]{1,}) ?([A-Z]{1,})?$";
     // String tags
-    public static final String TAG_ERREUR_SYSTEM = "erreur_Systeme";
+    public static final String TAG_ERREUR_SYSTEM = "Erreur système";
     public static final String TAG_CHARGEMENT_VALIDE = "chargement_Valide";
     public static final String TAG_PAS_RESULTAT = "palertDialogeResultat";
     public static final String TAG_TOKEN_EXPIRE = "tokenExpire";
@@ -206,67 +211,79 @@ public class Constants {
         //pDialog.cancel();
     }
 
-    public static void captureImage(View view, Fragment fragmentActivity) {
+    public static void captureImage(Context context, ActivityResultCaller caller) {
+
         final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-        builder.setTitle("Add Photo!");
-        builder.setItems(options, (dialog, item) -> {
 
-            if (options[item].equals("Take Photo")) {
-                if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    fragmentActivity.requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-                } else {
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    fragmentActivity.startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                }
+        new AlertDialog.Builder(context)
+                .setTitle("Add Photo!")
+                .setItems(options, (dialog, item) -> {
 
-            } else if (options[item].equals("Choose from Gallery")) {
-                if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    fragmentActivity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    fragmentActivity.startActivityForResult(intent, GALLERY_REQUEST_CODE);
-                }
+                    switch (item) {
 
-            } else if (options[item].equals("Cancel")) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
+                        case 0: // Take Photo
+                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                                    != PackageManager.PERMISSION_GRANTED) {
+
+                                if (caller instanceof Activity) {
+                                    ActivityCompat.requestPermissions(
+                                            (Activity) caller,
+                                            new String[]{Manifest.permission.CAMERA},
+                                            CAMERA_REQUEST
+                                    );
+                                } else if (caller instanceof Fragment) {
+                                    ((Fragment) caller).requestPermissions(
+                                            new String[]{Manifest.permission.CAMERA},
+                                            CAMERA_REQUEST
+                                    );
+                                }
+
+                            } else {
+                                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                if (caller instanceof Activity) {
+                                    ((Activity) caller).startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                                } else {
+                                    ((Fragment) caller).startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                                }
+                            }
+                            break;
+
+                        case 1: // Choose from Gallery
+                            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    != PackageManager.PERMISSION_GRANTED) {
+
+                                if (caller instanceof Activity) {
+                                    ActivityCompat.requestPermissions(
+                                            (Activity) caller,
+                                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                            STORAGE_PERMISSION_CODE
+                                    );
+                                } else if (caller instanceof Fragment) {
+                                    ((Fragment) caller).requestPermissions(
+                                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                            STORAGE_PERMISSION_CODE
+                                    );
+                                }
+
+                            } else {
+                                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                if (caller instanceof Activity) {
+                                    ((Activity) caller).startActivityForResult(intent, GALLERY_REQUEST_CODE);
+                                } else {
+                                    ((Fragment) caller).startActivityForResult(intent, GALLERY_REQUEST_CODE);
+                                }
+                            }
+                            break;
+
+                        case 2: // Cancel
+                            dialog.dismiss();
+                            break;
+                    }
+
+                })
+                .show();
     }
 
-    public static void captureImage(View view, Activity fragmentActivity) {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-        builder.setTitle("Add Photo!");
-        builder.setItems(options, (dialog, item) -> {
-
-            if (options[item].equals("Take Photo")) {
-                if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    fragmentActivity.requestPermissions(new String[]{Manifest.permission.CAMERA}, CAMERA_REQUEST);
-                } else {
-                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    fragmentActivity.startActivityForResult(cameraIntent, CAMERA_REQUEST);
-                }
-
-            } else if (options[item].equals("Choose from Gallery")) {
-                if (ContextCompat.checkSelfPermission(view.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    fragmentActivity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
-                } else {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    fragmentActivity.startActivityForResult(intent, GALLERY_REQUEST_CODE);
-                }
-
-            } else if (options[item].equals("Cancel")) {
-                dialog.dismiss();
-            }
-        });
-        builder.show();
-    }
 
 
     public static void AffichageMessage(String _tag, String title, final Activity _context) {
