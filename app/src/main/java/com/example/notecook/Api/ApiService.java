@@ -49,7 +49,7 @@ public interface ApiService {
 
     @Headers("Content-Type: application/json")
     @POST("auth/change-password")
-    Call<ResponseBody> changePassword(@Body Map<String, String> body);
+    Call<LoginResponse> changePassword(@Body Map<String, String> body);
 
     @GET("users")
     Call<List<User>> getData(@Header("Authorization") String token);

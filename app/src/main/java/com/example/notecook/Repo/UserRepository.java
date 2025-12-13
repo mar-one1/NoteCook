@@ -74,7 +74,6 @@ public class UserRepository {
                         userLogin.setValue(getLocalUserLogin(username, "success").getValue());
                         Log.e("tag","image url"+viewModel.getUserLogin().getValue().getUser().getPathimageuser());
                         //getImageUserUrl(user_login.getUser().getUsername(), "user_login", context);
-                        Toast.makeText(context, viewModel.getTagConnexionMessage()  + " " + "get user from Api", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     ErrorHandler.handleErrorResponse(response, appCompatActivity);

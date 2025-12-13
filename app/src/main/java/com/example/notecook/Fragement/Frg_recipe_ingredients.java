@@ -51,31 +51,6 @@ public class Frg_recipe_ingredients extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Toast.makeText(getContext(), "onCreate", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Toast.makeText(getContext(), "onPause Frg_ingredient", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Toast.makeText(getContext(), "onStart Frg_ingredient", Toast.LENGTH_SHORT).show();
-        //bindingRcV_Ingredients(mRecyclerView);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Toast.makeText(getContext(), "onResume Frg_ingredient", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment

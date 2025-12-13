@@ -146,7 +146,6 @@ public class AccessRepository {
         User user = userDatasource.select_User_BYUsername(username);
         passwordHasher = new PasswordHasher();
         if (user != null)
-            //Toast.makeText(getBaseContext(), "user : " + item.getUser_name() + " pass : " + item.getPassWord(), Toast.LENGTH_SHORT).show();
             if (passwordHasher.verifyPassword(password, user.getPassWord())) {
                 saveUserInput(username, password, context);
                 viewModel.setTagConnexionLocal("success");
@@ -202,18 +201,19 @@ public class AccessRepository {
             body.put("old_password", etOldPassword);
             body.put("new_password", etNewPassword);
 
-            Call<ResponseBody> call = apiService.changePassword(body);
-            call.enqueue(new Callback<ResponseBody>() {
+            Call<LoginResponse> call = apiService.changePassword(body);
+            call.enqueue(new Callback<LoginResponse>() {
                 @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                     if (response.isSuccessful()) {
-                        s.setValue(response.message());
+                        LoginResponse loginResponse = response.body();
+                        s.setValue(loginResponse != null ? loginResponse.getMessage() : "changed");
                     }else
                         ErrorHandler.handleErrorResponse(response, activity);
                 }
 
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                public void onFailure(Call<LoginResponse> call, Throwable t) {
                     viewModel.setTagConnexionMessage(call.toString());
                     ErrorHandler.handleNetworkFailure(t, activity, call);
                 }

@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.R;
+import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.ViewModel.AccessViewModel;
 import com.example.notecook.ViewModel.SharedRecipeViewModel;
@@ -65,6 +66,7 @@ public class activity_force_change_password extends AppCompatActivity {
                     if(!s.isEmpty()) {
                         Intent intent = new Intent(getBaseContext(), Login.class);
                         startActivity(intent);
+                        Constants.showSnackPar(view,s);
                         progressBar.setVisibility(View.GONE);
                     }else {
                         progressBar.setVisibility(View.GONE);
