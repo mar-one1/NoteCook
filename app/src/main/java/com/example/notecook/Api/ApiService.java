@@ -128,13 +128,17 @@ public interface ApiService {
     @GET
     Call<ResponseBody> downloadImage(@Url String fileUrl);
 
-    @POST("users")
+    @POST("auth/register")
         //@Headers("Content-Type: application/json")
     Call<User> createUser(@Body User user);
 
+    @POST("users")
+        @Headers("Content-Type: application/json")
+    Call<User> createUser(@Body User user,@Header("Authorization") String token);
+
     @PUT("users/{id}")
     @Headers("Content-Type: application/json")
-    Call<User> updateUser(@Path("id") int id, @Body User user);
+    Call<User> updateUser(@Path("id") int id, @Body User user,@Header("Authorization") String token);
 
     @PUT("users/filtre/{username}")
     @Headers("Content-Type: application/json")

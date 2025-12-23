@@ -9,15 +9,13 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Model.User;
 import com.example.notecook.Repo.AccessRepository;
-import com.example.notecook.Repo.CategorieRepository;
-import com.example.notecook.Repo.UserRepository;
 
 public class AccessViewModel extends ViewModel implements ViewModelProvider.Factory {
 
-    private Context context;
-    private Activity appCompatActivity;
-    private AccessRepository repository;
-    private SharedRecipeViewModel viewModel;
+    private  Context context;
+    private  Activity appCompatActivity;
+    private final AccessRepository repository;
+    private final SharedRecipeViewModel viewModel;
 
     public AccessViewModel(Context context, Activity activity,SharedRecipeViewModel viewModel) {
         this.context =context;
@@ -48,6 +46,4 @@ public class AccessViewModel extends ViewModel implements ViewModelProvider.Fact
     public LiveData<String> mustChangePassword(int userId,String OldPassword,String NewPassword) {
         return repository.changePassword(userId,OldPassword,NewPassword);
     }
-
-
 }

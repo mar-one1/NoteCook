@@ -3,7 +3,6 @@ package com.example.notecook.Repo;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
 import static com.example.notecook.Utils.Constants.TAG_LOCAL;
-import static com.example.notecook.Utils.Constants.getToken;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,8 +16,8 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Data.UserDatasource;
+import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.Constants;
@@ -346,7 +345,7 @@ public class UserRepository {
         MutableLiveData<String> pathImageUser = new MutableLiveData<>();
 
         String jsonInputString = "{\"url\": \"" + path + "\"}";
-// Create a RequestBody from the string
+        // Create a RequestBody from the string
         RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), jsonInputString);
 
         // Call the method to upload the file

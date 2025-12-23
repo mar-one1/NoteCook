@@ -11,15 +11,6 @@ public class LoginResponse {
     private String password;
     @SerializedName("force_password_change")
     private Boolean mustChangePassword;
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
-    }
-
     @SerializedName("status")
     private String status;   // PASSWORD_CHANGE_REQUIRED or null
     @SerializedName("user_id")
@@ -73,6 +64,9 @@ public class LoginResponse {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
     public int getUser_id() {
         return user_id;
     }
