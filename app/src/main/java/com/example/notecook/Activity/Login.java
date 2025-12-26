@@ -63,6 +63,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.UUID;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -514,17 +515,17 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 String password = passwordHasher.hashPassword(acct.getId().toString());
                 User Newuser = new User(username, acct.getFamilyName(), acct.getGivenName(), "00/00/0000", acct.getEmail(),
                         null, "000000000000", password, "active", "good");
-
                 userVM.postUser(Newuser, jsonInputString, null, "google").observe(this, new Observer<User>() {
                     @Override
                     public void onChanged(User user) {
                         Constants.AffichageMessage("Registre Success", "", Login.this);
                     }
                 });
+                String uniqueKey = UUID.randomUUID().toString();
                 if (!dataSourceUser.isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !dataSourceUser.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
                     User userInsered = dataSourceUser.createUserlogin(null, username, acct.getGivenName(),
                             acct.getFamilyName(), "00/00/0000", acct.getEmail(),
-                            "0", password, "Chef ", "active");
+                            "0", password, "Chef ", "active",uniqueKey);
                     if (userInsered.equals(Newuser)) isPosted = true;
 
                     Constants.AffichageMessage("Vous avez Register avec succes Localy", "", Login.this);

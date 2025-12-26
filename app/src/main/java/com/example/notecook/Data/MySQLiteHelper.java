@@ -27,7 +27,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
             + " integer primary key autoincrement, " + COLUMN_USERNAME + " text, " + COLUMN_FIRSTNAME_USER + " text, " + COLUMN_LASTNAME_USER + " text, "
             + COLUMN_ICON + " BLOB, " + COLUMN_ICON_PATH + " text, " + COLUMN_PASSWORD + " text, "
             + COLUMN_BIRTHDAY_USER + " text, " + COLUMN_PHONENUMBER_USER + " text, " + COLUMN_EMAIL_USER + " integer ,"
-            + COLUMN_STATUS + " text, " + COLUMN_GRADE + " text );";
+            + COLUMN_STATUS + " text, " + COLUMN_GRADE + " text," + COLUMN_UNIQUE_KEY_USER + " text )";
 
     /*
      * Commande sql pour la création de la table RECIPE
@@ -266,6 +266,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
 //        sqLiteDatabase.execSQL(InsertDataListIngredient);
 //        sqLiteDatabase.execSQL(InsertDataStep);
 //        sqLiteDatabase.execSQL(InsertDataReview);
+
+        sqLiteDatabase.execSQL(
+                "CREATE UNIQUE INDEX idx_user_username " +
+                        "ON " + TABLE_USER + " (" + COLUMN_USERNAME + ");"
+        );
+        // إنشاء index فـ العمود الجديد باش يكون unique
+        sqLiteDatabase.execSQL("CREATE UNIQUE INDEX idx_unique_key_user ON " + TABLE_USER + " (unique_key_user);");
     }
 
     @Override

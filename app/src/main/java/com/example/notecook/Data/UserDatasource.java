@@ -24,7 +24,7 @@ public class UserDatasource {
             MySQLiteHelper.COLUMN_FIRSTNAME_USER, MySQLiteHelper.COLUMN_LASTNAME_USER,
             MySQLiteHelper.COLUMN_BIRTHDAY_USER, MySQLiteHelper.COLUMN_EMAIL_USER,
             MySQLiteHelper.COLUMN_PHONENUMBER_USER,
-            MySQLiteHelper.COLUMN_PASSWORD, MySQLiteHelper.COLUMN_GRADE, MySQLiteHelper.COLUMN_STATUS
+            MySQLiteHelper.COLUMN_PASSWORD, MySQLiteHelper.COLUMN_GRADE, MySQLiteHelper.COLUMN_STATUS,MySQLiteHelper.COLUMN_UNIQUE_KEY_USER
     };
     private MySQLiteHelper dbHelper;
 
@@ -103,7 +103,7 @@ public class UserDatasource {
     }
 
 
-    public User createUserlogin(byte[] icon, String username, String firstname, String lastname, String birthday, String email, String tel, String Password, String grade, String status) {
+    public User createUserlogin(byte[] icon, String username, String firstname, String lastname,String unique, String birthday, String email, String tel, String Password, String grade, String status) {
         open();
         ContentValues values = new ContentValues();
 
@@ -111,6 +111,7 @@ public class UserDatasource {
         values.put(MySQLiteHelper.COLUMN_ICON, icon);
         values.put(MySQLiteHelper.COLUMN_FIRSTNAME_USER, firstname);
         values.put(MySQLiteHelper.COLUMN_LASTNAME_USER, lastname);
+        values.put(MySQLiteHelper.COLUMN_UNIQUE_KEY_USER,unique);
         values.put(MySQLiteHelper.COLUMN_BIRTHDAY_USER, birthday);
         values.put(MySQLiteHelper.COLUMN_EMAIL_USER, email);
         values.put(MySQLiteHelper.COLUMN_PHONENUMBER_USER, tel);
@@ -144,6 +145,7 @@ public class UserDatasource {
         user.setPassWord(cursor.getString(9));
         user.setGrade(cursor.getString(10));
         user.setStatus(cursor.getString(11));
+        user.setUnique_key_user(cursor.getString(12));
         return user;
     }
 

@@ -27,11 +27,10 @@ public class User {
     private String Grade;
     @SerializedName("url")
     private String pathimageuser;
-
+    @SerializedName("unique_key_user")
+    private String unique_key_user;
     public User() {
     }
-
-
     public User(String user_name, String user_lastname, String birthday,
                 String email, byte[] icon, String phonenumber, String passWord,
                 String status, String grade) {
@@ -45,7 +44,8 @@ public class User {
         Status = status;
         Grade = grade;
     }
-    public User(int id,String username,String firstname, String lastname, String birthday, String email, byte[] icon, String phonenumber, String passWord, String status, String grade,String pathimage) {
+
+    public User(int id, String username, String firstname, String lastname, String birthday, String email, byte[] icon, String phonenumber, String passWord, String status, String grade, String pathimage) {
         this.Id_User = id;
         this.firstname = firstname;
         this.username = username;
@@ -60,7 +60,8 @@ public class User {
         this.pathimageuser = pathimage;
     }
 
-    public User(String username,String firstname, String lastname, String birthday, String email, byte[] icon, String phonenumber, String passWord, String status, String grade) {
+
+    public User(String username, String firstname, String lastname, String birthday, String email, byte[] icon, String phonenumber, String passWord, String status, String grade) {
         this.firstname = firstname;
         this.username = username;
         this.lastname = lastname;
@@ -71,6 +72,14 @@ public class User {
         PassWord = passWord;
         Status = status;
         Grade = grade;
+    }
+
+    public String getUnique_key_user() {
+        return unique_key_user;
+    }
+
+    public void setUnique_key_user(String unique_key_user) {
+        this.unique_key_user = unique_key_user;
     }
 
     public int getId_User() {
