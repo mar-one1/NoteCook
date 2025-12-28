@@ -23,6 +23,8 @@
             android:drawableEnd="@drawable/ic_keyboard_voice_fill0_wght400_grad0_opsz48"
             android:hint="Ingredients / Dish"
             android:imeOptions="actionSend"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:singleLine="true" />
 
         <ImageView

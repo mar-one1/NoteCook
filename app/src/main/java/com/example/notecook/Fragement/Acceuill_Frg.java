@@ -110,8 +110,13 @@ public class Acceuill_Frg extends Fragment {
                 }, 2000); // 2 seconds simulated refresh time (adjust as needed)
             }
         });
-        binding.txtRecherche.setOnClickListener(view -> {binding.seeMoreTxt.callOnClick();});
 
+        binding.txtRecherche.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(b) MainFragment.viewPager2.setCurrentItem(2);
+            }
+        });
         return binding.getRoot();
     }
 

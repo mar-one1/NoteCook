@@ -109,6 +109,7 @@ public class Frg_Search extends Fragment {
             }
         });
 
+        binding.txtRecherche.requestFocus();
         binding.txtRecherche.addTextChangedListener(new TextWatcher() {
             Set<String> list = new HashSet<>();
 

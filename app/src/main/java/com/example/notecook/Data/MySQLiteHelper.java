@@ -15,7 +15,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
      */
 
     private static final String DATABASE_NAME = "DB_Notebook.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
 
     /*
@@ -276,20 +276,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPE);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_DETAIL_RECIPE);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_STEP_RECIPE);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_RECIPE);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_INGREDIENT_RECIPE);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_LIST_INGREDIENT_RECIPE);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUIT);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPEPRODIUT);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIE_RECIPE);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_FAV_RECIPE_USER);
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        onCreate(sqLiteDatabase);
+        // tables with foreign keys FIRST
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAV_RECIPE_USER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REVIEW_RECIPE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STEP_RECIPE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DETAIL_RECIPE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPEPRODIUT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LIST_INGREDIENT_RECIPE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_INGREDIENT_RECIPE);
+
+        // then parent tables
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECIPE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUIT);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIE_RECIPE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+
+        onCreate(db);
     }
 
     @Override

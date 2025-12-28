@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -44,6 +45,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Adapter.Adapter_Rc_Steps;
+import com.example.notecook.Data.MySQLiteHelper;
+import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Step;
@@ -381,8 +384,24 @@ public class Constants {
     }
 
     public static Boolean getUserSynch(String username, Context context) {
+        MySQLiteHelper dbHelper = new MySQLiteHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        int version = db.getVersion();
+        Log.d("DB_VERSION", "Current DB version = " + version);
         SharedPreferences preferences = context.getSharedPreferences(SYNCH_KEY, MODE_PRIVATE);
         return preferences.getBoolean(username, false);
+    }
+
+    public static void setDbUpgrade(String username, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("db_prefs", Context.MODE_PRIVATE);
+                 prefs.edit()
+                .putBoolean("db_upgraded", true)
+                .apply();
+    }
+
+    public static boolean getDbUpgrade(String username, Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("db_prefs", Context.MODE_PRIVATE);
+        return prefs.getBoolean("db_upgraded", false);
     }
 
     public static String getUserInput(Context context) {
