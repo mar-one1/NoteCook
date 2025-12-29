@@ -26,18 +26,16 @@ public class NotificationUtils {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "My App Channel",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel.setDescription("General notifications");
-            channel.enableLights(true);
-            channel.setLightColor(Color.RED);
-            channel.enableVibration(true);
-            nm.createNotificationChannel(channel);
-        }
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                "My App Channel",
+                NotificationManager.IMPORTANCE_HIGH
+        );
+        channel.setDescription("General notifications");
+        channel.enableLights(true);
+        channel.setLightColor(Color.RED);
+        channel.enableVibration(true);
+        nm.createNotificationChannel(channel);
 
         Intent intent = new Intent(context, targetActivity);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

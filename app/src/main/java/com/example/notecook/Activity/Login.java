@@ -6,7 +6,6 @@ import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
 import static com.example.notecook.Utils.Constants.LOGIN_KEY;
 import static com.example.notecook.Utils.Constants.captureImage;
 
-
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -34,12 +33,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.TaskStackBuilder;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Data.UserDatasource;
-import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -47,8 +44,8 @@ import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.Utils.NotificationUtils;
 import com.example.notecook.Utils.PasswordHasher;
-import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.AccessViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.ActivityLoginBinding;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -89,7 +86,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Boolean isPosted = false;
     private SharedRecipeViewModel viewModel;
 
-    //@TargetApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,13 +94,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         view = binding.getRoot();
         viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
-        userVM = new UserViewModel(this, this,viewModel);
-        accessVM = new AccessViewModel(this, this,viewModel);
+        userVM = new UserViewModel(this, this, viewModel);
+        accessVM = new AccessViewModel(this, this, viewModel);
 
 
         // Check FingerPrint In Device
         try {
-            if(checkBiometricSupport()) empreinte();
+            if (checkBiometricSupport()) empreinte();
         } catch (Exception e) {
             Log.e("tag", e.getMessage());
         }
@@ -116,21 +112,21 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 String s2 = sharedPreferences.getString("password", "");
                 userVM.getUserLocal(s1, "success");
                 binding.etUsername.setText(s1);
-                binding.etPassword.setText("");
-                if(checkBiometricSupport()) secoundLogin();
+                binding.etPassword.setText(s2);
+                if (checkBiometricSupport()) secoundLogin(this);
             }
         } catch (Exception e) {
             Log.e("tag", e.getMessage());
         }
 
-        if (viewModel.getUserLoginLocal().getValue()!=null && viewModel.getUserLoginLocal().getValue().getUser() != null && viewModel.getUserLoginLocal().getValue().getUser().getPathimageuser() != null) {
+        if (viewModel.getUserLoginLocal().getValue() != null && viewModel.getUserLoginLocal().getValue().getUser() != null && viewModel.getUserLoginLocal().getValue().getUser().getPathimageuser() != null) {
             binding.ivUserlogo1.setImageBitmap(ImageHelper.loadImageFromPath(viewModel.getUserLoginLocal().getValue().getUser().getPathimageuser()));
         }
 
 
         binding.SignUp.setOnClickListener(view -> {
             //addNotification(this);
-            NotificationUtils.showNotification(this,Login.class,"register with success","",1);
+            NotificationUtils.showNotification(this, Login.class, "register with success", "", 1);
             binding.layoutLoginCheck.setVisibility(View.GONE);
             binding.layoutRegistre.setVisibility(View.VISIBLE);
         });
@@ -156,7 +152,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             binding.layoutRegistre.setVisibility(View.GONE);
         });
 
-        binding.editIconProfil.setOnClickListener(v -> captureImage(this,this ));
+        binding.editIconProfil.setOnClickListener(v -> captureImage(this, this));
 
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -331,14 +327,17 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.P)
-    private void secoundLogin() {
+    private void secoundLogin(Context context) {
+        binding.etPassword.setVisibility(View.GONE);
         BiometricPrompt biometricPrompt = new BiometricPrompt
-                .Builder(getApplicationContext())
+                .Builder(context)
                 .setTitle("Authentication")
                 .setSubtitle("Fingerprint")
                 .setDescription("please apply your fingerprint to access the application")
-                .setNegativeButton("Cancel", getMainExecutor(), (dialogInterface, i) -> notifyUser("Authentication Cancelled")).build();
+                .setNegativeButton("Cancel", getMainExecutor(), (dialogInterface, i) -> {
+                            notifyUser("Authentication Cancelled");
+                        }
+                ).build();
 
         // start the authenticationCallback in
         // mainExecutor
@@ -356,6 +355,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         cancellationSignal.setOnCancelListener(
                 () -> {
                     notifyUser("Authentication was Cancelled by the user");
+                    binding.etPassword.setVisibility(View.VISIBLE);
+                    binding.etPassword.setText("");
                 });
         return cancellationSignal;
     }
@@ -363,7 +364,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     // it checks whether the
     // app the app has fingerprint
     // permission
-    @TargetApi(Build.VERSION_CODES.M)
     private Boolean checkBiometricSupport() {
         try {
             KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
@@ -439,8 +439,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
-
-
 
 
     public void loginclk() {
@@ -525,7 +523,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 if (!dataSourceUser.isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !dataSourceUser.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
                     User userInsered = dataSourceUser.createUserlogin(null, username, acct.getGivenName(),
                             acct.getFamilyName(), "00/00/0000", acct.getEmail(),
-                            "0", password, "Chef ", "active",uniqueKey);
+                            "0", password, "Chef ", "active", uniqueKey);
                     if (userInsered.equals(Newuser)) isPosted = true;
 
                     Constants.AffichageMessage("Vous avez Register avec succes Localy", "", Login.this);
@@ -556,7 +554,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             public void onChanged(User user) {
                                 if (user != null) {
                                     isPosted = true;
-                                    String Path = ImageHelper.saveImageToInternalStorage(Login.this,bitmap,"UserImages");
+                                    String Path = ImageHelper.saveImageToInternalStorage(Login.this, bitmap, "UserImages");
                                     newUser.setPathimageuser(Path);
                                     User userPost = dataSourceUser.insertUser(newUser);
                                     if (!Objects.equals(userPost.getUsername(), ""))
@@ -582,7 +580,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     void putPicture(Bitmap bitmap) {
         binding.editIconProfil.setImageBitmap(bitmap);
     }
-
 
 
     @Override

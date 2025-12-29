@@ -373,7 +373,6 @@ public class Constants {
         editor.putString("username", username);
         editor.putString("password", password);
         editor.apply();
-
     }
 
     public static void saveUserSynch(String username, Boolean b, Context context) {
@@ -392,9 +391,10 @@ public class Constants {
         return preferences.getBoolean(username, false);
     }
 
-    public static void setDbUpgrade(String username, Context context) {
+    public static void setDbUpgrade(int version, Context context) {
         SharedPreferences prefs = context.getSharedPreferences("db_prefs", Context.MODE_PRIVATE);
                  prefs.edit()
+                .putInt("version",version)
                 .putBoolean("db_upgraded", true)
                 .apply();
     }
