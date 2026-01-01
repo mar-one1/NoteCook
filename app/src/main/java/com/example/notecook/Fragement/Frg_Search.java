@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
@@ -75,7 +76,7 @@ public class Frg_Search extends Fragment {
         recipeVM = new RecipeViewModel(getContext(), getActivity(),viewModel);
         bindingRcV_recipes(binding.RcRecipeSearch, null, "default");
         //defaultImagelike=binding.HeartImgeclk;
-        defaultImagelike = getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
+        defaultImagelike = ContextCompat.getDrawable(fragmentActivity,R.drawable.ic_baseline_favorite_24);
         binding.filtreSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,7 +92,7 @@ public class Frg_Search extends Fragment {
                 //double minPrice = Double.parseDouble(binding.minPriceEditText.getText().toString().trim());
                 //double maxPrice = Double.parseDouble(binding.maxPriceEditText.getText().toString().trim());
                 binding.llFiltre.setVisibility(View.GONE);
-                binding.filtreSearch.setImageDrawable(getContext().getDrawable(R.drawable.active_filtre_24));
+                binding.filtreSearch.setImageDrawable(ContextCompat.getDrawable(v.getContext(),R.drawable.active_filtre_24));
                 search(searchText,false);
                 binding.filtreClear.setVisibility(View.VISIBLE);
             }
@@ -105,7 +106,7 @@ public class Frg_Search extends Fragment {
                 binding.llFiltre.setVisibility(View.GONE);
                 binding.levelRecipeSearch.setSelection(0);
                 binding.filterButton.callOnClick();
-                binding.filtreSearch.setImageDrawable(getContext().getDrawable(R.drawable.filtre_search_24));
+                binding.filtreSearch.setImageDrawable(ContextCompat.getDrawable(v.getContext(),R.drawable.filtre_search_24));
             }
         });
 

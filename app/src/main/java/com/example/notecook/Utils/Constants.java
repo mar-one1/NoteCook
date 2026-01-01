@@ -375,6 +375,79 @@ public class Constants {
         editor.apply();
     }
 
+    public static void resetAllSynch(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(SYNCH_KEY, MODE_PRIVATE);
+        prefs.edit().clear().apply();
+    }
+    public static int getCurrentDbVersion(Context context) {
+        MySQLiteHelper helper = new MySQLiteHelper(context);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        return db.getVersion();
+    }
+
+    public static int getSavedDbVersion(Context context) {
+        SharedPreferences prefs =
+                context.getSharedPreferences("db_prefs", Context.MODE_PRIVATE);
+        return prefs.getInt("db_version", -1);
+    }
+    public enum DbChangeType {
+        UPGRADE,
+        DOWNGRADE,
+        SAME,
+        FIRST_INSTALL
+    }
+
+    public static DbChangeType checkDbVersion(Context context) {
+        int current = getCurrentDbVersion(context);
+        int saved = getSavedDbVersion(context);
+
+        if (saved == -1) {
+            saveDbVersion(current, context);
+            return DbChangeType.FIRST_INSTALL;
+        }
+
+        if (current > saved) return DbChangeType.UPGRADE;
+        if (current < saved) return DbChangeType.DOWNGRADE;
+
+        return DbChangeType.SAME;
+    }
+
+    public static void saveDbVersion(int version, Context context) {
+        SharedPreferences prefs =
+                context.getSharedPreferences("db_prefs", Context.MODE_PRIVATE);
+        prefs.edit().putInt("db_version", version).apply();
+    }
+
+    public static void handleDbChange(Context context) {
+        DbChangeType type = checkDbVersion(context);
+
+        switch (type) {
+            case UPGRADE:
+                resetAllSynch(context);
+                saveDbVersion(getCurrentDbVersion(context), context);
+                Log.d("DB", "UPGRADE detected");
+                break;
+
+            case DOWNGRADE:
+                resetAllSynch(context);
+
+                // ⚠️ مسح DB نهائياً
+                context.deleteDatabase(MySQLiteHelper.DATABASE_NAME);
+
+                saveDbVersion(getCurrentDbVersion(context), context);
+                Log.e("DB", "DOWNGRADE detected → DB recreated");
+                break;
+
+            case FIRST_INSTALL:
+                Log.d("DB", "First install");
+                break;
+
+            case SAME:
+                // nothing
+                break;
+        }
+    }
+
     public static void saveUserSynch(String username, Boolean b, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SYNCH_KEY, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -389,19 +462,6 @@ public class Constants {
         Log.d("DB_VERSION", "Current DB version = " + version);
         SharedPreferences preferences = context.getSharedPreferences(SYNCH_KEY, MODE_PRIVATE);
         return preferences.getBoolean(username, false);
-    }
-
-    public static void setDbUpgrade(int version, Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("db_prefs", Context.MODE_PRIVATE);
-                 prefs.edit()
-                .putInt("version",version)
-                .putBoolean("db_upgraded", true)
-                .apply();
-    }
-
-    public static boolean getDbUpgrade(String username, Context context) {
-        SharedPreferences prefs = context.getSharedPreferences("db_prefs", Context.MODE_PRIVATE);
-        return prefs.getBoolean("db_upgraded", false);
     }
 
     public static String getUserInput(Context context) {
@@ -541,7 +601,7 @@ public class Constants {
         return t;
     }
 
-    public static void showImageRecipes(RecipeViewModel recipeVM, Recipe recipe, ImageView imageView) {
+    public static void showImageRecipes(RecipeViewModel recipeVM, Recipe recipe, ImageView imageView,Context context) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
@@ -583,7 +643,7 @@ public class Constants {
                     });
                 }
             } else {
-                handler.post(() -> imageView.setImageDrawable(imageView.getResources().getDrawable(R.drawable.ic_baseline_image_not_supported_24)));
+                handler.post(() -> ContextCompat.getDrawable(context,R.drawable.ic_baseline_image_not_supported_24));
             }
         });
     }

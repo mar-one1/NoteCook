@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
@@ -54,7 +55,7 @@ public class MainFragment extends Fragment  {
                     fragmentTransaction.commitNow();
 
                     //viewPager2.setCurrentItem(1,false);
-                    flBtn.setImageDrawable(getActivity().getDrawable(R.drawable.ic_playlist_add_check_black_24dp));
+                    flBtn.setImageDrawable(ContextCompat.getDrawable(v.getContext(),R.drawable.ic_playlist_add_check_black_24dp));
                     flBtn.hide();
                 }else Constants.showSnackPar(this.getView(),"Veuillez Connecter !!");
         });
@@ -106,7 +107,7 @@ public class MainFragment extends Fragment  {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-                flBtn.setImageDrawable(getResources().getDrawable(R.drawable.ic_baseline_plus_one_24));
+                flBtn.setImageDrawable(ContextCompat.getDrawable(viewPager2.getContext(),R.drawable.ic_baseline_plus_one_24));
                 flBtn.show();
             }
             @Override

@@ -7,6 +7,8 @@ import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -18,7 +20,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
@@ -138,7 +142,7 @@ public class Frg_detail_recipe extends Fragment {
         tabLayout.addTab(tabLayout.newTab().setText("PROCESS"));
         tabLayout.addTab(tabLayout.newTab().setText("REVIEWS"));
 
-        setViewPagerAdapter();
+        setViewPagerAdapter(requireActivity());
         viewPager.setUserInputEnabled(true);
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
         tabLayout.setSelectedTabIndicatorHeight((int) (3 * getResources().getDisplayMetrics().density));
@@ -176,7 +180,7 @@ public class Frg_detail_recipe extends Fragment {
             }
         });
 
-        defaultImagelike = getResources().getDrawable(R.drawable.ic_baseline_favorite_24);
+        defaultImagelike = ContextCompat.getDrawable(rootView.getContext(),R.drawable.ic_baseline_favorite_24);
 
         binding.IVFavorit.setOnClickListener(view -> {
             if (!defaultImagelike.getConstantState().equals(binding.IVFavorit.getDrawable().getConstantState())) {
@@ -219,9 +223,9 @@ public class Frg_detail_recipe extends Fragment {
 
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setViewPagerAdapter() {
+    public void setViewPagerAdapter(FragmentActivity fragmentActivity) {
         viewPager2Adapter = new
-                Adapter_Vp2_recipeProfil(getActivity());
+                Adapter_Vp2_recipeProfil(fragmentActivity);
         //create an ArrayList of Fragments
         ArrayList<Fragment> fragmentList = new ArrayList<>();
         fragmentList.add(new Frg_recipe_ingredients());

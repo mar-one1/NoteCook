@@ -75,11 +75,11 @@ public class Acceuill_Frg extends Fragment {
         });
         viewModel = new ViewModelProvider(requireActivity()).get(SharedRecipeViewModel.class);
 
-        defaultImagelike = getActivity().getDrawable(R.drawable.ic_baseline_favorite_24);
-        defaultImagenot = getActivity().getDrawable(R.drawable.ic_favorite_border_black_24dp);
+        defaultImagelike = ContextCompat.getDrawable(requireContext(),R.drawable.ic_baseline_favorite_24);
+        defaultImagenot = ContextCompat.getDrawable(requireContext(),R.drawable.ic_favorite_border_black_24dp);
 
         binding.seeMoreTxt.setOnClickListener(view -> {
-            ViewPager2 viewPager2 = getActivity().findViewById(R.id.vp2);
+            ViewPager2 viewPager2 = requireActivity().findViewById(R.id.vp2);
             viewPager2.setCurrentItem(2, false);
         });
 
@@ -114,7 +114,7 @@ public class Acceuill_Frg extends Fragment {
         binding.txtRecherche.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if(b) MainFragment.viewPager2.setCurrentItem(2);
+                if(b) MainFragment.viewPager2.setCurrentItem(2,false);
             }
         });
         return binding.getRoot();

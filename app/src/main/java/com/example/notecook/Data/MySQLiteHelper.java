@@ -14,8 +14,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper implements MySQLiteHelperTa
      * Commande sql pour la création de la base de données
      */
 
-    private static final String DATABASE_NAME = "DB_Notebook.db";
-    private static final int DATABASE_VERSION = 2;
+    public static final String DATABASE_NAME = "DB_Notebook.db";
+    private static final int DATABASE_VERSION = 4;
 
 
     /*

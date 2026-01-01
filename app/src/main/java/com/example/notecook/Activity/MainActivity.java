@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -45,7 +46,6 @@ import com.squareup.picasso.Picasso;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // No image path: show default
                 handler.post(() -> imageView.setImageDrawable(
-                        imageView.getResources().getDrawable(R.drawable.aec4b1a59b7165562698470ce91494be)));
+                        ContextCompat.getDrawable(imageView.getContext(),R.drawable.aec4b1a59b7165562698470ce91494be)));
             }
         });
     }
