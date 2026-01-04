@@ -47,6 +47,7 @@ import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Adapter.Adapter_Rc_Steps;
 import com.example.notecook.Data.MySQLiteHelper;
 import com.example.notecook.Data.UserDatasource;
+import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Ingredients;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Step;
@@ -158,7 +159,7 @@ public class Constants {
                 if (loadingDialog != null && loadingDialog.isShowing()) {
                     loadingDialog.dismiss();
                     // Show your pop-up dialog here
-                    AffichageMessage(TAG_NOT_FOUND, "404", activity);
+                    //AffichageMessage(TAG_NOT_FOUND, "404", activity);
                 }
             }
         }, 10000); // 10 seconds delay
@@ -331,7 +332,7 @@ public class Constants {
         alertDialog.setOnShowListener(dialog -> {
             alertDialog = (SweetAlertDialog) dialog;
             alertDialog.setCanceledOnTouchOutside(false);
-            TextView text = (TextView) alertDialog.findViewById(cn.pedant.SweetAlert.R.id.content_text);
+            TextView text =alertDialog.findViewById(cn.pedant.SweetAlert.R.id.content_text);
             text.setTextAppearance(_context, android.R.style.TextAppearance_Large);
             text.setGravity(Gravity.CENTER);
             text.setSingleLine(false);
@@ -398,19 +399,25 @@ public class Constants {
     }
 
     public static DbChangeType checkDbVersion(Context context) {
-        int current = getCurrentDbVersion(context);
-        int saved = getSavedDbVersion(context);
 
-        if (saved == -1) {
-            saveDbVersion(current, context);
+        int currentVersion = MySQLiteHelper.DATABASE_VERSION;
+
+        SharedPreferences prefs =
+                context.getSharedPreferences("db_prefs", Context.MODE_PRIVATE);
+
+        int savedVersion = prefs.getInt("db_version", -1);
+
+        if (savedVersion == -1) {
+            saveDbVersion(currentVersion, context);
             return DbChangeType.FIRST_INSTALL;
         }
 
-        if (current > saved) return DbChangeType.UPGRADE;
-        if (current < saved) return DbChangeType.DOWNGRADE;
+        if (currentVersion > savedVersion) return DbChangeType.UPGRADE;
+        if (currentVersion < savedVersion) return DbChangeType.DOWNGRADE;
 
         return DbChangeType.SAME;
     }
+
 
     public static void saveDbVersion(int version, Context context) {
         SharedPreferences prefs =
@@ -419,23 +426,24 @@ public class Constants {
     }
 
     public static void handleDbChange(Context context) {
+
         DbChangeType type = checkDbVersion(context);
 
         switch (type) {
+
             case UPGRADE:
                 resetAllSynch(context);
-                saveDbVersion(getCurrentDbVersion(context), context);
+                saveDbVersion(MySQLiteHelper.DATABASE_VERSION, context);
                 Log.d("DB", "UPGRADE detected");
                 break;
 
             case DOWNGRADE:
                 resetAllSynch(context);
 
-                // ⚠️ مسح DB نهائياً
+                // ⚠️ قبل أي فتح للـ DB
                 context.deleteDatabase(MySQLiteHelper.DATABASE_NAME);
-
-                saveDbVersion(getCurrentDbVersion(context), context);
-                Log.e("DB", "DOWNGRADE detected → DB recreated");
+                saveDbVersion(MySQLiteHelper.DATABASE_VERSION, context);
+                Log.e("DB", "DOWNGRADE detected → DB deleted");
                 break;
 
             case FIRST_INSTALL:
@@ -443,10 +451,10 @@ public class Constants {
                 break;
 
             case SAME:
-                // nothing
                 break;
         }
     }
+
 
     public static void saveUserSynch(String username, Boolean b, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SYNCH_KEY, MODE_PRIVATE);

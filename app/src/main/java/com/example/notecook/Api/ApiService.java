@@ -115,6 +115,12 @@ public interface ApiService {
     );
 
     @Multipart
+    @POST("auth/upload/{username}")
+    Call<ResponseBody> uploadFile(@Path("username") String username,
+                                  @Part MultipartBody.Part image
+    );
+
+    @Multipart
     @POST("recipes/upload/{id}")
     Call<ResponseBody> UpdateRecipeImage(
             @Header("Authorization") String token,

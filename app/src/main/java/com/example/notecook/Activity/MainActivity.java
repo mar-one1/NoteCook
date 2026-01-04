@@ -4,6 +4,7 @@ import static com.example.notecook.Api.env.BASE_URL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.getToken;
 import static com.example.notecook.Utils.Constants.getUserInput;
+import static com.example.notecook.Utils.Constants.handleDbChange;
 import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
 
 import android.Manifest;
@@ -101,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-
         viewModel.init();
         viewModel.setToken(getToken(this));
 
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void getUserInfo() {
 //            fetchData();
-        //Constants.loading_ui(this,"Loading...");
+        //Constants.loading_ui(this,this,"Loading...");
         String s1 = getUserInput(this);
         userVM.getUser(s1).observe(this, new Observer<User>() {
             @Override

@@ -7,8 +7,6 @@ import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -44,11 +42,8 @@ public class Frg_detail_recipe extends Fragment {
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private FragmentFrgDetailRecipeBinding binding;
-    private TextView txtTime, txtCal, txtLevel;
-    private List<String> titles;
     private Drawable defaultImagelike;
     private Drawable defaultImageRate;
-    private Recipe recipe;
     private ImageView chat_view;
     private Adapter_Vp2_recipeProfil viewPager2Adapter;
     private SharedRecipeViewModel viewModel;

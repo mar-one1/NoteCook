@@ -48,9 +48,7 @@ import retrofit2.Response;
 
 public class Frg_Search extends Fragment {
 
-    Recipe mRecipe;
     private FragmentFrgSearchBinding binding;
-    private RecyclerView mRecyclerView;
     private Drawable defaultImagelike;
     private RecipeViewModel recipeVM;
     private FragmentActivity fragmentActivity;

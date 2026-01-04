@@ -11,6 +11,7 @@ import static com.example.notecook.Utils.Constants.saveUserInput;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -31,10 +32,16 @@ import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.PasswordHasher;
 import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -167,7 +174,6 @@ public class AccessRepository {
         return s;
     }
 
-
     public LiveData<String> TokenApi() {
         MutableLiveData<String> mutableLiveDataToken = new MutableLiveData<>();
         Intent iM = new Intent(context, MainActivity.class);
@@ -180,17 +186,17 @@ public class AccessRepository {
             public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
                 if (response.isSuccessful()) {
                     handleSuccessfulResponse(response, mutableLiveDataToken, iM);
+                    TokenResponse tokenResponse = response.body();
+                    userDatasource.insertUser(tokenResponse.getUser());
                 } else {
                     handleErrorResponse(response, iM, iLg);
                 }
             }
-
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable t) {
                 handleFailure(t, iM, iLg);
             }
         });
-
         return mutableLiveDataToken;
     }
 
@@ -220,6 +226,8 @@ public class AccessRepository {
             });
             return s;
         }
+
+
 
 
     private void handleSuccessfulResponse(Response<TokenResponse> response, MutableLiveData<String> mutableLiveDataToken, Intent iM) {

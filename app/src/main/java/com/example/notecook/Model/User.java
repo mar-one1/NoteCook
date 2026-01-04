@@ -61,7 +61,7 @@ public class User {
     }
 
 
-    public User(String username, String firstname, String lastname, String birthday, String email, byte[] icon, String phonenumber, String passWord, String status, String grade) {
+    public User(String username, String firstname, String lastname, String birthday, String email, byte[] icon, String phonenumber, String passWord, String status, String grade,String unique_key_user) {
         this.firstname = firstname;
         this.username = username;
         this.lastname = lastname;
@@ -72,6 +72,7 @@ public class User {
         PassWord = passWord;
         Status = status;
         Grade = grade;
+        this.unique_key_user = unique_key_user;
     }
 
     public String getUnique_key_user() {

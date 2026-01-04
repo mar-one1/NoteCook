@@ -11,6 +11,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+# Keep SweetAlertDialog
+-keep class cn.pedant.SweetAlert.** { *; }
+-dontwarn cn.pedant.SweetAlert.**
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.

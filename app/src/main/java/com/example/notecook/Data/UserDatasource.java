@@ -1,5 +1,6 @@
 package com.example.notecook.Data;
 
+import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
 
 import android.content.ContentValues;
@@ -48,30 +49,32 @@ public class UserDatasource {
      * insert the value in the Image table
      */
     public User insertUser(User user) {
-        open();
-        ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_USERNAME, user.getUsername());
-        values.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
-        values.put(MySQLiteHelper.COLUMN_ICON_PATH, user.getPathimageuser());
-        values.put(MySQLiteHelper.COLUMN_FIRSTNAME_USER, user.getFirstname());
-        values.put(MySQLiteHelper.COLUMN_LASTNAME_USER, user.getLastname());
-        values.put(MySQLiteHelper.COLUMN_BIRTHDAY_USER, user.getBirthday());
-        values.put(MySQLiteHelper.COLUMN_EMAIL_USER, user.getEmail());
-        values.put(MySQLiteHelper.COLUMN_PHONENUMBER_USER, user.getPhonenumber());
-        values.put(MySQLiteHelper.COLUMN_PASSWORD, user.getPassWord());
-        values.put(MySQLiteHelper.COLUMN_GRADE, user.getGrade());
-        values.put(MySQLiteHelper.COLUMN_STATUS, user.getStatus());
+        if(!isRecordExist(TABLE_USER,COLUMN_USERNAME,user.getUsername())) {
+            open();
+            ContentValues values = new ContentValues();
+            values.put(MySQLiteHelper.COLUMN_USERNAME, user.getUsername());
+            values.put(MySQLiteHelper.COLUMN_ICON, user.getIcon());
+            values.put(MySQLiteHelper.COLUMN_ICON_PATH, user.getPathimageuser());
+            values.put(MySQLiteHelper.COLUMN_FIRSTNAME_USER, user.getFirstname());
+            values.put(MySQLiteHelper.COLUMN_LASTNAME_USER, user.getLastname());
+            values.put(MySQLiteHelper.COLUMN_BIRTHDAY_USER, user.getBirthday());
+            values.put(MySQLiteHelper.COLUMN_EMAIL_USER, user.getEmail());
+            values.put(MySQLiteHelper.COLUMN_PHONENUMBER_USER, user.getPhonenumber());
+            values.put(MySQLiteHelper.COLUMN_PASSWORD, user.getPassWord());
+            values.put(MySQLiteHelper.COLUMN_GRADE, user.getGrade());
+            values.put(MySQLiteHelper.COLUMN_STATUS, user.getStatus());
 
-        long insertId = database.insert(TABLE_USER, null,
-                values);
-        Cursor cursor = database.query(TABLE_USER,
-                allColumns, MySQLiteHelper.COLUMN_ID_USER + " = " + insertId, null,
-                null, null, null);
-        cursor.moveToFirst();
-        User newUser = cursorToComment(cursor);
-        cursor.close();
-        close();
-        return newUser;
+            long insertId = database.insert(TABLE_USER, null,
+                    values);
+            Cursor cursor = database.query(TABLE_USER,
+                    allColumns, MySQLiteHelper.COLUMN_ID_USER + " = " + insertId, null,
+                    null, null, null);
+            cursor.moveToFirst();
+            User newUser = cursorToComment(cursor);
+            cursor.close();
+            close();
+            return newUser;
+        }else return null;
     }
 
     public User insertUser(User user, Bitmap bitmap, Context context) {

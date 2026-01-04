@@ -61,7 +61,6 @@ public class Loading_Srcreen extends AppCompatActivity {
                         Constants.showToast(Loading_Srcreen.this, "welcome back");
                 }
             });
-            //TokenApi();
         }else if (!Objects.equals(Token, "") && !NetworkIsConnected(getBaseContext())) {
             startActivity(iM);
         } else

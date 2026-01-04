@@ -494,6 +494,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         UserDatasource dataSourceUser = new UserDatasource(this);
         dataSourceUser.open();
+        String uniqueKey = UUID.randomUUID().toString();
 //        User user = dataSourceUser.select_User_BYUsername(binding.txtUsername.getText().toString());
 //        Constants.listUser = dataSourceUser.getAllUser();
 
@@ -512,14 +513,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 passwordHasher = new PasswordHasher();
                 String password = passwordHasher.hashPassword(acct.getId().toString());
                 User Newuser = new User(username, acct.getFamilyName(), acct.getGivenName(), "00/00/0000", acct.getEmail(),
-                        null, "000000000000", password, "active", "good");
+                        null, "000000000000", password, "active", "good",uniqueKey);
                 userVM.postUser(Newuser, jsonInputString, null, "google").observe(this, new Observer<User>() {
                     @Override
                     public void onChanged(User user) {
                         Constants.AffichageMessage("Registre Success", "", Login.this);
                     }
                 });
-                String uniqueKey = UUID.randomUUID().toString();
+
                 if (!dataSourceUser.isRecordExist(TABLE_USER, COLUMN_USERNAME, username) && !dataSourceUser.isRecordExist(TABLE_USER, COLUMN_EMAIL_USER, acct.getEmail())) {
                     User userInsered = dataSourceUser.createUserlogin(null, username, acct.getGivenName(),
                             acct.getFamilyName(), "00/00/0000", acct.getEmail(),
@@ -533,8 +534,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 //MainActivity.uploadImage(Newuser.getUsername(),bitmap,getBaseContext());
             } else
                 Toast.makeText(this, "Welcome Back " + acct.getDisplayName(), Toast.LENGTH_LONG).show();
-
-
         }
         if (check.equals("registre")) {
             if (inputValidator.isValidRegistration(binding.txtUsername, binding.txtFirstnameLast, binding.txtTel,
@@ -547,7 +546,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     Bitmap bitmap = ((BitmapDrawable) d).getBitmap();
                     passwordHasher = new PasswordHasher();
                     String password = passwordHasher.hashPassword(binding.txtPassword.getText().toString());
-                    User newUser = new User(username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), null, binding.txtTel.getText().toString(), password, "active", "Chef");
+                    User newUser = new User(username, binding.txtUsername.getText().toString(), binding.txtFirstnameLast.getText().toString(), "00/00/0000", binding.txtEmail.getText().toString(), null, binding.txtTel.getText().toString(), password, "active", "Chef",uniqueKey);
                     if (Constants.NetworkIsConnected(this)) {
                         userVM.postUser(newUser, "", bitmap, "registre").observe(this, new Observer<User>() {
                             @Override
