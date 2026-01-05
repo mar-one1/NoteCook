@@ -17,6 +17,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.Data.UserDatasource;
+import com.example.notecook.Dto.RegistreResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.User;
@@ -208,11 +209,11 @@ public class UserRepository {
         // Create a File instance with the path to the file to upload
         RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), imageFile);
 
-// Create MultipartBody.Part instance from the RequestBody
+        // Create MultipartBody.Part instance from the RequestBody
         MultipartBody.Part filePart = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
-// Create a service using the Retrofit interface
+        // Create a service using the Retrofit interface
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
-// Call the method to upload the file
+        // Call the method to upload the file
         apiService.uploadFile(viewModel.getToken().getValue(),username, filePart).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -241,8 +242,6 @@ public class UserRepository {
                 }
 
             }
-
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(context, "OnFailure upload image : " + t.toString(), Toast.LENGTH_SHORT).show();
@@ -309,16 +308,17 @@ public class UserRepository {
     public LiveData<User> InsertUserApi(User user, String url, Bitmap bitmap, String type) {
         MutableLiveData<User> userInsered = new MutableLiveData<>();
         // Example: Fetch users from the API
-        apiService.createUser(user).enqueue(new Callback<User>() {
+        apiService.createUser(user).enqueue(new Callback<RegistreResponse>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<RegistreResponse> call, Response<RegistreResponse> response) {
                 if (response.isSuccessful()) {
-                    User UserResponse = response.body();
-                    if (UserResponse != null) {
+                    RegistreResponse registreResponse = response.body();
+                    if (registreResponse != null) {
                         // Store the token securely (e.g., in SharedPreferences) for later use
                         viewModel.setTagConnexion(response.code());
                         viewModel.setTagConnexionMessage(response.message());
-                        userInsered.setValue(UserResponse);
+                        viewModel.setToken(registreResponse.getToken());
+                        userInsered.setValue(registreResponse.getUser());
                         if (type != null && type.equals("registre"))
                             uploadImage(user.getUsername(), bitmap,"", type);
                         else if (!url.isEmpty()) {
@@ -334,7 +334,7 @@ public class UserRepository {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<RegistreResponse> call, Throwable t) {
                 ErrorHandler.handleNetworkFailure(t,appCompatActivity);
             }
         });

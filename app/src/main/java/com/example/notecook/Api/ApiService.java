@@ -2,6 +2,7 @@ package com.example.notecook.Api;
 
 import com.example.notecook.Dto.LoginResponse;
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Dto.RegistreResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Fragement.Favorite_User_Recipe;
 import com.example.notecook.Model.Category_Recipe;
@@ -136,7 +137,7 @@ public interface ApiService {
 
     @POST("auth/register")
         //@Headers("Content-Type: application/json")
-    Call<User> createUser(@Body User user);
+    Call<RegistreResponse> createUser(@Body User user);
 
     @POST("users")
         @Headers("Content-Type: application/json")

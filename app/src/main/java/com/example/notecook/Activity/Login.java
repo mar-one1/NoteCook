@@ -281,6 +281,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         int errorCode, CharSequence errString) {
                     super.onAuthenticationError(errorCode, errString);
                     notifyUser("Authentication Error : " + errString);
+                    binding.etPassword.setVisibility(View.VISIBLE);
+                    binding.etPassword.setText("");
                 }
 
                 // If the fingerprint is recognized by the
@@ -336,6 +338,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 .setDescription("please apply your fingerprint to access the application")
                 .setNegativeButton("Cancel", getMainExecutor(), (dialogInterface, i) -> {
                             notifyUser("Authentication Cancelled");
+                            binding.etPassword.setVisibility(View.VISIBLE);
+                            binding.etPassword.setText("");
                         }
                 ).build();
 
