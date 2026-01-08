@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Detail_Recipe;
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SharedRecipeViewModel extends ViewModel {
-
-
 
     // Boolean flags
     private final MutableLiveData<Boolean> tagEditRecipe = new MutableLiveData<>(false);
@@ -41,6 +40,8 @@ public class SharedRecipeViewModel extends ViewModel {
     private final MutableLiveData<List<RecipeResponse>> remoteListFullRecipe = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Ingredients>> ingredientsCurrentRecipe = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Nutrition> remoteNutritions = new MutableLiveData<>();
+
+    private final MutableLiveData<RecipesResponce> remoteRecipesByPages = new MutableLiveData<>();
 
     private final MutableLiveData<Recipe> currentRecipe = new MutableLiveData<>();
     private final MutableLiveData<RecipeResponse> currentFullRecipe = new MutableLiveData<>();
@@ -81,6 +82,7 @@ public class SharedRecipeViewModel extends ViewModel {
         setRemoteListRecipe(new ArrayList<>());
         setRemoteListByIdUserRecipe(new ArrayList<>());
         setRemoteListFullRecipe(new ArrayList<>());
+        setremoteRecipesByPages(new RecipesResponce());
         // You can also reset other fields if needed
     }
 
@@ -318,4 +320,7 @@ public class SharedRecipeViewModel extends ViewModel {
         tagConnexion.setValue(value);
     }
 
+    public MutableLiveData<RecipesResponce> getRemoteRecipesByPages() {return remoteRecipesByPages;}
+
+    public void setremoteRecipesByPages(RecipesResponce recipeResponse) { remoteRecipesByPages.setValue(recipeResponse);}
 }

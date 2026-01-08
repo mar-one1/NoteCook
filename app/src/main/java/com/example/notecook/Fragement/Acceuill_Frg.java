@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -25,6 +26,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.notecook.Adapter.Adapter_RC_MenuCat;
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
+import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
@@ -89,7 +91,18 @@ public class Acceuill_Frg extends Fragment {
         //Get All Ingredients Recipes
         ingredientsVM = new IngredientsViewModel(getContext(), getActivity(),viewModel);
         ingredientsVM.getAllIngredientsApi();
-        fetchRecipe();
+        fetchRecipe(1);
+
+        binding.RcCatPopular.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
+                RecipesResponce recipesResponce=viewModel.getRemoteRecipesByPages().getValue();
+                if (!rv.canScrollVertically(1) &&  recipesResponce.getPage()< recipesResponce.getTotalPages()) {
+                    recipesResponce.setPage(recipesResponce.getPage()+1);
+                    fetchRecipe(recipesResponce.getPage());
+                }
+            }
+        });
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -98,7 +111,7 @@ public class Acceuill_Frg extends Fragment {
                 // Perform your data refreshing operations here
                 // Simulate refresh delay (remove this in your actual code)
                 //onResume();
-                fetchRecipe();
+                fetchRecipe(viewModel.getRemoteRecipesByPages().getValue().getPage());
                 ingredientsVM.getAllIngredientsApi();
 
                 new android.os.Handler().postDelayed(new Runnable() {
@@ -135,6 +148,20 @@ public class Acceuill_Frg extends Fragment {
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.size(), Toast.LENGTH_SHORT).show();
                 } else
                     bindingRcV_recipes(viewModel.getListRecipe().getValue(), binding.RcCatPopular, true);
+            }
+        });
+    }
+
+    private void fetchRecipe(int page) {
+        recipeVM.getRecipes(page, 10).observe(getViewLifecycleOwner(), new Observer<RecipesResponce>() {
+            @Override
+            public void onChanged(@Nullable RecipesResponce recipeList) {
+                if (recipeList != null) {
+                    viewModel.setremoteRecipesByPages(recipeList);
+                    bindingRcV_recipes(recipeList.getRecipes(), binding.RcCatPopular, true);
+                    Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.getRecipes().size(), Toast.LENGTH_SHORT).show();
+                } else
+                    bindingRcV_recipes(viewModel.getRemoteRecipesByPages().getValue().getRecipes(), binding.RcCatPopular, true);
             }
         });
     }

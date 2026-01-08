@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Repo.RecipeRepository;
 
@@ -44,6 +45,10 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
 
     public LiveData<List<Recipe>> getRecipes() {
         return repository.getRecipes();
+    }
+
+    public LiveData<RecipesResponce> getRecipes(int page,int limit) {
+        return repository.getRecipesByPages(page,limit);
     }
 
 

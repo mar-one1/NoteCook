@@ -2,6 +2,7 @@ package com.example.notecook.Api;
 
 import com.example.notecook.Dto.LoginResponse;
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Dto.RegistreResponse;
 import com.example.notecook.Dto.TokenResponse;
 import com.example.notecook.Fragement.Favorite_User_Recipe;
@@ -60,6 +61,13 @@ public interface ApiService {
     @Headers("Content-Type: application/json")
     Call<List<Recipe>> getAllRecipes(@Header("Authorization") String token);
 
+    @GET("recipes")
+    Call<RecipesResponce> getRecipes(
+            @Header("Authorization") String token,
+            @Query("page") int page,
+            @Query("limit") int limit
+    );
+
     @GET("recipes/{id}")
     Call<RecipeResponse> getRecipeById(@Header("Authorization") String token, @Path("id") int recipeId);
 
@@ -97,7 +105,10 @@ public interface ApiService {
 
     // Users API Endpoints
     @GET("users")
-    Call<List<User>> getAllUsers(@Header("Authorization") String token);
+    Call<List<User>> getAllUsers(
+            @Header("Authorization") String token,
+            @Query("page") int page,
+            @Query("limit") int limit);
 
     @GET("users/{id}")
     Call<User> getUserById(@Path("id") int userId);
@@ -140,12 +151,12 @@ public interface ApiService {
     Call<RegistreResponse> createUser(@Body User user);
 
     @POST("users")
-        @Headers("Content-Type: application/json")
-    Call<User> createUser(@Body User user,@Header("Authorization") String token);
+    @Headers("Content-Type: application/json")
+    Call<User> createUser(@Body User user, @Header("Authorization") String token);
 
     @PUT("users/{id}")
     @Headers("Content-Type: application/json")
-    Call<User> updateUser(@Path("id") int id, @Body User user,@Header("Authorization") String token);
+    Call<User> updateUser(@Path("id") int id, @Body User user, @Header("Authorization") String token);
 
     @PUT("users/filtre/{username}")
     @Headers("Content-Type: application/json")

@@ -28,6 +28,7 @@ import com.example.notecook.Data.ReviewDataSource;
 import com.example.notecook.Data.StepsDataSource;
 import com.example.notecook.Data.UserDatasource;
 import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.ImageHelper;
@@ -403,6 +404,26 @@ public class RecipeRepository {
             }
         });
         return remoteRecipeList;
+    }
+
+    public LiveData<RecipesResponce> getRecipesByPages(int page,int limit) {
+        MutableLiveData<RecipesResponce> remoteRecipesList = new MutableLiveData<>();
+        apiService.getRecipes(viewModel.getToken().getValue(),page, limit)
+                .enqueue(new Callback<RecipesResponce>() {
+                    @Override
+                    public void onResponse(Call<RecipesResponce> call, Response<RecipesResponce>response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            RecipesResponce data = response.body();
+                            remoteRecipesList.setValue(data);
+                            remoteRecipesList.postValue(data);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<RecipesResponce> call, Throwable t) {
+                        Log.e("API", t.getMessage());
+                    }
+                });
+        return remoteRecipesList;
     }
 
     //TODO make synch with recipe with it image and with full data
