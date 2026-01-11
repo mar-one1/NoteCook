@@ -43,6 +43,8 @@ public class SharedRecipeViewModel extends ViewModel {
 
     private final MutableLiveData<RecipesResponce> remoteRecipesByPages = new MutableLiveData<>();
 
+    private final MutableLiveData<RecipesResponce> remoteSearchRecipesByPages = new MutableLiveData<>();
+
     private final MutableLiveData<Recipe> currentRecipe = new MutableLiveData<>();
     private final MutableLiveData<RecipeResponse> currentFullRecipe = new MutableLiveData<>();
 
@@ -83,6 +85,7 @@ public class SharedRecipeViewModel extends ViewModel {
         setRemoteListByIdUserRecipe(new ArrayList<>());
         setRemoteListFullRecipe(new ArrayList<>());
         setremoteRecipesByPages(new RecipesResponce());
+        setRemoteSearchRecipesByPages(new RecipesResponce());
         // You can also reset other fields if needed
     }
 
@@ -323,4 +326,9 @@ public class SharedRecipeViewModel extends ViewModel {
     public MutableLiveData<RecipesResponce> getRemoteRecipesByPages() {return remoteRecipesByPages;}
 
     public void setremoteRecipesByPages(RecipesResponce recipeResponse) { remoteRecipesByPages.setValue(recipeResponse);}
+
+    public MutableLiveData<RecipesResponce> getRemoteSearchRecipesByPages() {return remoteSearchRecipesByPages;}
+
+    public void setRemoteSearchRecipesByPages(RecipesResponce recipeResponse) { remoteSearchRecipesByPages.setValue(recipeResponse);}
+
 }

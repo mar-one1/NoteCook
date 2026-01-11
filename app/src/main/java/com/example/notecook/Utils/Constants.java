@@ -40,9 +40,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Adapter.Adapter_Rc_Ingredents;
 import com.example.notecook.Adapter.Adapter_Rc_Steps;
 import com.example.notecook.Data.MySQLiteHelper;
@@ -66,6 +68,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -702,6 +705,49 @@ public class Constants {
                             if (fallback != null) imageView.setImageBitmap(fallback);
                         }
                     });
+        }
+    }
+
+    public void bindingRcV_recipes(
+            Adapter_RC_RecipeDt adapter_rc_recipeDt,
+            RecyclerView recyclerView,
+            List<Recipe> newList,
+            SharedRecipeViewModel viewModel,
+            Context context,
+            Activity activity,
+            LinearLayoutManager manager,
+            boolean isRemote
+    ) {
+
+        if (adapter_rc_recipeDt == null) {
+
+            List<Recipe> baseList = new ArrayList<>();
+
+            if (isRemote && newList != null) {
+                baseList.addAll(newList);
+            } else if (!isRemote
+                    && viewModel.getListRecipe() != null
+                    && viewModel.getListRecipe().getValue() != null) {
+
+                baseList.addAll(viewModel.getListRecipe().getValue());
+            }
+
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(
+                    context,
+                    activity,
+                    viewModel,
+                    baseList,
+                    isRemote ? TAG_REMOTE : TAG_LOCAL
+            );
+
+            manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+            recyclerView.setLayoutManager(manager);
+            recyclerView.setAdapter(adapter_rc_recipeDt);
+            recyclerView.setHasFixedSize(true);
+
+        } else {
+            // 👉 إضافة فقط
+            adapter_rc_recipeDt.addRecipes(newList);
         }
     }
 

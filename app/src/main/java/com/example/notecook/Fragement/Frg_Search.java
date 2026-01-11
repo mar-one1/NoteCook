@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -27,6 +28,8 @@ import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
 import com.example.notecook.BuildConfig;
+import com.example.notecook.Dto.RecipeResponse;
+import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -39,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import retrofit2.Call;
@@ -91,11 +95,22 @@ public class Frg_Search extends Fragment {
                 //double maxPrice = Double.parseDouble(binding.maxPriceEditText.getText().toString().trim());
                 binding.llFiltre.setVisibility(View.GONE);
                 binding.filtreSearch.setImageDrawable(ContextCompat.getDrawable(v.getContext(),R.drawable.active_filtre_24));
-                search(searchText,false);
+                search(searchText,1);
                 binding.filtreClear.setVisibility(View.VISIBLE);
             }
         });
-
+        binding.RcRecipeSearch.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
+                RecipesResponce recipesResponce=viewModel.getRemoteSearchRecipesByPages().getValue();
+                if (!rv.canScrollVertically(1) &&  Objects.requireNonNull(recipesResponce).getPage()< recipesResponce.getTotalPages()) {
+                    recipesResponce.setPage(recipesResponce.getPage()+1);
+                    //viewModel.getRemoteSearchRecipesByPages().setValue(recipesResponce);
+                    String searchText = !(binding.txtRecherche.getText().equals("")) ? binding.txtRecherche.getText().toString().trim() : binding.txtRecherche.getText().toString();
+                    search(searchText,recipesResponce.getPage());
+                }
+            }
+        });
         binding.filtreClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,7 +140,7 @@ public class Frg_Search extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 //searchRecipes(String.valueOf(s));
-                search(s,false);
+                search(s,1);
             }
 
             @Override
@@ -140,24 +155,25 @@ public class Frg_Search extends Fragment {
                 binding.txtRecherche.setThreshold(2);
             }
         });
-
         Constants.level(binding.levelRecipeSearch,getContext());
 
         return binding.getRoot();
     }
 
-    private void search(CharSequence s, boolean Filtred) {
+    private void search(CharSequence s,int page) {
         Map<String, String> condition = new HashMap<>();
         condition.put("searchText", s.toString());
         String level = binding.levelRecipeSearch.getSelectedItem().toString().trim();
         if (!level.equals("autre"))
             condition.put("Level_recipe", level);
         //condition.put("userId", "1");
-        recipeVM.SearchRecipeByCondition(condition).observe(requireActivity(), new Observer<List<Recipe>>() {
+        recipeVM.SearchRecipeByCondition(condition,page).observe(requireActivity(), new Observer<RecipesResponce>() {
             @Override
-            public void onChanged(List<Recipe> recipes) {
-                if (recipes != null && recipes.size() > 0)
-                    bindingRcV_recipes(binding.RcRecipeSearch, recipes, "search");
+            public void onChanged(RecipesResponce recipes) {
+                if (recipes != null && !recipes.getRecipes().isEmpty()) {
+                    viewModel.getRemoteSearchRecipesByPages().getValue().getRecipes().addAll(recipes.getRecipes());
+                    bindingRcV_recipes(binding.RcRecipeSearch, recipes.getRecipes(), "search");
+                }
             }
         });
     }
@@ -172,8 +188,8 @@ public class Frg_Search extends Fragment {
 
     public void bindingRcV_recipes(RecyclerView recyclerView, List<Recipe> searchList, String tag) {
         Adapter_RC_RecipeDt adapter_rc_recipeDt;
-        if (!tag.equals("search") && viewModel.getRemoteListRecipe().getValue() != null)
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), viewModel,viewModel.getRemoteListRecipe().getValue(), TAG_REMOTE);
+        if (!tag.equals("search") && viewModel.getRemoteRecipesByPages().getValue() != null)
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), viewModel,viewModel.getRemoteRecipesByPages().getValue().getRecipes(), TAG_REMOTE);
         else {
             if (searchList == null) searchList = new ArrayList<>();
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(),viewModel, searchList, TAG_REMOTE);

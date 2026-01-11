@@ -358,16 +358,16 @@ public class RecipeRepository {
     }
 
 
-    public LiveData<List<Recipe>> getRecipesByConditionApi(Map<String, String> conditions) {
-        MutableLiveData<List<Recipe>> data = new MutableLiveData<>();
+    public LiveData<RecipesResponce> getRecipesByConditionApi(Map<String, String> conditions,int page) {
+        MutableLiveData<RecipesResponce> data = new MutableLiveData<>();
         /*Map<String, String> condition = new HashMap<>();
         conditions.put("recipeName", "Spaghetti");
         conditions.put("ingredientName", "Tomato");
         conditions.put("userId", "1");*/
 
-        apiService.getRecipesByConditions(viewModel.getToken().getValue(), conditions).enqueue(new Callback<List<Recipe>>() {
+        apiService.getRecipesByFilters(viewModel.getToken().getValue(),conditions,page,10).enqueue(new Callback<RecipesResponce>() {
             @Override
-            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+            public void onResponse(Call<RecipesResponce> call, Response<RecipesResponce> response) {
                 if (response.isSuccessful()) {
                     data.postValue(response.body());
                 } else {
@@ -377,7 +377,7 @@ public class RecipeRepository {
             }
 
             @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+            public void onFailure(Call<RecipesResponce> call, Throwable t) {
                 ErrorHandler.handleNetworkFailure(t, appCompatActivity);
             }
         });

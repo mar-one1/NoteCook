@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "com.example.notecook"
         minSdk 30
-        targetSdk 30
+        targetSdk 33
         versionCode 1
         versionName "1.0"
         buildConfigField "String", "IP", "\"192.168.0.109\""
@@ -22,8 +22,8 @@ android {
     buildTypes {
         debug {
             // Example: use local API in debug
-            buildConfigField "String", "BASE_URL", "\"https://notecookapi.netlify.app/\""
-//            buildConfigField "String", "BASE_URL", "\"http://192.168.0.104:3000/\""
+            //buildConfigField "String", "BASE_URL", "\"https://notecookapi.netlify.app/\""
+            buildConfigField "String", "BASE_URL", "\"http://192.168.0.118:3000/\""
         }
 
         release {
@@ -88,4 +88,5 @@ android {
         androidTestImplementation 'androidx.test.ext:junit:1.1.3'
         androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     }
+
 }

@@ -113,8 +113,8 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.searchRecipes(s);
     }
 
-    public LiveData<List<Recipe>> SearchRecipeByCondition(Map<String, String> conditions) {
-        return repository.getRecipesByConditionApi(conditions);
+    public LiveData<RecipesResponce> SearchRecipeByCondition(Map<String, String> conditions,int page) {
+        return repository.getRecipesByConditionApi(conditions,page);
     }
 
     public LiveData<String> updateFullRemoteRecipe(RecipeResponse recipe) {

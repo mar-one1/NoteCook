@@ -99,6 +99,7 @@ public class Acceuill_Frg extends Fragment {
                 RecipesResponce recipesResponce=viewModel.getRemoteRecipesByPages().getValue();
                 if (!rv.canScrollVertically(1) &&  recipesResponce.getPage()< recipesResponce.getTotalPages()) {
                     recipesResponce.setPage(recipesResponce.getPage()+1);
+                    viewModel.getRemoteRecipesByPages().getValue().getRecipes().addAll(recipesResponce.getRecipes());
                     fetchRecipe(recipesResponce.getPage());
                 }
             }
@@ -213,6 +214,7 @@ public class Acceuill_Frg extends Fragment {
             manager.setOrientation(HORIZONTAL);
             mRecyclerView.setLayoutManager(manager);
             mRecyclerView.setAdapter(adapter_rc_recipeDt);
+
         } else if (viewModel.getListRecipe() != null && viewModel.getListRecipe().getValue() != null && !viewModel.getListRecipe().getValue().isEmpty()) {
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(),viewModel, viewModel.getListRecipe().getValue(), TAG_LOCAL);
             manager = new LinearLayoutManager(getContext());

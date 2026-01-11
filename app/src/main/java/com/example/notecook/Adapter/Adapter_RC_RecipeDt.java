@@ -71,6 +71,12 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         return new Adapter_RC_RecipeDt.ViewHolder(view);
     }
 
+    public void addRecipes(List<Recipe> newRecipes) {
+        int start = recipes.size();
+        recipes.addAll(newRecipes);
+        notifyItemRangeInserted(start, newRecipes.size());
+    }
+
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {

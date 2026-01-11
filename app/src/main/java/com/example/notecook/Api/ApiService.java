@@ -74,6 +74,14 @@ public interface ApiService {
     @GET("recipes/filters/recipes")
     Call<List<Recipe>> getRecipesByConditions(@Header("Authorization") String token, @QueryMap Map<String, String> conditions);
 
+    @GET("/filters/recipes")
+    Call<RecipesResponce> getRecipesByFilters(
+            @Header("Authorization") String token,
+            @QueryMap Map<String, String> filters, // أي filter
+            @Query("page") int page,
+            @Query("limit") int limit
+    );
+
     @GET("recipes/user/{id}")
     Call<List<Recipe>> getRecipeByIdUser(@Header("Authorization") String token, @Path("id") int recipeId);
 
@@ -267,6 +275,14 @@ public interface ApiService {
     // Example of a custom query parameter
     @GET("recipes/search/nom")
     Call<List<Recipe>> searchRecipes(@Header("Authorization") String token, @Query("key") String query);
+
+    @GET("recipes/search/nom")
+    Call<RecipesResponce> searchRecipes(
+            @Header("Authorization") String token,
+            @Query("key") String key,
+            @Query("page") int page,
+            @Query("limit") int limit
+    );
 
     @POST("favorites")
     @Headers("Content-Type: application/json")
