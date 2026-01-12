@@ -16,6 +16,7 @@ import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.Review;
 import com.example.notecook.Model.Step;
 import com.example.notecook.Model.User;
+import com.example.notecook.Utils.Result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class SharedRecipeViewModel extends ViewModel {
     private final MutableLiveData<List<RecipeResponse>> remoteListFullRecipe = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<List<Ingredients>> ingredientsCurrentRecipe = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Nutrition> remoteNutritions = new MutableLiveData<>();
+    private final MutableLiveData<Result<RecipesResponce>> result = new MutableLiveData<>();
 
     private final MutableLiveData<RecipesResponce> remoteRecipesByPages = new MutableLiveData<>();
 
@@ -330,5 +332,7 @@ public class SharedRecipeViewModel extends ViewModel {
     public MutableLiveData<RecipesResponce> getRemoteSearchRecipesByPages() {return remoteSearchRecipesByPages;}
 
     public void setRemoteSearchRecipesByPages(RecipesResponce recipeResponse) { remoteSearchRecipesByPages.setValue(recipeResponse);}
+
+    public void setResult(Result<RecipesResponce> recipeResponse){result.setValue(recipeResponse);}
 
 }

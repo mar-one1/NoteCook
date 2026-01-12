@@ -49,11 +49,11 @@ import retrofit2.Response;
 
 public class AccessRepository {
     private final Context context;
-    private ApiService apiService;
+    private final ApiService apiService;
     private PasswordHasher passwordHasher;
-    private UserDatasource userDatasource;
-    private Activity activity;
-    private SharedRecipeViewModel viewModel;
+    private final UserDatasource userDatasource;
+    private final Activity activity;
+    private final SharedRecipeViewModel viewModel;
 
     public AccessRepository(Context context, Activity activity,SharedRecipeViewModel viewModel) {
         apiService = ApiClient.getClient().create(ApiService.class);

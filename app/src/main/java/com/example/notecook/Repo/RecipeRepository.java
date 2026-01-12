@@ -32,6 +32,7 @@ import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.Utils.Result;
 import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
@@ -358,7 +359,34 @@ public class RecipeRepository {
     }
 
 
-    public LiveData<RecipesResponce> getRecipesByConditionApi(Map<String, String> conditions,int page) {
+    public LiveData<Result<RecipesResponce>> getRecipesByCondition(Map<String, String> conditions, int page, int limit) {
+        //MutableLiveData<RecipesResponce> data = new MutableLiveData<>();
+        MutableLiveData<Result<RecipesResponce>> result = new MutableLiveData<>();
+        result.postValue(Result.loading());
+        /*Map<String, String> condition = new HashMap<>();
+        conditions.put("recipeName", "Spaghetti");
+        conditions.put("ingredientName", "Tomato");
+        conditions.put("userId", "1");*/
+
+        apiService.getRecipesByFilters(viewModel.getToken().getValue(),conditions,page,10).enqueue(new Callback<RecipesResponce>() {
+            @Override
+            public void onResponse(Call<RecipesResponce> call, Response<RecipesResponce> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.postValue(Result.success(response.body()));
+                } else {
+                    result.postValue(Result.error(null, response));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecipesResponce> call, Throwable t) {
+                result.postValue(Result.error(t, null));
+            }
+        });
+        return result;
+    }
+
+    public LiveData<RecipesResponce> getRecipesByConditionApi(Map<String, String> conditions,int page,int limit) {
         MutableLiveData<RecipesResponce> data = new MutableLiveData<>();
         /*Map<String, String> condition = new HashMap<>();
         conditions.put("recipeName", "Spaghetti");
