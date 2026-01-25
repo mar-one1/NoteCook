@@ -218,7 +218,7 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
 
     @Override
     public int getItemCount() {
-        return recipes.size();
+        return recipes == null ? 0 : recipes.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

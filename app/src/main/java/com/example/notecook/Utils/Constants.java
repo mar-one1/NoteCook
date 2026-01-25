@@ -708,7 +708,7 @@ public class Constants {
         }
     }
 
-    public void bindingRcV_recipes(
+    public static void bindingRcV_recipes(
             Adapter_RC_RecipeDt adapter_rc_recipeDt,
             RecyclerView recyclerView,
             List<Recipe> newList,
