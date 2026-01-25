@@ -57,6 +57,7 @@ public class Frg_Search extends Fragment {
     private RecipeViewModel recipeVM;
     private FragmentActivity fragmentActivity;
     private SharedRecipeViewModel viewModel;
+    private Adapter_RC_RecipeDt adapter_rc_recipeDt;
 
 
     public Frg_Search() {
@@ -167,12 +168,13 @@ public class Frg_Search extends Fragment {
         if (!level.equals("autre"))
             condition.put("Level_recipe", level);
         //condition.put("userId", "1");
-        recipeVM.SearchRecipeByCondition(condition,page).observe(requireActivity(), new Observer<RecipesResponce>() {
+        recipeVM.SearchRecipeByConditionApi(condition,page,10).observe(requireActivity(), new Observer<RecipesResponce>() {
             @Override
             public void onChanged(RecipesResponce recipes) {
                 if (recipes != null && !recipes.getRecipes().isEmpty()) {
                     viewModel.getRemoteSearchRecipesByPages().getValue().getRecipes().addAll(recipes.getRecipes());
-                    bindingRcV_recipes(binding.RcRecipeSearch, recipes.getRecipes(), "search");
+                    //bindingRcV_recipes(binding.RcRecipeSearch, recipes.getRecipes(), "search");
+                    adapter_rc_recipeDt.addRecipes(recipes.getRecipes());
                 }
             }
         });
@@ -187,7 +189,6 @@ public class Frg_Search extends Fragment {
     }
 
     public void bindingRcV_recipes(RecyclerView recyclerView, List<Recipe> searchList, String tag) {
-        Adapter_RC_RecipeDt adapter_rc_recipeDt;
         if (!tag.equals("search") && viewModel.getRemoteRecipesByPages().getValue() != null)
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(getContext(), getActivity(), viewModel,viewModel.getRemoteRecipesByPages().getValue().getRecipes(), TAG_REMOTE);
         else {
@@ -198,30 +199,5 @@ public class Frg_Search extends Fragment {
         recyclerView.setLayoutManager(manager);
         adapter_rc_recipeDt.notifyDataSetChanged();
         recyclerView.setAdapter(adapter_rc_recipeDt);
-    }
-
-    private void searchRecipes(String key) {
-        ApiService apiService = ApiClient.getClient().create(ApiService.class);
-
-        Call<List<Recipe>> call = apiService.searchRecipes(viewModel.getToken().getValue(), key);
-        call.enqueue(new Callback<List<Recipe>>() {
-            @Override
-            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
-                if (response.isSuccessful()) {
-                    viewModel.setSearchList(response.body());
-                    if (!viewModel.getSearchList().isEmpty())
-                        bindingRcV_recipes(binding.RcRecipeSearch, viewModel.getSearchList(), "search");
-                    Log.d("TAG", viewModel.getSearchList().toString());
-                    // Handle the list of products obtained from the server
-                } else {
-                    // Handle unsuccessful response
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Recipe>> call, Throwable t) {
-                // Handle failure to make the API call
-            }
-        });
     }
 }

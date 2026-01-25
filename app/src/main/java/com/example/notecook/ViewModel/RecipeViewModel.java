@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -12,6 +13,7 @@ import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.Repo.RecipeRepository;
+import com.example.notecook.Utils.Result;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,7 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
     private Context context;
     private Activity appCompatActivity;
     private SharedRecipeViewModel viewModel;
+    private final MutableLiveData<Result<RecipesResponce>> resultLiveData = new MutableLiveData<>();
 
     public RecipeViewModel(Context context) {
         repository = new RecipeRepository(context);
@@ -42,6 +45,7 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         }
         throw new IllegalArgumentException("Unknown ViewModel class");
     }
+
 
     public LiveData<List<Recipe>> getRecipes() {
         return repository.getRecipes();
@@ -113,8 +117,12 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
         return repository.searchRecipes(s);
     }
 
-    public LiveData<RecipesResponce> SearchRecipeByCondition(Map<String, String> conditions,int page) {
-        return repository.getRecipesByConditionApi(conditions,page);
+    public LiveData<RecipesResponce> SearchRecipeByConditionApi(Map<String, String> conditions,int page,int limit) {
+        return repository.getRecipesByConditionApi(conditions,page,limit);
+    }
+
+    public void SearchRecipeByCondition(Map<String, String> filters, int page, int limit) {
+        repository.getRecipesByCondition(filters, page, limit).observeForever(resultLiveData::postValue);
     }
 
     public LiveData<String> updateFullRemoteRecipe(RecipeResponse recipe) {
@@ -128,8 +136,4 @@ public class RecipeViewModel extends ViewModel implements ViewModelProvider.Fact
     public int updateImageRecipeLocal(Bitmap image,int id) {
         return repository.updateRecipeImageLocally(image,id);
     }
-
-
-
-
 }
