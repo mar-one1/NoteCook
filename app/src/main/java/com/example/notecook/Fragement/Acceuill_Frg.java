@@ -1,8 +1,8 @@
 package com.example.notecook.Fragement;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
-import static com.example.notecook.Utils.Constants.TAG_LOCAL;
-import static com.example.notecook.Utils.Constants.TAG_REMOTE;
+import static com.example.notecook.Activity.MainActivity.TAG_LOCAL;
+import static com.example.notecook.Activity.MainActivity.TAG_REMOTE;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.notecook.Activity.MainActivity;
 import com.example.notecook.Adapter.Adapter_RC_MenuCat;
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Dto.RecipesResponce;
@@ -145,10 +146,10 @@ public class Acceuill_Frg extends Fragment {
             public void onChanged(@Nullable List<Recipe> recipeList) {
                 if (recipeList != null) {
                     viewModel.setRemoteListRecipe(recipeList);
-                    bindingRcV_recipes(recipeList, binding.RcCatPopular, true);
+                    MainActivity.bindingRcV_recipes(binding.RcCatPopular,recipeList, true);
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.size(), Toast.LENGTH_SHORT).show();
                 } else
-                    bindingRcV_recipes(viewModel.getListRecipe().getValue(), binding.RcCatPopular, true);
+                    MainActivity.bindingRcV_recipes(binding.RcCatPopular,viewModel.getListRecipe().getValue(), true);
             }
         });
     }
@@ -159,10 +160,11 @@ public class Acceuill_Frg extends Fragment {
             public void onChanged(@Nullable RecipesResponce recipeList) {
                 if (recipeList != null) {
                     viewModel.setremoteRecipesByPages(recipeList);
-                    bindingRcV_recipes(recipeList.getRecipes(), binding.RcCatPopular, true);
+                   // bindingRcV_recipes(recipeList.getRecipes(), binding.RcCatPopular, true);
+                    adapter_rc_recipeDt.addRecipes(recipeList.getRecipes());
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.getRecipes().size(), Toast.LENGTH_SHORT).show();
                 } else
-                    bindingRcV_recipes(viewModel.getRemoteRecipesByPages().getValue().getRecipes(), binding.RcCatPopular, true);
+                    MainActivity.bindingRcV_recipes( binding.RcCatPopular,viewModel.getRemoteRecipesByPages().getValue().getRecipes(), true);
             }
         });
     }

@@ -1,7 +1,7 @@
 package com.example.notecook.Fragement;
 
+import static com.example.notecook.Activity.MainActivity.TAG_LOCAL;
 import static com.example.notecook.Activity.MainActivity.Type_User;
-import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 import static com.example.notecook.Utils.Constants.TAG_MODE_INVITE;
 import static com.example.notecook.Utils.Constants.getUserInput;
 import static com.example.notecook.Utils.Constants.getUserSynch;

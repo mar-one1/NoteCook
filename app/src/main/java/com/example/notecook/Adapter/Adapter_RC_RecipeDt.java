@@ -1,9 +1,9 @@
 package com.example.notecook.Adapter;
 
 
+import static com.example.notecook.Activity.MainActivity.TAG_LOCAL;
 import static com.example.notecook.Fragement.MainFragment.flBtn;
 import static com.example.notecook.Fragement.MainFragment.viewPager2;
-import static com.example.notecook.Utils.Constants.TAG_LOCAL;
 
 
 import android.annotation.SuppressLint;
@@ -62,6 +62,9 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         recipeVM = new RecipeViewModel(context, activity,viewModel);
         userVM = new UserViewModel(context, activity,viewModel);
         notifyDataSetChanged();
+    }
+
+    public Adapter_RC_RecipeDt() {
     }
 
     @Override

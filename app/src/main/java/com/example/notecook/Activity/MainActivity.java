@@ -8,6 +8,8 @@ import static com.example.notecook.Utils.Constants.handleDbChange;
 import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -28,10 +30,14 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Activity.OnBoarding.OnBoarding_screen;
+import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Category_Recipe;
+import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -46,6 +52,7 @@ import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
     private View view;
     private boolean doubleBackToExitPressedOnce = false;
     private SharedRecipeViewModel viewModel;
+    public static final String TAG_REMOTE = "Remote";
+    public static final String TAG_LOCAL = "Local";
+    private Adapter_RC_RecipeDt adapter_rc_recipeDt;
 
 
     @Override
@@ -237,6 +247,44 @@ public class MainActivity extends AppCompatActivity {
                         ContextCompat.getDrawable(imageView.getContext(),R.drawable.aec4b1a59b7165562698470ce91494be)));
             }
         });
+    }
+
+    public static void bindingRcV_recipes(
+            RecyclerView recyclerView,
+            List<Recipe> newList,
+            boolean isRemote
+    ) {
+
+        if (adapter_rc_recipeDt == null) {
+
+            List<Recipe> baseList = new ArrayList<>();
+
+            if (isRemote && newList != null) {
+                baseList.addAll(newList);
+            } else if (!isRemote
+                    && viewModel.getListRecipe() != null
+                    && viewModel.getListRecipe().getValue() != null) {
+
+                baseList.addAll(viewModel.getListRecipe().getValue());
+            }
+
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(
+                    this,
+                    this,
+                    viewModel,
+                    baseList,
+                    isRemote ? TAG_REMOTE : TAG_LOCAL
+            );
+
+            LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            recyclerView.setLayoutManager(manager);
+            recyclerView.setAdapter(adapter_rc_recipeDt);
+            recyclerView.setHasFixedSize(true);
+
+        } else {
+            // 👉 إضافة فقط
+            adapter_rc_recipeDt.addRecipes(newList);
+        }
     }
 
 }

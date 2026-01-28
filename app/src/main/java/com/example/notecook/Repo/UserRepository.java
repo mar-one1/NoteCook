@@ -1,8 +1,9 @@
 package com.example.notecook.Repo;
 
+import static com.example.notecook.Activity.MainActivity.TAG_LOCAL;
 import static com.example.notecook.Data.MySQLiteHelperTable.COLUMN_USERNAME;
 import static com.example.notecook.Data.MySQLiteHelperTable.TABLE_USER;
-import static com.example.notecook.Utils.Constants.TAG_LOCAL;
+
 
 import android.app.Activity;
 import android.content.Context;

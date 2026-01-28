@@ -1,6 +1,7 @@
 package com.example.notecook.Fragement;
 
-import static com.example.notecook.Utils.Constants.TAG_REMOTE;
+import static com.example.notecook.Activity.MainActivity.TAG_REMOTE;
+
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
