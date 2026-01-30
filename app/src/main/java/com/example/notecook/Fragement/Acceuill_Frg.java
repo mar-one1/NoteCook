@@ -146,10 +146,10 @@ public class Acceuill_Frg extends Fragment {
             public void onChanged(@Nullable List<Recipe> recipeList) {
                 if (recipeList != null) {
                     viewModel.setRemoteListRecipe(recipeList);
-                    MainActivity.bindingRcV_recipes(binding.RcCatPopular,recipeList, true);
+                    MainActivity.bindingRcV_recipes( getContext(),getActivity(),binding.RcCatPopular,recipeList, true);
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.size(), Toast.LENGTH_SHORT).show();
                 } else
-                    MainActivity.bindingRcV_recipes(binding.RcCatPopular,viewModel.getListRecipe().getValue(), true);
+                    MainActivity.bindingRcV_recipes( getContext(),getActivity(),binding.RcCatPopular,viewModel.getListRecipe().getValue(), true);
             }
         });
     }
@@ -164,7 +164,7 @@ public class Acceuill_Frg extends Fragment {
                     adapter_rc_recipeDt.addRecipes(recipeList.getRecipes());
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.getRecipes().size(), Toast.LENGTH_SHORT).show();
                 } else
-                    MainActivity.bindingRcV_recipes( binding.RcCatPopular,viewModel.getRemoteRecipesByPages().getValue().getRecipes(), true);
+                    MainActivity.bindingRcV_recipes( getContext(),getActivity(),binding.RcCatPopular,viewModel.getRemoteRecipesByPages().getValue().getRecipes(), true);
             }
         });
     }

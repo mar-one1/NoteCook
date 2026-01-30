@@ -72,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private View view;
     private boolean doubleBackToExitPressedOnce = false;
-    private SharedRecipeViewModel viewModel;
+    private static SharedRecipeViewModel viewModel;
     public static final String TAG_REMOTE = "Remote";
     public static final String TAG_LOCAL = "Local";
-    private Adapter_RC_RecipeDt adapter_rc_recipeDt;
+    private static Adapter_RC_RecipeDt adapter_rc_recipeDt;
 
 
     @Override
@@ -151,9 +151,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return;
         }
-
-
-
         setContentView(view);
     }
 
@@ -250,6 +247,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void bindingRcV_recipes(
+            Context context,
+            Activity activity,
             RecyclerView recyclerView,
             List<Recipe> newList,
             boolean isRemote
@@ -269,14 +268,14 @@ public class MainActivity extends AppCompatActivity {
             }
 
             adapter_rc_recipeDt = new Adapter_RC_RecipeDt(
-                    this,
-                    this,
+                    context,
+                    activity,
                     viewModel,
                     baseList,
                     isRemote ? TAG_REMOTE : TAG_LOCAL
             );
 
-            LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
             recyclerView.setLayoutManager(manager);
             recyclerView.setAdapter(adapter_rc_recipeDt);
             recyclerView.setHasFixedSize(true);
