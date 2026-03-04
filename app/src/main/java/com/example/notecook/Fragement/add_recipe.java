@@ -42,8 +42,8 @@ import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
 import com.example.notecook.Utils.InputValidator;
-import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.RecipeViewModel;
+import com.example.notecook.ViewModel.SharedRecipeViewModel;
 import com.example.notecook.ViewModel.StepViewModel;
 import com.example.notecook.ViewModel.UserViewModel;
 import com.example.notecook.databinding.FragmentAddRecipeBinding;
@@ -200,7 +200,6 @@ public class add_recipe extends Fragment {
         viewModel.setTagEditRecipe(false);
         viewModel.setTagMy(false);
     }
-
     private void fullRecipeDetails(RecipeResponse recipeR) {
         // Set the recipe name in the EditText field
         binding.editTextRecipeName.setText(recipeR.getRecipe().getNom_recipe());

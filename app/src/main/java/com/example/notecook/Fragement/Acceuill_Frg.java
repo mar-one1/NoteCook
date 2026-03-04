@@ -160,7 +160,7 @@ public class Acceuill_Frg extends Fragment {
             public void onChanged(@Nullable RecipesResponce recipeList) {
                 if (recipeList != null) {
                     viewModel.setremoteRecipesByPages(recipeList);
-                   // bindingRcV_recipes(recipeList.getRecipes(), binding.RcCatPopular, true);
+                    bindingRcV_recipes(recipeList.getRecipes(), binding.RcCatPopular, true);
                     adapter_rc_recipeDt.addRecipes(recipeList.getRecipes());
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.getRecipes().size(), Toast.LENGTH_SHORT).show();
                 } else

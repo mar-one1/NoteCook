@@ -22,7 +22,6 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     private FingerprintDialog listner;
     private CancellationSignal cancellationSignal;
 
-
     // Constructor
     public FingerprintHandler(Context mContext) {
         context = mContext;
@@ -92,8 +91,6 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                     }
                 }).show();
     }
-
-
 }
 
 
