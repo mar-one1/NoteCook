@@ -93,8 +93,6 @@ public class Constants {
     public static final String TAG_AUTHENTIFICATION_ECHOUE = "authentification_Echoue";
     public static final String TAG_OFFLINE = "Offline";
     public static final String TAG_NOT_FOUND = "404 Not Found";
-    public static final String TAG_REMOTE = "Remote";
-    public static final String TAG_LOCAL = "Local";
     public static final String TAG_MODE_INVITE = "Mode Invite";
 
     // Keys
@@ -705,49 +703,6 @@ public class Constants {
                             if (fallback != null) imageView.setImageBitmap(fallback);
                         }
                     });
-        }
-    }
-
-    public static void bindingRcV_recipes(
-            Adapter_RC_RecipeDt adapter_rc_recipeDt,
-            RecyclerView recyclerView,
-            List<Recipe> newList,
-            SharedRecipeViewModel viewModel,
-            Context context,
-            Activity activity,
-            LinearLayoutManager manager,
-            boolean isRemote
-    ) {
-
-        if (adapter_rc_recipeDt == null) {
-
-            List<Recipe> baseList = new ArrayList<>();
-
-            if (isRemote && newList != null) {
-                baseList.addAll(newList);
-            } else if (!isRemote
-                    && viewModel.getListRecipe() != null
-                    && viewModel.getListRecipe().getValue() != null) {
-
-                baseList.addAll(viewModel.getListRecipe().getValue());
-            }
-
-            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(
-                    context,
-                    activity,
-                    viewModel,
-                    baseList,
-                    isRemote ? TAG_REMOTE : TAG_LOCAL
-            );
-
-            manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-            recyclerView.setLayoutManager(manager);
-            recyclerView.setAdapter(adapter_rc_recipeDt);
-            recyclerView.setHasFixedSize(true);
-
-        } else {
-            // 👉 إضافة فقط
-            adapter_rc_recipeDt.addRecipes(newList);
         }
     }
 

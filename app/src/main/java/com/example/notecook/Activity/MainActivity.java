@@ -8,13 +8,18 @@ import static com.example.notecook.Utils.Constants.handleDbChange;
 import static com.example.notecook.Utils.ImageHelper.decodeBase64ToBitmap;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -22,16 +27,23 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Activity.OnBoarding.OnBoarding_screen;
+import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
 import com.example.notecook.Fragement.MainFragment;
 import com.example.notecook.Model.Category_Recipe;
+import com.example.notecook.Model.Recipe;
 import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
@@ -46,6 +58,8 @@ import com.squareup.picasso.Picasso;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,8 +79,10 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private View view;
     private boolean doubleBackToExitPressedOnce = false;
-    private SharedRecipeViewModel viewModel;
-
+    private static SharedRecipeViewModel viewModel;
+    public static final String TAG_REMOTE = "Remote";
+    public static final String TAG_LOCAL = "Local";
+    private static Adapter_RC_RecipeDt adapter_rc_recipeDt;
 
     @Override
     public void onBackPressed() {
@@ -141,9 +157,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return;
         }
-
-
-
         setContentView(view);
     }
 
@@ -237,6 +250,46 @@ public class MainActivity extends AppCompatActivity {
                         ContextCompat.getDrawable(imageView.getContext(),R.drawable.aec4b1a59b7165562698470ce91494be)));
             }
         });
+    }
+
+    public static void bindingRcV_recipes(
+            Context context,
+            Activity activity,
+            RecyclerView recyclerView,
+            List<Recipe> newList,
+            boolean isRemote
+    ) {
+
+        if (adapter_rc_recipeDt == null) {
+
+            List<Recipe> baseList = new ArrayList<>();
+
+            if (isRemote && newList != null) {
+                baseList.addAll(newList);
+            } else if (!isRemote
+                    && viewModel.getListRecipe() != null
+                    && viewModel.getListRecipe().getValue() != null) {
+
+                baseList.addAll(viewModel.getListRecipe().getValue());
+            }
+
+            adapter_rc_recipeDt = new Adapter_RC_RecipeDt(
+                    context,
+                    activity,
+                    viewModel,
+                    baseList,
+                    isRemote ? TAG_REMOTE : TAG_LOCAL
+            );
+
+            LinearLayoutManager manager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+            recyclerView.setLayoutManager(manager);
+            recyclerView.setAdapter(adapter_rc_recipeDt);
+            recyclerView.setHasFixedSize(true);
+
+        } else {
+            // 👉 إضافة فقط
+            adapter_rc_recipeDt.addRecipes(newList);
+        }
     }
 
 }
