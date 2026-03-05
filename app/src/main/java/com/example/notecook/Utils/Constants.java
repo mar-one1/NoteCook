@@ -216,6 +216,32 @@ public class Constants {
         //pDialog.cancel();
     }
 
+    public interface ImagePickerListener {
+        void onCameraSelected();
+        void onGallerySelected();
+    }
+
+    public static void captureImage(Context context, ImagePickerListener listener) {
+
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+
+        new AlertDialog.Builder(context)
+                .setTitle("Add Photo!")
+                .setItems(options, (dialog, item) -> {
+
+                    if (item == 0) {
+                        listener.onCameraSelected();
+                    }
+                    else if (item == 1) {
+                        listener.onGallerySelected();
+                    }
+                    else {
+                        dialog.dismiss();
+                    }
+
+                })
+                .show();
+    }
     public static void captureImage(Context context, ActivityResultCaller caller) {
 
         final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};

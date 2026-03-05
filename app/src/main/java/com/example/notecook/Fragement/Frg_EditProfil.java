@@ -21,6 +21,8 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -71,7 +73,8 @@ public class Frg_EditProfil extends Fragment {
     private FragmentActivity fragmentActivity;
     private SharedRecipeViewModel viewModel;
 
-
+    ActivityResultLauncher<Void> cameraLauncher;
+    ActivityResultLauncher<String> galleryLauncher;
     public Frg_EditProfil() {
         // Required empty public constructor
     }
@@ -165,7 +168,6 @@ public class Frg_EditProfil extends Fragment {
             Vp2.setCurrentItem(4, false);
         });
 
-        binding.editIconProfil.setOnClickListener(view -> captureImage(view.getContext(), Frg_EditProfil.this));
 
         binding.logOut.setOnClickListener(view -> {
             SweetAlertDialog ppDialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.SUCCESS_TYPE);
@@ -184,8 +186,41 @@ public class Frg_EditProfil extends Fragment {
         });
 
 
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicturePreview(),
+                bitmap -> {
+                    if (bitmap != null) {
+                        binding.editIconProfil.setImageBitmap(bitmap);
+                    }
+                });
+
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        binding.editIconProfil.setImageURI(uri);
+                    }
+                });
+        binding.editIconProfil.setOnClickListener(view -> {
+            Constants.captureImage(getContext(), new Constants.ImagePickerListener() {
+
+                @Override
+                public void onCameraSelected() {
+                    cameraLauncher.launch(null);
+                }
+
+                @Override
+                public void onGallerySelected() {
+                    galleryLauncher.launch("image/*");
+                }
+            });
+        });
+
+
+
         return binding.getRoot();
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

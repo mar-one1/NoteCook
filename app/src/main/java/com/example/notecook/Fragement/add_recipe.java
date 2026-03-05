@@ -23,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -41,6 +43,7 @@ import com.example.notecook.Model.User;
 import com.example.notecook.R;
 import com.example.notecook.Utils.Constants;
 import com.example.notecook.Utils.ImageHelper;
+import com.example.notecook.Utils.ImagePickerManager;
 import com.example.notecook.Utils.InputValidator;
 import com.example.notecook.ViewModel.RecipeViewModel;
 import com.example.notecook.ViewModel.SharedRecipeViewModel;
@@ -70,6 +73,8 @@ public class add_recipe extends Fragment {
     private ImageView currentTargetImageView;
     private SharedRecipeViewModel viewModel;
 
+    ActivityResultLauncher<Void> cameraLauncher;
+    ActivityResultLauncher<String> galleryLauncher;
 
     public add_recipe() {
         // Required empty public constructor
@@ -90,14 +95,38 @@ public class add_recipe extends Fragment {
         userVM = new UserViewModel(getContext(), getActivity(),viewModel);
         stepVM = new StepViewModel(getContext(), getActivity(),viewModel);
         Constants.level(binding.levelRecipe, getContext());
+                cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicturePreview(),
+                bitmap -> {
+                    if (bitmap != null) {
+                        binding.addIconRecipe.setImageBitmap(bitmap);
+                    }
+                });
 
-        binding.addIconRecipe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentTargetImageView = binding.addIconRecipe;
-                captureImage(v.getContext(), add_recipe.this);
-            }
-        });
+                galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        binding.addIconRecipe.setImageURI(uri);
+                    }
+                });
+
+                binding.addIconRecipe.setOnClickListener(v -> {
+
+                    Constants.captureImage(getContext(), new Constants.ImagePickerListener() {
+
+                        @Override
+                        public void onCameraSelected() {
+                            cameraLauncher.launch(null);
+                        }
+
+                        @Override
+                        public void onGallerySelected() {
+                            galleryLauncher.launch("image/*");
+                        }
+                    });
+            });
+
         binding.addIconStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -443,6 +472,7 @@ public class add_recipe extends Fragment {
             }
         }
     }
+
 
     private void expand(LinearLayout linearLayout) {
         linearLayout.setVisibility(View.VISIBLE);
