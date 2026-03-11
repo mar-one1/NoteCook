@@ -71,10 +71,10 @@ public interface ApiService {
     @GET("recipes/{id}")
     Call<RecipeResponse> getRecipeById(@Header("Authorization") String token, @Path("id") int recipeId);
 
-    @GET("recipes/filters/recipes")
+    @GET("filters/recipes")
     Call<List<Recipe>> getRecipesByConditions(@Header("Authorization") String token, @QueryMap Map<String, String> conditions);
 
-    @GET("/filters/recipes")
+    @GET("recipes/conditions/recipes")
     Call<RecipesResponce> getRecipesByFilters(
             @Header("Authorization") String token,
             @QueryMap Map<String, String> filters, // أي filter
