@@ -173,7 +173,7 @@ public class Frg_Search extends Fragment {
             @Override
             public void onChanged(RecipesResponce recipes) {
                 if (recipes != null && !recipes.getRecipes().isEmpty()) {
-                    viewModel.getRemoteSearchRecipesByPages().getValue().getRecipes().addAll(recipes.getRecipes());
+                    //viewModel.getRemoteSearchRecipesByPages().getValue().getRecipes().addAll(recipes.getRecipes());
                     bindingRcV_recipes(binding.RcRecipeSearch, recipes.getRecipes(), "search");
                     //adapter_rc_recipeDt.addRecipes(recipes.getRecipes());
                 }
