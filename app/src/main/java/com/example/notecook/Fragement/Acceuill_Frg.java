@@ -55,6 +55,8 @@ public class Acceuill_Frg extends Fragment {
     public static Drawable defaultImagelike;
     public Drawable defaultImagenot;
     private SharedRecipeViewModel viewModel;
+    private int currentPage = 1;
+    private boolean isLoading = false;
 
     public Acceuill_Frg() {
         // Required empty public constructor
@@ -94,17 +96,25 @@ public class Acceuill_Frg extends Fragment {
         ingredientsVM.getAllIngredientsApi();
         fetchRecipe(1);
 
-        binding.RcCatPopular.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*binding.RcCatPopular.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
-                RecipesResponce recipesResponce=viewModel.getRemoteRecipesByPages().getValue();
-                if (!rv.canScrollVertically(1) &&  recipesResponce.getPage()< recipesResponce.getTotalPages()) {
-                    recipesResponce.setPage(recipesResponce.getPage()+1);
-                    viewModel.getRemoteRecipesByPages().getValue().getRecipes().addAll(recipesResponce.getRecipes());
-                    fetchRecipe(recipesResponce.getPage());
+
+                if (!rv.canScrollVertically(1) && !isLoading) {
+
+                    RecipesResponce response = viewModel.getRemoteRecipesByPages().getValue();
+
+                    if (response != null && currentPage < response.getTotalPages()) {
+                        currentPage++;
+                        fetchRecipe(currentPage);
+                    }
                 }
             }
-        });
+        });*/
+
+        setupRecycler();     // 1
+        setupPagination();   // 2
+        fetchRecipe(1);
 
         swipeRefreshLayout = binding.swipeRefreshLayout;
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -140,22 +150,28 @@ public class Acceuill_Frg extends Fragment {
         super.onResume();
     }
 
-    private void fetchRecipe() {
-        recipeVM.getRecipes().observe(getViewLifecycleOwner(), new Observer<List<Recipe>>() {
-            @Override
-            public void onChanged(@Nullable List<Recipe> recipeList) {
-                if (recipeList != null) {
-                    viewModel.setRemoteListRecipe(recipeList);
-                    MainActivity.bindingRcV_recipes( getContext(),getActivity(),binding.RcCatPopular,recipeList, true);
-                    Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.size(), Toast.LENGTH_SHORT).show();
-                } else
-                    MainActivity.bindingRcV_recipes( getContext(),getActivity(),binding.RcCatPopular,viewModel.getListRecipe().getValue(), true);
+    private void fetchRecipe(int page) {
+
+        isLoading = true;
+
+        recipeVM.getRecipes(page, 10).observe(getViewLifecycleOwner(), recipeList -> {
+
+            isLoading = false;
+
+            if (recipeList != null && recipeList.getRecipes() != null) {
+
+                if (page == 1) {
+                    adapter_rc_recipeDt.setRecipes(recipeList.getRecipes());
+                } else {
+                    adapter_rc_recipeDt.addRecipes(recipeList.getRecipes());
+                }
+
+                viewModel.setremoteRecipesByPages(recipeList);
             }
         });
     }
-
-    private void fetchRecipe(int page) {
-        recipeVM.getRecipes(page, 10).observe(getViewLifecycleOwner(), new Observer<RecipesResponce>() {
+    private void fetchRecipe() {
+        recipeVM.getRecipes(1, 10).observe(getViewLifecycleOwner(), new Observer<RecipesResponce>() {
             @Override
             public void onChanged(@Nullable RecipesResponce recipeList) {
                 if (recipeList != null) {
@@ -165,6 +181,42 @@ public class Acceuill_Frg extends Fragment {
                     Toast.makeText(getContext(), "changed main " + "recipe by observe" + recipeList.getRecipes().size(), Toast.LENGTH_SHORT).show();
                 } else
                     MainActivity.bindingRcV_recipes( getContext(),getActivity(),binding.RcCatPopular,viewModel.getRemoteRecipesByPages().getValue().getRecipes(), true);
+            }
+        });
+    }
+
+    private void setupRecycler() {
+
+        adapter_rc_recipeDt = new Adapter_RC_RecipeDt(
+                getContext(),
+                getActivity(),
+                viewModel,
+                new ArrayList<>(),
+                TAG_REMOTE
+        );
+
+        LinearLayoutManager manager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+
+        binding.RcCatPopular.setLayoutManager(manager);
+        binding.RcCatPopular.setAdapter(adapter_rc_recipeDt);
+    }
+
+    private void setupPagination() {
+
+        binding.RcCatPopular.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
+
+                if (!rv.canScrollHorizontally(1) && !isLoading) {
+
+                    RecipesResponce response = viewModel.getRemoteRecipesByPages().getValue();
+
+                    if (response != null && currentPage < response.getTotalPages()) {
+                        currentPage++;
+                        fetchRecipe(currentPage);
+                    }
+                }
             }
         });
     }

@@ -80,6 +80,12 @@ public class Adapter_RC_RecipeDt extends RecyclerView.Adapter<Adapter_RC_RecipeD
         notifyItemRangeInserted(start, newRecipes.size());
     }
 
+    public void setRecipes(List<Recipe> newRecipes) {
+        this.recipes.clear();          // نحيد القديم
+        this.recipes.addAll(newRecipes); // نحط الجديد
+        notifyDataSetChanged();
+    }
+
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {

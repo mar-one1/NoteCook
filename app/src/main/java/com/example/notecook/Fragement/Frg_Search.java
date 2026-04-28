@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,10 +25,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notecook.Adapter.Adapter_RC_RecipeDt;
-import com.example.notecook.Api.ApiClient;
-import com.example.notecook.Api.ApiService;
 import com.example.notecook.BuildConfig;
-import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Model.Recipe;
 import com.example.notecook.R;
@@ -45,10 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class Frg_Search extends Fragment {

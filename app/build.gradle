@@ -23,7 +23,7 @@ android {
         debug {
             // Example: use local API in debug
             //buildConfigField "String", "BASE_URL", "\"https://notecookapi.netlify.app/\""
-            buildConfigField "String", "BASE_URL", "\"http://192.168.1.66:3000/\""
+            buildConfigField "String", "BASE_URL", "\"http://192.168.1.19:3000/\""
         }
 
         release {
