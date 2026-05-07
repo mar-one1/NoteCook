@@ -6,9 +6,6 @@ import android.util.Log;
 import com.example.notecook.Activity.Login;
 import com.example.notecook.Fragement.Frg_EditProfil;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedList;

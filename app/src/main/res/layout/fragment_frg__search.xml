@@ -94,7 +94,15 @@
                 android:text="Apply Filter"
                 />
         </LinearLayout>
-
+        <TextView
+            android:id="@+id/txtEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No recipes found"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="20dp"/>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/Rc_recipe_search"
             android:layout_width="match_parent"

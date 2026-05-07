@@ -34,165 +34,203 @@ import java.util.ArrayList;
 
 public class frg_Profil extends Fragment {
 
-    public static FragmentFrgProfilBinding bindingProfil;
-    private String TAG = "Profil";
+    private FragmentFrgProfilBinding bindingProfil;
+
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
-    private User user;
-    private FloatingActionButton b;
+
     private RecipeViewModel recipeVM;
     private UserViewModel userVM;
     private SharedRecipeViewModel viewModel;
 
+    private FloatingActionButton fab;
 
-    public frg_Profil() {
-        // Required empty public constructor
-    }
+    private static final String TAG = "Profil";
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        extracted();
-        Log.d(TAG, "onResume");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop");
-    }
-
-    private void extracted() {
-        if (!Type_User.equals(Constants.TAG_MODE_INVITE)) {
-            user = new User();
-            if (viewModel.getUserLogin().getValue().getUser() != null) {
-                user = viewModel.getUserLogin().getValue().getUser();
-                bindingProfil.txtUsername.setText(user.getUsername());
-                bindingProfil.txtGradeStatus.setText(user.getGrade() + " " + user.getStatus());
-                MainActivity.showImageUsers(viewModel.getUserLogin().getValue().getUser(), bindingProfil.iconProfil);
-            }
-        }
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    public frg_Profil() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         bindingProfil = FragmentFrgProfilBinding.inflate(inflater, container, false);
+
         viewPager2 = bindingProfil.vp2Profil;
         tabLayout = bindingProfil.tl;
-        b = getActivity().findViewById(R.id.floating_action_button);
-        viewModel = new ViewModelProvider(this).get(SharedRecipeViewModel.class);
-        b.show();
-        tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
-        tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
-        viewPager2.setUserInputEnabled(true);
-        recipeVM = new RecipeViewModel(requireContext(), requireActivity(),viewModel);
-        userVM = new UserViewModel(requireContext(), requireActivity(),viewModel);
+
+        viewModel = new ViewModelProvider(requireActivity())
+                .get(SharedRecipeViewModel.class);
+
+        recipeVM = new RecipeViewModel(requireContext(), requireActivity(), viewModel);
+        userVM = new UserViewModel(requireContext(), requireActivity(), viewModel);
+
+        setupFab();
+        setupTabs();
+        setupViewPager();
+        setupAdapter();
+
         getUserInfo();
 
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.red));
-        tabLayout.setSelectedTabIndicatorHeight((int) (3 * getResources().getDisplayMetrics().density));
-        tabLayout.setTabTextColors(getResources().getColor(R.color.gray), Color.parseColor("#000000"));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager2.setCurrentItem(tab.getPosition(), false);
-//                b.hide();
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                Toast.makeText(getContext(), "select none", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-
-        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-//                b.hide();
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                tabLayout.selectTab(tabLayout.getTabAt(position));
-//                b.hide();
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                super.onPageScrollStateChanged(state);
-//                b.hide();
-            }
-        });
         bindingProfil.ImgVSetting.setOnClickListener(view -> {
+
             if (Type_User.equals(Constants.TAG_MODE_INVITE)) {
-                Toast.makeText(getContext(), "" + Constants.TAG_MODE_INVITE, Toast.LENGTH_LONG).show();
+
+                Toast.makeText(getContext(),
+                        Constants.TAG_MODE_INVITE,
+                        Toast.LENGTH_SHORT).show();
+
             } else {
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.ly_vp_con, new Frg_EditProfil());
-                fragmentTransaction.commitNow();
+
+                FragmentTransaction ft =
+                        requireActivity()
+                                .getSupportFragmentManager()
+                                .beginTransaction();
+
+                ft.replace(R.id.ly_vp_con, new Frg_EditProfil());
+                ft.addToBackStack("edit_profile");
+                ft.commit();
             }
         });
-        setViewPagerAdapter();
 
         return bindingProfil.getRoot();
     }
 
-    public void setViewPagerAdapter() {
-        Adapter_Vp2_recipeProfil viewPager2Adapter = new
-                Adapter_Vp2_recipeProfil(getActivity());
-        //create an ArrayList of Fragments
-        ArrayList<Fragment> fragmentList = new ArrayList<>();
-        fragmentList.add(new Frg_Recipe_Profil());
-        fragmentList.add(new Frg_recipe_fav());
-        viewPager2Adapter.setData(fragmentList);
-        //set the data for the adapter
-        bindingProfil.vp2Profil.setAdapter(viewPager2Adapter);
-    }
+    // ================= FAB =================
+    private void setupFab() {
 
-    private void getUserInfo() {
-        if (!Type_User.equals(TAG_MODE_INVITE)) {
-            Constants.loading_ui(getContext(), getActivity(), "Loading...");
-            String s1 = getUserInput(getContext());
-            if (Boolean.TRUE.equals(viewModel.getModeOnline().getValue()))
-                userVM.getUser(s1).observe(getViewLifecycleOwner(), new Observer<User>() {
-                    @Override
-                    public void onChanged(User user) {
-                        if (user != null) {
-                            Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
-                            extracted();
-                        }
-                        Constants.dismissLoadingDialog();
-                    }
-                });
-            else userVM.getUserLocal(s1, "").observe(getViewLifecycleOwner(), new Observer<User>() {
-                @Override
-                public void onChanged(User user) {
-                    if (user != null) {
-                        Toast.makeText(getContext(), "user get by observe", Toast.LENGTH_SHORT).show();
-                        extracted();
-                        Constants.dismissLoadingDialog();
-                    }
-                }
-            });
+        if (getActivity() != null) {
+            fab = getActivity().findViewById(R.id.floating_action_button);
+            if (fab != null) fab.show();
         }
     }
+
+    // ================= TABS =================
+    private void setupTabs() {
+
+        tabLayout.addTab(tabLayout.newTab().setText("MY RECIPES"));
+        tabLayout.addTab(tabLayout.newTab().setText("MY BONUSES"));
+
+        tabLayout.setSelectedTabIndicatorColor(
+                getResources().getColor(R.color.red)
+        );
+
+        tabLayout.setSelectedTabIndicatorHeight(
+                (int) (3 * getResources().getDisplayMetrics().density)
+        );
+
+        tabLayout.setTabTextColors(
+                getResources().getColor(R.color.gray),
+                Color.BLACK
+        );
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition(), true);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+    }
+
+    // ================= VIEWPAGER =================
+    private void setupViewPager() {
+
+        viewPager2.registerOnPageChangeCallback(
+                new ViewPager2.OnPageChangeCallback() {
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        tabLayout.selectTab(tabLayout.getTabAt(position));
+                    }
+                }
+        );
+    }
+
+    // ================= ADAPTER =================
+    private void setupAdapter() {
+
+        Adapter_Vp2_recipeProfil adapter =
+                new Adapter_Vp2_recipeProfil(getActivity());
+
+        ArrayList<Fragment> fragments = new ArrayList<>();
+
+        fragments.add(new Frg_Recipe_Profil());
+        fragments.add(new Frg_recipe_fav());
+
+        adapter.setData(fragments);
+
+        viewPager2.setAdapter(adapter);
+    }
+
+    // ================= USER INFO =================
+    private void getUserInfo() {
+
+        if (Type_User.equals(TAG_MODE_INVITE)) return;
+
+        Constants.loading_ui(getContext(), getActivity(), "Loading...");
+
+        String userId = getUserInput(getContext());
+
+        Observer<User> observer = user -> {
+
+            if (user != null) {
+                extracted();
+            }
+
+            Constants.dismissLoadingDialog();
+        };
+
+        if (Boolean.TRUE.equals(viewModel.getModeOnline().getValue())) {
+
+            userVM.getUser(userId)
+                    .observe(getViewLifecycleOwner(), observer);
+
+        } else {
+
+            userVM.getUserLocal(userId, "")
+                    .observe(getViewLifecycleOwner(), observer);
+        }
+    }
+
+    // ================= UI UPDATE =================
+    private void extracted() {
+
+        if (Type_User.equals(TAG_MODE_INVITE)) return;
+
+        if (viewModel.getUserLogin().getValue() == null) return;
+
+        User user = viewModel.getUserLogin().getValue().getUser();
+
+        if (user == null) return;
+
+        bindingProfil.txtUsername.setText(user.getUsername());
+
+        bindingProfil.txtGradeStatus.setText(
+                user.getGrade() + " " + user.getStatus()
+        );
+
+        MainActivity.showImageUsers(user, bindingProfil.iconProfil);
+
+        Log.d(TAG, "User loaded");
+    }
+
+//    private void updateEmptyState(List<?> list) {
+//
+//        if (list == null || list.isEmpty()) {
+//
+//            binding.txtEmpty.setVisibility(View.VISIBLE);
+//            binding.RcRecipeSearch.setVisibility(View.GONE);
+//
+//        } else {
+//
+//            binding.txtEmpty.setVisibility(View.GONE);
+//            binding.RcRecipeSearch.setVisibility(View.VISIBLE);
+//        }
+//    }
 }

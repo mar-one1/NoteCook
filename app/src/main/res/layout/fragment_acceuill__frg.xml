@@ -42,7 +42,15 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:layout_marginBottom="@dimen/_20sdp">
-
+            <TextView
+                android:id="@+id/txtEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No recipes found"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:visibility="gone"
+                android:padding="20dp"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/Rc_Cat_Menu"
                 android:layout_width="match_parent"
