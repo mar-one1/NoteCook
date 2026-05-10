@@ -5,7 +5,7 @@ import com.example.notecook.Dto.RecipeResponse;
 import com.example.notecook.Dto.RecipesResponce;
 import com.example.notecook.Dto.RegistreResponse;
 import com.example.notecook.Dto.TokenResponse;
-import com.example.notecook.Fragement.Favorite_User_Recipe;
+import com.example.notecook.Model.Favorite_User_Recipe;
 import com.example.notecook.Model.Category_Recipe;
 import com.example.notecook.Model.ChatMessage;
 import com.example.notecook.Model.Detail_Recipe;

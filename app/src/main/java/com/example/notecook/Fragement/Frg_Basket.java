@@ -68,4 +68,11 @@ import com.example.notecook.databinding.FragmentFrgBasketBinding;
           recyclerView.setLayoutManager(manager);
           recyclerView.setAdapter(adapter);
       }
+
+      @Override
+      public void onDestroyView() {
+          super.onDestroyView();
+          // CRITICAL: This prevents the memory leak
+          binding = null;
+      }
 }

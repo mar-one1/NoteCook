@@ -46,8 +46,7 @@ public class Frg_recipe_ingredients extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Constants.bindingRcV_Ingredients(mRecyclerView, viewModel.getIngredientsCurrentRecipe().getValue(), getContext(),viewModel);
-        Toast.makeText(getContext(), "onDestroyView", Toast.LENGTH_SHORT).show();
+        binding = null;
     }
 
     @Override
@@ -124,5 +123,7 @@ public class Frg_recipe_ingredients extends Fragment {
 
 
     }
+
+
 
 }

@@ -348,4 +348,10 @@ public class Frg_Search extends Fragment {
 
         startActivityForResult(intent, 101);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        handler.removeCallbacks(searchRunnable); // Clean up!
+    }
 }

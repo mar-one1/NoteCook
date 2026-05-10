@@ -328,4 +328,11 @@ public class Frg_EditProfil extends Fragment {
                         .popBackStack();
             }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // CRITICAL: This prevents the memory leak
+        binding = null;
+    }
 }

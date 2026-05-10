@@ -139,6 +139,13 @@ public class MainFragment extends Fragment  {
         viewPager2.setAdapter(viewPager2Adapter);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // CRITICAL: This prevents the memory leak
+        binding = null;
+    }
+
 
 
 

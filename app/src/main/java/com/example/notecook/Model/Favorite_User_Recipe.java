@@ -1,4 +1,4 @@
-package com.example.notecook.Fragement;
+package com.example.notecook.Model;
 
 import com.google.gson.annotations.SerializedName;
 

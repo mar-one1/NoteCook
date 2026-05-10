@@ -62,4 +62,11 @@ public class Frg_recipe_fav extends Fragment {
         mRecyclerView.setLayoutManager(manager);
         mRecyclerView.setAdapter(adapter_rc_recipeDt);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // CRITICAL: This prevents the memory leak
+        binding = null;
+    }
 }

@@ -232,4 +232,11 @@ public class Frg_detail_recipe extends Fragment {
         //set the data for the adapter
         binding.vp2Detairecipe.setAdapter(viewPager2Adapter);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // CRITICAL: This prevents the memory leak
+        binding = null;
+    }
 }

@@ -5,8 +5,7 @@ import android.content.Context;
 
 import com.example.notecook.Api.ApiClient;
 import com.example.notecook.Api.ApiService;
-import com.example.notecook.Fragement.Favorite_User_Recipe;
-import com.example.notecook.Utils.Constants;
+import com.example.notecook.Model.Favorite_User_Recipe;
 import com.example.notecook.ViewModel.SharedRecipeViewModel;
 
 import retrofit2.Call;

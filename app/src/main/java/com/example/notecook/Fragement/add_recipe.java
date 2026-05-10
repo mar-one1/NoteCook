@@ -228,6 +228,7 @@ public class add_recipe extends Fragment {
         viewModel.setCurrentFullRecipe(new RecipeResponse());
         viewModel.setTagEditRecipe(false);
         viewModel.setTagMy(false);
+        binding = null;
     }
     private void fullRecipeDetails(RecipeResponse recipeR) {
         // Set the recipe name in the EditText field
@@ -345,6 +346,7 @@ public class add_recipe extends Fragment {
         // 1️⃣ Update local recipe object
         viewModel.getCurrentFullRecipe().getValue().getRecipe().setNom_recipe(binding.editTextRecipeName.getText().toString());
         Bitmap bitmap = ImageHelper.drawableToBitmap(binding.addIconRecipe.getDrawable());
+        Bitmap resizeBitmap =ImageHelper.resizeBitmap(bitmap,2);
 
         viewModel.getCurrentFullRecipe().getValue().getDetail_recipe().setDt_recipe(binding.editTextInstructions.getText().toString());
         viewModel.getCurrentFullRecipe().getValue().getDetail_recipe().setTime(parseIntSafe(binding.txtTotTime.getText().toString()));
@@ -366,8 +368,8 @@ public class add_recipe extends Fragment {
             }
 
             // 4️⃣ Update local recipe image if exists
-            if (bitmap != null) {
-                recipeVM.updateImageRecipeLocal(bitmap, viewModel.getCurrentFullRecipe().getValue().getRecipe().getId_recipe());
+            if (resizeBitmap != null) {
+                recipeVM.updateImageRecipeLocal(resizeBitmap, viewModel.getCurrentFullRecipe().getValue().getRecipe().getId_recipe());
             }
 
             // 5️⃣ Update recipe remotely
@@ -376,7 +378,6 @@ public class add_recipe extends Fragment {
                     AffichageMessage("error", "Error updating remote recipe!", getActivity());
                     return;
                 }
-
                 uploadRecipeImages(recipeResponse, bitmap);
             });
         });
@@ -550,4 +551,5 @@ public class add_recipe extends Fragment {
         userDatasource.close();
         return user;
     }
+
 }

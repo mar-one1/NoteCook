@@ -56,4 +56,11 @@ public class Frg_Fav extends Fragment {
         adapter_rc_review.notifyDataSetChanged();
         binding.rcReview.setAdapter(adapter_rc_review);
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // CRITICAL: This prevents the memory leak
+        binding = null;
+    }
 }

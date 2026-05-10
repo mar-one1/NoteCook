@@ -243,10 +243,11 @@ public class Frg_Step_Recipe extends Fragment {
         }
 
     }
-
     @Override
-    public void onPause() {
-        super.onPause();
-
+    public void onDestroyView() {
+        super.onDestroyView();
+        // CRITICAL: This prevents the memory leak
+        binding = null;
     }
+
 }

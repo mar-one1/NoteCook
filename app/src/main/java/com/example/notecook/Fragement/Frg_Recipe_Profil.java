@@ -115,6 +115,13 @@ public class Frg_Recipe_Profil extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // CRITICAL: This prevents the memory leak
+        binding = null;
+    }
 }
 
 

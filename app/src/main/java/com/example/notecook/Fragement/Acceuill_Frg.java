@@ -279,4 +279,11 @@ public class Acceuill_Frg extends Fragment {
         mRecyclerView.setHasFixedSize(true);
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // CRITICAL: This prevents the memory leak
+        binding = null;
+    }
+
 }
