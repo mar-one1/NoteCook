@@ -2,4 +2,5 @@
 - Add ingredient in add recipe : in work
 - add recipe reviews : ok
 - make max input in time picker : done
-- add ignore case in the username
+- add ignore case in the username : done(in api)
+- make upload user image from register (without token)

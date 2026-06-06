@@ -142,7 +142,7 @@ public class UserRepository {
     public LiveData<User> UpdateUserApi(User user, Bitmap bitmap) {
         MutableLiveData<User> userUpdated = new MutableLiveData<>();
         // Example: Fetch users from the API
-        apiService.updateUserByUsername(user.getUsername(), user).enqueue(new Callback<User>() {
+        apiService.updateUserByUsername(user.getUsername(), user,viewModel.getToken().getValue()).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
@@ -171,7 +171,7 @@ public class UserRepository {
 
     public void deleteimage(String s) {
         // Enqueue the download request
-        apiService.deleteimage(s).enqueue(new Callback<ResponseBody>() {
+        apiService.deleteimage(viewModel.getToken().getValue(),s).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -350,7 +350,7 @@ public class UserRepository {
         RequestBody requestBody = RequestBody.create(MediaType.parse("text/plain"), jsonInputString);
 
         // Call the method to upload the file
-        apiService.updateUserGoogleImageUrl(username, requestBody).enqueue(new Callback<String>() {
+        apiService.updateUserGoogleImageUrl(username, requestBody,viewModel.getToken().getValue()).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {

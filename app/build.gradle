@@ -13,7 +13,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "IP", "\"192.168.0.109\""
+        buildConfigField "String", "IP", "\"192.168.1.25\""
         buildConfigField "String", "PORT", "\"3000\""
         buildConfigField "String", "BASE_URL", "\"https://notecookapi.netlify.app/\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -23,7 +23,7 @@ android {
         debug {
             // Example: use local API in debug
             //buildConfigField "String", "BASE_URL", "\"https://notecookapi.netlify.app/\""
-            buildConfigField "String", "BASE_URL", "\"http://192.168.1.70:3000/\""
+            buildConfigField "String", "BASE_URL", "\"http://192.168.1.25:3000/\""
         }
 
         release {
@@ -40,7 +40,6 @@ android {
         buildFeatures {
             viewBinding true
             dataBinding true
-
         }
         namespace 'com.example.notecook'
     }

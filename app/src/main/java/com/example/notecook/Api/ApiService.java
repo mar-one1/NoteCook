@@ -149,7 +149,7 @@ public interface ApiService {
     );
 
     @DELETE("users/delete/{path}")
-    Call<ResponseBody> deleteimage(@Path("path") String fileUrl);
+    Call<ResponseBody> deleteimage(@Header("Authorization") String token,@Path("path") String fileUrl);
 
     @GET
     Call<ResponseBody> downloadImage(@Url String fileUrl);
@@ -168,14 +168,14 @@ public interface ApiService {
 
     @PUT("users/filtre/{username}")
     @Headers("Content-Type: application/json")
-    Call<User> updateUserByUsername(@Path("username") String username, @Body User user);
+    Call<User> updateUserByUsername(@Path("username") String username, @Body User user, @Header("Authorization") String token);
 
     @PUT("users/image/{username}")
     @Headers("Content-Type: application/json")
-    Call<String> updateUserGoogleImageUrl(@Path("username") String username, @Body RequestBody path);
+    Call<String> updateUserGoogleImageUrl(@Path("username") String username, @Body RequestBody path, @Header("Authorization") String token);
 
     @DELETE("users/{id}")
-    Call<Void> deleteUser(@Path("id") int userId);
+    Call<Void> deleteUser(@Path("id") int userId,@Header("Authorization") String token);
 
     // Ingredients API Endpoints
     @GET("ingredientrecipes")

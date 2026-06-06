@@ -163,7 +163,7 @@ public class Frg_EditProfil extends Fragment {
                 new ActivityResultContracts.TakePicturePreview(),
                 bitmap -> {
                     if (bitmap != null) {
-                        binding.editIconProfil.setImageBitmap(bitmap);
+                        binding.iconEditprofil.setImageBitmap(bitmap);
                     }
                 });
 
@@ -171,7 +171,7 @@ public class Frg_EditProfil extends Fragment {
                 new ActivityResultContracts.GetContent(),
                 uri -> {
                     if (uri != null) {
-                        binding.editIconProfil.setImageURI(uri);
+                        binding.iconEditprofil.setImageURI(uri);
                     }
                 });
 
