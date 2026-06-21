@@ -53,6 +53,12 @@ public interface ApiService {
     @POST("auth/change-password")
     Call<LoginResponse> changePassword(@Body Map<String, String> body);
 
+    @Multipart
+    @POST("auth/upload/{username}")
+    Call<ResponseBody> uploadFile(@Path("username") String username,
+                                  @Part MultipartBody.Part image
+    );
+
     @GET("users")
     Call<List<User>> getData(@Header("Authorization") String token);
 
@@ -135,12 +141,6 @@ public interface ApiService {
     );
 
     @Multipart
-    @POST("auth/upload/{username}")
-    Call<ResponseBody> uploadFile(@Path("username") String username,
-                                  @Part MultipartBody.Part image
-    );
-
-    @Multipart
     @POST("recipes/upload/{id}")
     Call<ResponseBody> UpdateRecipeImage(
             @Header("Authorization") String token,
@@ -214,7 +214,7 @@ public interface ApiService {
 
     @PUT("steps/{id}")
     @Headers("Content-Type: application/json")
-    Call<Step> updateStep(@Path("id") int stepId, @Body Step step);
+    Call<Step> updateStep(@Header("Authorization") String token,@Path("id") int stepId, @Body Step step);
 
     @Multipart
     @PUT("steprecipes/upload/{id}")
@@ -225,7 +225,7 @@ public interface ApiService {
     );
 
     @DELETE("steps/{id}")
-    Call<Void> deleteStep(@Path("id") int stepId);
+    Call<Void> deleteStep(@Header("Authorization") String token,@Path("id") int stepId);
 
     // Review API Endpoints
     @GET("reviewrecipes")
@@ -239,14 +239,14 @@ public interface ApiService {
 
     @POST("reviewrecipes")
     @Headers("Content-Type: application/json")
-    Call<Review> createReview(@Body Review review);
+    Call<Review> createReview(@Header("Authorization") String token,@Body Review review);
 
     @PUT("reviewrecipes/{id}")
     @Headers("Content-Type: application/json")
-    Call<Review> updateReview(@Path("id") int reviewId, @Body Review review);
+    Call<Review> updateReview(@Header("Authorization") String token,@Path("id") int reviewId, @Body Review review);
 
     @DELETE("reviewrecipes/{id}")
-    Call<Void> deleteReview(@Path("id") int reviewId);
+    Call<Void> deleteReview(@Header("Authorization") String token,@Path("id") int reviewId);
 
     // DetailRecipe API Endpoints
     @GET("DetailRecipes")
@@ -260,14 +260,14 @@ public interface ApiService {
 
     @POST("DetailRecipes")
     @Headers("Content-Type: application/json")
-    Call<Detail_Recipe> createDetailRecipe(@Body Detail_Recipe DetailRecipe);
+    Call<Detail_Recipe> createDetailRecipe(@Header("Authorization") String token,@Body Detail_Recipe DetailRecipe);
 
     @PUT("DetailRecipes/{id}")
     @Headers("Content-Type: application/json")
-    Call<Detail_Recipe> updateDetailRecipe(@Path("id") int DetailRecipeId, @Body Detail_Recipe DetailRecipe);
+    Call<Detail_Recipe> updateDetailRecipe(@Header("Authorization") String token,@Path("id") int DetailRecipeId, @Body Detail_Recipe DetailRecipe);
 
     @DELETE("DetailRecipes/{id}")
-    Call<Void> deleteDetailRecipe(@Path("id") int DetailRecipeId);
+    Call<Void> deleteDetailRecipe(@Header("Authorization") String token,@Path("id") int DetailRecipeId);
 
     // ...
     // Add more endpoints for other models as needed
