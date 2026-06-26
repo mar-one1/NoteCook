@@ -47,6 +47,10 @@ public class ErrorHandler {
                     } else {
                         errorMessage = "An error occurred. Please try again.";
                     }
+                }else if (statusCode == 401) {
+                    if (!appCompatActivity.getClass().equals(Login.class)) {
+                        Frg_EditProfil.logOut(appCompatActivity);
+                    }
                 }
                 /*else {
                     String jsonResponse = errorMessage;
